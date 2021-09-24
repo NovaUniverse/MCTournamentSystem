@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.novauniverse.mctournamentsystem</groupId>
+	<artifactId>MCTournamentSystem-Parent</artifactId>
+	<packaging>pom</packaging>
+	<version>PARENT</version>
+	<name>MCTournamentSystem Parent</name>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<url>https://novauniverse.net</url>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>novauniverse</id>
+			<url>https://nexus.novauniverse.net/repository/novauniverse/</url>
+		</snapshotRepository>
+		<repository>
+			<id>novauniverse</id>
+			<url>https://nexus.novauniverse.net/repository/novauniverse/</url>
+		</repository>
+	</distributionManagement>
+
+	<modules>
+		<module>MCTournamentSystem-Commons</module>
+		<module>MCTournamentSystem-Bungeecord</module>
+		<module>MCTournamentSystem-Spigot</module>
+		<module>MCTournamentSystem-Lobby</module>
+	</modules>
+
+	<repositories></repositories>
+
+	<dependencies></dependencies>
+</project>

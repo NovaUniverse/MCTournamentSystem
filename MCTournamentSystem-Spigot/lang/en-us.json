@@ -1,0 +1,29 @@
+{
+	"language_code": "en-us",
+	"language_name": "English",
+	"content": {
+		"tournamentsystem.scoreboard.score": "Score: ",
+		"tournamentsystem.scoreboard.kills": "Kills: ",
+		"tournamentsystem.scoreboard.team_score": "Team score: ",
+		"tournamentsystem.scoreboard.your_ping": "Ping: ",
+		"tournamentsystem.scoreboard.average_tps": "TPS: ",
+		"tournamentsystem.scoreboard.starting_in": "Starting in: ",
+
+		"tournamentsystem.yborder.start": "§c§lHeight limit is decreasing. You will take damage if you go above the Y level limit",
+		"tournamentsystem.yborder.remove": "§c§lHeight limit has been removed",
+		"tournamentsystem.yborder.above_limit.warning": "§c§lYou are above the height limit of Y: %s. You will continue to take damage until you get below the limit",
+		"tournamentsystem.yborder.above_limit.info": "§c§l%s blocks above the height limit",
+
+		"tournamentsystem.game.tracker.tracking_player": "§aTracking player §b%s",
+
+		"tournamentcore.command.reconnect.connecting": "§aConnecting to the server...",
+		"tournamentcore.command.reconnect.no_game": "§cThere is no active game right now",
+		
+		"tournamentcore.game.elimination.team.eliminated": "§c§lTeam Eliminated> %s§l%s §6§l%s place",
+		"tournamentcore.game.sending_you_to_lobby_10_seconds": "§bSending you to the lobby in 10 seconds",
+		"tournamentcore.game.server.restarting": "§b%s server restarting, Please reconnect",
+		
+		"tournamentcore.game.gameover.winner.player": "§a§lGAME OVER> §6§lWinning player: %s§l%s",
+		"tournamentcore.game.gameover.winner.team": "§a§lGAME OVER> §6§lWinning team: %s§l%s"
+	}
+}

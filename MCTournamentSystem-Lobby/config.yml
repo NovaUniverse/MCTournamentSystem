@@ -1,0 +1,28 @@
+# Spawn location
+spawn_x: 0.5
+spawn_y: 10.0
+spawn_z: 0.5
+
+spawn_yaw: 0
+spawn_pitch: 0
+
+# KOTL
+kotl_enabled: true
+
+kotl_x: 25
+kotl_z: 11
+
+kotl_radius: 5
+
+# Lobby leaderboard
+lobby_player_leaderboard:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+
+lobby_team_leaderboard:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    
+prevent_damage_mobs: false

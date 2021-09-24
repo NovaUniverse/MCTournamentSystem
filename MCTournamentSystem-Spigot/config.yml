@@ -1,0 +1,53 @@
+# =============================
+# -=-=-=  MySQL Settings =-=-=-
+# =============================
+# MySQL Database
+mysql:
+    driver: com.mysql.jdbc.Driver
+    host: jdbc:mysql://localhost
+    username: root
+    password: root
+    database: tournamentsystem
+
+# =================================
+# -=-=-= Bungeecord settings =-=-=-
+# =================================
+
+# Name of the server in the bungeecord configuration
+server_name: null
+
+# Name of the lobby server in the bungeecord configuration
+lobby_server: lobby
+
+# ===========================
+# -=-=-= Game settings =-=-=-
+# ===========================
+
+game_enabled: false
+
+# =============================
+# -=-=-=  Score settings =-=-=-
+# =============================
+
+# Added on kill
+kill_score_enabled: false
+kill_score: 20
+
+# Added on player placement
+win_score_enabled: false
+win_score: [100, 80, 60]
+
+
+# Added when another player is eliminated
+participation_score_enabled: false
+participation_score: 2
+
+# ==================================
+# -=-=-= Player head settings =-=-=-
+# ==================================
+
+# Head drops
+enable_head_drops: true
+
+# Edible heads
+enable_edible_heads: true

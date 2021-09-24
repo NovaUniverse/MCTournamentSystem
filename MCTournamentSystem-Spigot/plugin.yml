@@ -1,0 +1,9 @@
+main: net.novauniverse.mctournamentsystem.spigot.TournamentSystem
+name: TournamentSystem
+description: The 5th version of the tournament system developed by novauniverse
+version: 1.0
+api-version: 1.13
+
+depend: [NovaCore, HolographicDisplays, ProtocolLib, TitleAPI]
+softdepent: [NovaCoreGameEngine]
+loadbefore: [NovaGamesTarget]

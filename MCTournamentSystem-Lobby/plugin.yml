@@ -1,0 +1,9 @@
+main: net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby
+name: TournamentSystemLobby
+description: h
+version: 1.0
+api-version: 1.13
+
+depend: [NovaCore, HolographicDisplays, ProtocolLib, TitleAPI, TournamentSystem]
+softdepent: [NovaCoreGameEngine]
+loadbefore: [NovaGamesTarget]
