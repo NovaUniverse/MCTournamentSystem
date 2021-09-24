@@ -16,14 +16,14 @@
 
 		"tournamentsystem.game.tracker.tracking_player": "§aTracking player §b%s",
 
-		"tournamentcore.command.reconnect.connecting": "§aConnecting to the server...",
-		"tournamentcore.command.reconnect.no_game": "§cThere is no active game right now",
+		"tournamentsystem.command.reconnect.connecting": "§aConnecting to the server...",
+		"tournamentsystem.command.reconnect.no_game": "§cThere is no active game right now",
 		
-		"tournamentcore.game.elimination.team.eliminated": "§c§lTeam Eliminated> %s§l%s §6§l%s place",
-		"tournamentcore.game.sending_you_to_lobby_10_seconds": "§bSending you to the lobby in 10 seconds",
-		"tournamentcore.game.server.restarting": "§b%s server restarting, Please reconnect",
+		"tournamentsystem.game.elimination.team.eliminated": "§c§lTeam Eliminated> %s§l%s §6§l%s place",
+		"tournamentsystem.game.sending_you_to_lobby_10_seconds": "§bSending you to the lobby in 10 seconds",
+		"tournamentsystem.game.server.restarting": "§b%s server restarting, Please reconnect",
 		
-		"tournamentcore.game.gameover.winner.player": "§a§lGAME OVER> §6§lWinning player: %s§l%s",
-		"tournamentcore.game.gameover.winner.team": "§a§lGAME OVER> §6§lWinning team: %s§l%s"
+		"tournamentsystem.game.gameover.winner.player": "§a§lGAME OVER> §6§lWinning player: %s§l%s",
+		"tournamentsystem.game.gameover.winner.team": "§a§lGAME OVER> §6§lWinning team: %s§l%s"
 	}
 }
