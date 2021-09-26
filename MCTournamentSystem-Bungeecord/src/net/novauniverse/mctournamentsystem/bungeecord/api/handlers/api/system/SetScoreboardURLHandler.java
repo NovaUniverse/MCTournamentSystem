@@ -1,26 +1,25 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
-import net.novauniverse.mctournamentsystem.bungeecord.api.WebServer;
+import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
 @SuppressWarnings("restriction")
-public class SetScoreboardURLHandler implements HttpHandler {
-	@Override
-	public void handle(HttpExchange exchange) throws IOException {
-		JSONObject json = new JSONObject();
+public class SetScoreboardURLHandler extends APIEndpoint {
+	public SetScoreboardURLHandler() {
+		super(true);
+	}
 
-		Map<String, String> params = WebServer.queryToMap(exchange.getRequestURI().getQuery());
+	@Override
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
+		JSONObject json = new JSONObject();
 
 		if (params.containsKey("url")) {
 			String url = URLDecoder.decode(params.get("url"), StandardCharsets.UTF_8.name());
@@ -38,13 +37,7 @@ public class SetScoreboardURLHandler implements HttpHandler {
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: url");
 		}
-
-		String response = json.toString(4);
-
-		exchange.sendResponseHeaders(200, response.getBytes().length);
-
-		OutputStream os = exchange.getResponseBody();
-		os.write(response.getBytes());
-		os.close();
+		
+		return json;
 	}
 }

@@ -1,28 +1,32 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
+import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
 @SuppressWarnings("restriction")
-public class UpploadTeamHandler implements HttpHandler {
+public class UpploadTeamHandler extends APIEndpoint {
+	public UpploadTeamHandler() {
+		super(true);
+	}
+
 	@Override
-	public void handle(HttpExchange exchange) throws IOException {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject result = new JSONObject();
 
 		JSONArray teamData = null;
@@ -135,11 +139,6 @@ public class UpploadTeamHandler implements HttpHandler {
 			}
 		}
 
-		String response = result.toString(4);
-		exchange.sendResponseHeaders(200, response.getBytes().length);
-
-		OutputStream os = exchange.getResponseBody();
-		os.write(response.getBytes());
-		os.close();
+		return result;
 	}
 }

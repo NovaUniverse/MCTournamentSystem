@@ -20,6 +20,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.Se
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.StatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.ExportTeamDataHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.UpploadTeamHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.user.LoginHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.user.WhoAmIHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.StaticFileHandler;
 import net.zeeraa.novacore.commons.log.Log;
@@ -49,6 +51,10 @@ public class WebServer {
 
 		// Game
 		createContext("/api/start_game", new StartGameHandler());
+
+		// User
+		createContext("/api/whoami", new WhoAmIHandler());
+		createContext("/api/login", new LoginHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");

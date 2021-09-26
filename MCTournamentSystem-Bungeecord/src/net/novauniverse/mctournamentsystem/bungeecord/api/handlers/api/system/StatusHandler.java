@@ -1,32 +1,39 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.PlayerData;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.TeamData;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
 
-public class StatusHandler implements HttpHandler {
+public class StatusHandler extends APIEndpoint {
+	public StatusHandler() {
+		super(true);
+	}
+
 	@Override
-	public void handle(HttpExchange exchange) throws IOException {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
+
+		if (accessToken != null) {
+			json.put("user", accessToken.getUser().getUsername());
+		}
 
 		/* ===== Servers ===== */
 		JSONArray servers = new JSONArray();
@@ -156,23 +163,15 @@ public class StatusHandler implements HttpHandler {
 
 		system.put("proxy_software", ProxyServer.getInstance().getName());
 		system.put("proxy_software_version", ProxyServer.getInstance().getVersion());
-		
+
 		system.put("total_memory", Runtime.getRuntime().totalMemory());
 		system.put("free_memory", Runtime.getRuntime().freeMemory());
 		system.put("cores", Runtime.getRuntime().availableProcessors());
-		
+
 		system.put("os_name", System.getProperty("os.name"));
 
 		json.put("system", system);
 
-		/* ===== Yeet the data to the web ===== */
-
-		String response = json.toString(4);
-
-		exchange.sendResponseHeaders(200, response.getBytes().length);
-
-		OutputStream os = exchange.getResponseBody();
-		os.write(response.getBytes());
-		os.close();
+		return json;
 	}
 }

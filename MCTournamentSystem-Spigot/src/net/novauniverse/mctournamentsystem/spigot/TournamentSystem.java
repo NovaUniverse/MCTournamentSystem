@@ -180,7 +180,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		/* ----- Game support ----- */
 		if (getConfig().getBoolean("game_enabled")) {
-			if (!NovaCore.isNovaGameEngineEnabled()) {
+			if (NovaCore.isNovaGameEngineEnabled()) {
 				GameSetup.init(this);
 			}
 		}

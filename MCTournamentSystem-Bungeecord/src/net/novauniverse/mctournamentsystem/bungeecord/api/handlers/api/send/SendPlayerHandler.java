@@ -1,27 +1,26 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.novauniverse.mctournamentsystem.bungeecord.api.WebServer;
+import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 
 @SuppressWarnings("restriction")
-public class SendPlayerHandler implements HttpHandler {
+public class SendPlayerHandler extends APIEndpoint{
+	public SendPlayerHandler() {
+		super(true);
+	}
+	
 	@Override
-	public void handle( HttpExchange exchange) throws IOException {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
-
-		Map<String, String> params = WebServer.queryToMap(exchange.getRequestURI().getQuery());
 
 		if (params.containsKey("player")) {
 			if (params.containsKey("server")) {
@@ -53,13 +52,7 @@ public class SendPlayerHandler implements HttpHandler {
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: player");
 		}
-
-		String response = json.toString(4);
-
-		exchange.sendResponseHeaders(200, response.getBytes().length);
-
-		OutputStream os = exchange.getResponseBody();
-		os.write(response.getBytes());
-		os.close();
+		
+		return json;
 	}
 }
