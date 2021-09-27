@@ -175,6 +175,7 @@ function update() {
 			playerElement.find(".player-score").text(player.score);
 			playerElement.find(".player-kills").text(player.kills);
 			playerElement.find(".player-team").text("Team " + player.team_number);
+			playerElement.find(".player-team-score").text(player.team_score);
 
 			if (player.online) {
 				playerElement.find(".player-ping").text(player.ping);
