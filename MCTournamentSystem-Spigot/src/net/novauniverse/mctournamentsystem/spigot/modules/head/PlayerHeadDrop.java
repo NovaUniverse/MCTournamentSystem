@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.modules;
+package net.novauniverse.mctournamentsystem.spigot.modules.head;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,7 +14,7 @@ import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 
-@NovaAutoLoad(shouldEnable = true)
+@NovaAutoLoad(shouldEnable = false)
 public class PlayerHeadDrop extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerDeath(PlayerDeathEvent e) {

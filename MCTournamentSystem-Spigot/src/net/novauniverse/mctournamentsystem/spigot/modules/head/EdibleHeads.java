@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.modules;
+package net.novauniverse.mctournamentsystem.spigot.modules.head;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -14,7 +14,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import net.zeeraa.novacore.spigot.module.NovaModule;
+import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
+@NovaAutoLoad(shouldEnable = false)
 public class EdibleHeads extends NovaModule implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
@@ -47,6 +49,6 @@ public class EdibleHeads extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "TCEdibleHeads";
+		return "TSEdibleHeads";
 	}
 }

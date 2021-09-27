@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.modules;
+package net.novauniverse.mctournamentsystem.spigot.modules.head;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

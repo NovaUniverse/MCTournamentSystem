@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.modules;
+package net.novauniverse.mctournamentsystem.spigot.modules.misc;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

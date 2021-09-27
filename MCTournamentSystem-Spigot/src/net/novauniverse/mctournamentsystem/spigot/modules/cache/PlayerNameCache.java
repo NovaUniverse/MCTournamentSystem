@@ -31,7 +31,7 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 
 	@Override
 	public String getName() {
-		return "TournamentSystemPlayerNameCache";
+		return "TSPlayerNameCache";
 	}
 
 	@Override

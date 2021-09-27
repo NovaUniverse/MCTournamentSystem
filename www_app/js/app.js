@@ -46,6 +46,34 @@ $(function () {
 		$("#broadcast_modal").modal("show");
 	});
 
+	$(".btn-reset-data").on("click", function () {
+		$("#broadcast_reset_data").modal("show");
+	})
+
+	$("#btn_remove_playerdata").on("click", function () {
+		$.getJSON("/api/clear_players?access_token=" + token, function (data) {
+			console.log(data);
+			if(data.success) {
+				toastr.success("Player data wiped");
+				$("#broadcast_reset_data").modal("hide");
+			} else {
+				toastr.error(data.message);
+			}
+		});
+	});
+
+	$("#btn_full_reset").on("click", function () {
+		$.getJSON("/api/reset?access_token=" + token, function (data) {
+			console.log(data);
+			if(data.success) {
+				toastr.success("Player data wiped");
+				$("#broadcast_reset_data").modal("hide");
+			} else {
+				toastr.error(data.message);
+			}
+		});
+	});
+
 	$("#btn_broadcast").on("click", function () {
 		let text = $("#broadcast_text_message").val();
 		$.getJSON("/api/broadcast?message=" + encodeURIComponent(text) + "&access_token=" + token, function (data) {

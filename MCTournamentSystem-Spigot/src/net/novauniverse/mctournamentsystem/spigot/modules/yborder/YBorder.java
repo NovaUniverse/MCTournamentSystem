@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.modules;
+package net.novauniverse.mctournamentsystem.spigot.modules.yborder;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -19,15 +19,18 @@ public class GameSetup {
 		Bukkit.getServer().getPluginManager().registerEvents(scoreListener, tournamentSystem);
 		Log.info("GameSetup", "ScoreListener started");
 
+		ModuleManager.enable(CompassTracker.class);
+
 		ModuleManager.loadModule(GameListeners.class, true);
 		ModuleManager.loadModule(GameWinMessage.class, true);
-		ModuleManager.enable(CompassTracker.class);
-		Log.info("GameSetup", "Enabled modules required by games");
+		ModuleManager.loadModule(KillListener.class, true);
+
+		Log.info("GameSetup", "Loaded and enabled modules required by games");
 
 		GameManager.getInstance().setUseTeams(true);
 		GameManager.getInstance().addCombatTagMessage(new TSActionBarCombatTagMessage());
 		GameManager.getInstance().setTeamEliminationMessage(new TSTeamEliminationMessage());
-		
+
 		CompassTracker.getInstance().setStrictMode(true);
 		CompassTracker.getInstance().setCompassTrackerTarget(new TSCompassTracker());
 		Log.info("GameSetup", "Game variables set");

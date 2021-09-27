@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.JSONObject;
 
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
@@ -21,11 +22,14 @@ import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
+import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
+import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.pluginmessages.TSPluginMessageListnener;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.language.LanguageReader;
@@ -41,6 +45,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private String serverName;
 	private String lobbyServer;
 	private int[] winScore;
+	private boolean addXpLevelOnKill;
 
 	private File worldFolder;
 	private File gameLobbyFolder;
@@ -57,6 +62,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return teamManager;
 	}
 
+	public boolean isAddXpLevelOnKill() {
+		return addXpLevelOnKill;
+	}
+
 	@Override
 	public void onLoad() {
 		TournamentSystem.instance = this;
@@ -69,6 +78,30 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
 		worldFolder = new File(this.getDataFolder().getPath() + File.separator + "worlds");
 		gameLobbyFolder = new File(this.getDataFolder().getPath() + File.separator + "game_lobby");
+
+		Log.trace("TournamentSystem", "Data folder: " + getDataFolder().getAbsolutePath());
+		Log.trace("TournamentSystem", "Plugin folder: " + getDataFolder().getParentFile().getAbsolutePath());
+		Log.trace("TournamentSystem", "Proxy folder: " + new File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
+		Log.trace("TournamentSystem", "Shared data folder: " + new File(new File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
+
+		String globalConfigPath = new File(new File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
+
+		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
+		JSONObject config;
+		try {
+			if (!configFile.exists()) {
+				Log.fatal("TournamentSystem", "Config file not found at " + configFile.getAbsolutePath());
+				Bukkit.getPluginManager().disablePlugin(this);
+				return;
+			}
+
+			config = JSONFileUtils.readJSONObjectFromFile(configFile);
+		} catch (Exception e) {
+			Log.fatal("TournamentSystem", "Failed to parse the config file at " + configFile.getAbsolutePath());
+			e.printStackTrace();
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
 
 		// Try to create the files and folders and load the worlds
 		try {
@@ -84,7 +117,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		/* ----- Database ----- */
 		// Connect to the database
-		DBCredentials dbCredentials = new DBCredentials(getConfig().getString("mysql.driver"), getConfig().getString("mysql.host"), getConfig().getString("mysql.username"), getConfig().getString("mysql.password"), getConfig().getString("mysql.database"));
+		JSONObject mysqlDatabaseConfig = config.getJSONObject("database").getJSONObject("mysql");
+
+		DBCredentials dbCredentials = new DBCredentials(mysqlDatabaseConfig.getString("driver"), mysqlDatabaseConfig.getString("host"), mysqlDatabaseConfig.getString("username"), mysqlDatabaseConfig.getString("password"), mysqlDatabaseConfig.getString("database"));
 
 		try {
 			DBConnection connection = new DBConnection();
@@ -112,6 +147,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		/* ----- Config ----- */
 		serverName = getConfig().getString("server_name");
 		lobbyServer = getConfig().getString("lobby_server");
+		addXpLevelOnKill = getConfig().getBoolean("add_xp_level_on_kill");
 
 		// Setup win score
 		String winScoreString = "Win score: ";
@@ -155,7 +191,15 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		/* ----- Modules ----- */
 		ModuleManager.scanForModules(this, "net.novauniverse.mctournamentsystem.spigot.score");
 		ModuleManager.scanForModules(this, "net.novauniverse.mctournamentsystem.spigot.modules");
-		
+
+		if (getConfig().getBoolean("enable_head_drops")) {
+			ModuleManager.enable(PlayerHeadDrop.class);
+		}
+
+		if (getConfig().getBoolean("enable_edible_heads")) {
+			ModuleManager.enable(EdibleHeads.class);
+		}
+
 		/* ----- Events ----- */
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 
@@ -169,7 +213,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new HaltCommand());
 		CommandRegistry.registerCommand(new PurgeCacheCommand());
 		CommandRegistry.registerCommand(new ReconnectCommand());
-		
+
 		/* ----- Misc ----- */
 		new BukkitRunnable() {
 			@Override
