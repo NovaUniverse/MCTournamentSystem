@@ -331,25 +331,14 @@ function fixUUID(uuid) {
 }
 
 function showInfo(message) {
-	showMessage(message, "info");
+	toastr.info(message);
 }
 
 function showWarning(message) {
-	showMessage(message, "warning");
+	toastr.warning(message);
 }
 
 function showError(message) {
 	console.warn(message);
-	showMessage(message, "danger");
-}
-
-function showMessage(message, type) {
-	$.notify({
-		message: message
-	}, {
-		type: type,
-		allow_dismiss: true,
-		delay: 3000,
-		z_index: 1337
-	});
+	toastr.error(message);
 }
