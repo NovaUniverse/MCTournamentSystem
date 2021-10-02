@@ -64,8 +64,6 @@ public class TSLobby extends NovaModule implements Listener {
 
 	private MultiverseWorld multiverseWorld;
 
-	private HashMap<UUID, Integer> theCalmDownCageCounter;
-
 	private boolean gameRunningMessageSent;
 	private SimpleTask gameRunningCheckTask;
 
@@ -134,16 +132,6 @@ public class TSLobby extends NovaModule implements Listener {
 			}
 		}, 200L);
 		loadScoreTask.start();
-
-		theCalmDownCageCounter = new HashMap<UUID, Integer>();
-
-		calmDownCageResetTimer = new SimpleTask(new Runnable() {
-			@Override
-			public void run() {
-				theCalmDownCageCounter.clear();
-			}
-		}, 900L, 900L);
-		// calmDownCageResetTimer.start();
 
 		gameRunningCheckTask = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
@@ -312,18 +300,6 @@ public class TSLobby extends NovaModule implements Listener {
 							Player p = e.getPlayer();
 
 							if (!p.getInventory().contains(Material.FISHING_ROD)) {
-								if (!theCalmDownCageCounter.containsKey(p.getUniqueId())) {
-									// theCalmDownCageCounter.put(p.getUniqueId(), 1);
-								} else {
-									int newVal = theCalmDownCageCounter.get(p.getUniqueId()) + 1;
-									// theCalmDownCageCounter.put(p.getUniqueId(), newVal);
-
-									if (newVal > 5) {
-										p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + (RandomGenerator.generate(0, 5) == 4 ? "You have committed crimes against skyrim and her people. what say you in your defense" : "Stop you have violated the law pay the court a fine or serve your sentance"));
-										p.teleport(new Location(lobbyLocation.getWorld(), 28.5, 27, 46.5, -90, 0));
-									}
-								}
-
 								p.getInventory().addItem(new ItemBuilder(Material.FISHING_ROD).setUnbreakable(true).build());
 							}
 						}
