@@ -1,5 +1,6 @@
 package net.novauniverse.mctournamentsystem.spigot.modules.misc;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -7,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
@@ -25,6 +27,6 @@ public class NoEnderPearlDamage extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "TSNoEnderPearlDamage";
+		return new NamespacedKey(TournamentSystem.getInstance(), "noenderpearldamage").toString();
 	}
 }

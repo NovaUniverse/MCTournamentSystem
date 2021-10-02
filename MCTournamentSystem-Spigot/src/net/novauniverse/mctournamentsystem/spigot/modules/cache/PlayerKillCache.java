@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,7 +32,7 @@ public class PlayerKillCache extends NovaModule implements Listener, TSDataCache
 
 	@Override
 	public String getName() {
-		return "TournamentSystemPlayerKillCache";
+		return new NamespacedKey(TournamentSystem.getInstance(), "killcache").toString();
 	}
 
 	@Override

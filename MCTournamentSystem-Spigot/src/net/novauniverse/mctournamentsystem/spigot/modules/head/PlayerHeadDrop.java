@@ -2,6 +2,7 @@ package net.novauniverse.mctournamentsystem.spigot.modules.head;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,6 +11,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
@@ -42,6 +44,6 @@ public class PlayerHeadDrop extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "TSPlayerHeadDrop";
+		return new NamespacedKey(TournamentSystem.getInstance(), "playerheaddrop").toString();
 	}
 }

@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
@@ -77,7 +78,7 @@ public class TSLobby extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "TournamentSystemLobby";
+		return new NamespacedKey(TournamentSystemLobby.getInstance(), "lobby").toString();
 	}
 
 	@Override

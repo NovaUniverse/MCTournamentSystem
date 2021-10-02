@@ -2,6 +2,7 @@ package net.novauniverse.mctournamentsystem.spigot.modules.scoreboard;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -28,7 +29,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "TSScoreboard";
+		return new NamespacedKey(TournamentSystem.getInstance(), "scoreboard").toString();
 	}
 
 	@Override

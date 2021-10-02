@@ -183,7 +183,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		NetherBoardScoreboard.getInstance().setGlobalLine(14, scoreboardUrl == null ? "" : ChatColor.YELLOW + scoreboardUrl);
 
 		/* ----- Team system ----- */
-		int teamCount = 12; // TODO: add team size settings
+		// TODO: add team size settings
+		int teamCount = config.getInt("team_size");
 
 		teamManager = new TournamentSystemTeamManager(teamCount);
 		NovaCore.getInstance().setTeamManager(teamManager);

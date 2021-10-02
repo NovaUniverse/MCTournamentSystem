@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,7 +38,7 @@ public class YBorder extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "TCYBorder";
+		return new NamespacedKey(TournamentSystem.getInstance(), "yborder").toString();
 	}
 
 	@Override

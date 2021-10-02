@@ -1,6 +1,7 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system;
 
 import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -20,21 +21,40 @@ public class ResetHandler extends APIEndpoint {
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
 
+		boolean success = true;
+
 		try {
 			String sql = "{ CALL reset_data() }";
 			CallableStatement cs = TournamentSystemCommons.getDBConnection().getConnection().prepareCall(sql);
 
 			cs.execute();
 			cs.close();
-
-			json.put("success", true);
 		} catch (Exception e) {
 			e.printStackTrace();
 
-			json.put("success", false);
+			success = false;
+
 			json.put("error", "failed");
 			json.put("message", e.getClass().getName() + " " + e.getMessage());
 		}
+
+		// TODO: Add this query to reset_data
+		try {
+			String sql = "DELETE FROM teams";
+			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+
+			ps.execute();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			success = false;
+
+			json.put("error", "failed");
+			json.put("message", e.getClass().getName() + " " + e.getMessage());
+		}
+
+		json.put("success", success);
 
 		return json;
 	}

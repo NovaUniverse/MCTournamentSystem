@@ -2,6 +2,7 @@ package net.novauniverse.mctournamentsystem.spigot.modules.head;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +14,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
@@ -49,6 +51,6 @@ public class EdibleHeads extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "TSEdibleHeads";
+		return new NamespacedKey(TournamentSystem.getInstance(), "edibleheads").toString();
 	}
 }
