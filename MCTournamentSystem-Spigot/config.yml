@@ -5,9 +5,6 @@
 # Name of the server in the bungeecord configuration
 server_name: null
 
-# Name of the lobby server in the bungeecord configuration
-lobby_server: lobby
-
 # ===========================
 # -=-=-= Game settings =-=-=-
 # ===========================

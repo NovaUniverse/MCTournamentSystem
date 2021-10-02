@@ -145,8 +145,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		/* ----- Config ----- */
+		lobbyServer = config.getString("lobby_server");
+		
 		serverName = getConfig().getString("server_name");
-		lobbyServer = getConfig().getString("lobby_server");
 		addXpLevelOnKill = getConfig().getBoolean("add_xp_level_on_kill");
 
 		// Setup win score
