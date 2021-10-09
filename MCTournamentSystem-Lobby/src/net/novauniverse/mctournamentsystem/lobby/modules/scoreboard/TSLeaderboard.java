@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
@@ -150,6 +148,6 @@ public class TSLeaderboard extends NovaModule {
 
 	@Override
 	public String getName() {
-		return new NamespacedKey(TournamentSystemLobby.getInstance(), "leaderboard").toString();
+		return "ts.leaderboard";
 	}
 }

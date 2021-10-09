@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -51,7 +50,7 @@ public class DuelsManager extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return new NamespacedKey(TournamentSystemLobby.getInstance(), "duels").toString();
+		return "ts.duels";
 	}
 
 	@Override

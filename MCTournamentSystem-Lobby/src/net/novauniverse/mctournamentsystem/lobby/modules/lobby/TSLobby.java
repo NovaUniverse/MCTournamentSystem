@@ -1,7 +1,6 @@
 package net.novauniverse.mctournamentsystem.lobby.modules.lobby;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Achievement;
@@ -10,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
@@ -38,7 +36,6 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
-import net.zeeraa.novacore.commons.utils.RandomGenerator;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
@@ -76,7 +73,7 @@ public class TSLobby extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return new NamespacedKey(TournamentSystemLobby.getInstance(), "lobby").toString();
+		return "ts.lobby";
 	}
 
 	@Override

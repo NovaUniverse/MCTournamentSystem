@@ -3,7 +3,6 @@ package net.novauniverse.mctournamentsystem.spigot.modules.head;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +18,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import io.github.bananapuncher714.nbteditor.NBTEditor;
-import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
@@ -28,7 +26,7 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 public class GoldenHead extends NovaModule implements Listener {
 	@Override
 	public String getName() {
-		return new NamespacedKey(TournamentSystem.getInstance(), "goldenhead").toString();
+		return "ts.goldenhead";
 	}
 
 	@SuppressWarnings("deprecation")
@@ -43,19 +41,19 @@ public class GoldenHead extends NovaModule implements Listener {
 		recipe.shape("AAA", "ABA", "AAA");
 		recipe.setIngredient('A', Material.GOLD_INGOT);
 		recipe.setIngredient('B', skull);
-		
+
 		Bukkit.getServer().addRecipe(recipe);
 	}
 
 	public ItemStack getItem() {
 		ItemStack stack = ItemBuilder.getPlayerSkullWithBase64Texture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjkzN2UxYzQ1YmI4ZGEyOWIyYzU2NGRkOWE3ZGE3ODBkZDJmZTU0NDY4YTVkZmI0MTEzYjRmZjY1OGYwNDNlMSJ9fX0=");
-		
+
 		ItemMeta meta = stack.getItemMeta();
 
 		meta.setDisplayName(ChatColor.GOLD + "Golden head");
 
 		stack.setItemMeta(meta);
-		
+
 		stack = NBTEditor.set(stack, 1, "mcf", "goldenhead");
 
 		return stack;
