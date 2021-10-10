@@ -20,7 +20,7 @@ $(function () {
 		console.log("Target server: " + serverName);
 
 		if (sendTarget == "all") {
-			$.getJSON("/api/send_players?server=" + encodeURIComponent(serverName) + "&access_token=" + token, function (data) {
+			$.getJSON("/api/send/send_players?server=" + encodeURIComponent(serverName) + "&access_token=" + token, function (data) {
 				console.log(data);
 				if (data.success) {
 					$('#select_server_modal').modal('hide');
@@ -30,7 +30,7 @@ $(function () {
 				}
 			});
 		} else {
-			$.getJSON("/api/send_player?server=" + encodeURIComponent(serverName) + "&player=" + encodeURIComponent(sendTarget) + "&access_token=" + token, function (data) {
+			$.getJSON("/api/send/send_player?server=" + encodeURIComponent(serverName) + "&player=" + encodeURIComponent(sendTarget) + "&access_token=" + token, function (data) {
 				console.log(data);
 				if (data.success) {
 					$('#select_server_modal').modal('hide');
@@ -42,16 +42,14 @@ $(function () {
 		}
 	});
 
-	$(".btn_broadcast").on("click", function () {
-		$("#broadcast_modal").modal("show");
-	});
+	
 
 	$(".btn-reset-data").on("click", function () {
 		$("#broadcast_reset_data").modal("show");
 	})
 
 	$("#btn_remove_playerdata").on("click", function () {
-		$.getJSON("/api/clear_players?access_token=" + token, function (data) {
+		$.getJSON("/api/system/clear_players?access_token=" + token, function (data) {
 			console.log(data);
 			if(data.success) {
 				toastr.success("Player data wiped");
@@ -63,7 +61,7 @@ $(function () {
 	});
 
 	$("#btn_full_reset").on("click", function () {
-		$.getJSON("/api/reset?access_token=" + token, function (data) {
+		$.getJSON("/api/system/reset?access_token=" + token, function (data) {
 			console.log(data);
 			if(data.success) {
 				toastr.success("Player data wiped");
@@ -76,7 +74,7 @@ $(function () {
 
 	$("#btn_broadcast").on("click", function () {
 		let text = $("#broadcast_text_message").val();
-		$.getJSON("/api/broadcast?message=" + encodeURIComponent(text) + "&access_token=" + token, function (data) {
+		$.getJSON("/api/system/broadcast?message=" + encodeURIComponent(text) + "&access_token=" + token, function (data) {
 			if (data.success) {
 				toastr.success("Message sent");
 				$("#broadcast_text_message").val("");
@@ -94,7 +92,7 @@ $(function () {
 			content: 'Please confirm that you want to start the game countdown',
 			buttons: {
 				confirm: function () {
-					$.getJSON("/api/start_game" + "?access_token=" + token, function (data) {
+					$.getJSON("/api/game/start_game" + "?access_token=" + token, function (data) {
 						console.log(data);
 						if (data.success) {
 							toastr.success("Success");
@@ -108,7 +106,19 @@ $(function () {
 		});
 	});
 
-	$.getJSON("/api/status" + "?access_token=" + token, function (data) {
+	$(".page-link").on("click", function() {
+		if($(this).hasClass("active")) {
+			return;
+		}
+
+		$(".page-link").removeClass("active");
+		$(this).addClass("active");
+
+		$(".nav-page").addClass("d-none");
+		$("#" + $(this).data("page")).removeClass("d-none");
+	});
+
+	$.getJSON("/api/system/status" + "?access_token=" + token, function (data) {
 		if (data.error == "unauthorized") {
 			window.location = "/app/login/";
 			return;
@@ -119,6 +129,16 @@ $(function () {
 		}
 	});
 
+	$.getJSON("/api/staff/get_staff_roles", function(data) {
+		for(let i = 0; i < data.staff_roles.length; i++) {
+			let role = data.staff_roles[i];
+			let newElement = $("<option></option>");
+			newElement.text(role);
+			newElement.attr("value", role);
+			$("#staff_role_selector").append(newElement);
+		}
+	});
+
 	setInterval(function () {
 		update();
 	}, 1000);
@@ -126,7 +146,7 @@ $(function () {
 });
 
 function update() {
-	$.getJSON("/api/status" + "?access_token=" + token, function (data) {
+	$.getJSON("/api/system/status" + "?access_token=" + token, function (data) {
 		if (data.error == "unauthorized") {
 			console.error("It seems like we are no longer authorised. Maybe we should add a real error message here");
 			return;

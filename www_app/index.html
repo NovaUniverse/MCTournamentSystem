@@ -41,7 +41,7 @@
 					<li class="nav-item">
 						<a href="#" class="nav-link btn_broadcast">Broadcast message</a>
 					</li>
-
+	
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="navbarSettingsDropdown" role="button"
 							data-bs-toggle="dropdown" aria-expanded="false">
@@ -67,8 +67,23 @@
 		</div>
 	</nav>
 
-	<div id="overview">
-		<div class="container-fluid mt-2">
+	<ul class="nav nav-tabs mt-2">
+		<li class="nav-item">
+			<a class="nav-link page-link active" data-page="overview_page" href="#">Overview</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link page-link" data-page="staff_page" href="#">Staff settings</a>
+		</li>
+	</ul>
+
+	<div id="staff_page" class="nav-page d-none">
+		<select id="staff_role_selector">
+		</select>
+
+	</div>
+
+	<div id="overview_page" class="nav-page">
+		<div class="container-fluid">
 			<div class="row">
 				<div class="col">
 					<table class="table table-striped table-border">
@@ -118,6 +133,7 @@
 					</table>
 
 					<div id="game_controlls">
+						<a href="#" class="btn_broadcast btn btn-info">Broadcast message</a>
 						<button type="button" id="btn_send_all_players_to" class="btn btn-primary">Send all to</button>
 						<button type="button" class="btn-start-game btn btn-success ml-2">Start game</button>
 					</div>

@@ -12,6 +12,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.GetStaffRolesHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.BroadcastHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ClearPlayersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ResetHandler;
@@ -34,27 +35,30 @@ public class WebServer {
 		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
 
 		// System
-		createContext("/api/status", new StatusHandler());
-		createContext("/api/set_tournament_name", new SetTournamentNameHandler());
-		createContext("/api/set_scoreboard_url", new SetScoreboardURLHandler());
-		createContext("/api/broadcast", new BroadcastHandler());
-		createContext("/api/reset", new ResetHandler());
-		createContext("/api/clear_players", new ClearPlayersHandler());
+		createContext("/api/system/status", new StatusHandler());
+		createContext("/api/system/set_tournament_name", new SetTournamentNameHandler());
+		createContext("/api/system/set_scoreboard_url", new SetScoreboardURLHandler());
+		createContext("/api/system/broadcast", new BroadcastHandler());
+		createContext("/api/system/reset", new ResetHandler());
+		createContext("/api/system/clear_players", new ClearPlayersHandler());
 
 		// Team
-		createContext("/api/export_team_data", new ExportTeamDataHandler());
-		createContext("/api/uppload_team", new UpploadTeamHandler());
+		createContext("/api/team/export_team_data", new ExportTeamDataHandler());
+		createContext("/api/team/uppload_team", new UpploadTeamHandler());
 
 		// Send
-		createContext("/api/send_player", new SendPlayerHandler());
-		createContext("/api/send_players", new SendPlayersHandler());
+		createContext("/api/send/send_player", new SendPlayerHandler());
+		createContext("/api/send/send_players", new SendPlayersHandler());
 
 		// Game
-		createContext("/api/start_game", new StartGameHandler());
+		createContext("/api/game/start_game", new StartGameHandler());
 
 		// User
-		createContext("/api/whoami", new WhoAmIHandler());
-		createContext("/api/login", new LoginHandler());
+		createContext("/api/user/whoami", new WhoAmIHandler());
+		createContext("/api/user/login", new LoginHandler());
+		
+		// Staff
+		createContext("/api/staff/get_staff_roles", new GetStaffRolesHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");

@@ -2,6 +2,8 @@ package net.novauniverse.mctournamentsystem.bungeecord;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -26,6 +28,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	private WebServer webServer;
 	private boolean webserverDevelopmentMode;
+	private List<String> staffRoles;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -35,9 +38,14 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return webserverDevelopmentMode;
 	}
 
+	public List<String> getStaffRoles() {
+		return staffRoles;
+	}
+
 	@Override
 	public void onLoad() {
 		TournamentSystem.instance = this;
+		staffRoles = new ArrayList<>();
 	}
 
 	@Override
@@ -66,6 +74,11 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			e.printStackTrace();
 			ProxyServer.getInstance().stop("Failed to enable tournament system: Failed to read config file");
 			return;
+		}
+
+		JSONArray staffRolesJSON = config.getJSONArray("staff_roles");
+		for (int i = 0; i < staffRolesJSON.length(); i++) {
+			staffRoles.add(staffRolesJSON.getString(i));
 		}
 
 		JSONObject mysqlDatabaseConfig = config.getJSONObject("database").getJSONObject("mysql");
