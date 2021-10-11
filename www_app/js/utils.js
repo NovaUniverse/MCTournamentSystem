@@ -8,3 +8,7 @@ Array.prototype.remove = function () {
 	}
 	return this;
 };
+
+function expandUUID(str) {
+	return str.slice(0, 8) + "-" + str.slice(8, 12) + "-" + str.slice(12, 16) + "-" + str.slice(16, 20) + "-" + str.slice(20);
+}

@@ -12,7 +12,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayersHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.GetStaffRolesHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.GetStaffHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.SetStaffHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.BroadcastHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ClearPlayersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ResetHandler;
@@ -58,7 +59,8 @@ public class WebServer {
 		createContext("/api/user/login", new LoginHandler());
 		
 		// Staff
-		createContext("/api/staff/get_staff_roles", new GetStaffRolesHandler());
+		createContext("/api/staff/get_staff", new GetStaffHandler());
+		createContext("/api/staff/set_staff", new SetStaffHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");

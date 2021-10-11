@@ -204,6 +204,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>net.luckperms</groupId>
+			<artifactId>api</artifactId>
+			<version>5.3</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>com.github.ConnorLinfoot</groupId>
 			<artifactId>TitleAPI</artifactId>
 			<version>1.7.6</version>

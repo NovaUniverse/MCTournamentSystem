@@ -3,7 +3,9 @@ package net.novauniverse.mctournamentsystem.spigot;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
@@ -13,8 +15,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
@@ -47,6 +52,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private int[] winScore;
 	private boolean addXpLevelOnKill;
 
+	private Map<String, Group> staffGroups;
+	private Group defaultGroup;
+
 	private File worldFolder;
 	private File gameLobbyFolder;
 
@@ -66,9 +74,18 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return addXpLevelOnKill;
 	}
 
+	public Map<String, Group> getStaffGroups() {
+		return staffGroups;
+	}
+
+	public Group getDefaultGroup() {
+		return defaultGroup;
+	}
+
 	@Override
 	public void onLoad() {
 		TournamentSystem.instance = this;
+		this.staffGroups = new HashMap<>();
 	}
 
 	@Override
@@ -101,6 +118,25 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			e.printStackTrace();
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
+		}
+
+		// Staff permission groups
+		JSONArray staffRolesJSON = config.getJSONArray("staff_roles");
+		for (int i = 0; i < staffRolesJSON.length(); i++) {
+			String name = staffRolesJSON.getString(i);
+			Group group = LuckPermsProvider.get().getGroupManager().getGroup(name);
+
+			if (group == null) {
+				Log.error(getName(), "Could not find luckperms group " + name + ". Please add it to luckperms or remove it from staff_roles in tournamentconfig");
+				continue;
+			}
+
+			staffGroups.put(name, group);
+		}
+
+		defaultGroup = LuckPermsProvider.get().getGroupManager().getGroup("default");
+		if (defaultGroup == null) {
+			Log.error(getName(), "Could not find luckperms group default. Please add it to luckperms");
 		}
 
 		// Try to create the files and folders and load the worlds
@@ -146,7 +182,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		/* ----- Config ----- */
 		lobbyServer = config.getString("lobby_server");
-		
+
 		serverName = getConfig().getString("server_name");
 		addXpLevelOnKill = getConfig().getBoolean("add_xp_level_on_kill");
 
