@@ -1,3 +1,7 @@
 .player-options-th {
 	width: 100px;
 }
+
+body {
+	overflow-x: hidden;
+}

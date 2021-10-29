@@ -51,17 +51,15 @@ public class SpectatorFixes extends NovaModule implements Listener {
 
 						final double tpDist = (border.getSize() / 2) + BORDER_DISTANCE_BEFORE_TELEPORT_BACK;
 
-						Log.trace("BorderTest", "xDist: " + xDist + " zDist: " + zDist + " border: " + border.getSize() + " tpAt: " + tpDist);
-
 						if (xDist > tpDist) {
 							Location location = player.getLocation().clone();
-							location.setX((border.getSize() * (location.getX() > 0 ? 1 : -1)) / 2);
+							location.setX(borderCenter.getX() + ((border.getSize() * (location.getX() > 0 ? 1 : -1)) / 2));
 							player.teleport(location);
 						}
 
 						if (zDist > tpDist) {
 							Location location = player.getLocation().clone();
-							location.setZ((border.getSize() * (location.getZ() > 0 ? 1 : -1)) / 2);
+							location.setZ(borderCenter.getZ() + ((border.getSize() * (location.getZ() > 0 ? 1 : -1)) / 2));
 							player.teleport(location);
 						}
 					}
