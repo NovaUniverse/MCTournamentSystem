@@ -18,6 +18,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.TSPluginMessageListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
@@ -53,12 +54,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	public void onEnable() {
 		saveDefaultConfiguration();
 
-		Log.trace("TournamentSystem", "Data folder: " + getDataFolder().getAbsolutePath());
-		Log.trace("TournamentSystem", "Plugin folder: " + getDataFolder().getParentFile().getAbsolutePath());
-		Log.trace("TournamentSystem", "Proxy folder: " + new File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
-		Log.trace("TournamentSystem", "Shared data folder: " + new File(new File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
-
-		String globalConfigPath = new File(new File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
+		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;

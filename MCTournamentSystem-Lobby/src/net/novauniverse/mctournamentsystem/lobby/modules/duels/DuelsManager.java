@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.rayzr522.jsonmessage.JSONMessage;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
+import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
@@ -142,7 +143,7 @@ public class DuelsManager extends NovaModule implements Listener {
 
 			String worldName = "duels_" + uuid.toString().replace("-", "");
 
-			MultiverseWorld world = MultiverseManager.getInstance().createFromFile(new File(TournamentSystemLobby.getInstance().getDataFolder().getPath() + File.separator + "duels_world"), worldName, WorldUnloadOption.DELETE);
+			MultiverseWorld world = MultiverseManager.getInstance().createFromFile(new File(TournamentSystem.getInstance().getWorldDataFolder().getAbsolutePath() + File.separator + "Worlds" + File.separator + "duels_world"), worldName, WorldUnloadOption.DELETE);
 
 			world.getWorld().setDifficulty(Difficulty.PEACEFUL);
 			world.getWorld().setTime(1000L);

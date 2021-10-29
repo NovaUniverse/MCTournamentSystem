@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
@@ -55,8 +56,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private Map<String, Group> staffGroups;
 	private Group defaultGroup;
 
-	private File worldFolder;
-	private File gameLobbyFolder;
+	private File worldDataFolder;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -82,6 +82,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return defaultGroup;
 	}
 
+	public File getWorldDataFolder() {
+		return worldDataFolder;
+	}
+
 	@Override
 	public void onLoad() {
 		TournamentSystem.instance = this;
@@ -93,15 +97,25 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
-		worldFolder = new File(this.getDataFolder().getPath() + File.separator + "worlds");
-		gameLobbyFolder = new File(this.getDataFolder().getPath() + File.separator + "game_lobby");
+		// worldFolder = new File(this.getDataFolder().getPath() + File.separator +
+		// "worlds");
+		// gameLobbyFolder = new File(this.getDataFolder().getPath() + File.separator +
+		// "game_lobby");
 
-		Log.trace("TournamentSystem", "Data folder: " + getDataFolder().getAbsolutePath());
-		Log.trace("TournamentSystem", "Plugin folder: " + getDataFolder().getParentFile().getAbsolutePath());
-		Log.trace("TournamentSystem", "Proxy folder: " + new File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
-		Log.trace("TournamentSystem", "Shared data folder: " + new File(new File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
+		// Log.trace("TournamentSystem", "Data folder: " +
+		// getDataFolder().getAbsolutePath());
+		// Log.trace("TournamentSystem", "Plugin folder: " +
+		// getDataFolder().getParentFile().getAbsolutePath());
+		// Log.trace("TournamentSystem", "Proxy folder: " + new
+		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
+		// Log.trace("TournamentSystem", "Shared data folder: " + new File(new
+		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
 
-		String globalConfigPath = new File(new File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
+		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
+		// new File(new
+		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
+
+		this.worldDataFolder = new File(globalConfigPath + File.separator + "Worlds");
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;
@@ -141,8 +155,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		// Try to create the files and folders and load the worlds
 		try {
-			FileUtils.forceMkdir(worldFolder);
-			FileUtils.forceMkdir(gameLobbyFolder);
+			// FileUtils.forceMkdir(worldFolder);
+			// FileUtils.forceMkdir(gameLobbyFolder);
 			FileUtils.touch(sqlFixFile);
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -284,13 +298,5 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public int[] getWinScore() {
 		return winScore;
-	}
-
-	public File getGameLobbyFolder() {
-		return gameLobbyFolder;
-	}
-
-	public File getWorldsFolder() {
-		return worldFolder;
 	}
 }
