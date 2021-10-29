@@ -2,4 +2,4 @@ main: net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem
 name: TournamentSystem
 version: 1.0.0
 authors: [Zeeraa]
-depends: [NovaCore]
+depends: [NovaCore, BungeeMessages]

@@ -91,6 +91,10 @@ $(function () {
 		$('#broadcast_modal').modal('hide');
 	});
 
+	$(".btn_broadcast").on("click", function () {
+		$('#broadcast_modal').modal('show');
+	});
+
 	$(".btn-start-game").on("click", function () {
 		$.confirm({
 			title: 'Confirm start!',
@@ -142,7 +146,7 @@ $(function () {
 
 			$("#add_staff_username").text(data.name);
 			$("#add_staff_uuid").text(uuid);
-			$("#add_staff_head").attr("src", "https://crafatar.com/avatars/" + uuid)
+			$("#add_staff_head").attr("src", "https://mc-heads.net/avatar/" + uuid)
 
 			$("#add_staff_modal").modal("hide");
 			$("#add_staff_role_modal").modal("show");
@@ -206,13 +210,13 @@ function updateStaffTeam(update = false) {
 
 		let found = false;
 
-		$(".staff-tr").each(function() {
-			if($(this).data("uuid") == uuid) {
+		$(".staff-tr").each(function () {
+			if ($(this).data("uuid") == uuid) {
 				found = true;
 			}
 		});
 
-		if(found) {
+		if (found) {
 			continue;
 		}
 
@@ -233,7 +237,7 @@ function updateStaffTeam(update = false) {
 			newElement.find(".staff-role-selector").append(newOption);
 		}
 
-		newElement.find(".staff-avatar").attr("src", "https://crafatar.com/avatars/" + uuid);
+		newElement.find(".staff-avatar").attr("src", "https://mc-heads.net/avatar/" + uuid);
 
 		newElement.find(".staff-role-selector").val(staffTeam[uuid]);
 		newElement.find(".staff-role-selector").on("change", function () {
@@ -256,10 +260,10 @@ function updateStaffTeam(update = false) {
 		$("#staff_tbody").append(newElement);
 	}
 
-	if(update) {
+	if (update) {
 		staffTeam = {};
 
-		$(".staff-tr").each(function() {
+		$(".staff-tr").each(function () {
 			let uuid = $(this).data("uuid");
 			let role = $(this).find(".staff-role-selector").val();
 
@@ -268,7 +272,7 @@ function updateStaffTeam(update = false) {
 
 		$.ajax({
 			type: "POST",
-			url: "/api/staff/set_staff?access_token=" + token ,
+			url: "/api/staff/set_staff?access_token=" + token,
 			data: JSON.stringify(staffTeam),
 			success: function (data) {
 				//console.log(data);
@@ -298,6 +302,30 @@ function update() {
 			toRemove.push($(this).data("uuid"));
 		});
 
+
+		// Average ping
+		let totalPing = 0;
+		let totalPlayers = data.online_players.length;
+		data.online_players.forEach(player => {
+			totalPing += player.ping;
+		});
+
+		$("#stats_player_count").text(totalPlayers);
+		if (totalPlayers == 0) {
+			$("#stats_avg_ping").text("N/A");
+		} else {
+			$("#stats_avg_ping").text(Math.round(totalPing / totalPlayers));
+		}
+
+		$("#stats_software").text(data.system.proxy_software + " " + data.system.proxy_software_version);
+		$("#stats_cores").text(data.system.cores);
+		$("#stats_os").text(data.system.os_name);
+
+		$("#stats_torurnament_name").text(data.system.tournament_name);
+		$("#stats_scoreboard_link").text(data.system.scoreboard_url);
+
+		
+
 		data.players.forEach(player => {
 			toRemove.remove(player.uuid);
 
@@ -317,7 +345,7 @@ function update() {
 
 				$("#player_tbody").append(playerElement);
 
-				playerElement.find(".player-avatar").attr("src", "https://crafatar.com/avatars/" + player.uuid);
+				playerElement.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + player.uuid);
 				playerElement.find(".player-uuid").text(player.uuid);
 
 				playerElement.find(".player-send-to").on("click", function () {
