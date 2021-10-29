@@ -1,5 +1,6 @@
 var sendTarget = "all";
 var token = "";
+var lastData = undefined;
 
 var addStaffUUID = null;
 var addStaffUsername = null;
@@ -165,11 +166,50 @@ $(function () {
 		updateStaffTeam(true);
 	});
 
+	$(".set-tournament-name").on("click", function () {
+		$("#new_tournament_name").val(lastData.system.tournament_name);
+		$("#set_tournament_name_modal").modal("show");
+	});
+
+	$("#btn_set_tournament_name").on("click", function () {
+		let name = $("#new_tournament_name").val();
+
+		$.getJSON("/api/system/set_tournament_name?access_token=" + token + "&name=" + encodeURIComponent(name), function (data) {
+			if (data.success) {
+				$("#set_tournament_name_modal").modal("hide");
+				toastr.info("Tournament name changed to " + name + ". Please restart the server for it to update in game");
+			} else {
+				toastr.error("Failed to update name. " + data.message);
+			}
+		});
+	});
+
+	$(".set-scoreboard-url").on("click", function () {
+		$("#new_scoreboard_url").val(lastData.system.scoreboard_url);
+		$("#set_scoreboard_url_modal").modal("show");
+	});
+
+	$("#btn_set_scoreboard_url").on("click", function () {
+		let url = $("#new_scoreboard_url").val();
+
+		$.getJSON("/api/system/set_scoreboard_url?access_token=" + token + "&url=" + encodeURIComponent(url), function (data) {
+			if (data.success) {
+				$("#set_scoreboard_url_modal").modal("hide");
+				toastr.info("Scoreboard url changed to " + url + ". Please restart the server for it to update in game");
+			} else {
+				toastr.error("Failed to update scoreboard url. " + data.message);
+			}
+		});
+	});
+
 	$.getJSON("/api/system/status" + "?access_token=" + token, function (data) {
 		if (data.error == "unauthorized") {
 			window.location = "/app/login/";
 			return;
 		}
+
+		lastData = data;
+
 		for (let i = 0; i < data.servers.length; i++) {
 			let server = data.servers[i];
 			$("#select_server").append(new Option(server.name, server.name));
@@ -294,6 +334,9 @@ function update() {
 			console.error("It seems like we are no longer authorised. Maybe we should add a real error message here");
 			return;
 		}
+
+		lastData = data;
+
 		//console.log(data);
 
 		let toRemove = [];
@@ -324,7 +367,6 @@ function update() {
 		$("#stats_torurnament_name").text(data.system.tournament_name);
 		$("#stats_scoreboard_link").text(data.system.scoreboard_url);
 
-		
 
 		data.players.forEach(player => {
 			toRemove.remove(player.uuid);

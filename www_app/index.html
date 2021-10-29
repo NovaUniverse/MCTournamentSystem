@@ -49,10 +49,10 @@
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarSettingsDropdown">
 							<li>
-								<a class="dropdown-item" href="#">Set tournament name</a>
+								<a class="dropdown-item set-tournament-name" href="#">Set tournament name</a>
 							</li>
 							<li>
-								<a class="dropdown-item" href="#">Set scoreboard link</a>
+								<a class="dropdown-item set-scoreboard-url" href="#">Set scoreboard link</a>
 							</li>
 							<li>
 								<hr class="dropdown-divider">
@@ -278,13 +278,49 @@
 		</div>
 	</div>
 
+	<div class="modal fade" id="set_tournament_name_modal" tabindex="-1" aria-labelledby="setTournamentNameTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="setTournamentNameTitle">Set tournament name</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form onsubmit="return false;">
+						<div class="form-group">
+							<input type="text" id="new_tournament_name" class="form-control" maxlength="28">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" id="btn_set_tournament_name" class="btn btn-primary">Set name</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-
-
-
-
-
-
+	<div class="modal fade" id="set_scoreboard_url_modal" tabindex="-1" aria-labelledby="setScoreboardUrlTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="setScoreboardUrlTitle">Set scoreboard url</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form onsubmit="return false;">
+						<div class="form-group">
+							<input type="text" id="new_scoreboard_url" class="form-control" maxlength="38">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" id="btn_set_scoreboard_url" class="btn btn-primary">Set url</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<div class="modal fade" id="broadcast_modal" tabindex="-1" aria-labelledby="broadcastTitle" aria-hidden="true">
 		<div class="modal-dialog">

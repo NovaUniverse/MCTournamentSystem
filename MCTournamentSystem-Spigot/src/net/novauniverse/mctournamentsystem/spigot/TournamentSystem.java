@@ -209,7 +209,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		String scoreboardUrl = TournamentSystemCommons.getScoreboardURL();
 
 		if (tournamentName.equalsIgnoreCase(ChatColor.stripColor(tournamentName))) {
-			tournamentName = ChatColor.AQUA + " " + ChatColor.BOLD + TournamentSystemCommons.getTournamentName();
+			tournamentName = ChatColor.AQUA + "" + ChatColor.BOLD + TournamentSystemCommons.getTournamentName();
 		}
 
 		Log.info(getName(), "Tournament name: " + tournamentName);
