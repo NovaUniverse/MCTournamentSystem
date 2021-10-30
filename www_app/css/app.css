@@ -5,3 +5,30 @@
 body {
 	overflow-x: hidden;
 }
+
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+#main {
+	min-height: 100%;
+	margin-bottom: -50px;
+}
+
+.footer, .push {
+	height: 50px;
+}
+
+.footer {
+	background-color: #EEEEEE;
+	text-align: center;
+	justify-content: center;
+}
+
+#footer-content {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: normal;
+	height: 100%;
+}
