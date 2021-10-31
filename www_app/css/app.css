@@ -25,10 +25,3 @@ html, body {
 	text-align: center;
 	justify-content: center;
 }
-
-#footer-content {
-	display: inline-block;
-	vertical-align: middle;
-	line-height: normal;
-	height: 100%;
-}

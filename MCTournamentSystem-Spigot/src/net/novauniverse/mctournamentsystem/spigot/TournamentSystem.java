@@ -97,19 +97,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
-		// worldFolder = new File(this.getDataFolder().getPath() + File.separator +
-		// "worlds");
-		// gameLobbyFolder = new File(this.getDataFolder().getPath() + File.separator +
-		// "game_lobby");
-
-		// Log.trace("TournamentSystem", "Data folder: " +
-		// getDataFolder().getAbsolutePath());
-		// Log.trace("TournamentSystem", "Plugin folder: " +
-		// getDataFolder().getParentFile().getAbsolutePath());
-		// Log.trace("TournamentSystem", "Proxy folder: " + new
-		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
-		// Log.trace("TournamentSystem", "Shared data folder: " + new File(new
-		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath());
 
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 		// new File(new
@@ -155,8 +142,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		// Try to create the files and folders and load the worlds
 		try {
-			// FileUtils.forceMkdir(worldFolder);
-			// FileUtils.forceMkdir(gameLobbyFolder);
 			FileUtils.touch(sqlFixFile);
 		} catch (IOException e1) {
 			e1.printStackTrace();
