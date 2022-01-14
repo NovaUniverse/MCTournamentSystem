@@ -99,6 +99,7 @@ $(function () {
 	$(".btn-start-game").on("click", function () {
 		$.confirm({
 			title: 'Confirm start!',
+			theme: 'dark',
 			content: 'Please confirm that you want to start the game countdown',
 			buttons: {
 				confirm: function () {

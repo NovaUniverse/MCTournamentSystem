@@ -19,6 +19,8 @@ public class JoinEvents implements Listener {
 				BungeeMessages.getPlugin().getManager().playerSocialSpy().add(player);
 				player.sendMessage(new TextComponent(ChatColor.GREEN + "Social spy enabled since you have moderator permissions"));
 			}
+		} else if (BungeeMessages.getPlugin().getManager().isSocialSpy(player)) {
+			BungeeMessages.getPlugin().getManager().playerSocialSpy().remove(player);
 		}
 	}
 }

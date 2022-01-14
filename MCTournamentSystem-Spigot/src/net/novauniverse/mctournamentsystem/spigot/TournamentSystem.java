@@ -27,6 +27,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
@@ -250,6 +251,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new HaltCommand());
 		CommandRegistry.registerCommand(new PurgeCacheCommand());
 		CommandRegistry.registerCommand(new ReconnectCommand());
+		CommandRegistry.registerCommand(new YBorderCommand());
 
 		/* ----- Misc ----- */
 		new BukkitRunnable() {
