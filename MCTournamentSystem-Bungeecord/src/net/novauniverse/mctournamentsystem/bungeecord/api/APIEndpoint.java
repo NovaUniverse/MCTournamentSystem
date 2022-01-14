@@ -12,6 +12,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIKeyStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APITokenStore;
 
 @SuppressWarnings("restriction")
@@ -33,8 +34,17 @@ public abstract class APIEndpoint implements HttpHandler {
 		}
 
 		JSONObject result;
+		
+		boolean apiKeyOk = false;
+		
+		if (params.containsKey("api_key")) {
+			String apiKey = params.get("api_key");
+			if(APIKeyStore.getApiKeys().contains(apiKey)) {
+				apiKeyOk = true;
+			}
+		}
 
-		if (requireAuthentication && token == null && !TournamentSystem.getInstance().isWebserverDevelopmentMode()) {
+		if (requireAuthentication && token == null && !TournamentSystem.getInstance().isWebserverDevelopmentMode() && !apiKeyOk) {
 			result = new JSONObject();
 			result.put("success", false);
 			result.put("error", "unauthorized");

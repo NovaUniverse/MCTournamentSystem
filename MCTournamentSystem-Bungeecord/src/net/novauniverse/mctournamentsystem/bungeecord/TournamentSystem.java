@@ -9,14 +9,17 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.novauniverse.mctournamentsystem.bungeecord.api.WebServer;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIKeyStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUserStore;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.TSPluginMessageListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener;
+import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
@@ -31,6 +34,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private WebServer webServer;
 	private boolean webserverDevelopmentMode;
 	private List<String> staffRoles;
+	private List<String> quickMessages;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -44,6 +48,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return staffRoles;
 	}
 
+	public List<String> getQuickMessages() {
+		return quickMessages;
+	}
+
 	@Override
 	public void onLoad() {
 		TournamentSystem.instance = this;
@@ -53,6 +61,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		saveDefaultConfiguration();
+
+		quickMessages = new ArrayList<>();
 
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 
@@ -100,6 +110,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new TSPluginMessageListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new JoinEvents());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new WhitelistListener());
+		ProxyServer.getInstance().getPluginManager().registerListener(this, new Log4JRCEFix());
 
 		File wwwAppFile = new File(getDataFolder().getPath() + File.separator + "www_app");
 
@@ -109,14 +120,25 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			e.printStackTrace();
 		}
 
+		JSONArray quickMessagesJson = config.getJSONArray("quick_messages");
+		for (int i = 0; i < quickMessagesJson.length(); i++) {
+			quickMessages.add(ChatColor.translateAlternateColorCodes('§', quickMessagesJson.getString(i)));
+		}
+
 		Log.info("Setting up web server");
 
 		JSONObject webConfig = config.getJSONObject("web_ui");
+		JSONArray apiKeys = webConfig.getJSONArray("api_keys");
 		JSONArray webUsers = webConfig.getJSONArray("users");
 
 		if (webUsers.length() == 0) {
 			Log.warn("TournamentSystem", "No users defined for web server in " + configFile.getAbsolutePath() + ". The web ui might not work");
 		}
+
+		for (int i = 0; i < apiKeys.length(); i++) {
+			APIKeyStore.addApiKey(apiKeys.getString(i));
+		}
+		Log.info("TournamentSystem", APIKeyStore.getApiKeys().size() + " api keys loaded");
 
 		for (int i = 0; i < webUsers.length(); i++) {
 			JSONObject user = webUsers.getJSONObject(i);

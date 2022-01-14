@@ -26,7 +26,7 @@ public class BroadcastHandler extends APIEndpoint {
 		if (params.containsKey("message")) {
 			String message = URLDecoder.decode(params.get("message"), StandardCharsets.UTF_8.name());
 
-			ProxyServer.getInstance().broadcast(new TextComponent(ChatColor.translateAlternateColorCodes('�', message)));
+			ProxyServer.getInstance().broadcast(new TextComponent(ChatColor.translateAlternateColorCodes('§', message)));
 
 			json.put("success", true);
 		} else {
