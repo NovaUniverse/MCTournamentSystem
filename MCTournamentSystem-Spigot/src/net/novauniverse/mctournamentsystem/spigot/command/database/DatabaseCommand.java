@@ -28,7 +28,8 @@ public class DatabaseCommand extends NovaCommand {
 
 		addHelpSubCommand();
 
-		this.setFilterAutocomplete(true);
+		setFilterAutocomplete(true);
+		setEmptyTabMode(true);
 	}
 
 	@Override

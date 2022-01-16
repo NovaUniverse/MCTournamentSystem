@@ -19,6 +19,8 @@ public class DatabaseCommandSubCommandReconnect extends NovaSubCommand {
 		setPermission("tournamentcore.command.database.reconnect");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Access to the databse reconnect command");
+		
+		setEmptyTabMode(true);
 	}
 
 	@Override

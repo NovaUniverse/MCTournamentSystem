@@ -53,6 +53,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private String lobbyServer;
 	private int[] winScore;
 	private boolean addXpLevelOnKill;
+	private String labymodBanner;
 
 	private Map<String, Group> staffGroups;
 	private Group defaultGroup;
@@ -87,10 +88,15 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return worldDataFolder;
 	}
 
+	public String getLabymodBanner() {
+		return labymodBanner;
+	}
+
 	@Override
 	public void onLoad() {
 		TournamentSystem.instance = this;
 		this.staffGroups = new HashMap<>();
+		this.labymodBanner = null;
 	}
 
 	@Override
@@ -181,6 +187,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		/* ----- Config ----- */
+		JSONObject labymodBanner = config.getJSONObject("labymod_banner");
+		if (labymodBanner.getBoolean("enabled")) {
+			this.labymodBanner = labymodBanner.getString("url");
+		}
+
 		lobbyServer = config.getString("lobby_server");
 
 		serverName = getConfig().getString("server_name");
