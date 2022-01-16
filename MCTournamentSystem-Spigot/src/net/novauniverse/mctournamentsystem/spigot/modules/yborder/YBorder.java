@@ -33,7 +33,7 @@ public class YBorder extends NovaModule implements Listener {
 
 	private boolean color;
 
-	private static final int SCOREBOARD_LINE = 6;
+	private static final int SCOREBOARD_LINE = 7;
 
 	@Override
 	public String getName() {
@@ -73,7 +73,15 @@ public class YBorder extends NovaModule implements Listener {
 			@Override
 			public void run() {
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-					if (GameManager.getInstance().isInGame(player)) {
+					boolean showMessage = false;
+
+					if (NovaCore.isNovaGameEngineEnabled()) {
+						if (GameManager.getInstance().isInGame(player)) {
+							showMessage = true;
+						}
+					}
+
+					if (showMessage) {
 						if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
 							if (player.getLocation().getY() > yLimit) {
 								if (player.getHealth() > 0) {

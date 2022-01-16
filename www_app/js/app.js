@@ -167,6 +167,53 @@ $(function () {
 		updateStaffTeam(true);
 	});
 
+	$("#add_whitelist").on("click", function () {
+		$("#add_whitelist_modal").modal("show");
+	});
+
+	$("#clear_whitelist").on("click", function () {
+		$.confirm({
+			title: 'Confirm clear!',
+			theme: 'dark',
+			content: 'Please confirm that you want to clear the whitelist',
+			buttons: {
+				confirm: function () {
+					$.getJSON("/api/whitelist/clear" + "?access_token=" + token, function (data) {
+						console.log(data);
+						if (data.success) {
+							toastr.success("Whitelist cleared");
+						} else {
+							toastr.error(data.message);
+						}
+					});
+				},
+				cancel: function () { }
+			}
+		});
+	});
+
+	$("#btn_search_whitelist_user").on("click", function () {
+		let username = $("#tbx_add_whitlelist_username").val();
+
+		$.getJSON("https://api.minetools.eu/uuid/" + username, function (data) {
+			if (data.id == null) {
+				toastr.error("User not found");
+				return;
+			}
+
+			let uuid = expandUUID(data.id);
+
+			$.getJSON("/api/whitelist/add?access_token=" + token + "&uuid=" + uuid, function (data) {
+				if (data.success) {
+					toastr.info("User added");
+					$("#add_whitelist_modal").modal("hide");
+				} else {
+					toastr.error("Failed to add user. " + data.message);
+				}
+			});
+		});
+	});
+
 	$(".set-tournament-name").on("click", function () {
 		$("#new_tournament_name").val(lastData.system.tournament_name);
 		$("#set_tournament_name_modal").modal("show");
@@ -329,8 +376,60 @@ function updateStaffTeam(update = false) {
 	}
 }
 
+function updateWhitelist() {
+	let found = [];
+
+	$("#whitelist_entries").find(".whitelist-tr").each(function () {
+		let uuid = $(this).data("uuid");
+
+		found.push(uuid);
+
+		if (!lastData.whitelist.includes(uuid)) {
+			console.log("Removing whitelist entry: " + uuid);
+			$(this).remove();
+		}
+	});
+
+	lastData.whitelist.forEach(uuid => {
+		if (!found.includes(uuid)) {
+			console.log("Adding whitelist entry: " + uuid);
+
+			let newElem = $("#whitelist_tr_template").clone();
+
+			newElem.removeAttr("id");
+			newElem.attr("data-uuid", uuid);
+			newElem.addClass("whitelist-tr");
+			newElem.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + uuid);
+			newElem.find(".uuid").text(uuid);
+
+			$.getJSON("https://api.minetools.eu/profile/" + uuid, function (data) {
+				newElem.find(".name").text(data.decoded.profileName);
+			});
+
+			newElem.find(".btn-whitelist-remove").on("click", function () {
+				let uuidToRemove = $(this).parent().parent().data("uuid");
+
+				console.log("Remove clicked for " + uuidToRemove);
+
+				$.getJSON("/api/whitelist/remove" + "?access_token=" + token + "&uuid=" + uuidToRemove, function (data) {
+					console.log(data);
+					if (data.success) {
+						toastr.success("Success");
+					} else {
+						toastr.error(data.message);
+					}
+				});
+			});
+
+			$("#whitelist_entries").append(newElem);
+		}
+	});
+}
+
 function update() {
 	$.getJSON("/api/system/status" + "?access_token=" + token, function (data) {
+		console.log(data);
+
 		if (data.error == "unauthorized") {
 			console.error("It seems like we are no longer authorised. Maybe we should add a real error message here");
 			return;
@@ -434,5 +533,7 @@ function update() {
 				}
 			});
 		});
+
+		updateWhitelist();
 	});
 }

@@ -75,6 +75,10 @@
 			<li class="nav-item">
 				<a class="nav-link page-link" data-page="staff_page" href="#">Staff settings</a>
 			</li>
+			<li class="nav-item">
+				<a class="nav-link page-link" data-page="whitelist_page" href="#">Whitelist</a>
+			</li>
+
 		</ul>
 
 		<div id="staff_page" class="nav-page d-none">
@@ -212,11 +216,56 @@
 			</div>
 		</div>
 
+		<div id="whitelist_page" class="nav-page">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<table class="table table-border table-striped">
+							<thead>
+								<tr>
+									<th></th>
+									<th>UUID</th>
+									<th>Username</th>
+									<th></th>
+								</tr>
+							</thead>
+
+							<tbody class="d-none">
+								<tr id="whitelist_tr_template" data-uuid="00000000-0000-0000-0000-000000000000">
+									<td class="head-preview">
+										<img src="https://mc-heads.net/avatar/606e2ff0-ed77-4842-9d6c-e1d3321c7838"
+											class="player-avatar" width="32" height="32" alt="">
+									</td>
+									<td class="uuid"></td>
+									<td class="name">Loading...</td>
+									<td>
+										<button class="btn btn-danger btn-whitelist-remove float-end">Remove</button>
+									</td>
+								</tr>
+							</tbody>
+
+							<tbody id="whitelist_entries"></tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-12">
+						<button class="btn btn-success" id="add_whitelist">Add player</button>
+						<button class="btn btn-danger float-end" id="clear_whitelist">Clear</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
 		<div class="push"></div>
 	</div>
 
 	<footer class="footer">
-		<span>Developed by <a target="_blank" href="https://zeeraa.net">Zeeraa (Anton)</a> for <a target="_blank" href="https://novauniverse.net">NovaUniverse</a>. Skins provided by <a target="_blank" href="https://mc-heads.net">mc-heads.net</a></span>
+		<span>Developed by <a target="_blank" href="https://zeeraa.net">Zeeraa (Anton)</a> for <a target="_blank"
+				href="https://novauniverse.net">NovaUniverse</a>. Skins provided by <a target="_blank"
+				href="https://mc-heads.net">mc-heads.net</a></span>
 	</footer>
 
 	<!-- Background stuff thats not visible by default -->
@@ -241,6 +290,30 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
 						<button type="button" id="btn_search_staff_user" class="btn btn-primary">Add</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="add_whitelist_modal" tabindex="-1" aria-labelledby="addWhitelistTitle" aria-hidden="true"
+			data-bs-backdrop="static" data-bs-keyboard="false">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addWhitelistTitle">Add staff member</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form onsubmit="return false;">
+							<div class="form-group">
+								<input type="text" id="tbx_add_whitlelist_username" class="form-control" maxlength="16"
+									placeholder="Username">
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+						<button type="button" id="btn_search_whitelist_user" class="btn btn-primary">Add</button>
 					</div>
 				</div>
 			</div>

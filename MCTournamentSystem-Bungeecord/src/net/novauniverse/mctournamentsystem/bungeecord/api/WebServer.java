@@ -25,6 +25,9 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.Expo
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.UpploadTeamHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.user.LoginHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.user.WhoAmIHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.whitelist.AddWhitelistHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.whitelist.ClearWhitelistHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.whitelist.RemoveWhitelistHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.StaticFileHandler;
 import net.zeeraa.novacore.commons.log.Log;
@@ -64,6 +67,11 @@ public class WebServer {
 		createContext("/api/staff/get_staff", new GetStaffHandler());
 		createContext("/api/staff/set_staff", new SetStaffHandler());
 
+		// Whitelist
+		createContext("/api/whitelist/add", new AddWhitelistHandler());
+		createContext("/api/whitelist/remove", new RemoveWhitelistHandler());
+		createContext("/api/whitelist/clear", new ClearWhitelistHandler());
+		
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");
 		createContext("/app", sfh);

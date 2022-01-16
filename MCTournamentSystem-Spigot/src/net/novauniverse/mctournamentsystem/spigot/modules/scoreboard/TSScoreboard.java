@@ -16,6 +16,10 @@ import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.module.modules.game.MapGame;
+import net.zeeraa.novacore.spigot.module.modules.game.map.GameMapData;
+import net.zeeraa.novacore.spigot.module.modules.game.map.mapmodules.worldborder.WorldborderMapModule;
+import net.zeeraa.novacore.spigot.module.modules.game.triggers.DelayedGameTrigger;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 
 @NovaAutoLoad(shouldEnable = true)
@@ -23,8 +27,10 @@ public class TSScoreboard extends NovaModule implements Listener {
 	private int taskId;
 
 	private boolean gameCountdownShown;
+	private boolean borderCountdownShown;
 
 	public static final int COUNTDOWN_LINE = 6;
+	public static final int WORLDBORDER_LINE = 7;
 
 	@Override
 	public String getName() {
@@ -35,6 +41,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 	public void onLoad() {
 		this.taskId = -1;
 		this.gameCountdownShown = false;
+		this.borderCountdownShown = false;
 	}
 
 	@Override
@@ -71,6 +78,36 @@ public class TSScoreboard extends NovaModule implements Listener {
 					}
 
 					if (NovaCore.isNovaGameEngineEnabled()) {
+						if (GameManager.getInstance().hasGame()) {
+							if (GameManager.getInstance().getActiveGame().hasStarted()) {
+								if (GameManager.getInstance().getActiveGame() instanceof MapGame) {
+									MapGame game = (MapGame) GameManager.getInstance().getActiveGame();
+									if (game.hasActiveMap()) {
+										if (game.getActiveMap().getAbstractMapData() instanceof GameMapData) {
+											GameMapData mapData = (GameMapData) game.getActiveMap().getAbstractMapData();
+											if (mapData.hasMapModule(WorldborderMapModule.class)) {
+												WorldborderMapModule borderModule = (WorldborderMapModule) mapData.getMapModule(WorldborderMapModule.class);
+												if (borderModule != null) {
+													if (borderModule.getStartTrigger().isRunning()) {
+														DelayedGameTrigger trigger = borderModule.getStartTrigger();
+														long ticks = trigger.getTicksLeft();
+
+														borderCountdownShown = true;
+														NetherBoardScoreboard.getInstance().setGlobalLine(WORLDBORDER_LINE, ChatColor.GOLD + "Worldborder: " + ChatColor.AQUA + formatTime(ticks / 20));
+													} else {
+														if (borderCountdownShown) {
+															borderCountdownShown = false;
+															NetherBoardScoreboard.getInstance().clearGlobalLine(WORLDBORDER_LINE);
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+
 						if (GameManager.getInstance().getCountdown().isCountdownRunning()) {
 							gameCountdownShown = true;
 
@@ -89,6 +126,32 @@ public class TSScoreboard extends NovaModule implements Listener {
 				}
 			}, 10L, 10L);
 		}
+	}
+
+	private static String formatTime(long seconds) {
+		int h = (int) (seconds / 3600);
+		int m = (int) ((seconds % 3600) / 60);
+		int s = (int) (seconds % 60);
+
+		String time = "";
+
+		if (h > 0) {
+			time += h + ":";
+		}
+
+		if (m == 0) {
+			time += "00:";
+		} else {
+			time += (m >= 10 ? m : "0" + m) + ":";
+		}
+
+		if (s == 0) {
+			time += "00";
+		} else {
+			time += (s >= 10 ? s : "0" + s);
+		}
+
+		return time;
 	}
 
 	@Override

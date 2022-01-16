@@ -155,6 +155,25 @@ public class StatusHandler extends APIEndpoint {
 
 		json.put("online_players", onlinePlayers);
 
+		/* ===== Whitelist ===== */
+		JSONArray whitelist = new JSONArray();
+		try {
+			String sql = "SELECT uuid FROM whitelist";
+			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				whitelist.put(rs.getString("uuid"));
+			}
+
+			rs.close();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		json.put("whitelist", whitelist);
+
 		/* ===== System ===== */
 		JSONObject system = new JSONObject();
 

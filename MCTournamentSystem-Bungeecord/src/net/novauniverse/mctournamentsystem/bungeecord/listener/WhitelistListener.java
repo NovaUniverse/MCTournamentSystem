@@ -54,6 +54,22 @@ public class WhitelistListener implements Listener {
 				rs.close();
 				ps.close();
 			}
+			
+			if (!allow) {
+				sql = "SELECT id FROM staff WHERE uuid = ?";
+
+				ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+				ps.setString(1, uuidString);
+
+				rs = ps.executeQuery();
+
+				if (rs.next()) {
+					allow = true;
+				}
+
+				rs.close();
+				ps.close();
+			}
 
 			if (!allow) {
 				e.setCancelled(true);
