@@ -10,7 +10,3 @@
 .hidden-until-loaded {
 	display: none;
 }
-
-.vanta-canvas {
-	z-index: -1 !important;
-}
