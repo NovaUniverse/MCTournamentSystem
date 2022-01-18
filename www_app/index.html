@@ -78,7 +78,6 @@
 			<li class="nav-item">
 				<a class="nav-link page-link" data-page="whitelist_page" href="#">Whitelist</a>
 			</li>
-
 		</ul>
 
 		<div id="staff_page" class="nav-page d-none">
@@ -194,6 +193,7 @@
 							<button type="button" id="btn_send_all_players_to" class="btn btn-primary">Send all
 								to</button>
 							<button type="button" class="btn-start-game btn btn-success ml-2">Start game</button>
+							<button type="button" id="btn_export_summary" class="btn btn-info ml-2">Export summary</button>
 						</div>
 					</div>
 				</div>
@@ -216,7 +216,7 @@
 			</div>
 		</div>
 
-		<div id="whitelist_page" class="nav-page">
+		<div id="whitelist_page" class="nav-page d-none">
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-12">
@@ -295,8 +295,8 @@
 			</div>
 		</div>
 
-		<div class="modal fade" id="add_whitelist_modal" tabindex="-1" aria-labelledby="addWhitelistTitle" aria-hidden="true"
-			data-bs-backdrop="static" data-bs-keyboard="false">
+		<div class="modal fade" id="add_whitelist_modal" tabindex="-1" aria-labelledby="addWhitelistTitle"
+			aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">

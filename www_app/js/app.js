@@ -284,6 +284,56 @@ $(function () {
 		updateStaffTeam();
 	});
 
+	$("#btn_export_summary").on("click", function () {
+		toastr.info("Exporting...");
+		console.log("Data export starting");
+		$.getJSON("/api/system/status" + "?access_token=" + token, function (data) {
+			if (data.error != undefined) {
+				toastr.error("Data export failed. Error: " + data.error);
+				console.error("Data export failed. Error: " + data.error);
+				return;
+			}
+
+			let dataExport = {};
+			let servers = [];
+			let players = [];
+
+			data.servers.forEach(server => {
+				servers.push(server.name);
+			});
+
+			data.players.forEach(p => {
+				let player = {};
+
+				player["username"] = p.username;
+				player["uuid"] = p.uuid;
+				player["team_number"] = p.team_number;
+				player["score"] = p.score;
+				player["kills"] = p.kills;
+				player["team_score"] = p.team_score;
+
+				players.push(player);
+			});
+
+			dataExport["servers"] = servers;
+			dataExport["teams"] = data.teams;
+			dataExport["players"] = players;
+
+			console.log("Data collected. Downloading...");
+			console.log(dataExport);
+
+			let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataExport, null, 4));
+			let downloadAnchorNode = document.createElement('a');
+			downloadAnchorNode.setAttribute("href", dataStr);
+			downloadAnchorNode.setAttribute("download", "tournament_data.json");
+			document.body.appendChild(downloadAnchorNode); // required for firefox
+			downloadAnchorNode.click();
+			downloadAnchorNode.remove();
+
+			toastr.success("Success. JSON Download started");
+		});
+	});
+
 	setInterval(function () {
 		update();
 	}, 1000);
