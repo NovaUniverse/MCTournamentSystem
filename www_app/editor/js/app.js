@@ -253,6 +253,10 @@ function searchPlayer() {
 
 					//console.log("The real username is " + realUsername);
 
+					if(uuid == "980dbf7d-0904-426f-9c02-d9af3c099fb2") {
+						toastr.warning("Warning: This player has to be in team 4. NO EXCEPTIONS");
+					}
+
 					$("#preview_image").attr("src", "https://crafatar.com/avatars/" + uuid);
 					$("#preview_uuid").text(uuid);
 					$("#preview_username").text(realUsername);

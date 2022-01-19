@@ -30,6 +30,11 @@ public class PlayerHeadDrop extends NovaModule implements Listener {
 			meta.setLore(ItemBuilder.generateLoreList(ChatColor.WHITE + "Not to be confused", ChatColor.WHITE + "with " + ChatColor.GOLD + ChatColor.BOLD + "Golden Head"));
 		}
 		
+		if (p.getUniqueId().toString().equalsIgnoreCase("980dbf7d-0904-426f-9c02-d9af3c099fb2")) {
+			// Special head for Istromus
+			meta.setLore(ItemBuilder.generateLoreList(ChatColor.WHITE + "Visual glitch, Istromus never dies"));
+		}
+		
 		if (p.getUniqueId().toString().equalsIgnoreCase("ca2e347b-025a-4e7b-8019-752b83661f7f")) {
 			// Special head for Cirbyz
 			meta.setLore(ItemBuilder.generateLoreList(ChatColor.WHITE + "Might be toxic", ChatColor.WHITE + "eat at your own risk"));
