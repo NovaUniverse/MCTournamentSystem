@@ -30,6 +30,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.whitelist
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.whitelist.RemoveWhitelistHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.StaticFileHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.RedirectToApp;
 import net.zeeraa.novacore.commons.log.Log;
 
 @SuppressWarnings("restriction")
@@ -39,6 +40,9 @@ public class WebServer {
 	public WebServer(int port, String appRoot) throws IOException {
 		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
 
+		// Redirect
+		createContext("/", new RedirectToApp());
+		
 		// System
 		createContext("/api/system/status", new StatusHandler());
 		createContext("/api/system/set_tournament_name", new SetTournamentNameHandler());
