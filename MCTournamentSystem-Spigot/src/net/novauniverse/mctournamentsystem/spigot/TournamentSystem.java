@@ -54,7 +54,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private int[] winScore;
 	private boolean addXpLevelOnKill;
 	private String labymodBanner;
-
+	
 	private Map<String, Group> staffGroups;
 	private Group defaultGroup;
 

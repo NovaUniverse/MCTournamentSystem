@@ -29,6 +29,7 @@
 		<module>MCTournamentSystem-Bungeecord</module>
 		<module>MCTournamentSystem-Spigot</module>
 		<module>MCTournamentSystem-Lobby</module>
+		<module>MCTournamentSystem-MissilewarsLobby</module>
 		<module>MCTournamentSystem-WebUiLauncher</module>
 	</modules>
 
