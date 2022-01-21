@@ -41,14 +41,14 @@ public class NovaScoreboard extends NovaModule {
 				}
 
 				if (tps != -1) {
-					NetherBoardScoreboard.getInstance().setGlobalLine(13, ChatColor.GOLD + "TPS: " + TextUtils.formatTps(tps));
+					NetherBoardScoreboard.getInstance().setGlobalLine(5, ChatColor.GOLD + "TPS: " + TextUtils.formatTps(tps));
 				} else {
-					NetherBoardScoreboard.getInstance().setGlobalLine(13, ChatColor.GOLD + "TPS: " + ChatColor.AQUA + "--");
+					NetherBoardScoreboard.getInstance().setGlobalLine(5, ChatColor.GOLD + "TPS: " + ChatColor.AQUA + "--");
 				}
 
 				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 					int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
-					NetherBoardScoreboard.getInstance().setPlayerLine(12, player, ChatColor.GOLD + "Ping: " + TextUtils.formatPing(ping));
+					NetherBoardScoreboard.getInstance().setPlayerLine(6, player, ChatColor.GOLD + "Ping: " + TextUtils.formatPing(ping));
 				}
 			}
 		}, 20L);

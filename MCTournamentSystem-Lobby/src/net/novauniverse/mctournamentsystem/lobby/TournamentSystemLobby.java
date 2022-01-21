@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.novauniverse.mctournamentsystem.lobby.command.duel.AcceptDuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.duel.DuelCommand;
+import net.novauniverse.mctournamentsystem.lobby.command.missilewars.MissileWars;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.TSLobby;
 import net.novauniverse.mctournamentsystem.lobby.modules.scoreboard.TSLeaderboard;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
@@ -66,6 +67,7 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 
 		CommandRegistry.registerCommand(new AcceptDuelCommand());
 		CommandRegistry.registerCommand(new DuelCommand());
+		CommandRegistry.registerCommand(new MissileWars(this));
 
 		/* ----- Misc ----- */
 		new BukkitRunnable() {

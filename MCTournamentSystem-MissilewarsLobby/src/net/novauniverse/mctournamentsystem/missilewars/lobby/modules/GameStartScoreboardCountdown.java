@@ -14,7 +14,7 @@ public class GameStartScoreboardCountdown extends NovaModule {
 
 	private boolean countdownVisible;
 
-	public static final int DEFAULT_COUNTDOWN_LINE = 0;
+	public static final int DEFAULT_COUNTDOWN_LINE = 1;
 
 	private int countdownLine;
 
