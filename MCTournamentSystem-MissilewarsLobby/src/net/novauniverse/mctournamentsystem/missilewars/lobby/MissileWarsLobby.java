@@ -163,6 +163,5 @@ public class MissileWarsLobby extends NovaPlugin implements Listener {
 				}.runTaskLater(getInstance(), 15 * 20);
 			}
 		}.runTaskLater(getInstance(), 20L);
-
 	}
 }
