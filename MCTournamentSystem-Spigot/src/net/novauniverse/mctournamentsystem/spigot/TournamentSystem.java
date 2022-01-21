@@ -25,6 +25,7 @@ import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.misc.WhatIsDogeWorthCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
@@ -263,6 +264,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new PurgeCacheCommand());
 		CommandRegistry.registerCommand(new ReconnectCommand());
 		CommandRegistry.registerCommand(new YBorderCommand());
+		CommandRegistry.registerCommand(new WhatIsDogeWorthCommand());
 
 		/* ----- Misc ----- */
 		new BukkitRunnable() {
