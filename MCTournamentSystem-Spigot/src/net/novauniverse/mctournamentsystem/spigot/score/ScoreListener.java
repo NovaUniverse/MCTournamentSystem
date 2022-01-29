@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerKillCache;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
@@ -100,24 +101,28 @@ public class ScoreListener implements Listener {
 			}
 		}
 
-		if (killScoreEnabled) {
-			if (e.getPlayer().isOnline()) {
-				Entity killer = e.getKiller();
+		if (e.getPlayer().isOnline()) {
+			Entity killer = e.getKiller();
 
-				Player killerPlayer = null;
+			Player killerPlayer = null;
 
-				if (ProjectileUtils.isProjectile(killer)) {
-					Entity shooter = ProjectileUtils.getProjectileShooterEntity(killer);
+			if (ProjectileUtils.isProjectile(killer)) {
+				Entity shooter = ProjectileUtils.getProjectileShooterEntity(killer);
 
-					if (shooter != null) {
-						if (shooter instanceof Player) {
-							killerPlayer = (Player) shooter;
-						}
+				if (shooter != null) {
+					if (shooter instanceof Player) {
+						killerPlayer = (Player) shooter;
 					}
-				} else if (killer instanceof Player) {
-					killerPlayer = (Player) killer;
 				}
+			} else if (killer instanceof Player) {
+				killerPlayer = (Player) killer;
+			}
+			
+			if(TournamentSystem.getInstance().isAddXpLevelOnKill()) {
+				killerPlayer.setLevel(killerPlayer.getLevel() + 1);
+			}
 
+			if (killScoreEnabled) {
 				if (killerPlayer != null) {
 					ScoreManager.getInstance().addPlayerScore(killerPlayer, killScore, true);
 					PlayerKillCache.getInstance().invalidate(killerPlayer);
@@ -161,8 +166,8 @@ public class ScoreListener implements Listener {
 				int score = winScore[placement - 1];
 
 				ScoreManager.getInstance().addPlayerScore(player, score, false);
-				if(player.isOnline()) {
-					((Player)player).sendMessage(ChatColor.GRAY + "+" + score + " score");
+				if (player.isOnline()) {
+					((Player) player).sendMessage(ChatColor.GRAY + "+" + score + " score");
 				}
 			}
 		}
@@ -180,7 +185,7 @@ public class ScoreListener implements Listener {
 			}
 
 			ScoreManager.getInstance().addTeamScore((TournamentSystemTeam) team, score);
-			
+
 			team.sendMessage(ChatColor.GRAY + "+" + score + " score (Shared with team members)");
 		}
 	}

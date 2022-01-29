@@ -20,6 +20,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.TSPluginMessageListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
+import net.novauniverse.mctournamentsystem.commands.sendhere.SendHereCommand;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
@@ -111,6 +112,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new JoinEvents());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new WhitelistListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new Log4JRCEFix());
+		
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new SendHereCommand());
 
 		File wwwAppFile = new File(getDataFolder().getPath() + File.separator + "www_app");
 

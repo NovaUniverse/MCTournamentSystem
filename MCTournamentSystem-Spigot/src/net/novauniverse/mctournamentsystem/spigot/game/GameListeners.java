@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.BingoManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SpleefManager;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
@@ -30,9 +31,17 @@ public class GameListeners extends NovaModule implements Listener {
 	public void onGameLoaded(GameLoadedEvent e) {
 		NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + e.getGame().getDisplayName());
 
+		if (e.getGame().getName().equalsIgnoreCase("bingo")) {
+			if (ModuleManager.loadModule(BingoManager.class, true)) {
+				Log.success(getName(), "Enabled game specific module: BingoManager (" + BingoManager.class.getName() + ")");
+			} else {
+				Log.error(getName(), "Failed to enable game specific module: BingoManager (" + BingoManager.class.getName() + ")");
+			}
+		}
+
 		if (e.getGame().getName().equalsIgnoreCase("spleef")) {
-			if(ModuleManager.loadModule(SpleefManager.class, true)) {
-				Log.success(getName(), "Enabled game specific module: SpleefManager (" + SpleefManager.class.getName() + ")");	
+			if (ModuleManager.loadModule(SpleefManager.class, true)) {
+				Log.success(getName(), "Enabled game specific module: SpleefManager (" + SpleefManager.class.getName() + ")");
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: SpleefManager (" + SpleefManager.class.getName() + ")");
 			}

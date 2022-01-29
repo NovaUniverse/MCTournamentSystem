@@ -12,8 +12,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -23,7 +21,6 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.EssentialModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
-import net.zeeraa.novacore.spigot.module.modules.game.events.PlayerEliminatedEvent;
 
 @NovaAutoLoad(shouldEnable = true)
 @EssentialModule
@@ -221,10 +218,5 @@ public class ScoreManager extends NovaModule implements Listener {
 			System.err.format("IOException: %s%n", ioe);
 			Log.error("Emergency score error", "Failled to write score log to sql_fix.sql! Please run this query to fix the score: " + query);
 		}
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerEliminated(PlayerEliminatedEvent e) {
-
 	}
 }
