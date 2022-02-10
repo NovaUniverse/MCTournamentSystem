@@ -39,8 +39,8 @@ public class GameSetup {
 
 		Log.info("GameSetup", "Loading lobby maps...");
 		
-		File dataFileDirectory = new File(TournamentSystem.getInstance().getWorldDataFolder() + File.separator + "GameLobbyData");
-		File worldFileDirectory = new File(TournamentSystem.getInstance().getWorldDataFolder() + File.separator + "Worlds");
+		File dataFileDirectory = new File(TournamentSystem.getInstance().getMapDataFolder() + File.separator + "GameLobbyData");
+		File worldFileDirectory = new File(TournamentSystem.getInstance().getMapDataFolder() + File.separator + "Worlds");
 		
 		GameLobby.getInstance().getMapReader().loadAll(dataFileDirectory, worldFileDirectory);
 

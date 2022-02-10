@@ -91,7 +91,7 @@ public class TSLobby extends NovaModule implements Listener {
 
 	@Override
 	public void onEnable() throws Exception {
-		File worldFolder = TournamentSystem.getInstance().getWorldDataFolder();
+		File worldFolder = TournamentSystem.getInstance().getMapDataFolder();
 		Log.debug(getName(), "World folder is: " + worldFolder.getAbsolutePath());
 		multiverseWorld = MultiverseManager.getInstance().createFromFile(new File(worldFolder.getAbsolutePath() + File.separator + "Worlds" + File.separator + "lobby_world"), WorldUnloadOption.DELETE);
 

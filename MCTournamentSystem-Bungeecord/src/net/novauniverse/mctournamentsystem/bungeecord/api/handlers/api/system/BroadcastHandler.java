@@ -12,6 +12,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
 public class BroadcastHandler extends APIEndpoint {
@@ -26,7 +27,7 @@ public class BroadcastHandler extends APIEndpoint {
 		if (params.containsKey("message")) {
 			String message = URLDecoder.decode(params.get("message"), StandardCharsets.UTF_8.name());
 
-			ProxyServer.getInstance().broadcast(new TextComponent(ChatColor.translateAlternateColorCodes('§', message)));
+			ProxyServer.getInstance().broadcast(new TextComponent(ChatColor.translateAlternateColorCodes(TournamentSystemCommons.CHAT_COLOR_CHAR, message)));
 
 			json.put("success", true);
 		} else {

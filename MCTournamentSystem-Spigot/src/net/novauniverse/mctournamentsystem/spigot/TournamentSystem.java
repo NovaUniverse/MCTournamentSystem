@@ -10,8 +10,11 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -20,6 +23,7 @@ import org.json.JSONObject;
 
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
+import net.novauniverse.mctournamentsystem.commons.LCS;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
@@ -55,11 +59,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private int[] winScore;
 	private boolean addXpLevelOnKill;
 	private String labymodBanner;
-	
+
 	private Map<String, Group> staffGroups;
 	private Group defaultGroup;
 
-	private File worldDataFolder;
+	private File mapDataFolder;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -85,8 +89,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return defaultGroup;
 	}
 
-	public File getWorldDataFolder() {
-		return worldDataFolder;
+	public File getMapDataFolder() {
+		return mapDataFolder;
 	}
 
 	public String getLabymodBanner() {
@@ -110,7 +114,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		// new File(new
 		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
 
-		this.worldDataFolder = new File(globalConfigPath + File.separator + "Worlds");
+		this.mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;
@@ -271,6 +275,37 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			@Override
 			public void run() {
 				/* ----- Run after load ----- */
+				try {
+					if (!LCS.connectivityCheck()) {
+						Log.fatal("Could not connect to the license servers. Please join our discord server https://discord.gg/4gZSVJ7 and open a ticket about this and we will try to resolve it asap");
+						Bukkit.getServer().shutdown();
+						return;
+					}
+
+					File licenseFile = new File(globalConfigPath + File.separator + "license_key.txt");
+					boolean success = LCS.check(licenseFile);
+					if (!success) {
+						if (!LCS.isValid()) {
+							Log.error("Server will shutdown due to a missing or invalid liscense key");
+						} else if (LCS.isExpired()) {
+							Log.error("Server will shutdown due to a expired liscense key");
+						}
+
+						Bukkit.getServer().shutdown();
+					}
+				} catch (Exception e) {
+					Log.fatal("License validation failure");
+					Bukkit.getServer().shutdown();
+				}
+
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (LCS.isDemo() || !LCS.isValid()) {
+							Bukkit.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(ChatColor.RED + "This server is running a demo version of TournamentSystem by NovaUniverse. To get a license open a ticket in our discord server https://discord.gg/4gZSVJ7"));
+						}
+					}
+				}.runTaskTimer(instance, 20 * 60, 20 * 60);
 			}
 		}.runTask(this);
 
@@ -298,5 +333,20 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public int[] getWinScore() {
 		return winScore;
+	}
+
+	/* ----- Send annoying messages to the player ----- */
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent e) {
+		if (LCS.isDemo()) {
+			e.getPlayer().sendMessage(ChatColor.RED + "This server is running a demo version of TournamentSystem by NovaUniverse. To get a license open a ticket in our discord server https://discord.gg/4gZSVJ7");
+		}
+	}
+
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent e) {
+		if (LCS.isDemo()) {
+			e.getPlayer().sendMessage(ChatColor.RED + "This server is running a demo version of TournamentSystem by NovaUniverse. To get a license open a ticket in our discord server https://discord.gg/4gZSVJ7");
+		}
 	}
 }

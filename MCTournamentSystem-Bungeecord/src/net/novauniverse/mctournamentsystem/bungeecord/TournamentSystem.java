@@ -21,6 +21,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.TSPluginMessageLi
 import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
 import net.novauniverse.mctournamentsystem.commands.sendhere.SendHereCommand;
+import net.novauniverse.mctournamentsystem.commons.LCS;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
@@ -112,7 +113,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new JoinEvents());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new WhitelistListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new Log4JRCEFix());
-		
+
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new SendHereCommand());
 
 		File wwwAppFile = new File(getDataFolder().getPath() + File.separator + "www_app");
@@ -125,7 +126,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		JSONArray quickMessagesJson = config.getJSONArray("quick_messages");
 		for (int i = 0; i < quickMessagesJson.length(); i++) {
-			quickMessages.add(ChatColor.translateAlternateColorCodes('§', quickMessagesJson.getString(i)));
+			quickMessages.add(ChatColor.translateAlternateColorCodes(TournamentSystemCommons.CHAT_COLOR_CHAR, quickMessagesJson.getString(i)));
 		}
 
 		Log.info("Setting up web server");
@@ -174,6 +175,29 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		Log.info("Registering channel " + TournamentSystemCommons.DATA_CHANNEL);
 		this.getProxy().registerChannel(TournamentSystemCommons.DATA_CHANNEL);
+
+		if (!LCS.connectivityCheck()) {
+			Log.fatal("Could not connect to the license servers. Please join our discord server https://discord.gg/4gZSVJ7 and open a ticket about this and we will try to resolve it asap");
+			ProxyServer.getInstance().stop("Could not connect to the license servers");
+			return;
+		}
+
+		try {
+			File licenseFile = new File(globalConfigPath + File.separator + "license_key.txt");
+			boolean success = LCS.check(licenseFile);
+			if (!success) {
+				if (!LCS.isValid()) {
+					Log.error("Server will shutdown due to a missing or invalid liscense key");
+				} else if (LCS.isExpired()) {
+					Log.error("Server will shutdown due to a expired liscense key");
+				}
+
+				ProxyServer.getInstance().stop("Missing or invalid license");
+			}
+		} catch (Exception e) {
+			Log.fatal("License validation failure");
+			ProxyServer.getInstance().stop("License validation failure");
+		}
 	}
 
 	@Override

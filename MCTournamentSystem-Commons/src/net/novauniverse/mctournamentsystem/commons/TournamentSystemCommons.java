@@ -8,6 +8,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.zeeraa.novacore.commons.database.DBConnection;
 
 public class TournamentSystemCommons {
+	public static final char CHAT_COLOR_CHAR = (char) 0xA7;
 	public static final String DATA_CHANNEL = "tsys:tsdata";
 
 	private static DBConnection dbConnection;
@@ -24,7 +25,7 @@ public class TournamentSystemCommons {
 		try {
 			String name = TournamentSystemCommons.getConfigValue("tournament_name");
 			if (name != null) {
-				return ChatColor.translateAlternateColorCodes('§', name);
+				return ChatColor.translateAlternateColorCodes(TournamentSystemCommons.CHAT_COLOR_CHAR, name);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

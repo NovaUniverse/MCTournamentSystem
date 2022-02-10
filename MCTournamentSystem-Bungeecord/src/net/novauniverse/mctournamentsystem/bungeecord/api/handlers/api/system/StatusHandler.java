@@ -18,6 +18,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.PlayerData;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.TeamData;
+import net.novauniverse.mctournamentsystem.commons.LCS;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
@@ -173,7 +174,18 @@ public class StatusHandler extends APIEndpoint {
 		}
 
 		json.put("whitelist", whitelist);
-
+		
+		/* ===== License ===== */
+		JSONObject license = new JSONObject();
+		
+		license.put("is_valid", LCS.isValid());
+		license.put("is_demo", LCS.isDemo());
+		license.put("is_expired", LCS.isExpired());
+		license.put("expires_at", LCS.getExpiresAt());
+		license.put("owner", LCS.getLicensedTo());
+		
+		json.put("license", license);
+		
 		/* ===== System ===== */
 		JSONObject system = new JSONObject();
 
