@@ -82,6 +82,9 @@
 			<li class="nav-item">
 				<a class="nav-link page-link" data-page="whitelist_page" href="#">Whitelist</a>
 			</li>
+			<li class="nav-item">
+				<a class="nav-link page-link" data-page="support_page" href="#">Support</a>
+			</li>
 		</ul>
 
 		<div id="staff_page" class="nav-page d-none">
@@ -205,6 +208,13 @@
 			<div class="row">
 				<div class="col">
 					<div class="mt-2 mx-2">
+						<h5>License</h5>
+						<p>
+							Status: <span class="license-status"></span><br>
+							Licensed to: <span class="licensed-to">None</span><br>
+							Expires at: <span class="licensed-expires">?</span><br>
+						</p>
+
 						<h5>System stats</h5>
 						<p>
 							Player count: <span id="stats_player_count"></span><br>
@@ -263,6 +273,19 @@
 
 		</div>
 
+		<div id="support_page" class="nav-page d-none mt-4">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<h4>Support</h4>
+						<p>
+							Join our discord server <a href="https://discord.gg/4gZSVJ7">https://discord.gg/4gZSVJ7</a> and open a ticket in the support section of our server to get help related to the tournament system.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div class="push"></div>
 	</div>
 
@@ -294,6 +317,24 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
 						<button type="button" id="btn_search_staff_user" class="btn btn-primary">Add</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="license_warning" tabindex="-1" aria-labelledby="licenseWarningTitle" aria-hidden="true"
+			data-bs-backdrop="static" data-bs-keyboard="false">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="licenseWarningTitle">License warning</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p id="license_warning_body"></p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>

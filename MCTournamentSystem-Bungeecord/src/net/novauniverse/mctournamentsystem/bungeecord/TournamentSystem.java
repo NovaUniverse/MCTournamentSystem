@@ -182,17 +182,23 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			return;
 		}
 
+		if(!LCS.connectivityCheck()) {
+			Log.fatal("Cant connect to the license servers");
+			ProxyServer.getInstance().stop("Cant connect to the license servers");
+			return;
+		}
+		
 		try {
 			File licenseFile = new File(globalConfigPath + File.separator + "license_key.txt");
 			boolean success = LCS.check(licenseFile);
 			if (!success) {
 				if (!LCS.isValid()) {
-					Log.error("Server will shutdown due to a missing or invalid liscense key");
+					Log.error("Missing or invalid liscense key");
 				} else if (LCS.isExpired()) {
-					Log.error("Server will shutdown due to a expired liscense key");
+					Log.error("Expired liscense key");
 				}
-
-				ProxyServer.getInstance().stop("Missing or invalid license");
+			} else {
+				Log.info("Licensed to: " + LCS.getLicensedTo());
 			}
 		} catch (Exception e) {
 			Log.fatal("License validation failure");
