@@ -133,7 +133,6 @@ public class NovaUpdater implements Runnable {
 			return;
 		}
 
-		System.out.println(updateManifest.toString());
 		for (int i = 0; i < updateManifest.length(); i++) {
 			JSONObject fileData = updateManifest.getJSONObject(i);
 
