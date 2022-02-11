@@ -63,6 +63,8 @@ public class LCS {
 		}
 
 		demo = data.getBoolean("is_demo");
+		
+		LCS.licensedTo = data.getString("owner");
 
 		if (demo) {
 			Log.warn("Your license key is a demo key. Only use this key for evaluation purposes");
