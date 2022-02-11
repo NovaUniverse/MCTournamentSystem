@@ -1,0 +1,7 @@
+/* Required to make the background display correctly */
+body {
+	background-repeat: no-repeat !important;
+	background-size: auto !important;
+	height: 100vh !important;
+	padding: 0 !important;
+}

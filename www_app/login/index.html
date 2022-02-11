@@ -7,16 +7,21 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>TournamentSystem - Login</title>
 
-	<link rel="stylesheet" href="../css/bootstrap.quartz.min.css">
 	<link rel="stylesheet" href="../css/toastr.min.css">
 	<link rel="stylesheet" href="../css/global.css">
+
+	<script>
+		const THEME_DIR = "../css/themes/";
+	</script>
 
 	<script src="../js/jquery-3.6.0.min.js"></script>
 	<script src="../js/popper.min.js"></script>
 	<script src="../js/toastr.min.js"></script>
 	<script src="../js/utils.js"></script>
-	<script src="../js/bootstrap.js"></script>
+	<script src="../js/bootstrap.min.js"></script>
 	<script src="../js/login.js"></script>
+	<script src="../js/theme/themes.js"></script>
+	<script src="../js/theme/theme-manager.js"></script>
 </head>
 
 <body>
@@ -32,6 +37,9 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarText">
 				<ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+					<li class="nav-item">
+						<a href="#" class="select-theme-button nav-link">Theme</a>
+					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="/phpmyadmin" target="blank">PHPMyAdmin</a>
 					</li>
@@ -63,6 +71,25 @@
 					</div>
 				</form>
 
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="selectThemeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		aria-labelledby="selectThemeModalTitle" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="selectThemeModalTitle">Select theme</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<select class="form-select" id="theme-selector">
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+				</div>
 			</div>
 		</div>
 	</div>
