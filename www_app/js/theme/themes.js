@@ -24,7 +24,7 @@ const themes = [
 		"name": "quartz",
 		"display_name": "Quartz",
 		"css": "quartz.css",
-		"css_fix": undefined,
+		"css_fix": "fix/quarts.fix.css",
 		"is_dark": true
 	},
 	{

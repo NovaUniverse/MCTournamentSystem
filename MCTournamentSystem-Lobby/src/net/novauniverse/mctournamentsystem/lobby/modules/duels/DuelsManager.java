@@ -233,7 +233,7 @@ public class DuelsManager extends NovaModule implements Listener {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
 			Player player = (Player) e.getEntity();
-			for (DuelInstance duelInstace : duelInstances) {
+			duelInstances.forEach(duelInstace -> {
 				if (duelInstace.getPlayers().contains(player)) {
 					if (duelInstace.getStage() == DuelStage.INGAME) {
 						e.setDamage(0);
@@ -241,7 +241,7 @@ public class DuelsManager extends NovaModule implements Listener {
 						e.setCancelled(true);
 					}
 				}
-			}
+			});
 		}
 	}
 
@@ -249,20 +249,20 @@ public class DuelsManager extends NovaModule implements Listener {
 		if (duelInstances.contains(duelInstance)) {
 			Log.trace("Killing duels instance " + duelInstance.getInstanceUUID().toString());
 
-			for (Player player : duelInstance.getPlayers()) {
+			duelInstance.getPlayers().forEach(player -> {
 				if (player.isOnline()) {
 					restorePlayer(player);
 				}
-			}
+			});
 
-			for (Player player : duelInstance.getWorld().getWorld().getPlayers()) {
+			duelInstance.getWorld().getWorld().getPlayers().forEach(player -> {
 				if (TournamentSystemLobby.getInstance().getLobbyLocation() != null) {
 					player.teleport(TournamentSystemLobby.getInstance().getLobbyLocation());
 					player.setGameMode(GameMode.ADVENTURE);
 				} else {
 					player.kickPlayer("Unloading duels world. Please reconnect");
 				}
-			}
+			});
 
 			duelInstance.getPlayers().clear();
 

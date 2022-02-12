@@ -8,7 +8,6 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -28,13 +27,13 @@ public class StartGameHandler extends APIEndpoint{
 			json.put("error", "no_players");
 			json.put("message", "No players online to use for plugin message channel. Try again when there are players online");
 		} else {
-			for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+			ProxyServer.getInstance().getPlayers().forEach(player -> {
 				ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
 				out.writeUTF("start_game");
 
 				player.getServer().getInfo().sendData(TournamentSystemCommons.DATA_CHANNEL, out.toByteArray());
-			}
+			});
 
 			json.put("success", true);
 		}

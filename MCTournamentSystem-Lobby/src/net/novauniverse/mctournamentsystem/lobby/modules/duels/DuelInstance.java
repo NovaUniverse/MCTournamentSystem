@@ -118,8 +118,6 @@ public class DuelInstance {
 			players.get(0).teleport(location1);
 			players.get(1).teleport(location2);
 
-			// TODO: Play megalovania if the player is xnl_
-
 			BasicTimer timer = new BasicTimer(5, 20L);
 			timer.addTickCallback(new TickCallback() {
 				@Override
@@ -129,12 +127,13 @@ public class DuelInstance {
 					}
 
 					sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + timeLeft);
-					for (Player player : world.getWorld().getPlayers()) {
+
+					world.getWorld().getPlayers().forEach(player -> {
 						if (NovaCore.getInstance().getActionBar() != null) {
 							NovaCore.getInstance().getActionBar().sendMessage(player, ChatColor.AQUA + "" + ChatColor.BOLD + timeLeft);
 						}
 						player.playSound(player.getLocation(), Sound.NOTE_PLING, 1F, 1F);
-					}
+					});
 				}
 			});
 
@@ -146,19 +145,20 @@ public class DuelInstance {
 					players.get(0).teleport(location1);
 					players.get(1).teleport(location2);
 
-					for (Player player : players) {
+					players.forEach(player -> {
 						if (player.isOnline()) {
 							player.setFireTicks(0);
 							player.setFallDistance(0);
 						}
-					}
+					});
 
-					for (Player player : world.getWorld().getPlayers()) {
+					world.getWorld().getPlayers().forEach(player -> {
 						player.playSound(player.getLocation(), Sound.NOTE_PLING, 1F, 2F);
 						if (NovaCore.getInstance().getActionBar() != null) {
 							NovaCore.getInstance().getActionBar().sendMessage(player, ChatColor.GOLD + "" + ChatColor.BOLD + "GO");
 						}
-					}
+					});
+
 					setStage(DuelStage.INGAME);
 				}
 			});
@@ -182,11 +182,11 @@ public class DuelInstance {
 			timer2.addFinishCallback(new Callback() {
 				@Override
 				public void execute() {
-					for (Player player : players) {
+					players.forEach(player -> {
 						if (player.isOnline()) {
 							DuelsManager.getInstance().restorePlayer(player);
 						}
-					}
+					});
 
 					Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
 						@Override

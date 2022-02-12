@@ -33,6 +33,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.misc.WhatIsDogeWorthCo
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
+import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
@@ -315,6 +316,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				GameSetup.init(this);
 			}
 		}
+		
+		// Register debug commands
+		new DebugCommands();
 	}
 
 	@Override

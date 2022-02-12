@@ -54,15 +54,14 @@ public class StaffManager extends NovaModule implements Listener {
 		User user = LuckPermsProvider.get().getUserManager().getUser(e.getPlayer().getUniqueId());
 
 		List<Node> toRemove = new ArrayList<>();
-		for (Node node : user.getDistinctNodes()) {
+		
+		user.getDistinctNodes().forEach(node -> {
 			if (node.getKey().startsWith("group.")) {
 				toRemove.add(node);
 			}
-		}
+		});
 
-		for (Node node : toRemove) {
-			user.data().remove(node);
-		}
+		toRemove.forEach(node -> user.data().remove(node));
 
 		if (role != null) {
 			if (!TournamentSystem.getInstance().getStaffGroups().containsKey(role)) {

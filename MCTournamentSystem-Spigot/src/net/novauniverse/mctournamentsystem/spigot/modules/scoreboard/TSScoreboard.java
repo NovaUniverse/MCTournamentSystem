@@ -2,7 +2,6 @@ package net.novauniverse.mctournamentsystem.spigot.modules.scoreboard;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
@@ -51,9 +50,9 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 				@Override
 				public void run() {
-					double[] recentTps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps();
+					final double[] recentTps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps();
 
-					for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+					Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 						int playerScore = ScoreManager.getInstance().getPlayerScore(player);
 						int teamScore = 0;
 
@@ -75,7 +74,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 							double tps = recentTps[0];
 							NetherBoardScoreboard.getInstance().setPlayerLine(13, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
 						}
-					}
+					});
 
 					if (NovaCore.isNovaGameEngineEnabled()) {
 						if (GameManager.getInstance().hasGame()) {
@@ -111,15 +110,13 @@ public class TSScoreboard extends NovaModule implements Listener {
 						if (GameManager.getInstance().getCountdown().isCountdownRunning()) {
 							gameCountdownShown = true;
 
-							for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 								NetherBoardScoreboard.getInstance().setPlayerLine(COUNTDOWN_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.starting_in") + ChatColor.AQUA + TextUtils.secondsToHoursMinutes(GameManager.getInstance().getCountdown().getTimeLeft()));
-							}
+							});
 						} else {
 							if (gameCountdownShown) {
 								gameCountdownShown = false;
-								for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-									NetherBoardScoreboard.getInstance().clearPlayerLine(COUNTDOWN_LINE, player);
-								}
+								Bukkit.getServer().getOnlinePlayers().forEach(player -> NetherBoardScoreboard.getInstance().clearPlayerLine(COUNTDOWN_LINE, player));
 							}
 						}
 					}

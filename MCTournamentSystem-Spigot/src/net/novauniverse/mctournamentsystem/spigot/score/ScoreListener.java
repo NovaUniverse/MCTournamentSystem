@@ -1,7 +1,5 @@
 package net.novauniverse.mctournamentsystem.spigot.score;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -88,7 +86,7 @@ public class ScoreListener implements Listener {
 		if (participationScoreEnabled) {
 			if (GameManager.getInstance().hasGame()) {
 				if (GameManager.getInstance().getActiveGame().hasStarted()) {
-					for (UUID uuid : GameManager.getInstance().getActiveGame().getPlayers()) {
+					GameManager.getInstance().getActiveGame().getPlayers().forEach(uuid -> {
 						Player player = Bukkit.getServer().getPlayer(uuid);
 						if (player != null) {
 							if (player.isOnline()) {
@@ -96,7 +94,7 @@ public class ScoreListener implements Listener {
 								player.sendMessage(ChatColor.GRAY + "+" + participationScore + " Participation score");
 							}
 						}
-					}
+					});
 				}
 			}
 		}
@@ -180,9 +178,7 @@ public class ScoreListener implements Listener {
 
 			double individualScore = Math.ceil(((double) score) / ((double) team.getMembers().size()));
 
-			for (UUID uuid : team.getMembers()) {
-				ScoreManager.getInstance().addPlayerScore(uuid, (int) individualScore, false);
-			}
+			team.getMembers().forEach(uuid -> ScoreManager.getInstance().addPlayerScore(uuid, (int) individualScore, false));
 
 			ScoreManager.getInstance().addTeamScore((TournamentSystemTeam) team, score);
 

@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -104,8 +105,8 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		} catch (Exception ee) {
 			ee.printStackTrace();
 		}
-
-		for (Integer i : missingTeams) {
+		
+		missingTeams.forEach(i -> {
 			try {
 				String sql = "INSERT INTO teams (team_number) VALUES (?)";
 				PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
@@ -118,11 +119,14 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			} catch (Exception ee) {
 				ee.printStackTrace();
 			}
-		}
+		});
 	}
 
 	private void updateTeams() {
 		// Update players
+
+		List<UUID> fullPlayerList = new ArrayList<>();
+
 		try {
 			String sql = "SELECT uuid, team_number FROM players";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
@@ -131,6 +135,8 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			while (rs.next()) {
 				UUID uuid = UUID.fromString(rs.getString("uuid"));
 				int teamNumber = rs.getInt("team_number");
+
+				fullPlayerList.add(uuid);
 
 				for (Team team : teams) {
 					if (teamNumber <= 0 || ((TournamentSystemTeam) team).getTeamNumber() != teamNumber) {
@@ -157,6 +163,20 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			return;
 		}
 
+		this.getTeams().forEach(team -> {
+			List<UUID> toRemove = new ArrayList<>();
+			team.getMembers().forEach(member -> {
+				if (!fullPlayerList.contains(member)) {
+					toRemove.add(member);
+				}
+			});
+
+			toRemove.forEach(uuid -> {
+				Log.trace("TournamentCoreTeamManager", "Removing player with uuid " + uuid.toString() + " from team " + ((TournamentSystemTeam) team).getTeamNumber() + " since they are no longer in the team list");
+				team.getMembers().remove(uuid);
+			});
+		});
+
 		// Update score
 		try {
 			String sql = "SELECT score, team_number FROM teams";
@@ -180,9 +200,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		}
 
 		// Update player names
-		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			updatePlayerName(player);
-		}
+		Bukkit.getServer().getOnlinePlayers().forEach(player -> this.updatePlayerName(player));
 	}
 
 	public TournamentSystemTeam getTeam(int teamNumber) {
@@ -234,7 +252,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 
-		updatePlayerName(player);
+		this.updatePlayerName(player);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

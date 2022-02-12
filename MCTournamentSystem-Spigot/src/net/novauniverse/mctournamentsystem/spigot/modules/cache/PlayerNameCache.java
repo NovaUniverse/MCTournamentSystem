@@ -22,7 +22,7 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 public class PlayerNameCache extends NovaModule implements Listener, TSDataCache {
 	private static PlayerNameCache instance;
 
-	private HashMap<UUID, String> cache;
+	private HashMap<String, String> cache;
 	private int taskId;
 
 	public static PlayerNameCache getInstance() {
@@ -37,7 +37,7 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 	@Override
 	public void onLoad() {
 		PlayerNameCache.instance = this;
-		this.cache = new HashMap<UUID, String>();
+		this.cache = new HashMap<String, String>();
 		this.taskId = -1;
 	}
 
@@ -49,7 +49,7 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 				public void run() {
 					updateCache();
 				}
-			}, 36000L, 36000L); // 30 minutes
+			}, 12000L, 12000L);
 		}
 		updateCache();
 	}
@@ -70,13 +70,13 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 		if (player != null) {
 			if (player.isOnline()) {
 				name = player.getName();
-				cache.put(uuid, name);
+				cache.put(uuid.toString(), name);
 				return name;
 			}
 		}
 
-		if (cache.containsKey(uuid)) {
-			name = cache.get(uuid);
+		if (cache.containsKey(uuid.toString())) {
+			name = cache.get(uuid.toString());
 		} else {
 			Log.trace("Fetching player name from database");
 			try {
@@ -88,7 +88,7 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					name = rs.getString("username");
-					cache.put(uuid, name);
+					cache.put(uuid.toString(), name);
 				}
 
 				rs.close();
@@ -105,7 +105,7 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 		Log.trace("Updating player name cache");
 		cache.clear();
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			cache.put(player.getUniqueId(), player.getName());
+			cache.put(player.getUniqueId().toString(), player.getName());
 		}
 	}
 
@@ -119,6 +119,6 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		Log.trace("Caching player name for " + player.getName());
-		cache.put(player.getUniqueId(), player.getName());
+		cache.put(player.getUniqueId().toString(), player.getName());
 	}
 }

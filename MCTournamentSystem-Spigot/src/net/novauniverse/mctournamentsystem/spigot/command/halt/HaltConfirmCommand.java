@@ -15,7 +15,6 @@ import net.zeeraa.novacore.commons.log.LogLevel;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaSubCommand;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
-import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseWorld;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.PlayerUnloadOption;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.WorldUnloadOption;
 
@@ -41,10 +40,10 @@ public class HaltConfirmCommand extends NovaSubCommand {
 		if (MultiverseManager.getInstance().isEnabled()) {
 			Log.info("Server Halt", "Preventing multiverse kick");
 
-			for (MultiverseWorld world : MultiverseManager.getInstance().getWorlds().values()) {
+			MultiverseManager.getInstance().getWorlds().values().forEach(world -> {
 				world.setUnloadOption(WorldUnloadOption.KEEP);
 				world.setPlayerUnloadOptions(PlayerUnloadOption.DO_NOTHING);
-			}
+			});
 		}
 
 		Log.info("Server Halt", "Killing database");

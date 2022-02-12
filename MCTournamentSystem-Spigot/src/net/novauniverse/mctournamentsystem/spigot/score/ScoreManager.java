@@ -49,9 +49,7 @@ public class ScoreManager extends NovaModule implements Listener {
 
 				@Override
 				public void run() {
-					for (UUID uuid : playerScoreCache.keySet()) {
-						updatePlayerScore(uuid);
-					}
+					playerScoreCache.keySet().forEach(uuid -> updatePlayerScore(uuid));
 				}
 			}, 100L, 100L);
 		}

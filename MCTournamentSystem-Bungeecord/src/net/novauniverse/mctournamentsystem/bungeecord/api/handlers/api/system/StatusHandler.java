@@ -91,8 +91,9 @@ public class StatusHandler extends APIEndpoint {
 
 		JSONArray players = new JSONArray();
 
-		for (PlayerData pd : playerDataList) {
+		playerDataList.forEach(pd -> {
 			JSONObject p = new JSONObject();
+			
 			// im not going to use a short name for this one
 			ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(pd.getUuid());
 
@@ -121,17 +122,17 @@ public class StatusHandler extends APIEndpoint {
 			p.put("team_number", pd.getTeamNumber());
 
 			players.put(p);
-		}
+		});
 
 		JSONArray teams = new JSONArray();
-		for (TeamData td : teamDataList) {
+		teamDataList.forEach(td -> {
 			JSONObject team = new JSONObject();
 
 			team.put("team_number", td.getTeamNumber());
 			team.put("score", td.getScore());
 
 			teams.put(team);
-		}
+		});
 
 		json.put("players", players);
 		json.put("teams", teams);
@@ -139,11 +140,11 @@ public class StatusHandler extends APIEndpoint {
 		/* ===== Online players ===== */
 		JSONArray onlinePlayers = new JSONArray();
 
-		for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+		ProxyServer.getInstance().getPlayers().forEach(player -> {
 			JSONObject p = new JSONObject();
 
 			if (player.getServer() == null) {
-				continue;
+				return;
 			}
 
 			p.put("uuid", player.getUniqueId());
@@ -152,7 +153,7 @@ public class StatusHandler extends APIEndpoint {
 			p.put("ping", player.getPing());
 
 			onlinePlayers.put(p);
-		}
+		});
 
 		json.put("online_players", onlinePlayers);
 
