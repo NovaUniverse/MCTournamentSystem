@@ -143,7 +143,7 @@ public class DuelsManager extends NovaModule implements Listener {
 
 			String worldName = "duels_" + uuid.toString().replace("-", "");
 
-			MultiverseWorld world = MultiverseManager.getInstance().createFromFile(new File(TournamentSystem.getInstance().getMapDataFolder().getAbsolutePath() + "Worlds" + File.separator + "duels_world"), worldName, WorldUnloadOption.DELETE);
+			MultiverseWorld world = MultiverseManager.getInstance().createFromFile(new File(TournamentSystem.getInstance().getMapDataFolder().getAbsolutePath() + File.separator + "Worlds" + File.separator + "duels_world"), worldName, WorldUnloadOption.DELETE);
 
 			world.getWorld().setDifficulty(Difficulty.PEACEFUL);
 			world.getWorld().setTime(1000L);
