@@ -28,7 +28,7 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 
 	private Location lobbyLocation;
 	private boolean preventDamageMobs;
-	
+
 	public Location getLobbyLocation() {
 		return lobbyLocation;
 	}
@@ -44,7 +44,7 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		TournamentSystemLobby.instance = this;
-		
+
 		saveDefaultConfig();
 
 		ModuleManager.scanForModules(this, "net.novauniverse.mctournamentsystem.lobby.modules");
@@ -86,11 +86,5 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 	public void onDisable() {
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerJoin(PlayerJoinEvent e) {
-		int protocolVersion = ProtocolLibrary.getProtocolManager().getProtocolVersion(e.getPlayer());
-		Log.debug("TournamentSystemLobby", e.getPlayer().getName() + " is joining with protocol version " + protocolVersion);
 	}
 }
