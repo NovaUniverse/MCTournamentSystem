@@ -100,13 +100,15 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	@Override
 	public void onLoad() {
-		TournamentSystem.instance = this;
-		this.staffGroups = new HashMap<>();
-		this.labymodBanner = null;
+		System.out.println("TournamentSystem#onLoad()");
 	}
 
 	@Override
 	public void onEnable() {
+		TournamentSystem.instance = this;
+		this.staffGroups = new HashMap<>();
+		this.labymodBanner = null;
+		
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
@@ -158,7 +160,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			FileUtils.touch(sqlFixFile);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			Log.fatal("TournamentCore", "Failed to setup data directory");
+			Log.fatal("TournamentSystem", "Failed to setup data directory");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -177,7 +179,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 			connection.startKeepAliveTask();
 		} catch (ClassNotFoundException | SQLException e) {
-			Log.fatal("TournamentCore", "Failed to connect to the database");
+			Log.fatal("TournamentSystem", "Failed to connect to the database");
 			e.printStackTrace();
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
@@ -185,7 +187,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		/* ----- Language ----- */
 		// Language files
-		Log.info("TournamentCore", "Loading language files...");
+		Log.info("TournamentSystem", "Loading language files...");
 		try {
 			LanguageReader.readFromJar(this.getClass(), "/lang/en-us.json");
 		} catch (Exception e) {

@@ -3,7 +3,6 @@ package net.novauniverse.mctournamentsystem.lobby.modules.lobby;
 import java.io.File;
 import java.util.UUID;
 
-import org.bukkit.Achievement;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -32,11 +31,14 @@ import org.bukkit.util.Vector;
 import me.rayzr522.jsonmessage.JSONMessage;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
+import net.novauniverse.mctournamentsystem.lobby.versionspecific.Pre_1_13_Utils;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.NovaCore;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.enums.NovaCoreGameVersion;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
@@ -91,6 +93,9 @@ public class TSLobby extends NovaModule implements Listener {
 
 	@Override
 	public void onEnable() throws Exception {
+		System.out.println("DBG:PRINT_TS_INSTANCE");
+		System.out.println(TournamentSystem.getInstance());
+		System.out.println("---------------------");
 		File worldFolder = TournamentSystem.getInstance().getMapDataFolder();
 		Log.debug(getName(), "World folder is: " + worldFolder.getAbsolutePath());
 		multiverseWorld = MultiverseManager.getInstance().createFromFile(new File(worldFolder.getAbsolutePath() + File.separator + "Worlds" + File.separator + "lobby_world"), WorldUnloadOption.DELETE);
@@ -153,6 +158,8 @@ public class TSLobby extends NovaModule implements Listener {
 		}, 20L);
 		gameRunningCheckTask.start();
 
+		
+		multiverseWorld.getWorld().setGameRuleValue("announceAdvancements", "false");
 		// CommandRegistry.registerCommand(new ReconnectCommand());
 	}
 
@@ -208,28 +215,29 @@ public class TSLobby extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(PlayerJoinEvent e) {
-		Player p = e.getPlayer();
+		Player player = e.getPlayer();
 
 		// Prevent the press e to open inventory message from showing all the time
-		if (!p.hasAchievement(Achievement.OPEN_INVENTORY)) {
-			p.awardAchievement(Achievement.OPEN_INVENTORY);
+		NovaCoreGameVersion version = VersionIndependantUtils.get().getNovaCoreGameVersion();
+		if(version == NovaCoreGameVersion.V_1_8 || version == NovaCoreGameVersion.V_1_12) {
+			Pre_1_13_Utils.giveOpenInventoryAchivement(player);
 		}
 
-		PlayerUtils.clearPlayerInventory(p);
-		PlayerUtils.clearPotionEffects(p);
-		PlayerUtils.resetPlayerXP(p);
+		PlayerUtils.clearPlayerInventory(player);
+		PlayerUtils.clearPotionEffects(player);
+		PlayerUtils.resetPlayerXP(player);
 		if (lobbyLocation != null) {
-			p.teleport(lobbyLocation);
+			player.teleport(lobbyLocation);
 		}
-		p.setFallDistance(0);
-		p.setGameMode(GameMode.ADVENTURE);
+		player.setFallDistance(0);
+		player.setGameMode(GameMode.ADVENTURE);
 
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				// Fix but where gamemode does not get set
-				p.setGameMode(GameMode.CREATIVE);
-				p.setGameMode(GameMode.ADVENTURE);
+				player.setGameMode(GameMode.CREATIVE);
+				player.setGameMode(GameMode.ADVENTURE);
 			}
 		}.runTaskLater(TournamentSystem.getInstance(), 5L);
 	}

@@ -42,12 +42,9 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 	}
 
 	@Override
-	public void onLoad() {
-		TournamentSystemLobby.instance = this;
-	}
-
-	@Override
 	public void onEnable() {
+		TournamentSystemLobby.instance = this;
+		
 		saveDefaultConfig();
 
 		ModuleManager.scanForModules(this, "net.novauniverse.mctournamentsystem.lobby.modules");

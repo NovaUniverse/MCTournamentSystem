@@ -13,11 +13,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import io.github.bananapuncher714.nbteditor.NBTEditor;
+import net.novauniverse.mctournamentsystem.textures.Textures;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
@@ -29,24 +30,20 @@ public class GoldenHead extends NovaModule implements Listener {
 		return "ts.goldenhead";
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable() throws Exception {
 		ShapedRecipe recipe = new ShapedRecipe(getItem());
 
-		MaterialData skull = new MaterialData(Material.SKULL_ITEM);
-
-		skull.setData((byte) 3);
-
 		recipe.shape("AAA", "ABA", "AAA");
 		recipe.setIngredient('A', Material.GOLD_INGOT);
-		recipe.setIngredient('B', skull);
+		
+		VersionIndependantUtils.get().setShapedRecipeIngredientAsPlayerSkull(recipe, 'B');
 
 		Bukkit.getServer().addRecipe(recipe);
 	}
 
 	public ItemStack getItem() {
-		ItemStack stack = ItemBuilder.getPlayerSkullWithBase64Texture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjkzN2UxYzQ1YmI4ZGEyOWIyYzU2NGRkOWE3ZGE3ODBkZDJmZTU0NDY4YTVkZmI0MTEzYjRmZjY1OGYwNDNlMSJ9fX0=");
+		ItemStack stack = ItemBuilder.getPlayerSkullWithBase64Texture(Textures.GOLDEN_HEAD);
 
 		ItemMeta meta = stack.getItemMeta();
 

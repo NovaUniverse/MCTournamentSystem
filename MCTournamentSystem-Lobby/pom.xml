@@ -159,14 +159,14 @@
 			<groupId>net.novauniverse.mctournamentsystem</groupId>
 			<artifactId>MCTournamentSystem-Commons</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>net.novauniverse.mctournamentsystem</groupId>
 			<artifactId>MCTournamentSystem-Spigot</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
