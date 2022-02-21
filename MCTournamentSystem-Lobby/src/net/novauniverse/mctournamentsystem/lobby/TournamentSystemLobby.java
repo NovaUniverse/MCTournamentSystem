@@ -3,23 +3,17 @@ package net.novauniverse.mctournamentsystem.lobby;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.comphenix.protocol.ProtocolLibrary;
 
 import net.novauniverse.mctournamentsystem.lobby.command.duel.AcceptDuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.duel.DuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.missilewars.MissileWars;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.TSLobby;
 import net.novauniverse.mctournamentsystem.lobby.modules.scoreboard.TSLeaderboard;
-import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 

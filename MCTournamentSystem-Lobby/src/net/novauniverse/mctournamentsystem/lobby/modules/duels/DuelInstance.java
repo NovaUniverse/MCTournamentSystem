@@ -13,6 +13,8 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.timers.TickCallback;
 import net.zeeraa.novacore.commons.utils.Callback;
 import net.zeeraa.novacore.spigot.NovaCore;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseWorld;
 import net.zeeraa.novacore.spigot.timers.BasicTimer;
 
@@ -132,7 +134,7 @@ public class DuelInstance {
 						if (NovaCore.getInstance().getActionBar() != null) {
 							NovaCore.getInstance().getActionBar().sendMessage(player, ChatColor.AQUA + "" + ChatColor.BOLD + timeLeft);
 						}
-						player.playSound(player.getLocation(), Sound.NOTE_PLING, 1F, 1F);
+						VersionIndependantUtils.get().playSound(player, player.getLocation(), VersionIndependantSound.NOTE_PLING, 1F, 1F);
 					});
 				}
 			});
@@ -153,6 +155,7 @@ public class DuelInstance {
 					});
 
 					world.getWorld().getPlayers().forEach(player -> {
+						VersionIndependantUtils.get().playSound(player, player.getLocation(), VersionIndependantSound.NOTE_PLING, 1F, 1F);
 						player.playSound(player.getLocation(), Sound.NOTE_PLING, 1F, 2F);
 						if (NovaCore.getInstance().getActionBar() != null) {
 							NovaCore.getInstance().getActionBar().sendMessage(player, ChatColor.GOLD + "" + ChatColor.BOLD + "GO");
