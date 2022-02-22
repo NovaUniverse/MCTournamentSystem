@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
@@ -12,12 +13,12 @@ import net.zeeraa.novacore.spigot.module.modules.game.events.PlayerWinEvent;
 import net.zeeraa.novacore.spigot.module.modules.game.events.TeamWinEvent;
 import net.zeeraa.novacore.spigot.teams.Team;
 
-public class GameWinMessage  extends NovaModule implements Listener{
+public class GameWinMessage extends NovaModule implements Listener {
 	@Override
 	public String getName() {
 		return "TSWinMessageListener";
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerWin(PlayerWinEvent e) {
 		ChatColor color = ChatColor.AQUA;
@@ -28,13 +29,25 @@ public class GameWinMessage  extends NovaModule implements Listener{
 			color = team.getTeamColor();
 		}
 
-		LanguageManager.broadcast("tournamentsystem.game.gameover.winner.player", color.toString(), e.getPlayer().getName());
+		final ChatColor finalColor = color;
+
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				LanguageManager.broadcast("tournamentsystem.game.gameover.winner.player", finalColor.toString(), e.getPlayer().getName());
+			}
+		}.runTaskLater(TournamentSystem.getInstance(), 4L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onTeamWin(TeamWinEvent e) {
 		ChatColor color = e.getTeam().getTeamColor();
-		
-		LanguageManager.broadcast("tournamentsystem.game.gameover.winner.team", color.toString(), e.getTeam().getDisplayName());
+
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				LanguageManager.broadcast("tournamentsystem.game.gameover.winner.team", color.toString(), e.getTeam().getDisplayName());
+			}
+		}.runTaskLater(TournamentSystem.getInstance(), 4L);
 	}
 }

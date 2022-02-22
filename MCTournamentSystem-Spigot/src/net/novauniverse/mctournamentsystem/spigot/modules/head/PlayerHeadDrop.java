@@ -1,7 +1,6 @@
 package net.novauniverse.mctournamentsystem.spigot.modules.head;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,6 +9,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
@@ -19,7 +19,9 @@ public class PlayerHeadDrop extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		Player p = e.getEntity();
-		ItemStack playerHead = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+		ItemStack playerHead = VersionIndependantUtils.get().getPlayerSkullitem();
+		
+		playerHead.setAmount(1);
 
 		SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
 

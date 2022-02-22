@@ -115,9 +115,13 @@ public class ScoreListener implements Listener {
 			} else if (killer instanceof Player) {
 				killerPlayer = (Player) killer;
 			}
-			
-			if(TournamentSystem.getInstance().isAddXpLevelOnKill()) {
-				killerPlayer.setLevel(killerPlayer.getLevel() + 1);
+
+			if (TournamentSystem.getInstance().isAddXpLevelOnKill()) {
+				if (killerPlayer != null) {
+					if (!killerPlayer.isDead()) {
+						killerPlayer.setLevel(killerPlayer.getLevel() + 1);
+					}
+				}
 			}
 
 			if (killScoreEnabled) {
