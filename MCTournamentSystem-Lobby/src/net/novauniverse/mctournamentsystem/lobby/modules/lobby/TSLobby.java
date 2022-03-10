@@ -8,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
@@ -21,13 +20,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import me.rayzr522.jsonmessage.JSONMessage;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
@@ -158,7 +154,6 @@ public class TSLobby extends NovaModule implements Listener {
 		}, 20L);
 		gameRunningCheckTask.start();
 
-		
 		multiverseWorld.getWorld().setGameRuleValue("announceAdvancements", "false");
 		// CommandRegistry.registerCommand(new ReconnectCommand());
 	}
@@ -219,7 +214,7 @@ public class TSLobby extends NovaModule implements Listener {
 
 		// Prevent the press e to open inventory message from showing all the time
 		NovaCoreGameVersion version = VersionIndependantUtils.get().getNovaCoreGameVersion();
-		if(version == NovaCoreGameVersion.V_1_8 || version == NovaCoreGameVersion.V_1_12) {
+		if (version == NovaCoreGameVersion.V_1_8 || version == NovaCoreGameVersion.V_1_12) {
 			Pre_1_13_Utils.giveOpenInventoryAchivement(player);
 		}
 
@@ -299,7 +294,9 @@ public class TSLobby extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			if (e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.WALL_SIGN) {
+			// if (e.getClickedBlock().getType() == Material.SIGN_POST ||
+			// e.getClickedBlock().getType() == Material.WALL_SIGN) {
+			if (VersionIndependantUtils.get().isSign(e.getClickedBlock())) {
 				if (e.getPlayer().getGameMode() != GameMode.SPECTATOR) {
 					if (e.getClickedBlock().getState() instanceof Sign) {
 						Sign sign = (Sign) e.getClickedBlock().getState();
@@ -323,32 +320,6 @@ public class TSLobby extends NovaModule implements Listener {
 			e.setLine(1, ChatColor.BLUE + "Fishing rod");
 			e.setLine(2, "");
 			e.setLine(3, "");
-		}
-	}
-
-	// sorry, i just had to
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
-		if (e.getMessage().equalsIgnoreCase("fus ro dah")) {
-			Player player = e.getPlayer();
-			player.getLocation().getWorld().playSound(player.getLocation(), Sound.EXPLODE, 1, 1);
-			for (Player player2 : Bukkit.getServer().getOnlinePlayers()) {
-				if (player2.getWorld() != player.getWorld()) {
-					continue;
-				}
-
-				Vector toPlayer2 = player2.getLocation().toVector().subtract(player.getLocation().toVector());
-
-				Vector direction = player.getLocation().getDirection();
-
-				double dot = toPlayer2.normalize().dot(direction);
-
-				if (player.getLocation().distance(player2.getLocation()) < 12) {
-					if (dot > 0.90) {
-						player2.setVelocity(direction.multiply(4 - (player.getLocation().distance(player2.getLocation()) / 4)));
-					}
-				}
-			}
 		}
 	}
 }
