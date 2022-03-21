@@ -9,7 +9,8 @@
 
 #fixed_bg {
 	z-index: -9999;
-	position: fixed;
+	position: -webkit-sticky;
+	position: sticky;
 	top: 0;
 	bottom: 0;
 	right: 0;
