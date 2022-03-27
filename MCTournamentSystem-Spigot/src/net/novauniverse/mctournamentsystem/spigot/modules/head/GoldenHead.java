@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -51,22 +52,22 @@ public class GoldenHead extends NovaModule implements Listener {
 
 		stack.setItemMeta(meta);
 
-		stack = NBTEditor.set(stack, 1, "mcf", "goldenhead");
+		stack = NBTEditor.set(stack, 1, "tournamentsystem", "goldenhead");
 
 		return stack;
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPlace(BlockPlaceEvent e) {
-		if (NBTEditor.contains(e.getItemInHand(), "mcf", "goldenhead")) {
+		if (NBTEditor.contains(e.getItemInHand(), "tournamentsystem", "goldenhead")) {
 			e.setCancelled(true);
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if (e.getItem() != null) {
-			if (NBTEditor.contains(e.getItem(), "mcf", "goldenhead")) {
+			if (NBTEditor.contains(e.getItem(), "tournamentsystem", "goldenhead")) {
 				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					e.setCancelled(true);
 					Player p = e.getPlayer();
@@ -81,7 +82,7 @@ public class GoldenHead extends NovaModule implements Listener {
 								ItemStack item = p.getInventory().getItem(i);
 								if (item != null) {
 									if (item.getType() != Material.AIR) {
-										if (NBTEditor.contains(item, "mcf", "goldenhead")) {
+										if (NBTEditor.contains(item, "tournamentsystem", "goldenhead")) {
 											if (item.getAmount() > 1) {
 												item.setAmount(item.getAmount() - 1);
 												removed = true;

@@ -4,6 +4,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -21,7 +22,7 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 @NovaAutoLoad(shouldEnable = false)
 public class EdibleHeads extends NovaModule implements Listener {
 	@SuppressWarnings("deprecation")
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Player p = e.getPlayer();
@@ -33,9 +34,8 @@ public class EdibleHeads extends NovaModule implements Listener {
 				if (VersionIndependantUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_12 || VersionIndependantUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_8) {
 					if (item.getType().name().equals("SKULL_ITEM")) {
 						MaterialData data = e.getItem().getData();
-
 						if (data.getData() == 3) {
-							isPlayerSkull = false;
+							isPlayerSkull = true;
 						}
 					}
 				} else {
