@@ -151,7 +151,7 @@ public class LabymodIntegration extends NovaModule implements Listener {
 	 * if (updateDeaths) { updateBalanceDisplay(player, EnumBalanceType.BANK, true,
 	 * deaths, DEATHS_ICON); deathsCache.put(player.getUniqueId(), deaths); } }
 	 */
-	
+
 	public void updateBalanceDisplay(Player player, EnumBalanceType type, boolean visible, int balance) {
 		this.updateBalanceDisplay(player, type, visible, balance, null);
 	}

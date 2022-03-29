@@ -54,7 +54,7 @@ public class WhitelistListener implements Listener {
 				rs.close();
 				ps.close();
 			}
-			
+
 			if (!allow) {
 				sql = "SELECT id FROM staff WHERE uuid = ?";
 

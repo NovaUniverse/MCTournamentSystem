@@ -9,7 +9,8 @@ import net.zeeraa.novacore.commons.database.DBConnection;
 
 public class TournamentSystemCommons {
 	public static final char CHAT_COLOR_CHAR = (char) 0xA7;
-	public static final String DATA_CHANNEL = "tsys:tsdata";
+	public static final String DATA_CHANNEL = "mcts:controller";
+	public static final String PLAYER_TELEMENTRY_CHANNEL = "mcts:ptelementry";
 
 	private static DBConnection dbConnection;
 

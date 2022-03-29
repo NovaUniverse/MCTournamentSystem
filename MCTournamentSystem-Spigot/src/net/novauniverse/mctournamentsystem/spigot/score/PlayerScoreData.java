@@ -23,15 +23,15 @@ public class PlayerScoreData extends ScoreData {
 	@Override
 	public String toString() {
 		ChatColor color = ChatColor.AQUA;
-		
-		if(NovaCore.getInstance().hasTeamManager()) {
+
+		if (NovaCore.getInstance().hasTeamManager()) {
 			Team team = NovaCore.getInstance().getTeamManager().getPlayerTeam(uuid);
-			
-			if(team != null) {
-				color=team.getTeamColor();
+
+			if (team != null) {
+				color = team.getTeamColor();
 			}
 		}
-		
+
 		return color + PlayerNameCache.getInstance().getPlayerName(uuid) + ChatColor.GOLD + " : " + ChatColor.AQUA + this.getScore();
 	}
 }

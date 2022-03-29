@@ -15,7 +15,7 @@ public class ClearPlayersHandler extends APIEndpoint {
 	public ClearPlayersHandler() {
 		super(true);
 	}
-	
+
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
@@ -34,7 +34,7 @@ public class ClearPlayersHandler extends APIEndpoint {
 			json.put("error", e.getClass().getName());
 			json.put("message", e.getClass().getName() + " " + e.getMessage());
 		}
-		
+
 		return json;
 	}
 }

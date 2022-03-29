@@ -21,7 +21,7 @@ public class WebUILauncher {
 			fatalError("Error: Could not find tournamentconfig.json. Check that this program is loacated in the same directory as tournamentconfig.json");
 			return;
 		}
-		
+
 		JSONObject json;
 
 		try {
@@ -37,7 +37,7 @@ public class WebUILauncher {
 		int port = webSettings.getInt("port");
 
 		System.out.println("Port is " + port);
-		
+
 		URI uri;
 		try {
 			uri = new URI("http://localhost:" + port + "/app/");
@@ -45,16 +45,16 @@ public class WebUILauncher {
 			fatalError("Failed to parse url. " + e.getClass().getName() + " " + e.getMessage());
 			return;
 		}
-		
+
 		System.out.println("URL is " + uri);
-		
+
 		try {
 			Desktop.getDesktop().browse(uri);
 		} catch (Exception e) {
 			fatalError("Failed to open browser. " + e.getClass().getName() + " " + e.getMessage());
 			return;
 		}
-		
+
 		System.out.println("Web ui opened in default browser");
 	}
 

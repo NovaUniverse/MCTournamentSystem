@@ -85,7 +85,7 @@ public class TournamentSystemTeam extends Team {
 
 		case 15:
 			return ChatColor.WHITE;
-			
+
 		default:
 			return ChatColor.BLACK;
 		}

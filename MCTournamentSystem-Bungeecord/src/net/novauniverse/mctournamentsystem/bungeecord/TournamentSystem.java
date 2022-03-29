@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -19,6 +20,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUserStore
 import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.TSPluginMessageListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener;
+import net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
 import net.novauniverse.mctournamentsystem.commands.sendhere.SendHereCommand;
 import net.novauniverse.mctournamentsystem.commons.LCS;
@@ -38,6 +40,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private List<String> staffRoles;
 	private List<String> quickMessages;
 
+	private PlayerTelementryManager playerTelementryManager;
+
 	public static TournamentSystem getInstance() {
 		return instance;
 	}
@@ -52,6 +56,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	public List<String> getQuickMessages() {
 		return quickMessages;
+	}
+
+	public PlayerTelementryManager getPlayerTelementryManager() {
+		return playerTelementryManager;
 	}
 
 	@Override
@@ -108,8 +116,11 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			return;
 		}
 
+		playerTelementryManager = new PlayerTelementryManager();
+
 		ProxyServer.getInstance().getPluginManager().registerListener(this, this);
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new TSPluginMessageListener());
+		ProxyServer.getInstance().getPluginManager().registerListener(this, playerTelementryManager);
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new JoinEvents());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new WhitelistListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new Log4JRCEFix());
@@ -132,12 +143,17 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		Log.info("Setting up web server");
 
 		JSONObject webConfig = config.getJSONObject("web_ui");
+		JSONObject commentatorKeys = config.getJSONObject("commentator_keys");
 		JSONArray apiKeys = webConfig.getJSONArray("api_keys");
 		JSONArray webUsers = webConfig.getJSONArray("users");
 
 		if (webUsers.length() == 0) {
 			Log.warn("TournamentSystem", "No users defined for web server in " + configFile.getAbsolutePath() + ". The web ui might not work");
 		}
+
+		commentatorKeys.keySet().forEach(key -> {
+			APIKeyStore.addCommentatorKey(key, UUID.fromString(commentatorKeys.getString(key)));
+		});
 
 		for (int i = 0; i < apiKeys.length(); i++) {
 			APIKeyStore.addApiKey(apiKeys.getString(i));
@@ -175,6 +191,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		Log.info("Registering channel " + TournamentSystemCommons.DATA_CHANNEL);
 		this.getProxy().registerChannel(TournamentSystemCommons.DATA_CHANNEL);
+		Log.info("Registering channel " + TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
+		this.getProxy().registerChannel(TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
 
 		if (!LCS.connectivityCheck()) {
 			Log.fatal("Could not connect to the license servers. Please join our discord server https://discord.gg/4gZSVJ7 and open a ticket about this and we will try to resolve it asap");
@@ -182,12 +200,12 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			return;
 		}
 
-		if(!LCS.connectivityCheck()) {
+		if (!LCS.connectivityCheck()) {
 			Log.fatal("Cant connect to the license servers");
 			ProxyServer.getInstance().stop("Cant connect to the license servers");
 			return;
 		}
-		
+
 		try {
 			File licenseFile = new File(globalConfigPath + File.separator + "license_key.txt");
 			boolean success = LCS.check(licenseFile);

@@ -13,11 +13,11 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 
 @SuppressWarnings("restriction")
-public class SendPlayerHandler extends APIEndpoint{
+public class SendPlayerHandler extends APIEndpoint {
 	public SendPlayerHandler() {
 		super(true);
 	}
-	
+
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
@@ -52,7 +52,7 @@ public class SendPlayerHandler extends APIEndpoint{
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: player");
 		}
-		
+
 		return json;
 	}
 }

@@ -64,11 +64,13 @@ public class MissileWarsHandler extends NovaModule implements Listener {
 	@Override
 	public void onEnable() throws Exception {
 		updateTask.start();
-		
+
 		GameStartScoreboardCountdown.getInstance().setCountdownLine(2);
 
-		//NetherBoardScoreboard.getInstance().setGlobalLine(12, ChatColor.GRAY + "Missile Wars made by");
-		//NetherBoardScoreboard.getInstance().setGlobalLine(13, ChatColor.GRAY + "SethBling & Cubehamster");
+		// NetherBoardScoreboard.getInstance().setGlobalLine(12, ChatColor.GRAY +
+		// "Missile Wars made by");
+		// NetherBoardScoreboard.getInstance().setGlobalLine(13, ChatColor.GRAY +
+		// "SethBling & Cubehamster");
 	}
 
 	@Override

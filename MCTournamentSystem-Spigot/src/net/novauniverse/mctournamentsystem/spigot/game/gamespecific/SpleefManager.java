@@ -79,7 +79,7 @@ public class SpleefManager extends NovaModule implements Listener {
 			taskId = -1;
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		e.getPlayer().setFireTicks(0);

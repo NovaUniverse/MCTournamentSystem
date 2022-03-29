@@ -9,6 +9,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.CommentatorTPHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayersHandler;
@@ -42,7 +43,7 @@ public class WebServer {
 
 		// Redirect
 		createContext("/", new RedirectToApp());
-		
+
 		// System
 		createContext("/api/system/status", new StatusHandler());
 		createContext("/api/system/set_tournament_name", new SetTournamentNameHandler());
@@ -66,7 +67,7 @@ public class WebServer {
 		// User
 		createContext("/api/user/whoami", new WhoAmIHandler());
 		createContext("/api/user/login", new LoginHandler());
-		
+
 		// Staff
 		createContext("/api/staff/get_staff", new GetStaffHandler());
 		createContext("/api/staff/set_staff", new SetStaffHandler());
@@ -75,7 +76,10 @@ public class WebServer {
 		createContext("/api/whitelist/add", new AddWhitelistHandler());
 		createContext("/api/whitelist/remove", new RemoveWhitelistHandler());
 		createContext("/api/whitelist/clear", new ClearWhitelistHandler());
-		
+
+		// Commentator
+		createContext("/api/commentator/tp", new CommentatorTPHandler());
+
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");
 		createContext("/app", sfh);

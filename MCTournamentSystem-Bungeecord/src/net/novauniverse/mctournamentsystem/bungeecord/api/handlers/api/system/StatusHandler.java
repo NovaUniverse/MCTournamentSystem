@@ -14,6 +14,7 @@ import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.PlayerData;
@@ -26,6 +27,11 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 public class StatusHandler extends APIEndpoint {
 	public StatusHandler() {
 		super(true);
+	}
+
+	@Override
+	public boolean allowCommentatorAccess() {
+		return true;
 	}
 
 	@Override
@@ -89,11 +95,15 @@ public class StatusHandler extends APIEndpoint {
 			e.printStackTrace();
 		}
 
+		JSONArray playerServerData = new JSONArray();
+		TournamentSystem.getInstance().getPlayerTelementryManager().getData().values().forEach(d -> playerServerData.put(d.toJSON()));
+		json.put("player_server_data", playerServerData);
+
 		JSONArray players = new JSONArray();
 
 		playerDataList.forEach(pd -> {
 			JSONObject p = new JSONObject();
-			
+
 			// im not going to use a short name for this one
 			ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(pd.getUuid());
 
@@ -175,18 +185,18 @@ public class StatusHandler extends APIEndpoint {
 		}
 
 		json.put("whitelist", whitelist);
-		
+
 		/* ===== License ===== */
 		JSONObject license = new JSONObject();
-		
+
 		license.put("is_valid", LCS.isValid());
 		license.put("is_demo", LCS.isDemo());
 		license.put("is_expired", LCS.isExpired());
 		license.put("expires_at", LCS.getExpiresAt());
 		license.put("owner", LCS.getLicensedTo());
-		
+
 		json.put("license", license);
-		
+
 		/* ===== System ===== */
 		JSONObject system = new JSONObject();
 

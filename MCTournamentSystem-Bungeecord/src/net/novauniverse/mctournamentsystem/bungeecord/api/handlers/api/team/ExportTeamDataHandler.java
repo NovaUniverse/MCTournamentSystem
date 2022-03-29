@@ -18,7 +18,7 @@ public class ExportTeamDataHandler extends APIEndpoint {
 	public ExportTeamDataHandler() {
 		super(true);
 	}
-	
+
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
@@ -47,7 +47,7 @@ public class ExportTeamDataHandler extends APIEndpoint {
 		}
 
 		json.put("teams_data", teamEntries);
-		
+
 		return json;
 	}
 }

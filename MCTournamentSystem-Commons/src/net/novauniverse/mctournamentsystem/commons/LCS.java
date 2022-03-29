@@ -63,7 +63,7 @@ public class LCS {
 		}
 
 		demo = data.getBoolean("is_demo");
-		
+
 		LCS.licensedTo = data.getString("owner");
 
 		if (demo) {

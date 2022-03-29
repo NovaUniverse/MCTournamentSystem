@@ -14,11 +14,11 @@ import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class NovaScoreboard extends NovaModule {
 	private static NovaScoreboard instance;
-	
+
 	public static NovaScoreboard getInstance() {
 		return instance;
 	}
-	
+
 	private Task task;
 
 	@Override
@@ -32,7 +32,7 @@ public class NovaScoreboard extends NovaModule {
 		task = new SimpleTask(new Runnable() {
 			@Override
 			public void run() {
-				
+
 				double tps = -1;
 				try {
 					tps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps()[0];

@@ -32,7 +32,7 @@ public class AddWhitelistHandler extends APIEndpoint {
 
 				ps.executeUpdate();
 				ps.close();
-				
+
 				json.put("success", true);
 			} catch (IllegalArgumentException e) {
 				json.put("success", false);

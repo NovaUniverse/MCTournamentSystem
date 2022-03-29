@@ -10,7 +10,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
-
 @NovaAutoLoad(shouldEnable = true)
 public class NoEnderPearlDamage extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

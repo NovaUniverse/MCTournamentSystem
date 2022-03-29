@@ -62,7 +62,6 @@ public class BingoManager extends NovaModule implements Listener {
 							color = ChatColor.RED;
 						}
 
-						
 						String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
 						NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + color + timeString);

@@ -105,7 +105,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		} catch (Exception ee) {
 			ee.printStackTrace();
 		}
-		
+
 		missingTeams.forEach(i -> {
 			try {
 				String sql = "INSERT INTO teams (team_number) VALUES (?)";

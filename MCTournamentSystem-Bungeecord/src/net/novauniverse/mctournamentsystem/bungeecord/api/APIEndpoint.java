@@ -23,6 +23,10 @@ public abstract class APIEndpoint implements HttpHandler {
 		this.requireAuthentication = requireAuthentication;
 	}
 
+	public boolean allowCommentatorAccess() {
+		return false;
+	}
+
 	@Override
 	public final void handle(HttpExchange exchange) throws IOException {
 		Map<String, String> params = WebServer.queryToMap(exchange.getRequestURI().getQuery());
@@ -34,13 +38,22 @@ public abstract class APIEndpoint implements HttpHandler {
 		}
 
 		JSONObject result;
-		
+
 		boolean apiKeyOk = false;
-		
+
 		if (params.containsKey("api_key")) {
 			String apiKey = params.get("api_key");
-			if(APIKeyStore.getApiKeys().contains(apiKey)) {
+			if (APIKeyStore.getApiKeys().contains(apiKey)) {
 				apiKeyOk = true;
+			}
+		}
+
+		if (allowCommentatorAccess()) {
+			if (params.containsKey("commentator_key")) {
+				String commentatorKey = params.get("commentator_key");
+				if (APIKeyStore.getCommentatorKeys().containsKey(commentatorKey)) {
+					apiKeyOk = true;
+				}
 			}
 		}
 

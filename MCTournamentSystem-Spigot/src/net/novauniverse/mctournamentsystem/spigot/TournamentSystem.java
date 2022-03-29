@@ -26,6 +26,8 @@ import net.luckperms.api.model.group.Group;
 import net.novauniverse.mctournamentsystem.commons.LCS;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
+import net.novauniverse.mctournamentsystem.spigot.command.csp.CSPCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.ctp.CTPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
@@ -108,7 +110,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		TournamentSystem.instance = this;
 		this.staffGroups = new HashMap<>();
 		this.labymodBanner = null;
-		
+
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
@@ -261,6 +263,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 
 		/* ----- Plugin Channels ----- */
+		this.getServer().getMessenger().registerOutgoingPluginChannel(this, TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
+
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, TournamentSystemCommons.DATA_CHANNEL);
 		this.getServer().getMessenger().registerIncomingPluginChannel(this, TournamentSystemCommons.DATA_CHANNEL, new TSPluginMessageListnener());
 
@@ -272,6 +276,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new ReconnectCommand());
 		CommandRegistry.registerCommand(new YBorderCommand());
 		CommandRegistry.registerCommand(new WhatIsDogeWorthCommand());
+		CommandRegistry.registerCommand(new CSPCommand());
+		CommandRegistry.registerCommand(new CTPCommand());
 
 		/* ----- Misc ----- */
 		new BukkitRunnable() {
@@ -318,7 +324,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				GameSetup.init(this);
 			}
 		}
-		
+
 		// Register debug commands
 		new DebugCommands();
 	}

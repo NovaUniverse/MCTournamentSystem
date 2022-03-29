@@ -37,7 +37,7 @@ public class GoldenHead extends NovaModule implements Listener {
 
 		recipe.shape("AAA", "ABA", "AAA");
 		recipe.setIngredient('A', Material.GOLD_INGOT);
-		
+
 		VersionIndependantUtils.get().setShapedRecipeIngredientAsPlayerSkull(recipe, 'B');
 
 		Bukkit.getServer().addRecipe(recipe);

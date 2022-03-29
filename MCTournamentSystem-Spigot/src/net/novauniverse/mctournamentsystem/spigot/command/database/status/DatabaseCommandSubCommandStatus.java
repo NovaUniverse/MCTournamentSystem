@@ -16,7 +16,7 @@ public class DatabaseCommandSubCommandStatus extends NovaSubCommand {
 		setAllowedSenders(AllowedSenders.ALL);
 		setPermission("tournamentcore.command.database.status");
 		setPermissionDefaultValue(PermissionDefault.OP);
-		
+
 		this.setFilterAutocomplete(true);
 	}
 

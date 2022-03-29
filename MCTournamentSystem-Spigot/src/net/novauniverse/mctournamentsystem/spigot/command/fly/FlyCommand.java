@@ -17,9 +17,9 @@ public class FlyCommand extends NovaCommand {
 		setPermission("tournamentcore.command.fly");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setAllowedSenders(AllowedSenders.ALL);
-		
+
 		addHelpSubCommand();
-		
+
 		this.setFilterAutocomplete(true);
 	}
 

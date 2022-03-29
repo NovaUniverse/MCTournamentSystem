@@ -38,10 +38,10 @@ public class GameSetup {
 		Log.info("GameSetup", "Game variables set");
 
 		Log.info("GameSetup", "Loading lobby maps...");
-		
+
 		File dataFileDirectory = new File(TournamentSystem.getInstance().getMapDataFolder() + File.separator + "GameLobbyData");
 		File worldFileDirectory = new File(TournamentSystem.getInstance().getMapDataFolder() + File.separator + "Worlds");
-		
+
 		GameLobby.getInstance().getMapReader().loadAll(dataFileDirectory, worldFileDirectory);
 
 		Log.success("GameSetup", "Game support enabled");

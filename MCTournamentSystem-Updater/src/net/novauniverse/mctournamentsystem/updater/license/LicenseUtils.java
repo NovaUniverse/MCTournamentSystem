@@ -14,18 +14,17 @@ public class LicenseUtils {
 		boolean active = false;
 		boolean demo = false;
 		String owner = null;
-		
+
 		if (json.getBoolean("success")) {
 			JSONObject data = json.getJSONObject("data");
 			active = data.getBoolean("is_active");
 			demo = data.getBoolean("is_demo");
-			owner  = data.getString("owner");
+			owner = data.getString("owner");
 		} else {
 			valid = false;
 		}
-		
+
 		return new LicenseData(valid, active, demo, owner);
 	}
 
-	
 }

@@ -19,7 +19,7 @@ public class DatabaseCommandSubCommandReconnect extends NovaSubCommand {
 		setPermission("tournamentcore.command.database.reconnect");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Access to the databse reconnect command");
-		
+
 		setEmptyTabMode(true);
 	}
 
@@ -36,7 +36,7 @@ public class DatabaseCommandSubCommandReconnect extends NovaSubCommand {
 			sender.sendMessage(ChatColor.DARK_RED + "Reconnect failed. Cause: " + e.getClass().getName() + " : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
 }

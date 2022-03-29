@@ -37,7 +37,7 @@ public class SetScoreboardURLHandler extends APIEndpoint {
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: url");
 		}
-		
+
 		return json;
 	}
 }

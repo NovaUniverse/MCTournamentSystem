@@ -32,7 +32,7 @@ public class TSCompassTracker implements CompassTrackerTarget {
 			}
 
 			for (UUID uuid : players) {
-				
+
 				Player p = Bukkit.getServer().getPlayer(uuid);
 
 				if (p != null) {

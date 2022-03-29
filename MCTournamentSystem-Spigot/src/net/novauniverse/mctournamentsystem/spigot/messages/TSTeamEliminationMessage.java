@@ -13,10 +13,6 @@ public class TSTeamEliminationMessage implements TeamEliminationMessage {
 			TournamentSystemTeam mcfTeam = (TournamentSystemTeam) team;
 
 			LanguageManager.broadcast("tournamentsystem.game.elimination.team.eliminated", mcfTeam.getTeamColor(), mcfTeam.getDisplayName(), TextUtils.ordinal(placement));
-			// Bukkit.getServer().broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD +
-			// "Team Eliminated> " + mcfTeam.getTeamColor() + ChatColor.BOLD + ("Team " +
-			// mcfTeam.getTeamNumber()) + ChatColor.GOLD + ChatColor.BOLD + " " +
-			// TextUtils.ordinal(placement) + " place");
 		}
 	}
 }

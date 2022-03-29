@@ -19,10 +19,10 @@ public class JoinEvents implements Listener {
 	public void onPostLogin(PostLoginEvent e) {
 		ProxiedPlayer player = e.getPlayer();
 
-		if(LCS.isDemo()) {
+		if (LCS.isDemo()) {
 			player.sendMessage(new TextComponent(ChatColor.GREEN + "This is a demo version"));
 		}
-		
+
 		if (player.hasPermission("tournamentcore.autosocialspy")) {
 			if (!BungeeMessages.getPlugin().getManager().isSocialSpy(player)) {
 				BungeeMessages.getPlugin().getManager().playerSocialSpy().add(player);

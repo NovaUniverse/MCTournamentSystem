@@ -1,6 +1,10 @@
 package net.novauniverse.mctournamentsystem.spigot.pluginmessages;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -17,7 +21,7 @@ public class TSPluginMessageListnener implements PluginMessageListener {
 		if (channel.equalsIgnoreCase(TournamentSystemCommons.DATA_CHANNEL)) {
 			ByteArrayDataInput in = ByteStreams.newDataInput(message);
 			String subchannel = in.readUTF();
-			
+
 			Log.trace("Received message on sub channel ", subchannel);
 
 			switch (subchannel.toLowerCase()) {
@@ -30,6 +34,20 @@ public class TSPluginMessageListnener implements PluginMessageListener {
 								GameManager.getInstance().getCountdown().startCountdown();
 							}
 						}
+					}
+				}
+				break;
+
+			case "commentator_tp":
+				UUID commentatorUuid = UUID.fromString(in.readUTF());
+				UUID commentatorTargetUuid = UUID.fromString(in.readUTF());
+
+				Player commentator = Bukkit.getPlayer(commentatorUuid);
+				Player commentatorTarget = Bukkit.getPlayer(commentatorTargetUuid);
+
+				if (commentator != null && commentatorTarget != null) {
+					if (commentator.isOnline() && commentatorTarget.isOnline()) {
+						commentator.teleport(commentatorTarget, TeleportCause.PLUGIN);
 					}
 				}
 				break;

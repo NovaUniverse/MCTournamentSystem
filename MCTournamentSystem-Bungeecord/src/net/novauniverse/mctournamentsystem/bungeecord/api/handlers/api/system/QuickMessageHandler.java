@@ -24,8 +24,8 @@ public class QuickMessageHandler extends APIEndpoint {
 		if (params.containsKey("message_id")) {
 			try {
 				int messageId = Integer.parseInt(params.get("message_id"));
-				
-				if(messageId >= TournamentSystem.getInstance().getQuickMessages().size() || messageId < 0) {
+
+				if (messageId >= TournamentSystem.getInstance().getQuickMessages().size() || messageId < 0) {
 					json.put("success", false);
 					json.put("error", "bad_request");
 					json.put("message", "invalid message id");

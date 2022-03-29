@@ -16,7 +16,7 @@ public class WhoAmIHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange,Map<String, String> params, APIAccessToken accessToken) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject result = new JSONObject();
 
 		result.put("success", true);

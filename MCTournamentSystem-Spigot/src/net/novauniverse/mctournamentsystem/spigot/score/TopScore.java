@@ -8,7 +8,7 @@ import net.zeeraa.novacore.spigot.NovaCore;
 public class TopScore {
 	public static ArrayList<PlayerScoreData> getPlayerTopScore(int maxEntries) {
 		ArrayList<PlayerScoreData> result = new ArrayList<PlayerScoreData>();
-		
+
 		ScoreManager.getInstance().getPlayerScoreCache().keySet().forEach(uuid -> {
 			if (NovaCore.getInstance().getTeamManager().getPlayerTeam(uuid) != null) {
 				PlayerScoreData scoreData = new PlayerScoreData(uuid, ScoreManager.getInstance().getPlayerScore(uuid));

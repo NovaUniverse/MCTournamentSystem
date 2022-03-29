@@ -62,7 +62,7 @@ public class SetStaffHandler extends APIEndpoint {
 				ps.close();
 			}
 		}
-		
+
 		result.put("success", true);
 
 		return result;

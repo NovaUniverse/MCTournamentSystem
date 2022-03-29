@@ -41,9 +41,9 @@ public class WhatIsDogeWorthCommand extends NovaCommand {
 					connection.setRequestMethod("GET");
 					connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 					connection.setRequestProperty("accept", "application/json");
-					
+
 					connection.getResponseCode();
-					
+
 					BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 					String inputLine;
 					StringBuffer response = new StringBuffer();

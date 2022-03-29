@@ -50,7 +50,10 @@ $(function () {
 		}
 	});
 
-
+	$(".btn-logout").on("click", function () {
+		localStorage.removeItem("token");
+		window.location.reload();
+	});
 
 	$(".btn-reset-data").on("click", function () {
 		$("#broadcast_reset_data").modal("show");

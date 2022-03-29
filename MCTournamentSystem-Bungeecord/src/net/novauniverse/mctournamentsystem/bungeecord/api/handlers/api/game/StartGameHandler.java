@@ -13,7 +13,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
-public class StartGameHandler extends APIEndpoint{
+public class StartGameHandler extends APIEndpoint {
 	public StartGameHandler() {
 		super(true);
 	}
@@ -37,7 +37,7 @@ public class StartGameHandler extends APIEndpoint{
 
 			json.put("success", true);
 		}
-		
+
 		return json;
 	}
 }
