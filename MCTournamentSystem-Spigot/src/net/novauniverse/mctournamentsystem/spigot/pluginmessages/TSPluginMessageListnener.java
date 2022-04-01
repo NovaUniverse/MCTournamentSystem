@@ -11,6 +11,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissions;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
@@ -47,7 +48,9 @@ public class TSPluginMessageListnener implements PluginMessageListener {
 
 				if (commentator != null && commentatorTarget != null) {
 					if (commentator.isOnline() && commentatorTarget.isOnline()) {
-						commentator.teleport(commentatorTarget, TeleportCause.PLUGIN);
+						if (commentator.hasPermission(TournamentPermissions.COMMENTATOR_PERMISSION)) {
+							commentator.teleport(commentatorTarget, TeleportCause.PLUGIN);
+						}
 					}
 				}
 				break;

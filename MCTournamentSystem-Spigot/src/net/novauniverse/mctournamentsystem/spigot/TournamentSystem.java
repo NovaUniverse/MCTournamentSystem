@@ -15,6 +15,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -39,6 +40,7 @@ import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
+import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissions;
 import net.novauniverse.mctournamentsystem.spigot.pluginmessages.TSPluginMessageListnener;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.zeeraa.novacore.commons.database.DBConnection;
@@ -51,6 +53,7 @@ import net.zeeraa.novacore.spigot.language.LanguageReader;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.permission.PermissionRegistrator;
 
 public class TournamentSystem extends JavaPlugin implements Listener {
 	private static TournamentSystem instance;
@@ -278,6 +281,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new WhatIsDogeWorthCommand());
 		CommandRegistry.registerCommand(new CSPCommand());
 		CommandRegistry.registerCommand(new CTPCommand());
+		
+		/* ----- Permissions ----- */
+		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commantator access", PermissionDefault.FALSE);
 
 		/* ----- Misc ----- */
 		new BukkitRunnable() {

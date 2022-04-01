@@ -104,9 +104,7 @@ function update() {
 				playerElement.on("click", function() {
 					let username = $(this).find(".player-name").text();
 					let uuid = $(this).data("uuid");
-
-					toastr.info("Attempting to teleport to " + username);
-
+					
 					$.getJSON("/api/commentator/tp?commentator_key=" + accessKey + "&target=" + uuid, function (data) {
 						if(data.success) {
 							toastr.success("Teleport successful");

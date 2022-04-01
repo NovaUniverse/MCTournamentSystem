@@ -24,8 +24,6 @@ public class CTPCommand extends NovaCommand {
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setAllowedSenders(AllowedSenders.PLAYERS);
 
-		addHelpSubCommand();
-
 		setFilterAutocomplete(true);
 	}
 
