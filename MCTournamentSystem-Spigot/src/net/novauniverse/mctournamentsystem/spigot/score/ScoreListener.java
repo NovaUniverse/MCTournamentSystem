@@ -59,6 +59,7 @@ public class ScoreListener implements Listener {
 	public int getKillScore() {
 		return killScore;
 	}
+	
 
 	public int[] getWinScore() {
 		return winScore;

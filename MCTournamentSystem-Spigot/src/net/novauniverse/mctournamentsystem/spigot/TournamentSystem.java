@@ -27,6 +27,7 @@ import net.luckperms.api.model.group.Group;
 import net.novauniverse.mctournamentsystem.commons.LCS;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
+import net.novauniverse.mctournamentsystem.spigot.command.cinvsee.CInvseeCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.csp.CSPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.ctp.CTPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
@@ -281,7 +282,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new WhatIsDogeWorthCommand());
 		CommandRegistry.registerCommand(new CSPCommand());
 		CommandRegistry.registerCommand(new CTPCommand());
-		
+		CommandRegistry.registerCommand(new CInvseeCommand());
+
 		/* ----- Permissions ----- */
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commantator access", PermissionDefault.FALSE);
 

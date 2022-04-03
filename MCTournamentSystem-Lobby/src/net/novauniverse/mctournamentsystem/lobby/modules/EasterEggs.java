@@ -10,6 +10,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.util.Vector;
 
+import net.novauniverse.mctournamentsystem.spigot.textures.Textures;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantMetarial;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
 import net.zeeraa.novacore.spigot.module.NovaModule;
@@ -37,6 +38,19 @@ public class EasterEggs extends NovaModule implements Listener {
 
 			e.getPlayer().getInventory().addItem(builder.build());
 		}
+
+		// Give CloakedLive an oreo
+		if (e.getPlayer().getUniqueId().toString().equalsIgnoreCase("a54cddf2-d6b0-43d3-a47b-a2525f629d00")) {
+			ItemBuilder builder = ItemBuilder.getPlayerSkullWithBase64TextureAsBuilder(Textures.OREO);
+
+			builder.setName("Oreo");
+
+			builder.setAmount(1);
+
+			builder.addLore(ChatColor.WHITE + "Please dont eat it with a fork");
+
+			e.getPlayer().getInventory().setItem(8, builder.build());
+		}
 	}
 
 	// sorry, i just had to
@@ -44,8 +58,6 @@ public class EasterEggs extends NovaModule implements Listener {
 	public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
 		if (e.getMessage().equalsIgnoreCase("fus ro dah")) {
 			Player player = e.getPlayer();
-			// player.getLocation().getWorld().playSound(player.getLocation(),
-			// Sound.EXPLODE, 1, 1);
 			VersionIndependantSound.EXPLODE.play(player, player.getLocation(), 1F, 1F);
 			Bukkit.getServer().getOnlinePlayers().forEach(player2 -> {
 				if (player2.getWorld() != player.getWorld()) {

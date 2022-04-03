@@ -47,8 +47,8 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 
 @NovaAutoLoad(shouldEnable = true)
-public class TSLobby extends NovaModule implements Listener {
-	private static TSLobby instance;
+public class Lobby extends NovaModule implements Listener {
+	private static Lobby instance;
 
 	private Location lobbyLocation;
 	private Location kotlLocation;
@@ -65,7 +65,7 @@ public class TSLobby extends NovaModule implements Listener {
 	private SimpleTask loadScoreTask;
 	private SimpleTask lobbyTask;
 
-	public static TSLobby getInstance() {
+	public static Lobby getInstance() {
 		return instance;
 	}
 
@@ -76,7 +76,7 @@ public class TSLobby extends NovaModule implements Listener {
 
 	@Override
 	public void onLoad() {
-		TSLobby.instance = this;
+		Lobby.instance = this;
 		this.addDependency(NetherBoardScoreboard.class);
 		this.addDependency(MultiverseManager.class);
 		this.lobbyLocation = null;

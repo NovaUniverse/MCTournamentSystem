@@ -52,7 +52,7 @@ public class EdibleHeads extends NovaModule implements Listener {
 						if (item.getAmount() > 1) {
 							item.setAmount(item.getAmount() - 1);
 						} else {
-							VersionIndependantUtils.get().setItemInOffHand(p, ItemBuilder.AIR);
+							VersionIndependantUtils.get().setItemInMainHand(p, ItemBuilder.AIR);
 						}
 
 						p.getLocation().getWorld().playSound(p.getLocation(), Sound.EAT, 1F, 1F);

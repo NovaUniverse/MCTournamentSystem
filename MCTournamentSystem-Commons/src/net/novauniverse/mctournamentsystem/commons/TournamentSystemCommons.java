@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import net.md_5.bungee.api.ChatColor;
 import net.zeeraa.novacore.commons.database.DBConnection;
+import net.zeeraa.novacore.commons.log.Log;
 
 public class TournamentSystemCommons {
 	public static final char CHAT_COLOR_CHAR = (char) 0xA7;
@@ -29,6 +30,7 @@ public class TournamentSystemCommons {
 				return ChatColor.translateAlternateColorCodes(TournamentSystemCommons.CHAT_COLOR_CHAR, name);
 			}
 		} catch (Exception e) {
+			Log.error("TournamentSystemCommons", "Failed to get tournament name. " + e.getClass().getName() + " " + e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
@@ -39,6 +41,7 @@ public class TournamentSystemCommons {
 			TournamentSystemCommons.setConfigValue("tournament_name", tournamentName);
 			return true;
 		} catch (SQLException e) {
+			Log.error("TournamentSystemCommons", "Failed to set tournament name. " + e.getClass().getName() + " " + e.getMessage());
 			e.printStackTrace();
 		}
 		return false;
@@ -48,6 +51,7 @@ public class TournamentSystemCommons {
 		try {
 			return TournamentSystemCommons.getConfigValue("scoreboard_url");
 		} catch (SQLException e) {
+			Log.error("TournamentSystemCommons", "Failed to get scoreboard url. " + e.getClass().getName() + " " + e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
@@ -58,6 +62,7 @@ public class TournamentSystemCommons {
 			TournamentSystemCommons.setConfigValue("scoreboard_url", tournamentName);
 			return true;
 		} catch (SQLException e) {
+			Log.error("TournamentSystemCommons", "Failed to set scoreboard url. " + e.getClass().getName() + " " + e.getMessage());
 			e.printStackTrace();
 		}
 		return false;
@@ -79,6 +84,7 @@ public class TournamentSystemCommons {
 			rs.close();
 			ps.close();
 		} catch (Exception ee) {
+			Log.error("TournamentSystemCommons", "Failed to check if config value exist. " + ee.getClass().getName() + " " + ee.getMessage());
 			ee.printStackTrace();
 		}
 
@@ -101,6 +107,7 @@ public class TournamentSystemCommons {
 			rs.close();
 			ps.close();
 		} catch (Exception ee) {
+			Log.error("TournamentSystemCommons", "Failed to fetch config value. " + ee.getClass().getName() + " " + ee.getMessage());
 			ee.printStackTrace();
 		}
 
@@ -131,6 +138,7 @@ public class TournamentSystemCommons {
 		try {
 			name = TournamentSystemCommons.getConfigValue("active_server");
 		} catch (SQLException e) {
+			Log.error("TournamentSystemCommons", "Failed to fetch active server. " + e.getClass().getName() + " " + e.getMessage());
 			e.printStackTrace();
 		}
 		return name;
@@ -141,6 +149,7 @@ public class TournamentSystemCommons {
 			TournamentSystemCommons.setConfigValue("active_server", serverName);
 			return true;
 		} catch (Exception e) {
+			Log.error("TournamentSystemCommons", "Failed to set reconnect server. " + e.getClass().getName() + " " + e.getMessage());
 			e.printStackTrace();
 		}
 		return false;

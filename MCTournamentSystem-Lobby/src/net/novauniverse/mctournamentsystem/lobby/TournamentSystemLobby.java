@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import net.novauniverse.mctournamentsystem.lobby.command.duel.AcceptDuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.duel.DuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.missilewars.MissileWars;
-import net.novauniverse.mctournamentsystem.lobby.modules.lobby.TSLobby;
+import net.novauniverse.mctournamentsystem.lobby.modules.lobby.Lobby;
 import net.novauniverse.mctournamentsystem.lobby.modules.scoreboard.TSLeaderboard;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
@@ -49,18 +49,18 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 			preventDamageMobs = true;
 		}
 
-		lobbyLocation = new Location(TSLobby.getInstance().getWorld(), getConfig().getDouble("spawn_x"), getConfig().getDouble("spawn_y"), getConfig().getDouble("spawn_z"), (float) getConfig().getDouble("spawn_yaw"), (float) getConfig().getDouble("spawn_pitch"));
-		TSLobby.getInstance().setLobbyLocation(lobbyLocation);
+		lobbyLocation = new Location(Lobby.getInstance().getWorld(), getConfig().getDouble("spawn_x"), getConfig().getDouble("spawn_y"), getConfig().getDouble("spawn_z"), (float) getConfig().getDouble("spawn_yaw"), (float) getConfig().getDouble("spawn_pitch"));
+		Lobby.getInstance().setLobbyLocation(lobbyLocation);
 
-		TSLobby.getInstance().setKOTLLocation(getConfig().getDouble("kotl_x"), getConfig().getDouble("kotl_z"), getConfig().getDouble("kotl_radius"));
+		Lobby.getInstance().setKOTLLocation(getConfig().getDouble("kotl_x"), getConfig().getDouble("kotl_z"), getConfig().getDouble("kotl_radius"));
 
 		ConfigurationSection playerLeaderboard = getConfig().getConfigurationSection("lobby_player_leaderboard");
 		ConfigurationSection teamLeaderboard = getConfig().getConfigurationSection("lobby_team_leaderboard");
 
 		TSLeaderboard.getInstance().setLines(8);
 
-		TSLeaderboard.getInstance().setPlayerHologramLocation(new Location(TSLobby.getInstance().getWorld(), playerLeaderboard.getDouble("x"), playerLeaderboard.getDouble("y"), playerLeaderboard.getDouble("z")));
-		TSLeaderboard.getInstance().setTeamHologramLocation(new Location(TSLobby.getInstance().getWorld(), teamLeaderboard.getDouble("x"), teamLeaderboard.getDouble("y"), teamLeaderboard.getDouble("z")));
+		TSLeaderboard.getInstance().setPlayerHologramLocation(new Location(Lobby.getInstance().getWorld(), playerLeaderboard.getDouble("x"), playerLeaderboard.getDouble("y"), playerLeaderboard.getDouble("z")));
+		TSLeaderboard.getInstance().setTeamHologramLocation(new Location(Lobby.getInstance().getWorld(), teamLeaderboard.getDouble("x"), teamLeaderboard.getDouble("y"), teamLeaderboard.getDouble("z")));
 
 		CommandRegistry.registerCommand(new AcceptDuelCommand());
 		CommandRegistry.registerCommand(new DuelCommand());

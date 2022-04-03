@@ -1,5 +1,7 @@
-package net.novauniverse.mctournamentsystem.textures;
+package net.novauniverse.mctournamentsystem.spigot.textures;
 
 public class Textures {
 	public static final String GOLDEN_HEAD = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjkzN2UxYzQ1YmI4ZGEyOWIyYzU2NGRkOWE3ZGE3ODBkZDJmZTU0NDY4YTVkZmI0MTEzYjRmZjY1OGYwNDNlMSJ9fX0=";
+	
+	public static final String OREO = "eyJ0ZXh0dXJlcyIgOiB7IlNLSU4iIDogeyAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzQ5NDFkZDBmNDQwYmFmNThlZjZjNTBmYzIyMzY0MDlhNWY0ODIzN2UxNjU3NWY1OWIyYzRkMzIyMDhiOTQ5YmYifX19";
 }
