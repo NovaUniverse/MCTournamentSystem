@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="../css/jquery-confirm.min.css">
 	<link rel="stylesheet" href="../css/global.css">
 	<link rel="stylesheet" href="../css/commentator.css">
+	<link rel="stylesheet" href="../css/cat.css">
 
 	<script src="../js/highlight.min.js"></script>
 	<script src="../js/jquery-3.6.0.min.js"></script>
@@ -18,6 +19,7 @@
 	<script src="../js/utils.js"></script>
 	<script src="../js/jquery-confirm.min.js"></script>
 	<script src="../js/commentator.js"></script>
+	<script src="../js/cat.js"></script>
 
 	<script>
 		const THEME_DIR = "../css/themes/";
@@ -27,7 +29,6 @@
 	<script src="../js/theme/theme-manager.js"></script>
 
 	<title>Commentator UI</title>
-
 </head>
 
 <body>
@@ -78,6 +79,15 @@
 					<span class="player-enemy-distance">N/A</span>
 				</td>
 				<td>
+					<span class="player-score">N/A</span>
+				</td>
+				<td>
+					<span class="player-team-score">N/A</span>
+				</td>
+				<td>
+					<span class="player-team">N/A</span>
+				</td>
+				<td>
 					<span class="player-server">N/A</span>
 				</td>
 			</tr>
@@ -90,19 +100,30 @@
 			If a player has a red background it means that they might be close to death or combat.<br>
 		</p>
 	</div>
-	<table class="table table-striped table-border table-hover mt-2">
-		<thead>
-			<tr>
-				<th class="t-fit"></th>
-				<th>Username</th>
-				<th>Health</th>
-				<th>Food</th>
-				<th>Enemy distance</th>
-				<th>Server</th>
-			</tr>
-		</thead>
-		<tbody id="player_container"></tbody>
-	</table>
+	<div class="mt-2 ">
+		<div id="bongo_cat" class="bongo_cat">
+			<img src="../img/cat-bongo.gif" id="bongo_cat_img">
+		</div>
+		<table class="table table-striped table-border table-hover border">
+			<thead>
+				<tr>
+					<th class="t-fit"></th>
+					<th>Username</th>
+					<th>Health</th>
+					<th>Food</th>
+					<th>Enemy distance</th>
+					<th>Score</th>
+					<th>Team Score</th>
+					<th>Team</th>
+					<th>Server</th>
+				</tr>
+			</thead>
+			<tbody id="player_container"></tbody>
+		</table>
+	</div>
+	<div class="bongo_cat mx-2 mt-2">
+		<button type="button" class="btn btn-danger" id="no_more_cats">Disable cat</button>
+	</div>
 
 	<div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 		aria-labelledby="loginModalTitle" aria-hidden="true">

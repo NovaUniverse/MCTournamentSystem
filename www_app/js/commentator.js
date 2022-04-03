@@ -102,7 +102,6 @@ function update() {
 				playerElement.find(".player-head").attr("src", "https://mc-heads.net/avatar/" + player.uuid);
 
 				playerElement.on("click", function() {
-					let username = $(this).find(".player-name").text();
 					let uuid = $(this).data("uuid");
 					
 					$.getJSON("/api/commentator/tp?commentator_key=" + accessKey + "&target=" + uuid, function (data) {
@@ -121,6 +120,20 @@ function update() {
 				if (lowHealthMatters.includes(player.server)) {
 					highRisk = true;
 				}
+			}
+
+			let playerExtraData = data.players.find(p2 => p2.uuid == player.uuid);
+
+			console.log(playerExtraData);
+
+			if(playerExtraData != null) {
+				playerElement.find(".player-score").text(playerExtraData.score);
+				playerElement.find(".player-team-score").text(playerExtraData.team_score);
+				playerElement.find(".player-team").text("Team " + playerExtraData.team_number);				
+			} else {
+				playerElement.find(".player-score").text("N/A");
+				playerElement.find(".player-team-score").text("N/A");
+				playerElement.find(".player-team").text("N/A");	
 			}
 
 			playerElement.find(".player-name").text(player.username);
