@@ -64,6 +64,36 @@ function update() {
 
 		let found = [];
 
+		let topTeamId = -1;
+		let topTeamScore = 0;
+
+		let topPlayerName = null;
+		let topPlayerScore = 0;
+
+		data.players.forEach(player => {
+			if(player.team_score > topTeamScore) {
+				topTeamScore = player.team_score;
+				topTeamId = player.team_number;
+			}
+
+			if(player.score > topPlayerScore) {
+				topPlayerScore = player.score;
+				topPlayerName = player.username;
+			}
+		});
+
+		if(topTeamId == -1) {
+			$("#top_team").text("N/A");
+		} else {
+			$("#top_team").text("Team " + topTeamId + " with " + topTeamScore + " points");
+		}
+
+		if(topPlayerName == null) {
+			$("#top_player").text("N/A");
+		} else {
+			$("#top_player").text(topPlayerName + " with " + topPlayerScore + " points");
+		}
+
 		data.player_server_data.forEach(player => {
 			if (player.game_enabled && player.in_game) {
 				anyInGame = true;
@@ -124,7 +154,7 @@ function update() {
 
 			let playerExtraData = data.players.find(p2 => p2.uuid == player.uuid);
 
-			console.log(playerExtraData);
+			//console.log(playerExtraData);
 
 			if(playerExtraData != null) {
 				playerElement.find(".player-score").text(playerExtraData.score);
