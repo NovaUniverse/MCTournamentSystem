@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.commands.sendhere;
+package net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
