@@ -51,8 +51,18 @@ $(function () {
 	});
 
 	$(".btn-logout").on("click", function () {
-		localStorage.removeItem("token");
-		window.location.reload();
+		$.confirm({
+			title: 'Confirm logout',
+			theme: 'dark',
+			content: 'Do you really want to logout',
+			buttons: {
+				confirm: function () {
+					localStorage.removeItem("token");
+					window.location.reload();
+				},
+				cancel: function () { }
+			}
+		});
 	});
 
 	$(".btn-reset-data").on("click", function () {
