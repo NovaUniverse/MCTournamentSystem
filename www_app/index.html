@@ -54,7 +54,7 @@
 						<li class="nav-item">
 							<a href="/app/commentator/" target="_blank" class="nav-link">Commentator</a>
 						</li>
-						
+
 						<li class="nav-item">
 							<a href="#" class="nav-link btn_broadcast">Broadcast message</a>
 						</li>
@@ -218,7 +218,8 @@
 						</table>
 
 						<div id="game_controlls">
-							<button type="button" class="btn btn-danger bongo_cat" id="no_more_cats">Disable cat</button>
+							<button type="button" class="btn btn-danger bongo_cat" id="no_more_cats">Disable
+								cat</button>
 							<a href="#" class="btn_broadcast btn btn-info">Broadcast message</a>
 							<button type="button" id="btn_send_all_players_to" class="btn btn-primary">Send all
 								to</button>
@@ -229,26 +230,31 @@
 					</div>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row mt-2">
 				<div class="col">
-					<div class="mt-2 mx-2">
-						<h5>License</h5>
-						<p>
-							Status: <span class="license-status"></span><br>
-							Licensed to: <span class="licensed-to">None</span><br>
-							Expires at: <span class="licensed-expires">?</span><br>
-						</p>
-
-						<h5>System stats</h5>
-						<p>
-							Player count: <span id="stats_player_count"></span><br>
-							Average player ping: <span id="stats_avg_ping"></span><br>
-							Server software: <span id="stats_software"></span><br>
-							Host cores: <span id="stats_cores"></span><br>
-							Host OS: <span id="stats_os"></span><br>
-							Tournament name: <span id="stats_torurnament_name"></span><br>
-							Scoreboard link: <span id="stats_scoreboard_link"></span><br>
-						</p>
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-12 com-sm-12 col-md-6">
+								<h5>System stats</h5>
+								<p>
+									Player count: <span id="stats_player_count"></span><br>
+									Average player ping: <span id="stats_avg_ping"></span><br>
+									Server software: <span id="stats_software"></span><br>
+									Host cores: <span id="stats_cores"></span><br>
+									Host OS: <span id="stats_os"></span><br>
+									Tournament name: <span id="stats_torurnament_name"></span><br>
+									Scoreboard link: <span id="stats_scoreboard_link"></span><br>
+								</p>
+							</div>
+							<div class="col-12 com-sm-12 col-md-6">
+								<h5>License</h5>
+								<p>
+									Status: <span class="license-status"></span><br>
+									Licensed to: <span class="licensed-to">None</span><br>
+									Expires at: <span class="licensed-expires">?</span><br>
+								</p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -543,22 +549,22 @@
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="modal fade" id="selectThemeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-		aria-labelledby="selectThemeModalTitle" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="selectThemeModalTitle">Select theme</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<select class="form-select" id="theme-selector">
-					</select>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+		<div class="modal fade" id="selectThemeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+			aria-labelledby="selectThemeModalTitle" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="selectThemeModalTitle">Select theme</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<select class="form-select" id="theme-selector">
+						</select>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+					</div>
 				</div>
 			</div>
 		</div>
