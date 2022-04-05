@@ -32,8 +32,10 @@ function setCatMode(enabled) {
 	if (enabled) {
 		localStorage.setItem("bongo_cat", true);
 		$(".bongo_cat").show();
+		toastr.success("Cat mode enabled");
 	} else {
 		$(".bongo_cat").hide();
 		localStorage.removeItem("bongo_cat");
+		toastr.info("Cat mode disabled :(");
 	}
 }
