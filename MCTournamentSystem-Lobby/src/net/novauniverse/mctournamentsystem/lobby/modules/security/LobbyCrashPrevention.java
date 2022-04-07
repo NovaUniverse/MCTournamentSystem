@@ -15,7 +15,7 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 public class LobbyCrashPrevention extends NovaModule implements Listener {
 	@Override
 	public String getName() {
-		return "ts.LobbyCrashPrevention";
+		return "ts.lobby.CrashPrevention";
 	}
 
 	// Prevent crash exploit with using too many tnt minecarts

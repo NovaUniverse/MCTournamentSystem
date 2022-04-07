@@ -6,4 +6,4 @@ api-version: 1.13
 
 depend: [NovaCore, HolographicDisplays, ProtocolLib, TitleAPI, LuckPerms]
 softdepend: [NovaCoreGameEngine, LabyApi]
-loadbefore: [NovaGamesTarget]
+loadbefore: [NovaGamesTarget, NovaSurvivalGames]

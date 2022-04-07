@@ -51,7 +51,7 @@ public class DuelsManager extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "ts.duels";
+		return "ts.lobby.DuelManager";
 	}
 
 	@Override

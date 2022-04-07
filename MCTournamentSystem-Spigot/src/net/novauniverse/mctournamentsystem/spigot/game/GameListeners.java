@@ -11,6 +11,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.BingoManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SpleefManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SurvivalGamesManager;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
@@ -31,6 +32,14 @@ public class GameListeners extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameLoaded(GameLoadedEvent e) {
 		NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + GameManager.getInstance().getDisplayName());
+
+		if (e.getGame().getName().equalsIgnoreCase("survivalgames")) {
+			if (ModuleManager.loadModule(SurvivalGamesManager.class, true)) {
+				Log.success(getName(), "Enabled game specific module: SurvivalGamesManager (" + SurvivalGamesManager.class.getName() + ")");
+			} else {
+				Log.error(getName(), "Failed to enable game specific module: SurvivalGamesManager (" + SurvivalGamesManager.class.getName() + ")");
+			}
+		}
 
 		if (e.getGame().getName().equalsIgnoreCase("bingo")) {
 			if (ModuleManager.loadModule(BingoManager.class, true)) {

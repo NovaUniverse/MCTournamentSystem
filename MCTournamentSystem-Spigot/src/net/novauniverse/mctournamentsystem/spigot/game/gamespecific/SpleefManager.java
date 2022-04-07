@@ -22,7 +22,7 @@ public class SpleefManager extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "TCSpleefManager";
+		return "ts.SpleefManager";
 	}
 
 	@Override

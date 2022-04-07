@@ -39,6 +39,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCom
 import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
 import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
+import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissions;
@@ -63,8 +64,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private TournamentSystemTeamManager teamManager;
 	private String serverName;
 	private String lobbyServer;
+
 	private int[] winScore;
+
 	private boolean addXpLevelOnKill;
+	private boolean useExtendedSpawnLocations;
+	private boolean celebrationMode;
+	private boolean replaceEz;
+
 	private String labymodBanner;
 
 	private Map<String, Group> staffGroups;
@@ -102,6 +109,18 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public String getLabymodBanner() {
 		return labymodBanner;
+	}
+
+	public boolean isUseExtendedSpawnLocations() {
+		return useExtendedSpawnLocations;
+	}
+
+	public boolean isCelebrationMode() {
+		return celebrationMode;
+	}
+
+	public boolean isReplaceEz() {
+		return replaceEz;
 	}
 
 	@Override
@@ -201,6 +220,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		/* ----- Config ----- */
+		useExtendedSpawnLocations = config.getBoolean("extended_spawn_locations");
+		celebrationMode = config.getBoolean("celebration_mode");
+		replaceEz = config.getBoolean("replace_ez");
+
 		JSONObject labymodBanner = config.getJSONObject("labymod_banner");
 		if (labymodBanner.getBoolean("enabled")) {
 			this.labymodBanner = labymodBanner.getString("url");
@@ -288,6 +311,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commantator access", PermissionDefault.FALSE);
 
 		/* ----- Misc ----- */
+		if (replaceEz) {
+			ModuleManager.enable(EZReplacer.class);
+		}
+
 		new BukkitRunnable() {
 			@Override
 			public void run() {

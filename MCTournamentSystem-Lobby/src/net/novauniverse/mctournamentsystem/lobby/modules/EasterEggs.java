@@ -21,7 +21,7 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 public class EasterEggs extends NovaModule implements Listener {
 	@Override
 	public String getName() {
-		return "ts.EasterEggs";
+		return "ts.lobby.EasterEggs";
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

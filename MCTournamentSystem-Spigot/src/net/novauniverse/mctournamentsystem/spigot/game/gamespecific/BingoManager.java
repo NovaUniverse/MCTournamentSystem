@@ -33,7 +33,7 @@ public class BingoManager extends NovaModule implements Listener {
 
 	@Override
 	public String getName() {
-		return "TCBingoManager";
+		return "ts.BingoManager";
 	}
 
 	@Override

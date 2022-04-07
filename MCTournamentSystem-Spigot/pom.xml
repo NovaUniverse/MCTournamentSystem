@@ -160,6 +160,13 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.novauniverse</groupId>
+			<artifactId>NovaSurvivalGames</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>com.comphenix.protocol</groupId>
