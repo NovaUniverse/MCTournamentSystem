@@ -39,6 +39,9 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private boolean webserverDevelopmentMode;
 	private List<String> staffRoles;
 	private List<String> quickMessages;
+	private int teamSize;
+
+	private String phpmyadminURL;
 
 	private PlayerTelementryManager playerTelementryManager;
 
@@ -60,6 +63,14 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	public PlayerTelementryManager getPlayerTelementryManager() {
 		return playerTelementryManager;
+	}
+
+	public String getPHPMyAdminURL() {
+		return phpmyadminURL;
+	}
+
+	public int getTeamSize() {
+		return teamSize;
 	}
 
 	@Override
@@ -92,6 +103,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			ProxyServer.getInstance().stop("Failed to enable tournament system: Failed to read config file");
 			return;
 		}
+
+		// Read configuration values
+		this.phpmyadminURL = config.getString("phpmyadmin_url");
+		this.teamSize = config.getInt("team_size");
 
 		JSONArray staffRolesJSON = config.getJSONArray("staff_roles");
 		for (int i = 0; i < staffRolesJSON.length(); i++) {

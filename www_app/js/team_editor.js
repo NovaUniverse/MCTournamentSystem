@@ -5,6 +5,15 @@ var addPlayerUsername = null;
 
 var sortDirection = true;
 
+function expandTeamSize(size) {
+	if(size > 12) {
+		size = size - 12;
+		for(let i = 1; i <= size; i++) {
+			$(".player-team-select").append(new Option("Team " + (i + 12), i + 12));
+		}
+	}
+}
+
 $(function () {
 	$("#back_to_admin_li").hide();
 	$("#btn_upload_team_data").hide();
@@ -117,6 +126,10 @@ $(function () {
 		console.log("It seems like the team editor is running on the same web server as TournamentSystem");
 		$("#back_to_admin_li").show();
 		$("#btn_upload_team_data").show();
+
+		if(data.system.team_size > 12) {
+			expandTeamSize(data.system.team_size);
+		}
 
 		$.getJSON("/api/team/export_team_data?access_token=" + localStorage.getItem("token"), function (data) {
 			data.teams_data.forEach(element => {
