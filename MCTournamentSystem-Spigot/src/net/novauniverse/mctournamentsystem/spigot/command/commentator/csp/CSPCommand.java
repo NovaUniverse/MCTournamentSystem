@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.command.csp;
+package net.novauniverse.mctournamentsystem.spigot.command.commentator.csp;
 
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;

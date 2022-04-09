@@ -123,21 +123,25 @@ $(function () {
 	setCookie("exported_team_data", "", 0);
 
 	$.getJSON("/api/system/status?access_token=" + localStorage.getItem("token"), function (data) {
-		console.log("It seems like the team editor is running on the same web server as TournamentSystem");
-		$("#back_to_admin_li").show();
-		$("#btn_upload_team_data").show();
-
-		if(data.system.team_size > 12) {
-			expandTeamSize(data.system.team_size);
-		}
-
-		$.getJSON("/api/team/export_team_data?access_token=" + localStorage.getItem("token"), function (data) {
-			data.teams_data.forEach(element => {
-				addPlayer(element.uuid, element.username, element.team_number);
+		if(data.success !== false) {
+			console.log("It seems like the team editor is running on the same web server as TournamentSystem");
+			$("#back_to_admin_li").show();
+			$("#btn_upload_team_data").show();
+	
+			if(data.system.team_size > 12) {
+				expandTeamSize(data.system.team_size);
+			}
+	
+			$.getJSON("/api/team/export_team_data?access_token=" + localStorage.getItem("token"), function (data) {
+				data.teams_data.forEach(element => {
+					addPlayer(element.uuid, element.username, element.team_number);
+				});
+	
+				toastr.info("Team data loaded from TournamentSystem");
 			});
-
-			toastr.info("Team data loaded from TournamentSystem");
-		});
+		} else {
+			toastr.error("Could not fetch data from tournament system. Please check that you are logged in");
+		}
 	});
 
 	$("#link_back_to_admin").on("click", function () {
@@ -256,13 +260,13 @@ function searchPlayer() {
 	let username = $("#add_player_username").val();
 
 	if (username.length > 0) {
-		$.getJSON("https://api.minetools.eu/uuid/" + username, function (data) {
+		$.getJSON("https://novauniverse.net/api/private/mojang/name_to_uuid/" + username, function (data) {
 			//console.log(data);
-			if (data.status == "OK") {
-				let uuid = fixUUID(data.id);
+			if (data.data != null) {
+				let uuid = data.data.full_uuid
 				//console.log("The uuid of " + username + " is " + uuid);
-				$.getJSON("https://api.minetools.eu/profile/" + uuid, function (profileData) {
-					let realUsername = profileData.decoded.profileName;
+				$.getJSON("https://novauniverse.net/api/private/mojang/profile/" + uuid, function (profileData) {
+					let realUsername = profileData.data.name;
 
 					//console.log("The real username is " + realUsername);
 

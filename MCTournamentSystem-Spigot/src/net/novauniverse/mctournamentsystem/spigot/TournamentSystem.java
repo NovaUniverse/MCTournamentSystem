@@ -27,9 +27,10 @@ import net.luckperms.api.model.group.Group;
 import net.novauniverse.mctournamentsystem.commons.LCS;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
-import net.novauniverse.mctournamentsystem.spigot.command.cinvsee.CInvseeCommand;
-import net.novauniverse.mctournamentsystem.spigot.command.csp.CSPCommand;
-import net.novauniverse.mctournamentsystem.spigot.command.ctp.CTPCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.bc.BCCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.commentator.cinvsee.CInvseeCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.commentator.csp.CSPCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.commentator.ctp.CTPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
@@ -306,6 +307,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new CSPCommand());
 		CommandRegistry.registerCommand(new CTPCommand());
 		CommandRegistry.registerCommand(new CInvseeCommand());
+		CommandRegistry.registerCommand(new BCCommand());
 
 		/* ----- Permissions ----- */
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commantator access", PermissionDefault.FALSE);

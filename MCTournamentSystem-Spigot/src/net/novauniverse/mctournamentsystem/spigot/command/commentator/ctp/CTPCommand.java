@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.command.ctp;
+package net.novauniverse.mctournamentsystem.spigot.command.commentator.ctp;
 
 import java.util.ArrayList;
 import java.util.List;

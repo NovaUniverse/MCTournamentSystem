@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.novauniverse.mctournamentsystem.lobby.command.duel.AcceptDuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.duel.DuelCommand;
+import net.novauniverse.mctournamentsystem.lobby.command.givemefireworks.GiveMeFireworksCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.missilewars.MissileWars;
 import net.novauniverse.mctournamentsystem.lobby.modules.celebrationmode.LobbyCelebrationMode;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.Lobby;
@@ -70,6 +71,7 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 
 		if (TournamentSystem.getInstance().isCelebrationMode()) {
 			ModuleManager.enable(LobbyCelebrationMode.class);
+			CommandRegistry.registerCommand(new GiveMeFireworksCommand());
 		}
 
 		/* ----- Misc ----- */

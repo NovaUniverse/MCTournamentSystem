@@ -150,16 +150,16 @@ $(function () {
 	});
 
 	$("#btn_search_staff_user").on("click", function () {
-		$.getJSON("https://api.minetools.eu/uuid/" + $("#tbx_add_staff_username").val(), function (data) {
-			if (data.id == null) {
+		$.getJSON("https://novauniverse.net/api/private/mojang/name_to_uuid/" + $("#tbx_add_staff_username").val(), function (data) {
+			if (data.data == null) {
 				toastr.error("User not found");
 				return;
 			}
 
-			let uuid = expandUUID(data.id);
+			let uuid = data.data.full_uuid;
 
 			addStaffUUID = uuid;
-			addStaffUsername = data.name;
+			addStaffUsername = data.data.name;
 
 			$("#add_staff_username").text(data.name);
 			$("#add_staff_uuid").text(uuid);
@@ -210,13 +210,13 @@ $(function () {
 	$("#btn_search_whitelist_user").on("click", function () {
 		let username = $("#tbx_add_whitlelist_username").val();
 
-		$.getJSON("https://api.minetools.eu/uuid/" + username, function (data) {
-			if (data.id == null) {
+		$.getJSON("https://novauniverse.net/api/private/mojang/name_to_uuid/" + username, function (data) {
+			if (data.data == null) {
 				toastr.error("User not found");
 				return;
 			}
 
-			let uuid = expandUUID(data.id);
+			let uuid = data.data.full_uuid;
 
 			$.getJSON("/api/whitelist/add?access_token=" + token + "&uuid=" + uuid, function (data) {
 				if (data.success) {
@@ -406,8 +406,8 @@ function updateStaffTeam(update = false) {
 		});
 
 
-		$.getJSON("https://api.minetools.eu/profile/" + uuid, function (data) {
-			newElement.find(".staff-name").text(data.decoded.profileName);
+		$.getJSON("https://novauniverse.net/api/private/mojang/profile/" + uuid, function (data) {
+			newElement.find(".staff-name").text(data.data.name);
 		});
 
 		$("#staff_tbody").append(newElement);
@@ -467,8 +467,8 @@ function updateWhitelist() {
 			newElem.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + uuid);
 			newElem.find(".uuid").text(uuid);
 
-			$.getJSON("https://api.minetools.eu/profile/" + uuid, function (data) {
-				newElem.find(".name").text(data.decoded.profileName);
+			$.getJSON("https://novauniverse.net/api/private/mojang/profile/" + uuid, function (data) {
+				newElem.find(".name").text(data.data.name);
 			});
 
 			newElem.find(".btn-whitelist-remove").on("click", function () {

@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.command.cinvsee;
+package net.novauniverse.mctournamentsystem.spigot.command.commentator.cinvsee;
 
 import java.util.ArrayList;
 import java.util.List;
