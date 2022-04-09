@@ -6,9 +6,9 @@ var addPlayerUsername = null;
 var sortDirection = true;
 
 function expandTeamSize(size) {
-	if(size > 12) {
+	if (size > 12) {
 		size = size - 12;
-		for(let i = 1; i <= size; i++) {
+		for (let i = 1; i <= size; i++) {
 			$(".player-team-select").append(new Option("Team " + (i + 12), i + 12));
 		}
 	}
@@ -72,6 +72,20 @@ $(function () {
 		}
 	});
 
+	$("#btn_update_usernames").on("click", function() {
+		$.confirm({
+			title: 'Please confirm',
+			theme: 'dark',
+			content: 'Do you want to fetch the latest username for all players',
+			buttons: {
+				confirm: function () {
+					updateUsernames();
+				},
+				cancel: function () { }
+			}
+		});
+	});
+
 	$("#col_team_number").on("click", function () {
 		sortDirection = !sortDirection;
 		sortTable();
@@ -104,7 +118,7 @@ $(function () {
 	$("#btn_upload_team_data").on("click", function () {
 		$.ajax({
 			type: "POST",
-			url: "/api/team/uppload_team?access_token=" + localStorage.getItem("token") ,
+			url: "/api/team/uppload_team?access_token=" + localStorage.getItem("token"),
 			data: $("#json_output").text(),
 			success: function (data) {
 				console.log(data);
@@ -123,20 +137,20 @@ $(function () {
 	setCookie("exported_team_data", "", 0);
 
 	$.getJSON("/api/system/status?access_token=" + localStorage.getItem("token"), function (data) {
-		if(data.success !== false) {
+		if (data.success !== false) {
 			console.log("It seems like the team editor is running on the same web server as TournamentSystem");
 			$("#back_to_admin_li").show();
 			$("#btn_upload_team_data").show();
-	
-			if(data.system.team_size > 12) {
+
+			if (data.system.team_size > 12) {
 				expandTeamSize(data.system.team_size);
 			}
-	
+
 			$.getJSON("/api/team/export_team_data?access_token=" + localStorage.getItem("token"), function (data) {
 				data.teams_data.forEach(element => {
 					addPlayer(element.uuid, element.username, element.team_number);
 				});
-	
+
 				toastr.info("Team data loaded from TournamentSystem");
 			});
 		} else {
@@ -270,7 +284,7 @@ function searchPlayer() {
 
 					//console.log("The real username is " + realUsername);
 
-					if(uuid == "980dbf7d-0904-426f-9c02-d9af3c099fb2") {
+					if (uuid == "980dbf7d-0904-426f-9c02-d9af3c099fb2") {
 						toastr.warning("Warning: This player has to be in team 4. NO EXCEPTIONS");
 					}
 
@@ -321,6 +335,21 @@ function loadData(data) {
 	}
 }
 
+function updateUsernames() {
+	toastr.info("Fetching latest username for all players");
+	$(".player-tr").each(function () {
+		let uuid = $(this).attr("data-uuid");
+
+		let element = $(this);
+
+		$.getJSON("https://novauniverse.net/api/private/mojang/profile/" + uuid, function (profileData) {
+			let realUsername = profileData.data.name;
+			element.find(".player-username").text(realUsername);
+			element.attr("data-username", realUsername);
+		});
+	});
+}
+
 function getData() {
 	let data = [];
 
@@ -329,7 +358,7 @@ function getData() {
 		let username = $(this).attr("data-username");
 		let teamNumber = $(this).attr("data-team-number");
 
-		if(teamNumber == -1) {
+		if (teamNumber == -1) {
 			return;
 		}
 
