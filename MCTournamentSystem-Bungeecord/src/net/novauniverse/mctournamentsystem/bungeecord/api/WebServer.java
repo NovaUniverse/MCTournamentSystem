@@ -11,6 +11,7 @@ import com.sun.net.httpserver.HttpHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.CommentatorTPHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.StartGameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.publicapi.PublicStatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.GetStaffHandler;
@@ -81,6 +82,9 @@ public class WebServer {
 
 		// Commentator
 		createContext("/api/commentator/tp", new CommentatorTPHandler());
+
+		// Public
+		createContext("/api/public/status", new PublicStatusHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");
