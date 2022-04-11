@@ -13,11 +13,11 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerKillCache;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
-import net.zeeraa.novacore.spigot.module.modules.game.events.PlayerEliminatedEvent;
-import net.zeeraa.novacore.spigot.module.modules.game.events.PlayerWinEvent;
-import net.zeeraa.novacore.spigot.module.modules.game.events.TeamEliminatedEvent;
-import net.zeeraa.novacore.spigot.module.modules.game.events.TeamWinEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerWinEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.TeamEliminatedEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.TeamWinEvent;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.utils.ProjectileUtils;
 

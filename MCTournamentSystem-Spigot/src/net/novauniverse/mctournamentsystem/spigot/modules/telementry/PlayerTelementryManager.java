@@ -10,9 +10,9 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.NovaCore;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
@@ -22,9 +22,8 @@ import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 public class PlayerTelementryManager extends NovaModule {
 	private Task task;
 
-	@Override
-	public String getName() {
-		return "ts.playertelementrymanager";
+	public PlayerTelementryManager() {
+		super("TournamentSystem.PlayerTelementryManager");
 	}
 
 	@Override

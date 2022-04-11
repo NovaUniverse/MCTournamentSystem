@@ -11,17 +11,14 @@ import org.bukkit.event.Listener;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerKillCache;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.utils.ProjectileUtils;
 
 public class KillListener extends NovaModule implements Listener {
-	@Override
-	public String getName() {
-		return "TSKillListener";
-	}
-
 	public KillListener() {
+		super("TournamentSystem.KillListener");
+
 		this.addDependency(PlayerKillCache.class);
 	}
 

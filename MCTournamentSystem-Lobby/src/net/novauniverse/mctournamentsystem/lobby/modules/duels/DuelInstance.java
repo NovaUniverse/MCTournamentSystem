@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.timers.TickCallback;
 import net.zeeraa.novacore.commons.utils.Callback;
-import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseWorld;
@@ -131,9 +130,7 @@ public class DuelInstance {
 					sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + timeLeft);
 
 					world.getWorld().getPlayers().forEach(player -> {
-						if (NovaCore.getInstance().getActionBar() != null) {
-							NovaCore.getInstance().getActionBar().sendMessage(player, ChatColor.AQUA + "" + ChatColor.BOLD + timeLeft);
-						}
+						VersionIndependantUtils.get().sendActionBarMessage(player, ChatColor.AQUA + "" + ChatColor.BOLD + timeLeft);
 						VersionIndependantUtils.get().playSound(player, player.getLocation(), VersionIndependantSound.NOTE_PLING, 1F, 1F);
 					});
 				}
@@ -157,9 +154,7 @@ public class DuelInstance {
 					world.getWorld().getPlayers().forEach(player -> {
 						VersionIndependantUtils.get().playSound(player, player.getLocation(), VersionIndependantSound.NOTE_PLING, 1F, 1F);
 						player.playSound(player.getLocation(), Sound.NOTE_PLING, 1F, 2F);
-						if (NovaCore.getInstance().getActionBar() != null) {
-							NovaCore.getInstance().getActionBar().sendMessage(player, ChatColor.GOLD + "" + ChatColor.BOLD + "GO");
-						}
+						VersionIndependantUtils.get().sendActionBarMessage(player, ChatColor.GOLD + "" + ChatColor.BOLD + "GO");
 					});
 
 					setStage(DuelStage.INGAME);
@@ -187,7 +182,7 @@ public class DuelInstance {
 				public void execute() {
 					players.forEach(player -> {
 						if (player.isOnline()) {
-							DuelsManager.getInstance().restorePlayer(player);
+							DuelManager.getInstance().restorePlayer(player);
 						}
 					});
 
@@ -229,6 +224,6 @@ public class DuelInstance {
 	}
 
 	public void killInstance() {
-		DuelsManager.getInstance().killDuelInstance(this);
+		DuelManager.getInstance().killDuelInstance(this);
 	}
 }

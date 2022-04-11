@@ -12,6 +12,10 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
 @NovaAutoLoad(shouldEnable = true)
 public class NoEnderPearlDamage extends NovaModule implements Listener {
+	public NoEnderPearlDamage() {
+		super("TournamentSystem.NoEnderPearlDamage");
+	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
 		if (e.getCause() == TeleportCause.ENDER_PEARL) {
@@ -20,10 +24,5 @@ public class NoEnderPearlDamage extends NovaModule implements Listener {
 			p.setNoDamageTicks(1);
 			p.teleport(e.getTo());
 		}
-	}
-
-	@Override
-	public String getName() {
-		return "ts.noenderpearldamage";
 	}
 }

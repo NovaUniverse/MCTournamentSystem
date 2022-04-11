@@ -24,10 +24,9 @@ public class LobbyCelebrationMode extends NovaModule implements Listener {
 	public void onLoad() {
 		this.random = new Random();
 	}
-
-	@Override
-	public String getName() {
-		return "ts.lobby.CelebrationMode";
+	
+	public LobbyCelebrationMode() {
+		super("TournamentSystem.Lobby.CelebrationMode");
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

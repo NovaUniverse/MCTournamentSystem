@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
-import net.novauniverse.mctournamentsystem.lobby.modules.duels.DuelsManager;
+import net.novauniverse.mctournamentsystem.lobby.modules.duels.DuelManager;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaCommand;
@@ -33,7 +33,7 @@ public class DuelCommand extends NovaCommand {
 			if (targetPlayer != null) {
 				if (targetPlayer.isOnline()) {
 					if (targetPlayer.getUniqueId() != player.getUniqueId()) {
-						if (DuelsManager.getInstance().createInvite(player, targetPlayer)) {
+						if (DuelManager.getInstance().createInvite(player, targetPlayer)) {
 							player.sendMessage(ChatColor.GREEN + "Send a duel request to " + targetPlayer.getName());
 							return true;
 						} else {

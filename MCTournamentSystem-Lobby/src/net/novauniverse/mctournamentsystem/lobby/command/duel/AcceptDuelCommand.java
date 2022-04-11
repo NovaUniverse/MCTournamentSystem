@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
-import net.novauniverse.mctournamentsystem.lobby.modules.duels.DuelsManager;
+import net.novauniverse.mctournamentsystem.lobby.modules.duels.DuelManager;
 import net.novauniverse.mctournamentsystem.lobby.modules.duels.InviteResult;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.log.Log;
@@ -30,10 +30,10 @@ public class AcceptDuelCommand extends NovaCommand {
 			Player player = (Player) sender;
 			String code = args[0];
 
-			if (DuelsManager.getInstance().isInDuel(player)) {
+			if (DuelManager.getInstance().isInDuel(player)) {
 				player.sendMessage(ChatColor.RED + "You are already in a duel");
 			} else {
-				InviteResult result = DuelsManager.getInstance().acceptInvite(player, code);
+				InviteResult result = DuelManager.getInstance().acceptInvite(player, code);
 
 				Log.trace("Duel request result: " + result);
 

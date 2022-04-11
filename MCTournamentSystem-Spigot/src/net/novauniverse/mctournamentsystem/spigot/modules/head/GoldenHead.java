@@ -26,9 +26,8 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 
 @NovaAutoLoad(shouldEnable = true)
 public class GoldenHead extends NovaModule implements Listener {
-	@Override
-	public String getName() {
-		return "ts.goldenhead";
+	public GoldenHead() {
+		super("TournamentSystem.GoldenHead");
 	}
 
 	@Override

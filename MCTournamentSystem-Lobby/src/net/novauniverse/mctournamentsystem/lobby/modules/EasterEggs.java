@@ -19,9 +19,8 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 
 @NovaAutoLoad(shouldEnable = true)
 public class EasterEggs extends NovaModule implements Listener {
-	@Override
-	public String getName() {
-		return "ts.lobby.EasterEggs";
+	public EasterEggs() {
+		super("TournamentSystem.Lobby.EasterEggs");
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

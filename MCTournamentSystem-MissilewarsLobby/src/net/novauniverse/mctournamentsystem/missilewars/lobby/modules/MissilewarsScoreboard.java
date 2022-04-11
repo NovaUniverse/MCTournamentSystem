@@ -12,23 +12,22 @@ import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
-public class NovaScoreboard extends NovaModule {
-	private static NovaScoreboard instance;
+public class MissilewarsScoreboard extends NovaModule {
+	private static MissilewarsScoreboard instance;
 
-	public static NovaScoreboard getInstance() {
+	public static MissilewarsScoreboard getInstance() {
 		return instance;
 	}
 
 	private Task task;
-
-	@Override
-	public String getName() {
-		return "MissilewarsScoreboard";
+	
+	public MissilewarsScoreboard() {
+		super("TournamentSystem.MissileWars.MissilewarsScoreboard");
 	}
 
 	@Override
 	public void onLoad() {
-		NovaScoreboard.instance = this;
+		MissilewarsScoreboard.instance = this;
 		task = new SimpleTask(new Runnable() {
 			@Override
 			public void run() {

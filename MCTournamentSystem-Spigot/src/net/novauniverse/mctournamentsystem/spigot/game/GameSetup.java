@@ -10,10 +10,10 @@ import net.novauniverse.mctournamentsystem.spigot.messages.TSTeamEliminationMess
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
 import net.novauniverse.mctournamentsystem.spigot.tracker.TSCompassTracker;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.gamelobby.GameLobby;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.compass.CompassTracker;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
-import net.zeeraa.novacore.spigot.module.modules.gamelobby.GameLobby;
 
 public class GameSetup {
 	public static void init(TournamentSystem tournamentSystem) {
@@ -23,9 +23,9 @@ public class GameSetup {
 
 		ModuleManager.enable(CompassTracker.class);
 
-		ModuleManager.loadModule(GameListeners.class, true);
-		ModuleManager.loadModule(GameWinMessage.class, true);
-		ModuleManager.loadModule(KillListener.class, true);
+		ModuleManager.loadModule(TournamentSystem.getInstance(), GameListeners.class, true);
+		ModuleManager.loadModule(TournamentSystem.getInstance(), GameWinMessage.class, true);
+		ModuleManager.loadModule(TournamentSystem.getInstance(), KillListener.class, true);
 
 		Log.info("GameSetup", "Loaded and enabled modules required by games");
 

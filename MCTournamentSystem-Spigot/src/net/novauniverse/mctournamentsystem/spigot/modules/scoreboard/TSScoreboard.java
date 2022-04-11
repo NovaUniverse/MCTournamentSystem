@@ -11,14 +11,14 @@ import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.MapGame;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.map.GameMapData;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.map.mapmodules.worldborder.WorldborderMapModule;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.DelayedGameTrigger;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
-import net.zeeraa.novacore.spigot.module.modules.game.MapGame;
-import net.zeeraa.novacore.spigot.module.modules.game.map.GameMapData;
-import net.zeeraa.novacore.spigot.module.modules.game.map.mapmodules.worldborder.WorldborderMapModule;
-import net.zeeraa.novacore.spigot.module.modules.game.triggers.DelayedGameTrigger;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 
 @NovaAutoLoad(shouldEnable = true)
@@ -31,9 +31,8 @@ public class TSScoreboard extends NovaModule implements Listener {
 	public static final int COUNTDOWN_LINE = 6;
 	public static final int WORLDBORDER_LINE = 7;
 
-	@Override
-	public String getName() {
-		return "ts.scoreboard";
+	public TSScoreboard() {
+		super("TournamentSystem.Scoreboard");
 	}
 
 	@Override

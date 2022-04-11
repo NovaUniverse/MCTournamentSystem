@@ -69,9 +69,8 @@ public class Lobby extends NovaModule implements Listener {
 		return instance;
 	}
 
-	@Override
-	public String getName() {
-		return "ts.lobby";
+	public Lobby() {
+		super("TournamentSystem.Lobby.Lobby");
 	}
 
 	@Override

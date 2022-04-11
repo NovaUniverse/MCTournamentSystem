@@ -26,9 +26,8 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
 @NovaAutoLoad(shouldEnable = true)
 public class StaffManager extends NovaModule implements Listener {
-	@Override
-	public String getName() {
-		return "ts.staffmanager";
+	public StaffManager() {
+		super("TournamentSystem.StaffManager");
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)

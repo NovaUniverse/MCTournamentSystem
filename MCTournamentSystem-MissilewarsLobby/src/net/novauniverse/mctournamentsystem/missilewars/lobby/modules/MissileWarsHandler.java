@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import net.zeeraa.novacore.commons.tasks.Task;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.RepeatingGameTrigger;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
-import net.zeeraa.novacore.spigot.module.modules.game.triggers.RepeatingGameTrigger;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
@@ -21,9 +21,8 @@ public class MissileWarsHandler extends NovaModule implements Listener {
 	public static final int LOOT_COUNTDOWN_LINE = 1;
 	private boolean lootCountdownShown;
 
-	@Override
-	public String getName() {
-		return "MissileWarsHandler";
+	public MissileWarsHandler() {
+		super("TournamentSystem.MissileWars.MissileWarsHandler");
 	}
 
 	@Override

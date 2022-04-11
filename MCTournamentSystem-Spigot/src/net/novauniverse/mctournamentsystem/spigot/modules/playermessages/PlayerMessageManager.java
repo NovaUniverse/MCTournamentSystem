@@ -13,6 +13,10 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
 @NovaAutoLoad(shouldEnable = true)
 public class PlayerMessageManager extends NovaModule implements Listener {
+	public PlayerMessageManager() {
+		super("TournamentSystem.PlayerMessageManager");
+	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
@@ -25,10 +29,5 @@ public class PlayerMessageManager extends NovaModule implements Listener {
 		Player player = e.getPlayer();
 
 		e.setQuitMessage(PlayerMessages.getLeaveMessage(player));
-	}
-
-	@Override
-	public String getName() {
-		return "PlayerMessageManager";
 	}
 }

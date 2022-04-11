@@ -29,9 +29,8 @@ public class PlayerKillCache extends NovaModule implements Listener, TSDataCache
 		return instance;
 	}
 
-	@Override
-	public String getName() {
-		return "ts.killcache";
+	public PlayerKillCache() {
+		super("TournamentSystem.KillCache");
 	}
 
 	@Override

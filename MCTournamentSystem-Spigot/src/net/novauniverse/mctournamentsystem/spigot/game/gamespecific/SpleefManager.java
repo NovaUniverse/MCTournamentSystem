@@ -10,20 +10,19 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import net.novauniverse.games.spleef.game.Spleef;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.utils.TextUtils;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 
 public class SpleefManager extends NovaModule implements Listener {
+	public SpleefManager() {
+		super("TournamentSystem.SpleefManager");
+	}
+
 	public static final int SPLEEF_DECAY_LINE = 5;
 
 	private int taskId;
 	private boolean decayLineShown;
-
-	@Override
-	public String getName() {
-		return "ts.SpleefManager";
-	}
 
 	@Override
 	public void onLoad() {

@@ -14,7 +14,7 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaCommand;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 
 public class CTPCommand extends NovaCommand {
 	public CTPCommand() {

@@ -17,10 +17,10 @@ import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameEndReason;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.game.GameEndReason;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
-import net.zeeraa.novacore.spigot.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
@@ -31,9 +31,8 @@ public class BingoManager extends NovaModule implements Listener {
 	private Task task;
 	private boolean timeLeftLineShown;
 
-	@Override
-	public String getName() {
-		return "ts.BingoManager";
+	public BingoManager() {
+		super("TournamentSystem.BingoManager");
 	}
 
 	@Override
@@ -46,7 +45,8 @@ public class BingoManager extends NovaModule implements Listener {
 				boolean didShow = false;
 				if (GameManager.getInstance().hasGame()) {
 					if (GameManager.getInstance().getActiveGame().hasStarted() && !GameManager.getInstance().getActiveGame().hasEnded()) {
-						long totalSecs = ((Bingo) GameManager.getInstance().getActiveGame()).getTimeLeft();
+						Bingo bingo = (Bingo) GameManager.getInstance().getActiveGame();
+						long totalSecs = bingo.getTimeLeft();
 
 						long hours = totalSecs / 3600;
 						long minutes = (totalSecs % 3600) / 60;

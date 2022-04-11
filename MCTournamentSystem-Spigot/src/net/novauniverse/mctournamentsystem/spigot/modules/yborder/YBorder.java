@@ -16,10 +16,11 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
@@ -35,9 +36,8 @@ public class YBorder extends NovaModule implements Listener {
 
 	private static final int SCOREBOARD_LINE = 7;
 
-	@Override
-	public String getName() {
-		return "ts.yborder";
+	public YBorder() {
+		super("TournamentSystem.YBorder");
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class YBorder extends NovaModule implements Listener {
 									String message = LanguageManager.getString(player, "tournamentsystem.yborder.above_limit.info", (player.getLocation().getBlockY() - yLimit) + "");
 
 									if (message.length() <= 40) {
-										NovaCore.getInstance().getActionBar().sendMessage(player, message);
+										VersionIndependantUtils.get().sendActionBarMessage(player, message);
 									}
 								} else {
 									if (aboveLimit.contains(player)) {

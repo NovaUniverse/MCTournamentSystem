@@ -12,8 +12,8 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
 @NovaAutoLoad(shouldEnable = true)
 public class CInvseeManager extends NovaModule implements Listener {
-	public String getName() {
-		return "ts.cinvseemanager";
+	public CInvseeManager() {
+		super("TournamentSystem.CInvseeManager");
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

@@ -31,8 +31,8 @@ import net.zeeraa.novacore.spigot.module.modules.multiverse.WorldUnloadOption;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 
 @NovaAutoLoad(shouldEnable = true)
-public class DuelsManager extends NovaModule implements Listener {
-	private static DuelsManager instance;
+public class DuelManager extends NovaModule implements Listener {
+	private static DuelManager instance;
 
 	private List<DuelInstance> duelInstances;
 	private HashMap<UUID, ItemStack[]> inventoryContent;
@@ -45,18 +45,17 @@ public class DuelsManager extends NovaModule implements Listener {
 
 	private int taskId;
 
-	public static DuelsManager getInstance() {
+	public static DuelManager getInstance() {
 		return instance;
 	}
-
-	@Override
-	public String getName() {
-		return "ts.lobby.DuelManager";
+	
+	public DuelManager() {
+		super("TournamentSystem.Lobby.DuelManager");
 	}
 
 	@Override
 	public void onLoad() {
-		DuelsManager.instance = this;
+		DuelManager.instance = this;
 
 		this.duelInstances = new ArrayList<DuelInstance>();
 		this.inventoryContent = new HashMap<UUID, ItemStack[]>();

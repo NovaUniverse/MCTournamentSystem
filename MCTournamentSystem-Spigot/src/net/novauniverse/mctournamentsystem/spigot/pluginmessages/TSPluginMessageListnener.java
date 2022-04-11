@@ -15,7 +15,7 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissions;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.NovaCore;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 
 public class TSPluginMessageListnener implements PluginMessageListener {
 	@Override

@@ -22,9 +22,8 @@ public class SpectatorFixes extends NovaModule implements Listener {
 
 	private Task task;
 
-	@Override
-	public String getName() {
-		return "ts.spectatorfixes";
+	public SpectatorFixes() {
+		super("TournamentSystem.SpectatorFixes");
 	}
 
 	@Override

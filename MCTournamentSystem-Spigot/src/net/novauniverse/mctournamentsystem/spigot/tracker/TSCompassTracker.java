@@ -10,10 +10,10 @@ import org.bukkit.entity.Player;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.spigot.NovaCore;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.modules.compass.CompassTarget;
 import net.zeeraa.novacore.spigot.module.modules.compass.CompassTrackerTarget;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
 
 public class TSCompassTracker implements CompassTrackerTarget {
 	@Override

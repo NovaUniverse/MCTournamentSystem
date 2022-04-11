@@ -34,11 +34,10 @@ public class LabymodIntegration extends NovaModule implements Listener {
 		return instance;
 	}
 
-	@Override
-	public String getName() {
-		return "ts.LabymodIntegration";
+	public LabymodIntegration() {
+		super("TournamentSystem.LabymodIntegration");
 	}
-
+	
 	@Override
 	public void onLoad() {
 		LabymodIntegration.instance = this;

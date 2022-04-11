@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.log.Log;
@@ -70,12 +70,12 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 							if (team.getTeamColor() != playerColorCache.get(player.getUniqueId())) {
 								Log.trace("Changing team color for player " + player.getName());
 								playerColorCache.put(player.getUniqueId(), team.getTeamColor());
-								NetherBoardScoreboard.getInstance().setPlayerNameColor(player, team.getTeamColor());
+								NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, team.getTeamColor());
 							}
 						} else {
 							Log.trace("Setting team color for player " + player.getName());
 							playerColorCache.put(player.getUniqueId(), team.getTeamColor());
-							NetherBoardScoreboard.getInstance().setPlayerNameColor(player, team.getTeamColor());
+							NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, team.getTeamColor());
 						}
 					}
 				}

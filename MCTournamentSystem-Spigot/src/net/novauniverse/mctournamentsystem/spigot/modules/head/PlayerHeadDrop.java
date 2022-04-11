@@ -16,6 +16,10 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 
 @NovaAutoLoad(shouldEnable = false)
 public class PlayerHeadDrop extends NovaModule implements Listener {
+	public PlayerHeadDrop() {
+		super("TournamentSystem.PlayerHeadDrop");
+	}
+	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		Player p = e.getEntity();
@@ -77,10 +81,5 @@ public class PlayerHeadDrop extends NovaModule implements Listener {
 		playerHead.setItemMeta(meta);
 
 		p.getWorld().dropItem(p.getLocation(), playerHead);
-	}
-
-	@Override
-	public String getName() {
-		return "ts.playerheaddrop";
 	}
 }

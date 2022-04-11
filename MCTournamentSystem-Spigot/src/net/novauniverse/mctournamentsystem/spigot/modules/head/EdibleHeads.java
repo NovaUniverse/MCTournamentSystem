@@ -21,6 +21,10 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 
 @NovaAutoLoad(shouldEnable = false)
 public class EdibleHeads extends NovaModule implements Listener {
+	public EdibleHeads() {
+		super("TournamentSystem.EdibleHeads");
+	}
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e) {
@@ -61,10 +65,5 @@ public class EdibleHeads extends NovaModule implements Listener {
 				}
 			}
 		}
-	}
-
-	@Override
-	public String getName() {
-		return "ts.edibleheads";
 	}
 }

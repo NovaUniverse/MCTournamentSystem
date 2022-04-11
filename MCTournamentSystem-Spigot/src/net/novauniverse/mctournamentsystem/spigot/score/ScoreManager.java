@@ -34,6 +34,10 @@ public class ScoreManager extends NovaModule implements Listener {
 		return instance;
 	}
 
+	public ScoreManager() {
+		super("TournamentSystem.ScoreManager");
+	}
+	
 	@Override
 	public void onLoad() {
 		ScoreManager.instance = this;
@@ -61,11 +65,6 @@ public class ScoreManager extends NovaModule implements Listener {
 			Bukkit.getScheduler().cancelTask(taskId);
 			taskId = -1;
 		}
-	}
-
-	@Override
-	public String getName() {
-		return "TournamentSystemScoreManager";
 	}
 
 	public int updatePlayerScore(UUID uuid) {

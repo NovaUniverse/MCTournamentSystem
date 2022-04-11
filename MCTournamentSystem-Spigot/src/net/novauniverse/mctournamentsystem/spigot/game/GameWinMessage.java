@@ -1,22 +1,21 @@
 package net.novauniverse.mctournamentsystem.spigot.game;
 
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerWinEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.TeamWinEvent;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.game.events.PlayerWinEvent;
-import net.zeeraa.novacore.spigot.module.modules.game.events.TeamWinEvent;
 import net.zeeraa.novacore.spigot.teams.Team;
 
 public class GameWinMessage extends NovaModule implements Listener {
-	@Override
-	public String getName() {
-		return "TSWinMessageListener";
+	public GameWinMessage() {
+		super("TournamentSystem.GameWinMessage");
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

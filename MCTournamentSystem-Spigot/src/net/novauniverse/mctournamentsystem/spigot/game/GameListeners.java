@@ -13,28 +13,27 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.BingoManager
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SurvivalGamesManager;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameLoadedEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
-import net.zeeraa.novacore.spigot.module.modules.game.events.GameEndEvent;
-import net.zeeraa.novacore.spigot.module.modules.game.events.GameLoadedEvent;
-import net.zeeraa.novacore.spigot.module.modules.game.events.GameStartEvent;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.utils.BungeecordUtils;
 
 public class GameListeners extends NovaModule implements Listener {
-	@Override
-	public String getName() {
-		return "ts.GameListeners";
+	public GameListeners() {
+		super("TournamentSystem.GameListeners");
 	}
-
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameLoaded(GameLoadedEvent e) {
 		NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + GameManager.getInstance().getDisplayName());
 
 		if (e.getGame().getName().equalsIgnoreCase("survivalgames")) {
-			if (ModuleManager.loadModule(SurvivalGamesManager.class, true)) {
+			if (ModuleManager.loadModule(TournamentSystem.getInstance(), SurvivalGamesManager.class, true)) {
 				Log.success(getName(), "Enabled game specific module: SurvivalGamesManager (" + SurvivalGamesManager.class.getName() + ")");
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: SurvivalGamesManager (" + SurvivalGamesManager.class.getName() + ")");
@@ -42,7 +41,7 @@ public class GameListeners extends NovaModule implements Listener {
 		}
 
 		if (e.getGame().getName().equalsIgnoreCase("bingo")) {
-			if (ModuleManager.loadModule(BingoManager.class, true)) {
+			if (ModuleManager.loadModule(TournamentSystem.getInstance(), BingoManager.class, true)) {
 				Log.success(getName(), "Enabled game specific module: BingoManager (" + BingoManager.class.getName() + ")");
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: BingoManager (" + BingoManager.class.getName() + ")");
@@ -50,7 +49,7 @@ public class GameListeners extends NovaModule implements Listener {
 		}
 
 		if (e.getGame().getName().equalsIgnoreCase("spleef")) {
-			if (ModuleManager.loadModule(SpleefManager.class, true)) {
+			if (ModuleManager.loadModule(TournamentSystem.getInstance(), SpleefManager.class, true)) {
 				Log.success(getName(), "Enabled game specific module: SpleefManager (" + SpleefManager.class.getName() + ")");
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: SpleefManager (" + SpleefManager.class.getName() + ")");

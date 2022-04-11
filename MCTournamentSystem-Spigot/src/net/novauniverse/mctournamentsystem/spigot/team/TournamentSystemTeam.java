@@ -1,7 +1,6 @@
 package net.novauniverse.mctournamentsystem.spigot.team;
 
-import org.bukkit.ChatColor;
-
+import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerNameCache;
 import net.zeeraa.novacore.commons.utils.UUIDUtils;
 import net.zeeraa.novacore.spigot.teams.Team;

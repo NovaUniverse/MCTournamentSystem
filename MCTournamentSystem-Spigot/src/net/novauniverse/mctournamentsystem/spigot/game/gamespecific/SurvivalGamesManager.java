@@ -6,9 +6,8 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 
 public class SurvivalGamesManager extends NovaModule {
-	@Override
-	public String getName() {
-		return "ts.SurvivalGamesManager";
+	public SurvivalGamesManager() {
+		super("TournamentSystem.SurvivalGamesManager");
 	}
 
 	@Override

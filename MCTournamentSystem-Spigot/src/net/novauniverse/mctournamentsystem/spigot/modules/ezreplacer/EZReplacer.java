@@ -19,9 +19,8 @@ public class EZReplacer extends NovaModule implements Listener {
 
 	private Random random;
 
-	@Override
-	public String getName() {
-		return "EZReplacer";
+	public EZReplacer() {
+		super("TournamentSystem.EZReplacer");
 	}
 
 	@Override

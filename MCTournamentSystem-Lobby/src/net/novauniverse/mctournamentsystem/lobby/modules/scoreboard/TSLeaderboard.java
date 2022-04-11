@@ -27,9 +27,13 @@ public class TSLeaderboard extends NovaModule {
 	private int lines;
 
 	private int taskId;
-
+	
 	public static TSLeaderboard getInstance() {
 		return instance;
+	}
+	
+	public TSLeaderboard() {
+		super("TournamentSystem.Lobby.LeaderBoard");
 	}
 
 	@Override
@@ -144,10 +148,5 @@ public class TSLeaderboard extends NovaModule {
 
 	public void setLines(int lines) {
 		this.lines = lines;
-	}
-
-	@Override
-	public String getName() {
-		return "ts.leaderboard";
 	}
 }

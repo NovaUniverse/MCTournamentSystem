@@ -16,13 +16,13 @@ import net.novauniverse.mctournamentsystem.missilewars.lobby.gamestarter.Default
 import net.novauniverse.mctournamentsystem.missilewars.lobby.gamestarter.GameStarter;
 import net.novauniverse.mctournamentsystem.missilewars.lobby.modules.GameStartScoreboardCountdown;
 import net.novauniverse.mctournamentsystem.missilewars.lobby.modules.MissileWarsHandler;
-import net.novauniverse.mctournamentsystem.missilewars.lobby.modules.NovaScoreboard;
+import net.novauniverse.mctournamentsystem.missilewars.lobby.modules.MissilewarsScoreboard;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameEndReason;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
-import net.zeeraa.novacore.spigot.module.modules.game.GameEndReason;
-import net.zeeraa.novacore.spigot.module.modules.game.GameManager;
-import net.zeeraa.novacore.spigot.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.novaplugin.NovaPlugin;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
@@ -111,9 +111,9 @@ public class MissileWarsLobby extends NovaPlugin implements Listener {
 		NetherBoardScoreboard.getInstance().setGlobalLine(3, ChatColor.GOLD + "Use " + ChatColor.AQUA + "/hub " + ChatColor.GOLD + "to get back");
 		NetherBoardScoreboard.getInstance().setGlobalLine(4, ChatColor.GOLD + "to the tournament");
 
-		ModuleManager.loadModule(NovaScoreboard.class, true);
-		ModuleManager.loadModule(GameStartScoreboardCountdown.class, true);
-		ModuleManager.loadModule(MissileWarsHandler.class, true);
+		ModuleManager.loadModule(this, MissilewarsScoreboard.class, true);
+		ModuleManager.loadModule(this, GameStartScoreboardCountdown.class, true);
+		ModuleManager.loadModule(this, MissileWarsHandler.class, true);
 
 		new BukkitRunnable() {
 			@Override
