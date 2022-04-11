@@ -45,8 +45,7 @@ public class BingoManager extends NovaModule implements Listener {
 				boolean didShow = false;
 				if (GameManager.getInstance().hasGame()) {
 					if (GameManager.getInstance().getActiveGame().hasStarted() && !GameManager.getInstance().getActiveGame().hasEnded()) {
-						Bingo bingo = (Bingo) GameManager.getInstance().getActiveGame();
-						long totalSecs = bingo.getTimeLeft();
+						long totalSecs = ((Bingo) GameManager.getInstance().getActiveGame()).getTimeLeft();
 
 						long hours = totalSecs / 3600;
 						long minutes = (totalSecs % 3600) / 60;
