@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -137,7 +138,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public ITournamentSystemPlayerEliminationMessageProvider getPlayerEliminationMessageProvider() {
 		return playerEliminationMessageProvider;
 	}
-	
+
 	public void setPlayerEliminationMessageProvider(ITournamentSystemPlayerEliminationMessageProvider playerEliminationMessageProvider) {
 		this.playerEliminationMessageProvider = playerEliminationMessageProvider;
 	}
@@ -401,14 +402,19 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	}
 
 	/* ----- Send annoying messages to the player ----- */
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerJoinLowest(PlayerJoinEvent e) {
+		e.getPlayer().spigot().respawn();
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		if (LCS.isDemo()) {
 			e.getPlayer().sendMessage(ChatColor.RED + "This server is running a demo version of TournamentSystem by NovaUniverse. To get a license open a ticket in our discord server https://discord.gg/4gZSVJ7");
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
 		if (LCS.isDemo()) {
 			e.getPlayer().sendMessage(ChatColor.RED + "This server is running a demo version of TournamentSystem by NovaUniverse. To get a license open a ticket in our discord server https://discord.gg/4gZSVJ7");

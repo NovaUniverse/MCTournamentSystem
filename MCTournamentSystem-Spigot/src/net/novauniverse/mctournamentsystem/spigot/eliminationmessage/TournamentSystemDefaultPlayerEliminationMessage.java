@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 
 import net.md_5.bungee.api.ChatColor;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
@@ -25,19 +26,21 @@ public class TournamentSystemDefaultPlayerEliminationMessage implements ITournam
 			}
 		}
 
+		Log.trace("TournamentSystemDefaultPlayerEliminationMessage", "Elimination reason: " + reason.name());
+		
 		switch (reason) {
 		case DEATH:
-			return LanguageManager.getString("novacore.game.elimination.player.died", playerColor.toString(), player.getName());
+			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.died", playerColor.toString(), player.getName());
 
 		case COMBAT_LOGGING:
-			LanguageManager.getString("novacore.game.elimination.player.combat_logging", playerColor.toString(), player.getName());
+			LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.combat_logging", playerColor.toString(), player.getName());
 			break;
 
 		case DID_NOT_RECONNECT:
-			return LanguageManager.getString("novacore.game.elimination.player.did_not_reconnect", playerColor.toString(), player.getName());
+			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.did_not_reconnect", playerColor.toString(), player.getName());
 
 		case COMMAND:
-			return LanguageManager.getString("novacore.game.elimination.player.command", playerColor.toString(), player.getName());
+			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.command", playerColor.toString(), player.getName());
 
 		case KILLED:
 			String killerName = "";
@@ -61,18 +64,18 @@ public class TournamentSystemDefaultPlayerEliminationMessage implements ITournam
 
 			if (killerEntity instanceof Player) {
 				Team killerTeam = TeamManager.getTeamManager().getPlayerTeam((Player) killerEntity);
-				if(killerTeam != null) {
+				if (killerTeam != null) {
 					killerColor = killerTeam.getTeamColor();
 				}
 			}
 
-			return LanguageManager.getString("novacore.game.elimination.player.killed", playerColor.toString(), player.getName(), killerColor + killerName);
+			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.killed", playerColor.toString(), player.getName(), killerColor + "" + ChatColor.BOLD + killerName);
 
 		case QUIT:
-			return LanguageManager.getString("novacore.game.elimination.player.quit", playerColor.toString(), player.getName());
+			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.quit", playerColor.toString(), player.getName());
 
 		default:
-			return LanguageManager.getString("novacore.game.elimination.player.unknown", playerColor.toString(), player.getName());
+			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.unknown", playerColor.toString(), player.getName());
 		}
 
 		return "ERR:UNKNOWN_ELIMINATION_REASON";
