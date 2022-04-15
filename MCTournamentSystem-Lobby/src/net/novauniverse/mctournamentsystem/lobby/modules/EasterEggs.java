@@ -1,18 +1,12 @@
 package net.novauniverse.mctournamentsystem.lobby.modules;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.util.Vector;
-
 import net.novauniverse.mctournamentsystem.spigot.textures.Textures;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantMetarial;
-import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
@@ -49,32 +43,6 @@ public class EasterEggs extends NovaModule implements Listener {
 			builder.addLore(ChatColor.WHITE + "Please dont eat it with a fork");
 
 			e.getPlayer().getInventory().setItem(8, builder.build());
-		}
-	}
-
-	// sorry, i just had to
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
-		if (e.getMessage().equalsIgnoreCase("fus ro dah")) {
-			Player player = e.getPlayer();
-			VersionIndependantSound.EXPLODE.play(player, player.getLocation(), 1F, 1F);
-			Bukkit.getServer().getOnlinePlayers().forEach(player2 -> {
-				if (player2.getWorld() != player.getWorld()) {
-					return;
-				}
-
-				Vector toPlayer2 = player2.getLocation().toVector().subtract(player.getLocation().toVector());
-
-				Vector direction = player.getLocation().getDirection();
-
-				double dot = toPlayer2.normalize().dot(direction);
-
-				if (player.getLocation().distance(player2.getLocation()) < 12) {
-					if (dot > 0.90) {
-						player2.setVelocity(direction.multiply(4 - (player.getLocation().distance(player2.getLocation()) / 4)));
-					}
-				}
-			});
 		}
 	}
 }

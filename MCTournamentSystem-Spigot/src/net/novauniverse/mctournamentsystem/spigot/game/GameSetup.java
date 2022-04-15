@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSActionBarCombatTagMessage;
+import net.novauniverse.mctournamentsystem.spigot.messages.TSPlayerEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSTeamEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
 import net.novauniverse.mctournamentsystem.spigot.tracker.TSCompassTracker;
@@ -32,6 +33,7 @@ public class GameSetup {
 		GameManager.getInstance().setUseTeams(true);
 		GameManager.getInstance().addCombatTagMessage(new TSActionBarCombatTagMessage());
 		GameManager.getInstance().setTeamEliminationMessage(new TSTeamEliminationMessage());
+		GameManager.getInstance().setPlayerEliminationMessage(new TSPlayerEliminationMessage());
 
 		CompassTracker.getInstance().setStrictMode(true);
 		CompassTracker.getInstance().setCompassTrackerTarget(new TSCompassTracker());

@@ -40,6 +40,8 @@ import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCom
 import net.novauniverse.mctournamentsystem.spigot.command.respawnplayer.RespawnPlayerCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
 import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
+import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.ITournamentSystemPlayerEliminationMessageProvider;
+import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.TournamentSystemDefaultPlayerEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
@@ -73,6 +75,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean useExtendedSpawnLocations;
 	private boolean celebrationMode;
 	private boolean replaceEz;
+
+	private ITournamentSystemPlayerEliminationMessageProvider playerEliminationMessageProvider;
 
 	private String labymodBanner;
 
@@ -130,11 +134,21 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		System.out.println("TournamentSystem#onLoad()");
 	}
 
+	public ITournamentSystemPlayerEliminationMessageProvider getPlayerEliminationMessageProvider() {
+		return playerEliminationMessageProvider;
+	}
+	
+	public void setPlayerEliminationMessageProvider(ITournamentSystemPlayerEliminationMessageProvider playerEliminationMessageProvider) {
+		this.playerEliminationMessageProvider = playerEliminationMessageProvider;
+	}
+
 	@Override
 	public void onEnable() {
 		TournamentSystem.instance = this;
 		this.staffGroups = new HashMap<>();
 		this.labymodBanner = null;
+
+		this.playerEliminationMessageProvider = new TournamentSystemDefaultPlayerEliminationMessage();
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
