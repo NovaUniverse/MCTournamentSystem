@@ -21,11 +21,14 @@ import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 
 public class NovaUpdater implements Runnable {
 	public static void main(String[] args) {
+		NovaUpdater.args = args;
 		new NovaUpdater().run();
 	}
 
 	private File tempDir;
 	private File contentDir;
+
+	public static String[] args = {};
 
 	private static void fatalError(String message) {
 		System.err.println(message);
@@ -155,7 +158,55 @@ public class NovaUpdater implements Runnable {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.err.println("Failed  delete " + from.getAbsolutePath());
+				System.err.println("Failed to delete " + from.getAbsolutePath());
+				continue;
+			}
+
+			try {
+				System.out.println("Copying " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+				if (from.isDirectory()) {
+					FileUtils.copyDirectory(from, to);
+				} else {
+					FileUtils.copyFile(from, to);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.err.println("Failed to copy " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+			}
+		}
+
+		for (int i = 0; i < args.length; i++) {
+			File from;
+			File to;
+
+			String[] split = args[i].split(":");
+
+			try {
+				from = new File(contentDir.getAbsolutePath() + File.separator + split[0]);
+				to = new File(contentDir.getAbsolutePath() + File.separator + split[1]);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Failed to parse extra argument " + i);
+				continue;
+			}
+
+			if (!to.getParentFile().exists()) {
+				System.err.println("Cant extract " + from.getAbsolutePath() + " since the target directory " + to.getParentFile().getAbsolutePath() + " does not exits");
+				continue;
+			}
+
+			try {
+				if (to.exists()) {
+					System.out.println("Deleting " + to.getAbsolutePath());
+					if (to.isDirectory()) {
+						FileUtils.deleteDirectory(to);
+					} else {
+						FileUtils.delete(to);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.err.println("Failed to delete " + from.getAbsolutePath());
 				continue;
 			}
 
@@ -176,8 +227,7 @@ public class NovaUpdater implements Runnable {
 	public void downloadFile(String url, File target) throws MalformedURLException, IOException {
 		URL dlUrl = new URL(url);
 		URLConnection conn = dlUrl.openConnection();
-		// Fake UA so cloudflare lets us pass
-		conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
+		conn.setRequestProperty("User-Agent", "NovaUpdater 1.0");
 		conn.connect();
 		FileUtils.copyInputStreamToFile(conn.getInputStream(), target);
 	}

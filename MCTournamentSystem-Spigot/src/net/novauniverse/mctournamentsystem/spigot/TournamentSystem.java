@@ -37,6 +37,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.misc.WhatIsDogeWorthCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.respawnplayer.RespawnPlayerCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
 import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
@@ -308,6 +309,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new CTPCommand());
 		CommandRegistry.registerCommand(new CInvseeCommand());
 		CommandRegistry.registerCommand(new BCCommand());
+		CommandRegistry.registerCommand(new RespawnPlayerCommand());
 
 		/* ----- Permissions ----- */
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commantator access", PermissionDefault.FALSE);
