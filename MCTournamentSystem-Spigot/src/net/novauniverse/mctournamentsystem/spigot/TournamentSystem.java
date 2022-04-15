@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.permissions.PermissionDefault;
@@ -400,13 +401,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public int[] getWinScore() {
 		return winScore;
 	}
-
+	
 	/* ----- Send annoying messages to the player ----- */
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerJoinLowest(PlayerJoinEvent e) {
-		e.getPlayer().spigot().respawn();
-	}
-
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		if (LCS.isDemo()) {
