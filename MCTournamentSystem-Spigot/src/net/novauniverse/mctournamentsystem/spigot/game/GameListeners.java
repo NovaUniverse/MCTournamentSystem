@@ -1,33 +1,42 @@
 package net.novauniverse.mctournamentsystem.spigot.game;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-
+import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.BingoManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SurvivalGamesManager;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.utils.TextUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameLoadedEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.teams.Team;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 import net.zeeraa.novacore.spigot.utils.BungeecordUtils;
 
 public class GameListeners extends NovaModule implements Listener {
 	public GameListeners() {
 		super("TournamentSystem.GameListeners");
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameLoaded(GameLoadedEvent e) {
 		NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + GameManager.getInstance().getDisplayName());
@@ -64,6 +73,63 @@ public class GameListeners extends NovaModule implements Listener {
 		} catch (Exception ex) {
 			Log.error("Failed to set active server name");
 			ex.printStackTrace();
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerEliminated(PlayerEliminatedEvent e) {
+		if (e.getPlayer().isOnline()) {
+			Player player = e.getPlayer().getPlayer();
+
+			if (e.getReason() == PlayerEliminationReason.COMMAND) {
+				player.setGameMode(GameMode.SPECTATOR);
+			}
+
+			player.playSound(player.getLocation(), Sound.WITHER_HURT, 1F, 1F);
+
+			String subtitle = ChatColor.RED + TextUtils.ordinal(e.getPlacement()) + " place";
+
+			Entity killerEntity = null;
+			if (e.getKiller() != null) {
+				if (e.getKiller() instanceof Projectile) {
+					Entity theBoiWhoFirered = (Entity) ((Projectile) e.getKiller()).getShooter();
+
+					if (theBoiWhoFirered != null) {
+						killerEntity = theBoiWhoFirered;
+					} else {
+						killerEntity = e.getKiller();
+					}
+				} else {
+					killerEntity = e.getKiller();
+				}
+			}
+
+			ChatColor killerColor = ChatColor.RED;
+			Team killerTeam = null;
+			if (killerEntity != null) {
+				if (killerEntity instanceof Player) {
+					killerTeam = TeamManager.getTeamManager().getPlayerTeam((Player) killerEntity);
+				}
+			}
+
+			if (killerTeam != null) {
+				killerColor = killerTeam.getTeamColor();
+			}
+
+			switch (e.getReason()) {
+			case KILLED:
+				subtitle = ChatColor.RED + "Killed by " + killerColor + killerEntity.getName() + ChatColor.RED + ". " + TextUtils.ordinal(e.getPlacement()) + " place";
+				break;
+
+			case COMMAND:
+				subtitle = ChatColor.RED + "Eliminated by admin";
+				break;
+
+			default:
+				break;
+			}
+
+			VersionIndependantUtils.get().sendTitle(player, ChatColor.RED + "Eliminated", subtitle, 10, 60, 10);
 		}
 	}
 
