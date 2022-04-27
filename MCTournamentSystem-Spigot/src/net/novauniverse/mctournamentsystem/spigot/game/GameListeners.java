@@ -88,7 +88,7 @@ public class GameListeners extends NovaModule implements Listener {
 			// player.playSound(player.getLocation(), Sound.WITHER_HURT, 1F, 1F);
 			VersionIndependantSound.WITHER_HURT.play(player);
 
-			String subtitle = ChatColor.RED + TextUtils.ordinal(e.getPlacement()) + " place";
+			String subtitle = ChatColor.RED + TextUtils.ordinal(e.getPlacement() + 1) + " place";
 
 			Entity killerEntity = null;
 			if (e.getKiller() != null) {
@@ -119,7 +119,7 @@ public class GameListeners extends NovaModule implements Listener {
 
 			switch (e.getReason()) {
 			case KILLED:
-				subtitle = ChatColor.RED + "Killed by " + killerColor + killerEntity.getName() + ChatColor.RED + ". " + TextUtils.ordinal(e.getPlacement()) + " place";
+				subtitle = ChatColor.RED + "Killed by " + killerColor + killerEntity.getName() + ChatColor.RED + ". " + TextUtils.ordinal(e.getPlacement() + 1) + " place";
 				break;
 
 			case COMMAND:
