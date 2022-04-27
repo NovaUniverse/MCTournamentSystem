@@ -2,7 +2,6 @@ package net.novauniverse.mctournamentsystem.spigot.game;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -18,6 +17,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SurvivalGame
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
@@ -85,7 +85,8 @@ public class GameListeners extends NovaModule implements Listener {
 				player.setGameMode(GameMode.SPECTATOR);
 			}
 
-			player.playSound(player.getLocation(), Sound.WITHER_HURT, 1F, 1F);
+			// player.playSound(player.getLocation(), Sound.WITHER_HURT, 1F, 1F);
+			VersionIndependantSound.WITHER_HURT.play(player);
 
 			String subtitle = ChatColor.RED + TextUtils.ordinal(e.getPlacement()) + " place";
 

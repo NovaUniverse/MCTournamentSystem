@@ -158,7 +158,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 		// new File(new
 		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
-
+		
 		this.mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
