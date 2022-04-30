@@ -2,6 +2,7 @@ package net.novauniverse.mctournamentsystem.spigot.game;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -24,6 +25,7 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndE
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameLoadedEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.TeamWinEvent;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
@@ -74,6 +76,17 @@ public class GameListeners extends NovaModule implements Listener {
 			Log.error("Failed to set active server name");
 			ex.printStackTrace();
 		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onTeamWin(TeamWinEvent e) {
+		e.getTeam().getMembers().forEach(uuid -> {
+			Player player = Bukkit.getServer().getPlayer(uuid);
+			if (player != null) {
+				VersionIndependantUtils.get().sendTitle(player, ChatColor.GREEN + "Winner", ChatColor.GREEN + "Your team won", 10, 40, 10);
+				player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1F, 2F);
+			}
+		});
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
