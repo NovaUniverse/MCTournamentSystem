@@ -12,6 +12,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.zeeraa.novacore.commons.log.Log;
 
 public class OpenModeListeners implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -24,7 +25,7 @@ public class OpenModeListeners implements Listener {
 			UUID uuid = e.getPlayer().getUniqueId();
 			String uuidString = uuid.toString();
 
-			boolean shouldAdd = false;
+			boolean shouldAdd = true;
 
 			String sql;
 			PreparedStatement ps;
@@ -38,13 +39,14 @@ public class OpenModeListeners implements Listener {
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
-				shouldAdd = true;
+				shouldAdd = false;
 			}
 
 			rs.close();
 			ps.close();
 
 			if (shouldAdd) {
+				Log.info("OpenModeListeners", "Adding player " + e.getPlayer().getName() + " to the player list");
 				sql = "INSERT INTO players (uuid, username, team_number) VALUES (?, ?, ?)";
 				ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
@@ -58,6 +60,7 @@ public class OpenModeListeners implements Listener {
 			}
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			e.getPlayer().disconnect(new TextComponent(ChatColor.RED + "An internal error occured while joining the server\n\n" + ChatColor.DARK_RED + ex.getClass().getName() + " " + ex.getMessage() + "\n\n" + ChatColor.RED + "If you keep seeing this error please contact staff"));
 		}
 	}

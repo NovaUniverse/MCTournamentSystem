@@ -151,7 +151,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new SendHereCommand());
 
 		File wwwAppFile = new File(getDataFolder().getPath() + File.separator + "www_app");
-
+		
 		try {
 			FileUtils.forceMkdir(wwwAppFile);
 		} catch (Exception e) {
