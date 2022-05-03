@@ -153,7 +153,6 @@ public class DuelInstance {
 
 					world.getWorld().getPlayers().forEach(player -> {
 						VersionIndependantUtils.get().playSound(player, player.getLocation(), VersionIndependantSound.NOTE_PLING, 1F, 1F);
-						player.playSound(player.getLocation(), Sound.NOTE_PLING, 1F, 2F);
 						VersionIndependantUtils.get().sendActionBarMessage(player, ChatColor.GOLD + "" + ChatColor.BOLD + "GO");
 					});
 
