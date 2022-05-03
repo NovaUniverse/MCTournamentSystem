@@ -177,6 +177,13 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.novauniverse</groupId>
+			<artifactId>NovaDropper</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>com.comphenix.protocol</groupId>

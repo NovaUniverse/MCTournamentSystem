@@ -13,6 +13,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.BingoManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.DropperManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SurvivalGamesManager;
 import net.zeeraa.novacore.commons.log.Log;
@@ -64,6 +65,14 @@ public class GameListeners extends NovaModule implements Listener {
 				Log.success(getName(), "Enabled game specific module: SpleefManager (" + SpleefManager.class.getName() + ")");
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: SpleefManager (" + SpleefManager.class.getName() + ")");
+			}
+		}
+
+		if (e.getGame().getName().equalsIgnoreCase("dropper")) {
+			if (ModuleManager.loadModule(TournamentSystem.getInstance(), DropperManager.class, true)) {
+				Log.success(getName(), "Enabled game specific module: DropperManager (" + DropperManager.class.getName() + ")");
+			} else {
+				Log.error(getName(), "Failed to enable game specific module: DropperManager (" + DropperManager.class.getName() + ")");
 			}
 		}
 	}
