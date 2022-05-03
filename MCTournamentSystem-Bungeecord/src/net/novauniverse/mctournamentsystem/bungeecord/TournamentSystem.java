@@ -19,6 +19,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUserStore;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere.SendHereCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
+import net.novauniverse.mctournamentsystem.bungeecord.listener.OpenModeListeners;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.TSPluginMessageListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry.PlayerTelementryManager;
@@ -42,6 +43,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private int teamSize;
 
 	private String phpmyadminURL;
+
+	private boolean openMode;
 
 	private PlayerTelementryManager playerTelementryManager;
 
@@ -73,10 +76,15 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return teamSize;
 	}
 
+	public boolean isOpenMode() {
+		return openMode;
+	}
+
 	@Override
 	public void onLoad() {
 		TournamentSystem.instance = this;
 		staffRoles = new ArrayList<>();
+		openMode = false;
 	}
 
 	@Override
@@ -153,6 +161,14 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		JSONArray quickMessagesJson = config.getJSONArray("quick_messages");
 		for (int i = 0; i < quickMessagesJson.length(); i++) {
 			quickMessages.add(ChatColor.translateAlternateColorCodes(TournamentSystemCommons.CHAT_COLOR_CHAR, quickMessagesJson.getString(i)));
+		}
+
+		if (config.has("open_mode")) {
+			openMode = config.getBoolean("open_mode");
+			if (openMode) {
+				Log.info("TournamentSystem", "Open mode enabled");
+				ProxyServer.getInstance().getPluginManager().registerListener(this, new OpenModeListeners());
+			}
 		}
 
 		Log.info("Setting up web server");

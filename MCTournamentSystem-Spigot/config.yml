@@ -39,3 +39,8 @@ enable_head_drops: true
 
 # Edible heads
 enable_edible_heads: true
+
+# ===============================
+# -=-=-=  Dropper settings =-=-=-
+# ===============================
+dropper_level_complete_score: 10

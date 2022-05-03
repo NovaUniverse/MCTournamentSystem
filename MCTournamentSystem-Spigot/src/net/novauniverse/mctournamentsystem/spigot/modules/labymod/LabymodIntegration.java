@@ -23,6 +23,7 @@ import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 @NovaAutoLoad(shouldEnable = true)
 public class LabymodIntegration extends NovaModule implements Listener {
@@ -37,7 +38,7 @@ public class LabymodIntegration extends NovaModule implements Listener {
 	public LabymodIntegration() {
 		super("TournamentSystem.LabymodIntegration");
 	}
-	
+
 	@Override
 	public void onLoad() {
 		LabymodIntegration.instance = this;
@@ -45,8 +46,8 @@ public class LabymodIntegration extends NovaModule implements Listener {
 		this.task = new SimpleTask(new Runnable() {
 			@Override
 			public void run() {
-				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-					sendPlayerTeamTitles(player);
+				if (TeamManager.hasTeamManager()) {
+					Bukkit.getServer().getOnlinePlayers().forEach(player -> sendPlayerTeamTitles(player));
 				}
 			}
 		}, 200L);
@@ -68,7 +69,9 @@ public class LabymodIntegration extends NovaModule implements Listener {
 			this.sendTabImage(e.getPlayer(), TournamentSystem.getInstance().getLabymodBanner());
 		}
 
-		this.sendPlayerTeamTitles(e.getPlayer());
+		if (TeamManager.hasTeamManager()) {
+			this.sendPlayerTeamTitles(e.getPlayer());
+		}
 		this.setMiddleClickActions(e.getPlayer());
 
 	}
@@ -79,7 +82,7 @@ public class LabymodIntegration extends NovaModule implements Listener {
 	}
 
 	private void sendPlayerTeamTitles(Player player) {
-		for (Player target : Bukkit.getServer().getOnlinePlayers()) {
+		Bukkit.getServer().getOnlinePlayers().forEach(target -> {
 			if (!UUIDUtils.isSame(player.getUniqueId(), target.getUniqueId())) {
 				String text = ChatColor.YELLOW + "No team";
 				Team t = TournamentSystem.getInstance().getTeamManager().getPlayerTeam(target);
@@ -93,7 +96,7 @@ public class LabymodIntegration extends NovaModule implements Listener {
 
 				this.setSubtitle(player, target.getUniqueId(), text);
 			}
-		}
+		});
 	}
 
 	private void sendTabImage(Player player, String url) {

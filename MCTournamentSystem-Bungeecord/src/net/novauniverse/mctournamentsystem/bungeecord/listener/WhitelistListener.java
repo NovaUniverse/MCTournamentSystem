@@ -10,11 +10,16 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
+import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 public class WhitelistListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onLogin(LoginEvent e) {
+		if (TournamentSystem.getInstance().isOpenMode()) {
+			return;
+		}
+
 		try {
 			UUID uuid = e.getConnection().getUniqueId();
 			String uuidString = uuid.toString();

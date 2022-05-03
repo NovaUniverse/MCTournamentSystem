@@ -1,6 +1,7 @@
 package net.novauniverse.mctournamentsystem.lobby.modules.scoreboard;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,6 +17,7 @@ import net.novauniverse.mctournamentsystem.spigot.score.TeamScoreData;
 import net.novauniverse.mctournamentsystem.spigot.score.TopScore;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 @NovaAutoLoad(shouldEnable = true)
 public class TSLeaderboard extends NovaModule {
@@ -27,11 +29,11 @@ public class TSLeaderboard extends NovaModule {
 	private int lines;
 
 	private int taskId;
-	
+
 	public static TSLeaderboard getInstance() {
 		return instance;
 	}
-	
+
 	public TSLeaderboard() {
 		super("TournamentSystem.Lobby.LeaderBoard");
 	}
@@ -101,27 +103,28 @@ public class TSLeaderboard extends NovaModule {
 				playerHologram.removeLine(playerHologram.size() - 1);
 			}
 		}
-
-		if (teamHologram != null) {
-			int lineIndex = 0;
-
-			if (teamHologram.size() <= lineIndex) {
-				teamHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top team scores");
-			}
-
-			ArrayList<TeamScoreData> scores = TopScore.getTeamTopScore(lines);
-
-			for (TeamScoreData scoreData : scores) {
-				lineIndex++;
+		if (TeamManager.hasTeamManager()) {
+			if (teamHologram != null) {
+				int lineIndex = 0;
 
 				if (teamHologram.size() <= lineIndex) {
-					teamHologram.appendTextLine("-----------");
+					teamHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top team scores");
 				}
-				((TextLine) teamHologram.getLine(lineIndex)).setText(ChatColor.YELLOW + "" + lineIndex + ChatColor.GOLD + " : " + scoreData.toString());
-			}
 
-			while (teamHologram.size() > lineIndex + 1) {
-				teamHologram.removeLine(teamHologram.size() - 1);
+				List<TeamScoreData> scores = TopScore.getTeamTopScore(lines);
+
+				for (TeamScoreData scoreData : scores) {
+					lineIndex++;
+
+					if (teamHologram.size() <= lineIndex) {
+						teamHologram.appendTextLine("-----------");
+					}
+					((TextLine) teamHologram.getLine(lineIndex)).setText(ChatColor.YELLOW + "" + lineIndex + ChatColor.GOLD + " : " + scoreData.toString());
+				}
+
+				while (teamHologram.size() > lineIndex + 1) {
+					teamHologram.removeLine(teamHologram.size() - 1);
+				}
 			}
 		}
 	}

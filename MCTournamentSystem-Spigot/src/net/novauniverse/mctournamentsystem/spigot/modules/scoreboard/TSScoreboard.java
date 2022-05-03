@@ -20,6 +20,7 @@ import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 @NovaAutoLoad(shouldEnable = true)
 public class TSScoreboard extends NovaModule implements Listener {
@@ -55,7 +56,11 @@ public class TSScoreboard extends NovaModule implements Listener {
 						int playerScore = ScoreManager.getInstance().getPlayerScore(player);
 						int teamScore = 0;
 
-						TournamentSystemTeam team = (TournamentSystemTeam) TournamentSystemTeamManager.getInstance().getPlayerTeam(player);
+						TournamentSystemTeam team = null;
+
+						if (TeamManager.hasTeamManager()) {
+							team = (TournamentSystemTeam) TournamentSystemTeamManager.getInstance().getPlayerTeam(player);
+						}
 
 						if (team != null) {
 							teamScore = team.getScore();

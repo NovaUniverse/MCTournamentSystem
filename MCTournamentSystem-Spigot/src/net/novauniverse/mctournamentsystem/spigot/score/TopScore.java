@@ -4,13 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.spigot.NovaCore;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class TopScore {
 	public static ArrayList<PlayerScoreData> getPlayerTopScore(int maxEntries) {
 		ArrayList<PlayerScoreData> result = new ArrayList<PlayerScoreData>();
 
 		ScoreManager.getInstance().getPlayerScoreCache().keySet().forEach(uuid -> {
-			if (NovaCore.getInstance().getTeamManager().getPlayerTeam(uuid) != null) {
+			if (TeamManager.hasTeamManager()) {
+				if (NovaCore.getInstance().getTeamManager().getPlayerTeam(uuid) != null) {
+					PlayerScoreData scoreData = new PlayerScoreData(uuid, ScoreManager.getInstance().getPlayerScore(uuid));
+					result.add(scoreData);
+				}
+			} else {
 				PlayerScoreData scoreData = new PlayerScoreData(uuid, ScoreManager.getInstance().getPlayerScore(uuid));
 				result.add(scoreData);
 			}

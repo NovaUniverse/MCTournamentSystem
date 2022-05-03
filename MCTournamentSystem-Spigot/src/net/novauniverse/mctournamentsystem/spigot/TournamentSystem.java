@@ -72,10 +72,13 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private int[] winScore;
 
+	private int dropperCompleteLevelScore;
+
 	private boolean addXpLevelOnKill;
 	private boolean useExtendedSpawnLocations;
 	private boolean celebrationMode;
 	private boolean replaceEz;
+	private boolean noTeamsMode;
 
 	private ITournamentSystemPlayerEliminationMessageProvider playerEliminationMessageProvider;
 
@@ -143,11 +146,21 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.playerEliminationMessageProvider = playerEliminationMessageProvider;
 	}
 
+	public int getDropperCompleteLevelScore() {
+		return dropperCompleteLevelScore;
+	}
+
+	public boolean isNoTeamsMode() {
+		return noTeamsMode;
+	}
+
 	@Override
 	public void onEnable() {
 		TournamentSystem.instance = this;
 		this.staffGroups = new HashMap<>();
 		this.labymodBanner = null;
+
+		this.noTeamsMode = false;
 
 		this.playerEliminationMessageProvider = new TournamentSystemDefaultPlayerEliminationMessage();
 
@@ -158,7 +171,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 		// new File(new
 		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
-		
+
 		this.mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
@@ -240,6 +253,13 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		useExtendedSpawnLocations = config.getBoolean("extended_spawn_locations");
 		celebrationMode = config.getBoolean("celebration_mode");
 		replaceEz = config.getBoolean("replace_ez");
+		
+		if (config.has("no_teams")) {
+			noTeamsMode = config.getBoolean("no_teams");
+			if(noTeamsMode) {
+				Log.info("TournamentSystem", "No teams mode enabled");
+			}
+		}
 
 		JSONObject labymodBanner = config.getJSONObject("labymod_banner");
 		if (labymodBanner.getBoolean("enabled")) {
@@ -265,6 +285,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		Log.info("TournamentSystem", "Win score: " + winScoreString);
 
+		dropperCompleteLevelScore = getConfig().getInt("dropper_level_complete_score");
+
 		/* ----- Depends ----- */
 		ModuleManager.require(NetherBoardScoreboard.class);
 		ModuleManager.require(MultiverseManager.class);
@@ -288,8 +310,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		// TODO: add team size settings
 		int teamCount = config.getInt("team_size");
 
-		teamManager = new TournamentSystemTeamManager(teamCount);
-		NovaCore.getInstance().setTeamManager(teamManager);
+		if (!noTeamsMode) {
+			teamManager = new TournamentSystemTeamManager(teamCount);
+			NovaCore.getInstance().setTeamManager(teamManager);
+		}
 
 		/* ----- Modules ----- */
 		ModuleManager.scanForModules(this, "net.novauniverse.mctournamentsystem.spigot.score");
@@ -400,9 +424,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public int[] getWinScore() {
 		return winScore;
 	}
-	
+
 	/* ----- Send annoying messages to the player ----- */
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		if (LCS.isDemo()) {
