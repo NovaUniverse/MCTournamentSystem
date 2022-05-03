@@ -10,17 +10,12 @@ import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
 public class OpenModeListeners implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPostLogin(PostLoginEvent e) {
-		if (TournamentSystem.getInstance().isOpenMode()) {
-			return;
-		}
-
 		try {
 			UUID uuid = e.getPlayer().getUniqueId();
 			String uuidString = uuid.toString();

@@ -66,21 +66,23 @@ public class PlayerTelementryManager extends NovaModule {
 					if (GameManager.getInstance().getActiveGame().getPlayers().contains(player.getUniqueId())) {
 						isInGame = true;
 
-						Team team = TeamManager.getTeamManager().getPlayerTeam(player);
+						if (TeamManager.hasTeamManager()) {
+							Team team = TeamManager.getTeamManager().getPlayerTeam(player);
 
-						if (team != null) {
-							for (Player player2 : Bukkit.getServer().getOnlinePlayers()) {
-								Team team2 = TeamManager.getTeamManager().getPlayerTeam(player2);
-								if (team2 != null) {
-									if (team.equals(team2)) {
-										continue;
-									}
+							if (team != null) {
+								for (Player player2 : Bukkit.getServer().getOnlinePlayers()) {
+									Team team2 = TeamManager.getTeamManager().getPlayerTeam(player2);
+									if (team2 != null) {
+										if (team.equals(team2)) {
+											continue;
+										}
 
-									if (GameManager.getInstance().getActiveGame().getPlayers().contains(player2.getUniqueId())) {
-										if (player.getWorld().equals(player2.getWorld())) {
-											int dist = (int) player.getLocation().distance(player2.getLocation());
-											if (dist < closestEnemyDistance) {
-												closestEnemyDistance = dist;
+										if (GameManager.getInstance().getActiveGame().getPlayers().contains(player2.getUniqueId())) {
+											if (player.getWorld().equals(player2.getWorld())) {
+												int dist = (int) player.getLocation().distance(player2.getLocation());
+												if (dist < closestEnemyDistance) {
+													closestEnemyDistance = dist;
+												}
 											}
 										}
 									}

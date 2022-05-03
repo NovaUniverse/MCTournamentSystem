@@ -21,6 +21,7 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.EssentialModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 @NovaAutoLoad(shouldEnable = true)
 @EssentialModule
@@ -37,7 +38,7 @@ public class ScoreManager extends NovaModule implements Listener {
 	public ScoreManager() {
 		super("TournamentSystem.ScoreManager");
 	}
-	
+
 	@Override
 	public void onLoad() {
 		ScoreManager.instance = this;
@@ -50,7 +51,6 @@ public class ScoreManager extends NovaModule implements Listener {
 	public void onEnable() {
 		if (taskId == -1) {
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(TournamentSystem.getInstance(), new Runnable() {
-
 				@Override
 				public void run() {
 					playerScoreCache.keySet().forEach(uuid -> updatePlayerScore(uuid));
@@ -153,9 +153,11 @@ public class ScoreManager extends NovaModule implements Listener {
 			}
 
 			if (addToTeam) {
-				TournamentSystemTeam team = (TournamentSystemTeam) TournamentSystem.getInstance().getTeamManager().getPlayerTeam(uuid);
-				if (team != null) {
-					this.addTeamScore(team, score);
+				if (TeamManager.hasTeamManager()) {
+					TournamentSystemTeam team = (TournamentSystemTeam) TournamentSystem.getInstance().getTeamManager().getPlayerTeam(uuid);
+					if (team != null) {
+						this.addTeamScore(team, score);
+					}
 				}
 			}
 
