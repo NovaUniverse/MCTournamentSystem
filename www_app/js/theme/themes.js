@@ -1,5 +1,12 @@
 const themes = [
 	{
+		"name": "bootstrap",
+		"display_name": "Bootstrap",
+		"css": "bootstrap.min.css",
+		"css_fix": undefined,
+		"is_dark": false
+	},
+	{
 		"name": "cyborg",
 		"display_name": "Cyborg",
 		"css": "cyborg.css",

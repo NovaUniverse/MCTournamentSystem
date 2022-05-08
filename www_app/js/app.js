@@ -9,12 +9,37 @@ var staffTeam = {};
 
 var licenseWarningShown = false;
 
+function applyCustomTheme(url = null) {
+	if(url == null) {
+		localStorage.removeItem("custom_css");
+	} else {
+		localStorage.setItem("custom_css", url);
+	}
+	location.reload();
+}
+
+function disableCustomTheme() {
+	applyCustomTheme(null);
+}
+
 $(function () {
 	if (localStorage.getItem("token") == null) {
 		window.location = "/app/login/";
 		return;
 	} else {
 		token = localStorage.getItem("token");
+	}
+
+	$("#disable_custom_theme").on("click", () => disableCustomTheme());
+
+	$("#disable_custom_theme").hide();
+	if (localStorage.getItem("custom_css") != null) {
+		let url = localStorage.getItem("custom_css");
+		setTimeout(() => {
+			toastr.warning("Loading custom css from " + url + ". You can disable the custom theme is Settings");
+		}, 1000);
+		$("head").append($("<link>").attr("rel", "stylesheet").attr("href", url));
+		$("#disable_custom_theme").show();
 	}
 
 	$("#snapshot_file_uppload").on("change", function () {
@@ -86,7 +111,7 @@ $(function () {
 		}
 		console.log(importedData);
 
-		$.conresult.put("success", false);firm({
+		$.confirm({
 			title: 'Confirm import',
 			theme: 'dark',
 			content: 'Importing the snapshot will overwrite the existing scores!',
