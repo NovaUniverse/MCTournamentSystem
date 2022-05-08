@@ -2,16 +2,20 @@ package net.novauniverse.mctournamentsystem.spigot.game.gamespecific;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import net.novauniverse.games.dropper.NovaDropper;
 import net.novauniverse.games.dropper.game.Dropper;
 import net.novauniverse.games.dropper.game.event.DropperPlacementEvent;
 import net.novauniverse.games.dropper.game.event.DropperPlayerCompleteRoundEvent;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
@@ -23,6 +27,7 @@ import net.zeeraa.novacore.spigot.teams.TeamManager;
 public class DropperManager extends NovaModule implements Listener {
 	public static final int TIME_LEFT_LINE = 5;
 	public static final int DEATH_COUNT_LINE = 6;
+	public static final int REMAINING_PLAYERS_LINE = 7;
 
 	private Task task;
 	private boolean timeLeftLineShown;
@@ -34,6 +39,18 @@ public class DropperManager extends NovaModule implements Listener {
 	@Override
 	public void onLoad() {
 		timeLeftLineShown = false;
+
+		TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
+			Log.debug("DropperManager", "Handle player respawn for player " + player.getUniqueId());
+			Dropper dropper = NovaDropper.getInstance().getGame();
+			if (dropper.getMaps().size() > 0) {
+				player.setGameMode(GameMode.ADVENTURE);
+				if (!dropper.getRemainingPlayers().contains(player.getUniqueId())) {
+					dropper.getRemainingPlayers().add(player.getUniqueId());
+					dropper.teleportPlayer(player);
+				}
+			}
+		});
 
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override

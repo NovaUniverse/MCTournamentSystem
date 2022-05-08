@@ -56,6 +56,7 @@ public class RespawnPlayerCommand extends NovaCommand {
 										player.sendMessage(ChatColor.GREEN + "Respawned by a staff member");
 										VersionIndependantSound.NOTE_PLING.play(player, player.getLocation());
 										VersionIndependantUtils.get().sendTitle(player, ChatColor.GREEN + "Respawned", ChatColor.GREEN + "A staff member respawned you", 10, 60, 10);
+										TournamentSystem.getInstance().onRespawnPlayerCommand(player);
 										sender.sendMessage(ChatColor.GREEN + "Respawn successful");
 									} else {
 										sender.sendMessage(ChatColor.RED + "Player not in a team");

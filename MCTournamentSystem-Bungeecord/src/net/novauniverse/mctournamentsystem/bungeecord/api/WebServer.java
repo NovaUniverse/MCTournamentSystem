@@ -14,6 +14,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.Star
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.publicapi.PublicStatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.snapshot.ExportSnapshotHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.snapshot.ImportSnapshotHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.GetStaffHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.SetStaffHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.BroadcastHandler;
@@ -85,6 +87,10 @@ public class WebServer {
 
 		// Public
 		createContext("/api/public/status", new PublicStatusHandler());
+
+		// Snapshots
+		createContext("/api/snapshot/export", new ExportSnapshotHandler());
+		createContext("/api/snapshot/import", new ImportSnapshotHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");

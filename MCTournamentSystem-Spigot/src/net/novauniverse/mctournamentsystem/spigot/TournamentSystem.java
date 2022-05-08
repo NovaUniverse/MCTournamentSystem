@@ -3,13 +3,16 @@ package net.novauniverse.mctournamentsystem.spigot;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
@@ -79,6 +82,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean celebrationMode;
 	private boolean replaceEz;
 	private boolean noTeamsMode;
+	
+	private List<Consumer<Player>> respawnPlayerCallbacks;
 
 	private ITournamentSystemPlayerEliminationMessageProvider playerEliminationMessageProvider;
 
@@ -153,6 +158,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public boolean isNoTeamsMode() {
 		return noTeamsMode;
 	}
+	
+	public void addRespawnPlayerCallback(Consumer<Player> consumer) {
+		this.respawnPlayerCallbacks.add(consumer);
+	}
+	
+	public void onRespawnPlayerCommand(Player player) {
+		respawnPlayerCallbacks.forEach(c -> c.accept(player));
+	}
 
 	@Override
 	public void onEnable() {
@@ -162,6 +175,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.noTeamsMode = false;
 
+		this.respawnPlayerCallbacks = new ArrayList<>();
+		
 		this.playerEliminationMessageProvider = new TournamentSystemDefaultPlayerEliminationMessage();
 
 		/* ----- Setup files ----- */

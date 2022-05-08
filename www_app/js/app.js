@@ -17,6 +17,101 @@ $(function () {
 		token = localStorage.getItem("token");
 	}
 
+	$("#snapshot_file_uppload").on("change", function () {
+		let files = $("#snapshot_file_uppload").get(0).files;
+
+		//console.log(files);
+
+		if (files.length > 0) {
+			let f = files[0];
+
+			let reader = new FileReader();
+
+			reader.onload = (function (theFile) {
+				return function (e) {
+					jQuery('#snapshot_json_data').val(e.target.result);
+				};
+			})(f);
+
+			reader.readAsText(f)
+		} else {
+			console.log("No file selected");
+		}
+	});
+
+	$("#btn_import_snapshot_clear").on("click", function () {
+		$("#snapshot_json_data").val("");
+		$("#snapshot_file_uppload").val("");
+	});
+
+	$("#btn_export_snapshot").on("click", function () {
+		toastr.info("Exporting snapshot...");
+		$.getJSON("/api/snapshot/export" + "?access_token=" + token, function (data) {
+			if (data.error != undefined) {
+				toastr.error("Snapshot export failed. Error: " + data.error);
+				console.error("Snapshot export failed. Error: " + data.error);
+				return;
+			}
+
+			console.log(data);
+
+			console.log("Data collected. Downloading...");
+
+			let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data.data, null, 4));
+			let downloadAnchorNode = document.createElement('a');
+			downloadAnchorNode.setAttribute("href", dataStr);
+			downloadAnchorNode.setAttribute("download", "TournamentScoreSnapshot.json");
+			document.body.appendChild(downloadAnchorNode); // required for firefox
+			downloadAnchorNode.click();
+			downloadAnchorNode.remove();
+
+			toastr.success("Success. JSON Snapshot Download started");
+		});
+	});
+
+	$("#btn_import_snapshot").on("click", function () {
+		let text = $("#snapshot_json_data").val();
+
+		if (text.length == 0) {
+			toastr.error("Upload or paste the snapshot json data first");
+			return;
+		}
+
+		let importedData = undefined;
+		try {
+			importedData = JSON.parse(text);
+		} catch (err) {
+			toastr.error("Failed to parse json data. Please try to upload the file again");
+			return;
+		}
+		console.log(importedData);
+
+		$.conresult.put("success", false);firm({
+			title: 'Confirm import',
+			theme: 'dark',
+			content: 'Importing the snapshot will overwrite the existing scores!',
+			buttons: {
+				confirm: function () {
+					$.ajax({
+						type: "POST",
+						url: "/api/snapshot/import?access_token=" + localStorage.getItem("token"),
+						data: JSON.stringify(importedData),
+						success: function (data) {
+							console.log(data);
+							if (data.success) {
+								toastr.info("Snapshot imported");
+							} else {
+								toastr.error("Failed to uppload snapshot\n" + data.message);
+							}
+						},
+						dataType: "json"
+					});
+				},
+				cancel: function () { }
+			}
+		});
+	});
+
 	$("#btn_send_all_players_to").on("click", function () {
 		sendTarget = "all";
 		$('#select_server_modal').modal('show');
@@ -29,7 +124,7 @@ $(function () {
 
 		if (sendTarget == "all") {
 			$.getJSON("/api/send/send_players?server=" + encodeURIComponent(serverName) + "&access_token=" + token, function (data) {
-				console.log(data);
+				//console.log(data);
 				if (data.success) {
 					$('#select_server_modal').modal('hide');
 					toastr.success("Success");
@@ -39,7 +134,7 @@ $(function () {
 			});
 		} else {
 			$.getJSON("/api/send/send_player?server=" + encodeURIComponent(serverName) + "&player=" + encodeURIComponent(sendTarget) + "&access_token=" + token, function (data) {
-				console.log(data);
+				//console.log(data);
 				if (data.success) {
 					$('#select_server_modal').modal('hide');
 					toastr.success("Success");
@@ -58,6 +153,7 @@ $(function () {
 			buttons: {
 				confirm: function () {
 					localStorage.removeItem("token");
+					localStorage.removeItem("stored_credentials");
 					window.location.reload();
 				},
 				cancel: function () { }
@@ -71,7 +167,7 @@ $(function () {
 
 	$("#btn_remove_playerdata").on("click", function () {
 		$.getJSON("/api/system/clear_players?access_token=" + token, function (data) {
-			console.log(data);
+			//console.log(data);
 			if (data.success) {
 				toastr.success("Player data wiped");
 				$("#broadcast_reset_data").modal("hide");
@@ -83,7 +179,7 @@ $(function () {
 
 	$("#btn_full_reset").on("click", function () {
 		$.getJSON("/api/system/reset?access_token=" + token, function (data) {
-			console.log(data);
+			//console.log(data);
 			if (data.success) {
 				toastr.success("Player data wiped");
 				$("#broadcast_reset_data").modal("hide");
@@ -119,7 +215,7 @@ $(function () {
 			buttons: {
 				confirm: function () {
 					$.getJSON("/api/game/start_game" + "?access_token=" + token, function (data) {
-						console.log(data);
+						//console.log(data);
 						if (data.success) {
 							toastr.success("Success");
 						} else {
@@ -194,7 +290,7 @@ $(function () {
 			buttons: {
 				confirm: function () {
 					$.getJSON("/api/whitelist/clear" + "?access_token=" + token, function (data) {
-						console.log(data);
+						//console.log(data);
 						if (data.success) {
 							toastr.success("Whitelist cleared");
 						} else {
@@ -477,7 +573,7 @@ function updateWhitelist() {
 				console.log("Remove clicked for " + uuidToRemove);
 
 				$.getJSON("/api/whitelist/remove" + "?access_token=" + token + "&uuid=" + uuidToRemove, function (data) {
-					console.log(data);
+					//console.log(data);
 					if (data.success) {
 						toastr.success("Success");
 					} else {
@@ -505,7 +601,7 @@ function showLicenseWarning(text) {
 
 function update() {
 	$.getJSON("/api/system/status" + "?access_token=" + token, function (data) {
-		console.log(data);
+		//console.log(data);
 
 		if (data.error == "unauthorized") {
 			console.error("It seems like we are no longer authorised. Maybe we should add a real error message here");

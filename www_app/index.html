@@ -107,6 +107,9 @@
 				<a class="nav-link page-link" data-page="whitelist_page" href="#">Whitelist</a>
 			</li>
 			<li class="nav-item">
+				<a class="nav-link page-link" data-page="snapshot_page" href="#">Score snapshot</a>
+			</li>
+			<li class="nav-item">
 				<a class="nav-link page-link" data-page="support_page" href="#">Support</a>
 			</li>
 		</ul>
@@ -164,6 +167,29 @@
 							<li class="list-group-item">Helpers only have the helper prefix</li>
 							<li class="list-group-item">Moderators can kick, ban and mute players</li>
 						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="snapshot_page" class="nav-page d-none">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col">
+						<button type="button" id="btn_export_snapshot" class="btn btn-success">Export snapshot</button>
+						<button type="button" id="btn_import_snapshot" class="btn btn-success ml-2">Import
+							snapshot</button>
+							<button type="button" id="btn_import_snapshot_clear" class="btn btn-danger ml-2">Clear</button>
+					</div>
+				</div>
+
+				<div class="row mt-2">
+					<div class="col">
+						<label for="snapshot_json_data">Paste JSON data here</label>
+						<textarea class="form-control rounded-1" id="snapshot_json_data" rows="10"></textarea>
+
+						<label for="snapshot_file_uppload" class="form-label">Or uppload JSON file</label>
+						<input class="form-control" type="file" id="snapshot_file_uppload">
 					</div>
 				</div>
 			</div>

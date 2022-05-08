@@ -21,8 +21,8 @@ public class LobbyCrashPrevention extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntitySpawn(PlayerInteractEvent e) {
 		Material material = VersionIndependantUtils.get().getItemInMainHand(e.getPlayer()).getType();
-		if (material == Material.EXPLOSIVE_MINECART) {
-			if (VersionIndependantUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_8) {
+		if (VersionIndependantUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_8) {
+			if (material == Material.EXPLOSIVE_MINECART) {
 				e.setCancelled(true);
 			}
 		}

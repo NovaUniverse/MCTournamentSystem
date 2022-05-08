@@ -325,9 +325,8 @@ public class DuelManager extends NovaModule implements Listener {
 					// Player is busy
 					return InviteResult.PLAYER_BUSY;
 				} else {
+					invites.remove(inviteUuid);
 					if (duel(targetPlayer, player)) {
-						invites.remove(inviteUuid);
-
 						// Success
 						return InviteResult.OK;
 					}
