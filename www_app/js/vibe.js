@@ -16,8 +16,14 @@ function vibe() {
 }
 
 function onYouTubeIframeAPIReady() {
+	let vibeVideoId = localStorage.getItem("custom_vibe_video_id");
+
+	if (vibeVideoId == null) {
+		vibeVideoId = "Q_5HCPgFgW8";
+	}
+
 	player = new YT.Player('yt_player', {
-		videoId: 'Q_5HCPgFgW8',
+		videoId: vibeVideoId,
 		controls: 0,
 		disablekb: 1,
 		playerVars: {

@@ -104,7 +104,7 @@ public class GoldenHead extends NovaModule implements Listener {
 					p.getWorld().playSound(p.getLocation(), Sound.EAT, 1F, 1F);
 
 					p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 30 * 20, 1));
-					p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 15 * 20, 2));
+					p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 15 * 20, 1));
 					p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 60 * 20, 1));
 				}
 			}
