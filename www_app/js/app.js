@@ -17,6 +17,8 @@ $(function () {
 		token = localStorage.getItem("token");
 	}
 
+	$(".btn-fetch-chat-log").on("click", () => fetchChatLog());
+
 	$("#snapshot_file_uppload").on("change", function () {
 		let files = $("#snapshot_file_uppload").get(0).files;
 
@@ -445,11 +447,37 @@ $(function () {
 		});
 	});
 
+	$("#btn_open_chat_log").on("click", () => {
+		let content = $("#chat_log").text();
+
+		let win = window.open("", "Chat log", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
+		win.document.body.innerText = content;
+	});
+
 	setInterval(function () {
 		update();
 	}, 1000);
 	update();
 });
+
+function fetchChatLog() {
+	$("#chat_log").text("Loading...");
+	$("#chat_log").attr("disabled", 1);
+
+	$.getJSON("/api/chat/log" + "?access_token=" + token, function (data) {
+		if (!data.success) {
+			$("#chat_log").text(data.message);
+		} else {
+			let messages = "";
+
+			data.messages.forEach(message => {
+				messages += "[" + message.sent_at + "] <" + message.username + "> " + message.content + "\n";
+			});
+
+			$("#chat_log").text(messages);
+		}
+	});
+}
 
 function updateStaffTeam(update = false) {
 	let uuidList = Object.keys(staffTeam);

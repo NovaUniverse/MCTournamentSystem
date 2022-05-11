@@ -9,6 +9,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.chat.GetChatLogHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.CommentatorTPHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.publicapi.PublicStatusHandler;
@@ -91,6 +92,9 @@ public class WebServer {
 		// Snapshots
 		createContext("/api/snapshot/export", new ExportSnapshotHandler());
 		createContext("/api/snapshot/import", new ImportSnapshotHandler());
+
+		// Chat
+		createContext("/api/chat/log", new GetChatLogHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");

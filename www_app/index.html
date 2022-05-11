@@ -115,6 +115,9 @@
 				<a class="nav-link page-link" data-page="snapshot_page" href="#">Score snapshot</a>
 			</li>
 			<li class="nav-item">
+				<a class="nav-link page-link btn-fetch-chat-log" data-page="chat_log_page" href="#">Chat log</a>
+			</li>
+			<li class="nav-item">
 				<a class="nav-link page-link" data-page="support_page" href="#">Support</a>
 			</li>
 		</ul>
@@ -171,6 +174,25 @@
 							<li class="list-group-item">Helpers only have the helper prefix</li>
 							<li class="list-group-item">Moderators can kick, ban and mute players</li>
 						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div id="chat_log_page" class="nav-page d-none">
+			<div class="container-fluid mt-2">
+				<div class="row">
+					<div class="col">
+						<button type="button" class="btn btn-fetch-chat-log btn-info ml-2">Refresh</button>
+						<button type="button" id="btn_open_chat_log" class="btn btn-info ml-2">Show in separate window</button>
+					</div>
+				</div>
+
+				<div class="row mt-2">
+					<div class="col">
+						<label for="chat_log">Chat log</label>
+						<textarea class="form-control rounded-1" id="chat_log" rows="10"></textarea>
 					</div>
 				</div>
 			</div>

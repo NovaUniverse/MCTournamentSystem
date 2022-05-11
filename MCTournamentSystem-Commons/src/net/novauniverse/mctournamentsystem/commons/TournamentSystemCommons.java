@@ -3,6 +3,7 @@ package net.novauniverse.mctournamentsystem.commons;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import net.md_5.bungee.api.ChatColor;
 import net.zeeraa.novacore.commons.database.DBConnection;
@@ -12,6 +13,16 @@ public class TournamentSystemCommons {
 	public static final char CHAT_COLOR_CHAR = (char) 0xA7;
 	public static final String DATA_CHANNEL = "mcts:controller";
 	public static final String PLAYER_TELEMENTRY_CHANNEL = "mcts:ptelementry";
+	
+	private static UUID sessionId = null;
+	
+	public static UUID getSessionId() {
+		if(sessionId == null) {
+			sessionId = UUID.randomUUID();
+			Log.debug("TournamentSystemCommons", "Init sessionId as " + sessionId.toString());
+		}
+		return sessionId;
+	}
 
 	private static DBConnection dbConnection;
 

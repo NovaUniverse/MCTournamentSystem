@@ -82,7 +82,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean celebrationMode;
 	private boolean replaceEz;
 	private boolean noTeamsMode;
-	
+
 	private List<Consumer<Player>> respawnPlayerCallbacks;
 
 	private ITournamentSystemPlayerEliminationMessageProvider playerEliminationMessageProvider;
@@ -158,17 +158,20 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public boolean isNoTeamsMode() {
 		return noTeamsMode;
 	}
-	
+
 	public void addRespawnPlayerCallback(Consumer<Player> consumer) {
 		this.respawnPlayerCallbacks.add(consumer);
 	}
-	
+
 	public void onRespawnPlayerCommand(Player player) {
 		respawnPlayerCallbacks.forEach(c -> c.accept(player));
 	}
 
 	@Override
 	public void onEnable() {
+		// Init session id
+		TournamentSystemCommons.getSessionId();
+
 		TournamentSystem.instance = this;
 		this.staffGroups = new HashMap<>();
 		this.labymodBanner = null;
@@ -176,7 +179,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.noTeamsMode = false;
 
 		this.respawnPlayerCallbacks = new ArrayList<>();
-		
+
 		this.playerEliminationMessageProvider = new TournamentSystemDefaultPlayerEliminationMessage();
 
 		/* ----- Setup files ----- */
@@ -268,10 +271,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		useExtendedSpawnLocations = config.getBoolean("extended_spawn_locations");
 		celebrationMode = config.getBoolean("celebration_mode");
 		replaceEz = config.getBoolean("replace_ez");
-		
+
 		if (config.has("no_teams")) {
 			noTeamsMode = config.getBoolean("no_teams");
-			if(noTeamsMode) {
+			if (noTeamsMode) {
 				Log.info("TournamentSystem", "No teams mode enabled");
 			}
 		}
