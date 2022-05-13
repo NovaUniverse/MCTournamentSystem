@@ -11,6 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,10 +22,14 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.JSONObject;
+
 import me.rayzr522.jsonmessage.JSONMessage;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
@@ -32,9 +38,11 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
+import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.NovaCoreGameVersion;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
@@ -44,7 +52,9 @@ import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboar
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
+import net.zeeraa.novacore.spigot.utils.LocationUtils;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
+import net.zeeraa.novacore.spigot.utils.VectorArea;
 
 @NovaAutoLoad(shouldEnable = true)
 public class Lobby extends NovaModule implements Listener {
@@ -65,6 +75,15 @@ public class Lobby extends NovaModule implements Listener {
 	private SimpleTask loadScoreTask;
 	private SimpleTask lobbyTask;
 
+	private boolean spleefEnabled;
+	private VectorArea spleefArena;
+	private VectorArea spleefFloor;
+	private VectorArea spleefDeathArea;
+	private Location spleefRespawnLocation;
+
+	private Task spleefTask;
+	private Task spleefResetTask;
+
 	public static Lobby getInstance() {
 		return instance;
 	}
@@ -84,6 +103,12 @@ public class Lobby extends NovaModule implements Listener {
 		this.gameRunningCheckTask = null;
 		this.loadScoreTask = null;
 		this.lobbyTask = null;
+
+		this.spleefEnabled = false;
+		this.spleefArena = null;
+		this.spleefFloor = null;
+		this.spleefDeathArea = null;
+		this.spleefRespawnLocation = null;
 	}
 
 	@Override
@@ -99,6 +124,65 @@ public class Lobby extends NovaModule implements Listener {
 		multiverseWorld.getWorld().setWeatherDuration(0);
 
 		multiverseWorld.setLockWeather(true);
+
+		this.spleefTask = new SimpleTask(getPlugin(), new Runnable() {
+			@Override
+			public void run() {
+				getWorld().getPlayers().forEach(player -> {
+					if (spleefDeathArea.isInsideBlock(player.getLocation().toVector())) {
+						player.teleport(spleefRespawnLocation, TeleportCause.PLUGIN);
+						player.setFireTicks(0);
+						VersionIndependantSound.WITHER_HURT.play(player);
+						VersionIndependantUtils.getInstance().sendTitle(player, "", ChatColor.RED + "You died", 10, 20, 10);
+					}
+
+					if (spleefArena.isInsideBlock(player.getLocation().toVector())) {
+						if (player.getGameMode() == GameMode.ADVENTURE) {
+							player.setGameMode(GameMode.SURVIVAL);
+						}
+
+						if (!player.getInventory().contains(Material.DIAMOND_SPADE)) {
+							ItemBuilder builder = new ItemBuilder(Material.DIAMOND_SPADE);
+							builder.setUnbreakable(true);
+							player.getInventory().addItem(builder.build());
+						}
+					}
+				});
+			}
+		}, 5L);
+
+		this.spleefResetTask = new SimpleTask(getPlugin(), new Runnable() {
+			@Override
+			public void run() {
+				for (int x = spleefFloor.getPosition1().getBlockX(); x <= spleefFloor.getPosition2().getBlockX(); x++) {
+					for (int y = spleefFloor.getPosition1().getBlockY(); y <= spleefFloor.getPosition2().getBlockY(); y++) {
+						for (int z = spleefFloor.getPosition1().getBlockZ(); z <= spleefFloor.getPosition2().getBlockZ(); z++) {
+							getWorld().getBlockAt(x, y, z).setType(Material.SNOW_BLOCK);
+							getWorld().getPlayers().forEach(player -> {
+								if (spleefArena.isInsideBlock(player.getLocation().toVector())) {
+									VersionIndependantUtils.getInstance().sendActionBarMessage(player, ChatColor.GOLD + "" + ChatColor.BOLD + "Arena reset");
+								}
+							});
+						}
+					}
+				}
+			}
+		}, 20 * 20);
+
+		File spleefFile = new File(multiverseWorld.getWorld().getWorldFolder().getAbsolutePath() + File.separator + "spleefconfig.json");
+		if (spleefFile.exists()) {
+			Log.info("Lobby", "Found spleefconfig.json");
+			JSONObject json = JSONFileUtils.readJSONObjectFromFile(spleefFile);
+			spleefEnabled = true;
+			spleefArena = VectorArea.fromJSON(json.getJSONObject("arena"));
+			spleefFloor = VectorArea.fromJSON(json.getJSONObject("floor"));
+			spleefDeathArea = VectorArea.fromJSON(json.getJSONObject("death_area"));
+
+			spleefRespawnLocation = LocationUtils.fromJSONObject(json.getJSONObject("respawn_location"), multiverseWorld.getWorld());
+
+			Task.tryStartTask(spleefTask);
+			Task.tryStartTask(spleefResetTask);
+		}
 
 		NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + "Lobby");
 
@@ -163,6 +247,9 @@ public class Lobby extends NovaModule implements Listener {
 		Task.tryStopTask(calmDownCageResetTimer);
 		Task.tryStopTask(loadScoreTask);
 		Task.tryStopTask(lobbyTask);
+
+		Task.tryStopTask(spleefTask);
+		Task.tryStopTask(spleefResetTask);
 
 		MultiverseManager.getInstance().unload(multiverseWorld);
 		multiverseWorld = null;
@@ -253,6 +340,22 @@ public class Lobby extends NovaModule implements Listener {
 	 * VersionIndependantPlayerAchievementAwardedEvent e) { e.setCancelled(true); }
 	 */
 
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntitySpawn(EntitySpawnEvent e) {
+		if (e.getEntityType() == EntityType.DROPPED_ITEM) {
+			if (e.getLocation().getWorld() == getWorld()) {
+				if (spleefEnabled) {
+					if (spleefArena.isInsideBlock(e.getLocation().toVector())) {
+						Item item = (Item) e.getEntity();
+						if (item.getItemStack().getType() == Material.SNOW_BALL) {
+							e.setCancelled(true);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
@@ -274,6 +377,13 @@ public class Lobby extends NovaModule implements Listener {
 	public void onBlockBreak(BlockBreakEvent e) {
 		Player player = e.getPlayer();
 		if (player.getWorld() == lobbyLocation.getWorld()) {
+			if (spleefEnabled) {
+				if (spleefFloor.isInsideBlock(e.getBlock().getLocation().toVector())) {
+					e.setCancelled(false);
+					return;
+				}
+			}
+
 			if (player.getGameMode() != GameMode.CREATIVE) {
 				e.setCancelled(true);
 			}
