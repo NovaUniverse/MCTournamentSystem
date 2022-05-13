@@ -27,6 +27,7 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameLoad
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.TeamWinEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.mapselector.selectors.guivoteselector.GUIMapSelectorPlayerVotedEvent;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
@@ -197,5 +198,11 @@ public class GameListeners extends NovaModule implements Listener {
 				}, 200L);
 			}
 		}, 100L);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onGUIMapSelectorPlayerVoted(GUIMapSelectorPlayerVotedEvent e) {
+		Player player = e.getPlayer();
+		VersionIndependantUtils.getInstance().sendTitle(player, "", ChatColor.GOLD + "Voted for " + e.getMap().getDisplayName(), 10, 40, 10);
 	}
 }
