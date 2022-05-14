@@ -25,7 +25,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.TSPluginMessageLi
 import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
-import net.novauniverse.mctournamentsystem.commons.LCS;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
@@ -229,35 +228,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		this.getProxy().registerChannel(TournamentSystemCommons.DATA_CHANNEL);
 		Log.info("Registering channel " + TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
 		this.getProxy().registerChannel(TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
-
-		if (!LCS.connectivityCheck()) {
-			Log.fatal("Could not connect to the license servers. Please join our discord server https://discord.gg/4gZSVJ7 and open a ticket about this and we will try to resolve it asap");
-			ProxyServer.getInstance().stop("Could not connect to the license servers");
-			return;
-		}
-
-		if (!LCS.connectivityCheck()) {
-			Log.fatal("Cant connect to the license servers");
-			ProxyServer.getInstance().stop("Cant connect to the license servers");
-			return;
-		}
-
-		try {
-			File licenseFile = new File(globalConfigPath + File.separator + "license_key.txt");
-			boolean success = LCS.check(licenseFile);
-			if (!success) {
-				if (!LCS.isValid()) {
-					Log.error("Missing or invalid liscense key");
-				} else if (LCS.isExpired()) {
-					Log.error("Expired liscense key");
-				}
-			} else {
-				Log.info("Licensed to: " + LCS.getLicensedTo());
-			}
-		} catch (Exception e) {
-			Log.fatal("License validation failure");
-			ProxyServer.getInstance().stop("License validation failure");
-		}
 	}
 
 	@Override

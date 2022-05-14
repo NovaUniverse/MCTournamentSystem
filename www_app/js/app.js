@@ -7,8 +7,6 @@ var addStaffUsername = null;
 var staffRoles = [];
 var staffTeam = {};
 
-var licenseWarningShown = false;
-
 $(function () {
 	if (localStorage.getItem("token") == null) {
 		window.location = "/app/login/";
@@ -615,18 +613,6 @@ function updateWhitelist() {
 	});
 }
 
-function showLicenseWarning(text) {
-	if (licenseWarningShown) {
-		return;
-	}
-	licenseWarningShown = true;
-
-	toastr.warning(text);
-
-	$("#license_warning_body").text(text);
-	$("#license_warning").modal("show");
-}
-
 function update() {
 	$.getJSON("/api/system/status" + "?access_token=" + token, function (data) {
 		//console.log(data);
@@ -645,28 +631,6 @@ function update() {
 		$(".player-tr").each(function () {
 			toRemove.push($(this).data("uuid"));
 		});
-
-
-		if (data.license.is_valid) {
-			if (data.license.is_expired) {
-				$(".license-status").text("License expired");
-				showLicenseWarning("License expired. Please go the the support tab and contact us to extend your license");
-			} else {
-				if (data.license.is_demo) {
-					$(".license-status").text("Demo license");
-
-					showLicenseWarning("You are using a demo license. Please go the the support tab and contact us to get a license");
-				} else {
-					$(".license-status").text("License valid");
-				}
-			}
-			$(".licensed-to").text(data.license.owner);
-			$(".licensed-expires").text(data.license.expires_at);
-		} else {
-			$(".license-status").text("Invalid license");
-
-			showLicenseWarning("Invalid license key. Please go the the support tab and contact us to extend your license");
-		}
 
 		// Average ping
 		let totalPing = 0;

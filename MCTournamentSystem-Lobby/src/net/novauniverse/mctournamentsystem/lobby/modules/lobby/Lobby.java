@@ -192,6 +192,9 @@ public class Lobby extends NovaModule implements Listener {
 				for (Player player : lobbyLocation.getWorld().getPlayers()) {
 					player.setFoodLevel(20);
 					if (player.getLocation().getY() < -3) {
+						if(player.getGameMode() == GameMode.SURVIVAL) {
+							player.setGameMode(GameMode.ADVENTURE);
+						}
 						player.teleport(lobbyLocation);
 						player.setFallDistance(0);
 					}
