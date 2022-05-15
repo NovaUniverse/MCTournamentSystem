@@ -192,7 +192,7 @@ public class Lobby extends NovaModule implements Listener {
 				for (Player player : lobbyLocation.getWorld().getPlayers()) {
 					player.setFoodLevel(20);
 					if (player.getLocation().getY() < -3) {
-						if(player.getGameMode() == GameMode.SURVIVAL) {
+						if (player.getGameMode() == GameMode.SURVIVAL) {
 							player.setGameMode(GameMode.ADVENTURE);
 						}
 						player.teleport(lobbyLocation);
@@ -294,6 +294,14 @@ public class Lobby extends NovaModule implements Listener {
 	public void onPlayerDropItem(PlayerDropItemEvent e) {
 		if (e.getItemDrop().getItemStack().getType() == Material.FISHING_ROD) {
 			e.setCancelled(true);
+		}
+
+		if (spleefEnabled == true) {
+			if (e.getItemDrop().getItemStack().getType() == Material.DIAMOND_SPADE) {
+				if (e.getPlayer().getGameMode() == GameMode.SURVIVAL || e.getPlayer().getGameMode() == GameMode.ADVENTURE) {
+					e.setCancelled(true);
+				}
+			}
 		}
 	}
 
