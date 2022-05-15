@@ -42,6 +42,7 @@ import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.NovaCoreGameVersion;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantMetarial;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
@@ -141,8 +142,8 @@ public class Lobby extends NovaModule implements Listener {
 							player.setGameMode(GameMode.SURVIVAL);
 						}
 
-						if (!player.getInventory().contains(Material.DIAMOND_SPADE)) {
-							ItemBuilder builder = new ItemBuilder(Material.DIAMOND_SPADE);
+						if (!player.getInventory().contains(VersionIndependantMetarial.DIAMOND_SHOVEL.toBukkitVersion())) {
+							ItemBuilder builder = new ItemBuilder(VersionIndependantMetarial.DIAMOND_SHOVEL.toBukkitVersion());
 							builder.setUnbreakable(true);
 							player.getInventory().addItem(builder.build());
 						}
@@ -297,7 +298,7 @@ public class Lobby extends NovaModule implements Listener {
 		}
 
 		if (spleefEnabled == true) {
-			if (e.getItemDrop().getItemStack().getType() == Material.DIAMOND_SPADE) {
+			if (e.getItemDrop().getItemStack().getType() == VersionIndependantMetarial.DIAMOND_SHOVEL.toBukkitVersion()) {
 				if (e.getPlayer().getGameMode() == GameMode.SURVIVAL || e.getPlayer().getGameMode() == GameMode.ADVENTURE) {
 					e.setCancelled(true);
 				}
@@ -358,7 +359,7 @@ public class Lobby extends NovaModule implements Listener {
 				if (spleefEnabled) {
 					if (spleefArena.isInsideBlock(e.getLocation().toVector())) {
 						Item item = (Item) e.getEntity();
-						if (item.getItemStack().getType() == Material.SNOW_BALL) {
+						if (item.getItemStack().getType() == VersionIndependantMetarial.SNOWBALL.toBukkitVersion()) {
 							e.setCancelled(true);
 						}
 					}
