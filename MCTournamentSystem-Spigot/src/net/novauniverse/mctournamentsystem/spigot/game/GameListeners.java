@@ -16,6 +16,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.BingoManager
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.DropperManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SurvivalGamesManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.TNTTagManager;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
@@ -74,6 +75,14 @@ public class GameListeners extends NovaModule implements Listener {
 				Log.success(getName(), "Enabled game specific module: DropperManager (" + DropperManager.class.getName() + ")");
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: DropperManager (" + DropperManager.class.getName() + ")");
+			}
+		}
+
+		if (e.getGame().getName().equalsIgnoreCase("tnttag")) {
+			if (ModuleManager.loadModule(TournamentSystem.getInstance(), TNTTagManager.class, true)) {
+				Log.success(getName(), "Enabled game specific module: TNTTagManager (" + TNTTagManager.class.getName() + ")");
+			} else {
+				Log.error(getName(), "Failed to enable game specific module: TNTTagManager (" + TNTTagManager.class.getName() + ")");
 			}
 		}
 	}
@@ -146,7 +155,7 @@ public class GameListeners extends NovaModule implements Listener {
 				break;
 
 			case COMMAND:
-				subtitle = ChatColor.RED + "Eliminated by admin";
+				subtitle = ChatColor.RED + "Eliminated by an admin";
 				break;
 
 			default:

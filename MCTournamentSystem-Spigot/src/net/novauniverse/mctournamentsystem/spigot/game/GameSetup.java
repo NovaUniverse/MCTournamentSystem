@@ -19,6 +19,7 @@ import net.zeeraa.novacore.spigot.module.modules.compass.CompassTracker;
 public class GameSetup {
 	public static void init(TournamentSystem tournamentSystem) {
 		ScoreListener scoreListener = new ScoreListener(tournamentSystem.getConfig().getBoolean("kill_score_enabled"), tournamentSystem.getConfig().getInt("kill_score"), tournamentSystem.getConfig().getBoolean("win_score_enabled"), tournamentSystem.getWinScore(), tournamentSystem.getConfig().getBoolean("participation_score_enabled"), tournamentSystem.getConfig().getInt("participation_score"));
+		tournamentSystem.setScoreListener(scoreListener);
 		Bukkit.getServer().getPluginManager().registerEvents(scoreListener, tournamentSystem);
 		Log.info("GameSetup", "ScoreListener started");
 

@@ -46,6 +46,7 @@ import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissions;
 import net.novauniverse.mctournamentsystem.spigot.pluginmessages.TSPluginMessageListnener;
+import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
@@ -78,6 +79,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean noTeamsMode;
 
 	private List<Consumer<Player>> respawnPlayerCallbacks;
+	
+	private ScoreListener scoreListener;
 
 	private ITournamentSystemPlayerEliminationMessageProvider playerEliminationMessageProvider;
 
@@ -161,6 +164,18 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		respawnPlayerCallbacks.forEach(c -> c.accept(player));
 	}
 
+	public void setScoreListener(ScoreListener scoreListener) {
+		this.scoreListener = scoreListener;
+	}
+	
+	public ScoreListener getScoreListener() {
+		return scoreListener;
+	}
+	
+	public boolean hasScoreListener() {
+		return scoreListener != null;
+	}
+	
 	@Override
 	public void onEnable() {
 		// Init session id
@@ -176,6 +191,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.playerEliminationMessageProvider = new TournamentSystemDefaultPlayerEliminationMessage();
 
+		this.scoreListener = null;
+		
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
