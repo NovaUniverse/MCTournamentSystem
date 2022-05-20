@@ -48,7 +48,7 @@ public class DuelManager extends NovaModule implements Listener {
 	public static DuelManager getInstance() {
 		return instance;
 	}
-	
+
 	public DuelManager() {
 		super("TournamentSystem.Lobby.DuelManager");
 	}
@@ -75,7 +75,7 @@ public class DuelManager extends NovaModule implements Listener {
 					for (DuelInstance duelInstance : duelInstances) {
 						for (Player player : duelInstance.getPlayers()) {
 							if (duelInstance.getStage() == DuelStage.INGAME) {
-								if (player.getGameMode() == GameMode.ADVENTURE) {
+								if (player.getGameMode() == GameMode.ADVENTURE || player.getGameMode() == GameMode.SURVIVAL) {
 									if (player.getLocation().getY() <= 19) {
 										Player otherPlayer = null;
 
