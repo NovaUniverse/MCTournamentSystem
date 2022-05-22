@@ -37,42 +37,44 @@ public class TNTTagManager extends NovaModule implements Listener {
 				boolean didShow = false;
 				if (GameManager.getInstance().hasGame()) {
 					TNTTag tntTag = (TNTTag) GameManager.getInstance().getActiveGame();
-					if (GameManager.getInstance().getActiveGame().hasStarted() && !GameManager.getInstance().getActiveGame().hasEnded()) {
-						long totalSecs = tntTag.getRoundTimer();
+					if (GameManager.getInstance().getActiveGame().hasStarted()) {
+						if (!GameManager.getInstance().getActiveGame().hasEnded()) {
+							long totalSecs = tntTag.getRoundTimer();
 
-						long minutes = (totalSecs % 3600) / 60;
-						long seconds = totalSecs % 60;
+							long minutes = (totalSecs % 3600) / 60;
+							long seconds = totalSecs % 60;
 
-						ChatColor color;
+							ChatColor color;
 
-						if (totalSecs > 30) {
-							color = ChatColor.GREEN;
-						} else if (totalSecs > 10) {
-							color = ChatColor.YELLOW;
-						} else {
-							color = ChatColor.RED;
+							if (totalSecs > 30) {
+								color = ChatColor.GREEN;
+							} else if (totalSecs > 10) {
+								color = ChatColor.YELLOW;
+							} else {
+								color = ChatColor.RED;
+							}
+
+							String timeString = String.format("%02d:%02d", minutes, seconds);
+
+							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + color + timeString);
+
+							timeLeftLineShown = true;
+							didShow = true;
 						}
 
-						String timeString = String.format("%02d:%02d", minutes, seconds);
+						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+							if (tntTag.getTaggedPlayers().contains(player.getUniqueId())) {
+								NetherBoardScoreboard.getInstance().setPlayerLine(TAGGED_LINE, player, ChatColor.RED + "Tagged " + TextUtils.ICON_WARNING);
+							} else {
+								NetherBoardScoreboard.getInstance().clearPlayerLine(TAGGED_LINE, player);
+							}
+						});
 
-						NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + color + timeString);
-
-						timeLeftLineShown = true;
-						didShow = true;
+						if (!didShow && timeLeftLineShown) {
+							NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LEFT_LINE);
+							timeLeftLineShown = false;
+						}
 					}
-
-					Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-						if (tntTag.getTaggedPlayers().contains(player.getUniqueId())) {
-							NetherBoardScoreboard.getInstance().setPlayerLine(TAGGED_LINE, player, ChatColor.RED + "Tagged " + TextUtils.ICON_WARNING);
-						} else {
-							NetherBoardScoreboard.getInstance().clearPlayerLine(TAGGED_LINE, player);
-						}
-					});
-				}
-
-				if (!didShow && timeLeftLineShown) {
-					NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LEFT_LINE);
-					timeLeftLineShown = false;
 				}
 			}
 		}, 10L);

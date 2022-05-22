@@ -1,16 +1,21 @@
 package net.novauniverse.mctournamentsystem.bungeecord.listener;
 
+import java.util.concurrent.TimeUnit;
+
 import de.dombo.bungeemessages.BungeeMessages;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
+import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
+import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.UUIDUtils;
 
 public class JoinEvents implements Listener {
@@ -21,10 +26,28 @@ public class JoinEvents implements Listener {
 		if (player.hasPermission("tournamentcore.autosocialspy")) {
 			if (!BungeeMessages.getPlugin().getManager().isSocialSpy(player)) {
 				BungeeMessages.getPlugin().getManager().playerSocialSpy().add(player);
-				player.sendMessage(new TextComponent(ChatColor.GREEN + "Social spy enabled since you have moderator permissions"));
+				player.sendMessage(new ComponentBuilder("Social spy enabled since you have moderator permissions").color(ChatColor.GREEN).create());
 			}
 		} else if (BungeeMessages.getPlugin().getManager().isSocialSpy(player)) {
 			BungeeMessages.getPlugin().getManager().playerSocialSpy().remove(player);
+		}
+
+		String activeServerName = TournamentSystemCommons.getActiveServer();
+		if (activeServerName != null) {
+			ServerInfo activeServer = ProxyServer.getInstance().getServerInfo(activeServerName);
+			if (activeServer == null) {
+				Log.error("JoinEvents", "Cant find server with name: " + activeServerName);
+			} else {
+				ProxyServer.getInstance().getScheduler().schedule(TournamentSystem.getInstance(), new Runnable() {
+					@Override
+					public void run() {
+						if (player.isConnected()) {
+							player.connect(activeServer);
+							player.sendMessage(new ComponentBuilder("Connecting to " + activeServerName + " since a game is active. Use /hub to get back to the lobby").color(ChatColor.GOLD).create());
+						}
+					}
+				}, 500, TimeUnit.MILLISECONDS);
+			}
 		}
 
 		ProxyServer.getInstance().getPlayers().forEach(p -> {

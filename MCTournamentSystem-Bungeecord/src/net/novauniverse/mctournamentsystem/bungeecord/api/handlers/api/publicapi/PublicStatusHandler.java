@@ -160,6 +160,8 @@ public class PublicStatusHandler extends APIEndpoint {
 		});
 
 		json.put("online_players", onlinePlayers);
+		
+		json.put("active_server", TournamentSystemCommons.getActiveServer());
 
 		return json;
 	}

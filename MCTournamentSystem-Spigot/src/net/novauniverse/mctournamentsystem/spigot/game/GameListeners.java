@@ -25,6 +25,7 @@ import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.DefaultGameCountdownStartEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameLoadedEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
@@ -88,6 +89,16 @@ public class GameListeners extends NovaModule implements Listener {
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: TNTTagManager (" + TNTTagManager.class.getName() + ")");
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onDefaultGameCountdownStart(DefaultGameCountdownStartEvent e) {
+		try {
+			TournamentSystemCommons.setActiveServer(TournamentSystem.getInstance().getServerName());
+		} catch (Exception ex) {
+			Log.error("Failed to set active server name");
+			ex.printStackTrace();
 		}
 	}
 
