@@ -51,7 +51,7 @@ public abstract class APIEndpoint implements HttpHandler {
 		if (allowCommentatorAccess()) {
 			if (params.containsKey("commentator_key")) {
 				String commentatorKey = params.get("commentator_key");
-				if (APIKeyStore.getCommentatorKeys().containsKey(commentatorKey)) {
+				if (APIKeyStore.getCommentatorKeys().containsKey(commentatorKey) || TournamentSystem.getInstance().getCommentatorGuestKey().equalsIgnoreCase(commentatorKey)) {
 					apiKeyOk = true;
 				}
 			}

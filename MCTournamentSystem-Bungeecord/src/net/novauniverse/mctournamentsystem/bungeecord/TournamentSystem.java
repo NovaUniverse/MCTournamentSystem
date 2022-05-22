@@ -41,6 +41,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private List<String> staffRoles;
 	private List<String> quickMessages;
 	private int teamSize;
+	
+	private String commentatorGuestKey;
 
 	private String phpmyadminURL;
 
@@ -80,20 +82,23 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return openMode;
 	}
 
-	@Override
-	public void onLoad() {
-		TournamentSystem.instance = this;
-		staffRoles = new ArrayList<>();
-		openMode = false;
+	public String getCommentatorGuestKey() {
+		return commentatorGuestKey;
 	}
 
 	@Override
 	public void onEnable() {
+		TournamentSystem.instance = this;
+		staffRoles = new ArrayList<>();
+		openMode = false;
+		
 		// Init session id
 		TournamentSystemCommons.getSessionId();
 
 		saveDefaultConfiguration();
 
+		commentatorGuestKey = UUID.randomUUID().toString();
+		
 		quickMessages = new ArrayList<>();
 
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();

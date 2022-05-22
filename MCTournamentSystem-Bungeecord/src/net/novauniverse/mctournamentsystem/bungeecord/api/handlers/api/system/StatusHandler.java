@@ -196,12 +196,14 @@ public class StatusHandler extends APIEndpoint {
 		system.put("total_memory", Runtime.getRuntime().totalMemory());
 		system.put("free_memory", Runtime.getRuntime().freeMemory());
 		system.put("cores", Runtime.getRuntime().availableProcessors());
-		
+
 		system.put("team_size", TournamentSystem.getInstance().getTeamSize());
 
 		system.put("os_name", System.getProperty("os.name"));
 
 		json.put("system", system);
+
+		json.put("commentator_guest_key", TournamentSystem.getInstance().getCommentatorGuestKey());
 
 		return json;
 	}

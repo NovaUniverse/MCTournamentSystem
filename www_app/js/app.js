@@ -6,6 +6,7 @@ var addStaffUUID = null;
 var addStaffUsername = null;
 var staffRoles = [];
 var staffTeam = {};
+var commentatorKeyShown = false;
 
 $(function () {
 	if (localStorage.getItem("token") == null) {
@@ -369,6 +370,8 @@ $(function () {
 
 		lastData = data;
 
+		$("#commentator_guest_key").val(data.commentator_guest_key);
+
 		for (let i = 0; i < data.servers.length; i++) {
 			let server = data.servers[i];
 			$("#select_server").append(new Option(server.name, server.name));
@@ -393,6 +396,19 @@ $(function () {
 		staffTeam = data.staff;
 
 		updateStaffTeam();
+	});
+
+	$("#toggle_commentator_guest_key").on("click", function() {
+		$("#commentator_guest_key").attr("type", commentatorKeyShown ? "password" : "text");
+		$("#toggle_commentator_guest_key").text(commentatorKeyShown ? "Show key" : "Hide key");
+		toastr.info(commentatorKeyShown ? "Guest commentator key hidden" : "Guest commentator key visible");
+		commentatorKeyShown = !commentatorKeyShown;
+	});
+
+	$("#copy_commentator_guest_key").on("click", function() {
+		let key = $("#commentator_guest_key").val();
+		ClipboardHelper.copyText(key);
+		toastr.success("Commentator guest key copied to the clipboard");
 	});
 
 	$("#btn_export_summary").on("click", function () {

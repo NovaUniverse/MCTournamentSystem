@@ -24,6 +24,8 @@
 	<script src="./js/lib/popper.min.js"></script>
 	<script src="./js/lib/toastr.min.js"></script>
 	<script src="./js/lib/bootstrap.min.js"></script>
+	<script src="./js/lib/clipboard.min.js"></script>
+	<script src="./js/ClipboardHelper.js"></script>
 	<script src="./js/phpmyadmin_url.js"></script>
 	<script src="./js/utils.js"></script>
 	<script src="./js/app.js"></script>
@@ -120,7 +122,30 @@
 			<li class="nav-item">
 				<a class="nav-link page-link" data-page="support_page" href="#">Support</a>
 			</li>
+			<li class="nav-item">
+				<a class="nav-link page-link" data-page="commentator_guest_key_page" href="#">Commentator guest key</a>
+			</li>
 		</ul>
+
+		<div id="commentator_guest_key_page" class="nav-page d-none">
+			<div class="container-fluid">
+				<div class="row mt-2">
+					<div class="col">
+						<h2>Guest commentator key</h2>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12 col-md-6 mt-2">
+						<input type="password" class="form-control" id="commentator_guest_key" readonly="1">
+						
+					</div>
+					<div class="col-sm-12 col-md-6 mt-2">
+						<button class="btn btn-primary" id="toggle_commentator_guest_key">Show key</button>
+						<button class="btn btn-primary mx-2" id="copy_commentator_guest_key" data-clipboard-target="#commentator_guest_key">Copy key</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<div id="staff_page" class="nav-page d-none">
 			<div class="container-fluid">
@@ -164,7 +189,8 @@
 					<div class="col mt-1">
 						<button class="btn btn-primary" id="btn_open_add_staff_modal">Add user</button>
 						<p>
-							This page does not update live. Please reload the page before making changes to the staff
+							This page does not update live. Please reload the page before making changes to the
+							staff
 							team
 						</p>
 						<h3>Permissions</h3>
@@ -185,7 +211,8 @@
 				<div class="row">
 					<div class="col">
 						<button type="button" class="btn btn-fetch-chat-log btn-info ml-2">Refresh</button>
-						<button type="button" id="btn_open_chat_log" class="btn btn-info ml-2">Show in separate window</button>
+						<button type="button" id="btn_open_chat_log" class="btn btn-info ml-2">Show in separate
+							window</button>
 					</div>
 				</div>
 
@@ -202,7 +229,8 @@
 			<div class="container-fluid mt-2">
 				<div class="row">
 					<div class="col">
-						<button type="button" id="btn_export_snapshot" class="btn btn-success">Export snapshot</button>
+						<button type="button" id="btn_export_snapshot" class="btn btn-success">Export
+							snapshot</button>
 						<button type="button" id="btn_import_snapshot" class="btn btn-success ml-2">Import
 							snapshot</button>
 						<button type="button" id="btn_import_snapshot_clear" class="btn btn-danger ml-2">Clear</button>
@@ -365,7 +393,8 @@
 						<h4>Support</h4>
 						<p>
 							Join our discord server <a href="https://discord.gg/4gZSVJ7">https://discord.gg/4gZSVJ7</a>
-							and open a ticket in the support section of our server to get help related to the tournament
+							and open a ticket in the support section of our server to get help related to the
+							tournament
 							system.
 						</p>
 					</div>

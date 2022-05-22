@@ -10,6 +10,7 @@ import com.google.common.io.ByteStreams;
 import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIKeyStore;
@@ -41,29 +42,37 @@ public class CommentatorTPHandler extends APIEndpoint {
 
 		if (target != null) {
 			if (params.containsKey("commentator_key")) {
-				if (APIKeyStore.getCommentatorKeys().containsKey(params.get("commentator_key"))) {
-					UUID uuid = APIKeyStore.getCommentatorKeys().get(params.get("commentator_key"));
-
-					ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
-					if (player != null) {
-						ByteArrayDataOutput out = ByteStreams.newDataOutput();
-
-						out.writeUTF("commentator_tp");
-						out.writeUTF(uuid.toString());
-						out.writeUTF(target.toString());
-
-						player.getServer().getInfo().sendData(TournamentSystemCommons.DATA_CHANNEL, out.toByteArray());
-
-						json.put("success", true);
-					} else {
-						json.put("success", false);
-						json.put("error", "failed");
-						json.put("message", "Commentators minecraft account is not online");
-					}
-				} else {
+				String key = params.get("commentator_key");
+				if (TournamentSystem.getInstance().getCommentatorGuestKey().equalsIgnoreCase(key)) {
 					json.put("success", false);
 					json.put("error", "unauthorized");
-					json.put("message", "Invalid key");
+					json.put("message", "Guest commentators cant use the tp function. Please ask the staff if you want a full access commentator key");
+				} else {
+
+					if (APIKeyStore.getCommentatorKeys().containsKey(key)) {
+						UUID uuid = APIKeyStore.getCommentatorKeys().get(key);
+
+						ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
+						if (player != null) {
+							ByteArrayDataOutput out = ByteStreams.newDataOutput();
+
+							out.writeUTF("commentator_tp");
+							out.writeUTF(uuid.toString());
+							out.writeUTF(target.toString());
+
+							player.getServer().getInfo().sendData(TournamentSystemCommons.DATA_CHANNEL, out.toByteArray());
+
+							json.put("success", true);
+						} else {
+							json.put("success", false);
+							json.put("error", "failed");
+							json.put("message", "Commentators minecraft account is not online");
+						}
+					} else {
+						json.put("success", false);
+						json.put("error", "unauthorized");
+						json.put("message", "Invalid key");
+					}
 				}
 			} else {
 				json.put("success", false);
