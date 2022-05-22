@@ -23,6 +23,8 @@ public class PlayerTelementryData {
 
 	private String gamemode;
 
+	private JSONObject metadata;
+
 	public PlayerTelementryData(UUID uuid, String username, String server) {
 		this.uuid = uuid;
 		this.username = username;
@@ -36,6 +38,8 @@ public class PlayerTelementryData {
 
 		this.gameEnabled = false;
 		this.inGame = false;
+
+		this.metadata = new JSONObject();
 
 	}
 
@@ -52,6 +56,7 @@ public class PlayerTelementryData {
 		json.put("game_enabled", gameEnabled);
 		json.put("in_game", inGame);
 		json.put("server", server);
+		json.put("metadata", metadata);
 
 		return json;
 	}
@@ -126,5 +131,13 @@ public class PlayerTelementryData {
 
 	public void setInGame(boolean inGame) {
 		this.inGame = inGame;
+	}
+
+	public JSONObject getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(JSONObject metadata) {
+		this.metadata = metadata;
 	}
 }

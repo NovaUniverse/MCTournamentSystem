@@ -17,6 +17,8 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.DropperManag
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SurvivalGamesManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.TNTTagManager;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.TNTTagMetadataProvider;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
@@ -81,6 +83,8 @@ public class GameListeners extends NovaModule implements Listener {
 		if (e.getGame().getName().equalsIgnoreCase("tnttag")) {
 			if (ModuleManager.loadModule(TournamentSystem.getInstance(), TNTTagManager.class, true)) {
 				Log.success(getName(), "Enabled game specific module: TNTTagManager (" + TNTTagManager.class.getName() + ")");
+				PlayerTelementryManager telementryManager = (PlayerTelementryManager) ModuleManager.getModule(PlayerTelementryManager.class);
+				telementryManager.addMetadataProvider(new TNTTagMetadataProvider());
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: TNTTagManager (" + TNTTagManager.class.getName() + ")");
 			}

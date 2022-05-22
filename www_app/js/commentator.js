@@ -117,6 +117,8 @@ function update() {
 
 			let playerElement = null;
 
+			console.log(player);
+
 			$(".player").each(function () {
 				if ($(this).data("uuid") == player.uuid) {
 					playerElement = $(this);
@@ -148,6 +150,12 @@ function update() {
 
 			if (player.health <= 4) {
 				if (lowHealthMatters.includes(player.server)) {
+					highRisk = true;
+				}
+			}
+
+			if(player.metadata.tnttag_tagged != undefined) {
+				if(player.metadata.tnttag_tagged) {
 					highRisk = true;
 				}
 			}

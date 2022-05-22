@@ -3,6 +3,8 @@ package net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.json.JSONObject;
+
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
@@ -63,6 +65,10 @@ public class PlayerTelementryManager implements Listener {
 							pData.setInGame(in.readBoolean());
 
 							pData.setServer(player.getServer().getInfo().getName());
+							
+							JSONObject metadata = new JSONObject(in.readUTF());
+							
+							pData.setMetadata(metadata);
 						}
 
 					} else {

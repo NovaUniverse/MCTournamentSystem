@@ -1,13 +1,19 @@
 package net.novauniverse.mctournamentsystem.spigot.modules.telementry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.json.JSONObject;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.ITelementryMetadataProvider;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
@@ -22,8 +28,16 @@ import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 public class PlayerTelementryManager extends NovaModule {
 	private Task task;
 
+	private List<ITelementryMetadataProvider> telementryMetadataProviders;
+
 	public PlayerTelementryManager() {
 		super("TournamentSystem.PlayerTelementryManager");
+		telementryMetadataProviders = new ArrayList<ITelementryMetadataProvider>();
+	}
+
+	public void addMetadataProvider(ITelementryMetadataProvider provider) {
+		telementryMetadataProviders.add(provider);
+		Log.debug("PlayerTelementryManager", "Added telementry metadata provider " + provider.getClass().getName());
 	}
 
 	@Override
@@ -105,6 +119,12 @@ public class PlayerTelementryManager extends NovaModule {
 
 			out.writeBoolean(gameEnabled);
 			out.writeBoolean(isInGame);
+
+			JSONObject metadata = new JSONObject();
+
+			telementryMetadataProviders.forEach(provider -> provider.process(player, metadata));
+
+			out.writeUTF(metadata.toString());
 
 			player.sendPluginMessage(TournamentSystem.getInstance(), TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL, out.toByteArray());
 		});
