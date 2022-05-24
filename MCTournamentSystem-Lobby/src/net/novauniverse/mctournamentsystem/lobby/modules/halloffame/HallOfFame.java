@@ -13,7 +13,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.SpawnReason;
-import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.SkinTrait;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.Lobby;
 import net.zeeraa.novacore.commons.log.Log;
@@ -68,6 +68,11 @@ public class HallOfFame extends NovaModule {
 	@Override
 	public void onDisable() throws Exception {
 		Task.tryStopTask(task);
+		
+		if(initialized) {
+			this.config.getNpcs().forEach(npc -> npc.getNPC().destroy());
+			this.config.getNpcs().clear();
+		}
 	}
 
 	public void init(HallOfFameConfig config) {
@@ -82,7 +87,6 @@ public class HallOfFame extends NovaModule {
 		ModuleManager.enable(this.getClass());
 	}
 
-	@SuppressWarnings("deprecation")
 	public void showNext() {
 		if (cachedResults.size() == 0) {
 			return;
@@ -113,12 +117,16 @@ public class HallOfFame extends NovaModule {
 						if (debug) {
 							Log.debug("HallOfFame", "Spawning npc " + npc.getNPC().getId() + " at " + npc.getLocation());
 						}
-						npc.getNPC().spawn(npc.getLocation(),  SpawnReason.PLUGIN);
+						npc.getNPC().spawn(npc.getLocation(), SpawnReason.PLUGIN);
 					}
 					try {
 						npc.getNPC().setName(player.getUsername());
-						// TODO: find a better way
-						npc.getNPC().data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, player.getUsername());
+						// npc.getNPC().data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA,
+						// player.getUsername());
+
+						SkinTrait skinTrait = npc.getNPC().getOrAddTrait(SkinTrait.class);
+						skinTrait.setSkinName(player.getUsername(), true);
+
 					} catch (Exception e) {
 						Log.warn("HallOfFame", "Failed to set npc name or skin");
 						e.printStackTrace();
