@@ -9,6 +9,7 @@ import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerKillCache;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
+import net.novauniverse.mctournamentsystem.spigot.utils.TournamentUtils;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
@@ -72,11 +73,11 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 						int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
 
-						NetherBoardScoreboard.getInstance().setPlayerLine(12, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.your_ping") + formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : ""));
+						NetherBoardScoreboard.getInstance().setPlayerLine(12, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.your_ping") + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : ""));
 
 						if (recentTps.length > 0) {
 							double tps = recentTps[0];
-							NetherBoardScoreboard.getInstance().setPlayerLine(13, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
+							NetherBoardScoreboard.getInstance().setPlayerLine(13, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
 						}
 					});
 
@@ -161,25 +162,5 @@ public class TSScoreboard extends NovaModule implements Listener {
 			Bukkit.getScheduler().cancelTask(taskId);
 			taskId = -1;
 		}
-	}
-
-	private String formatPing(int ping) {
-		ChatColor color = ChatColor.DARK_RED;
-
-		if (ping < 200) {
-			color = ChatColor.GREEN;
-		} else if (ping < 400) {
-			color = ChatColor.DARK_GREEN;
-		} else if (ping < 600) {
-			color = ChatColor.YELLOW;
-		} else if (ping < 800) {
-			color = ChatColor.RED;
-		}
-
-		return color + "" + ping;
-	}
-
-	private String formatTps(double tps) {
-		return ((tps > 18.0) ? ChatColor.GREEN : (tps > 16.0) ? ChatColor.YELLOW : ChatColor.RED).toString() + ((tps > 20.0) ? "*" : "") + Math.min(Math.round(tps * 100.0) / 100.0, 20.0);
 	}
 }

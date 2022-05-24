@@ -44,6 +44,9 @@ public class WhatIsDogeWorthCommand extends NovaCommand {
 
 					connection.getResponseCode();
 
+					connection.setConnectTimeout(3000);
+					connection.setReadTimeout(3000);
+
 					BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 					String inputLine;
 					StringBuffer response = new StringBuffer();

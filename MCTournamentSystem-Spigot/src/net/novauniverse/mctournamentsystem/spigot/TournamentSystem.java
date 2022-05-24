@@ -90,6 +90,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private Group defaultGroup;
 
 	private File mapDataFolder;
+	
+	private String cachedTournamentName;
+	private String cachedTournamentLink;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -174,6 +177,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	
 	public boolean hasScoreListener() {
 		return scoreListener != null;
+	}
+	
+	public String getCachedTournamentLink() {
+		return cachedTournamentLink;
+	}
+	
+	public String getCachedTournamentName() {
+		return cachedTournamentName;
 	}
 	
 	@Override
@@ -330,6 +341,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		Log.info(getName(), "Tournament name: " + tournamentName);
 		Log.info(getName(), "Scoreboard url: " + scoreboardUrl);
+		
+		this.cachedTournamentLink = scoreboardUrl;
+		this.cachedTournamentName = tournamentName;
 
 		NetherBoardScoreboard.getInstance().setLineCount(15);
 		NetherBoardScoreboard.getInstance().setDefaultTitle(tournamentName == null ? "NULL" : tournamentName);

@@ -24,5 +24,14 @@ lobby_team_leaderboard:
     x: 0.0
     y: 0.0
     z: 0.0
-    
+
+hall_of_fame:
+    enabled: false
+    stats_url: "https://novauniverse.net/api/mcf/result/"
+    debug: false
+    name_hologram_location:
+       x: 0
+       y: 0
+       z: 0
+
 prevent_damage_mobs: false

@@ -118,12 +118,12 @@
 			<id>novauniverse-group</id>
 			<url>https://nexus.novauniverse.net/repository/novauniverse-group/</url>
 		</repository>
-		
+
 		<repository>
 			<id>zeeraas-snapshots</id>
 			<url>https://nexus.zeeraa.net/repository/maven-snapshots/</url>
 		</repository>
-		
+
 		<repository>
 			<id>zeeraas-releases</id>
 			<url>https://nexus.zeeraa.net/repository/maven-releases/</url>
@@ -142,6 +142,11 @@
 		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
+		</repository>
+
+		<repository>
+			<id>citizensnpcs</id>
+			<url>https://repo.citizensnpcs.co/</url>
 		</repository>
 	</repositories>
 
@@ -211,6 +216,14 @@
 			<groupId>com.gmail.filoghost.holographicdisplays</groupId>
 			<artifactId>holographicdisplays-api</artifactId>
 			<version>2.4.6</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.citizensnpcs</groupId>
+			<artifactId>citizens-main</artifactId>
+			<version>2.0.29-SNAPSHOT</version>
+			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 

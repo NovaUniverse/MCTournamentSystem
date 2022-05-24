@@ -27,14 +27,13 @@ public class TournamentSystemDefaultPlayerEliminationMessage implements ITournam
 		}
 
 		Log.trace("TournamentSystemDefaultPlayerEliminationMessage", "Elimination reason: " + reason.name());
-		
+
 		switch (reason) {
 		case DEATH:
 			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.died", playerColor.toString(), player.getName());
 
 		case COMBAT_LOGGING:
-			LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.combat_logging", playerColor.toString(), player.getName());
-			break;
+			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.combat_logging", playerColor.toString(), player.getName());
 
 		case DID_NOT_RECONNECT:
 			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.did_not_reconnect", playerColor.toString(), player.getName());
@@ -75,9 +74,8 @@ public class TournamentSystemDefaultPlayerEliminationMessage implements ITournam
 			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.quit", playerColor.toString(), player.getName());
 
 		default:
+			Log.error("TournamentSystemDefaultPlayerEliminationMessage", "ERR:UNKNOWN_ELIMINATION_REASON " + reason.name());
 			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.unknown", playerColor.toString(), player.getName());
 		}
-
-		return "ERR:UNKNOWN_ELIMINATION_REASON";
 	}
 }

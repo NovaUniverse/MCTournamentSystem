@@ -17,6 +17,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.DropperManag
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SurvivalGamesManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.TNTTagManager;
+import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabListMessage;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.TNTTagMetadataProvider;
 import net.zeeraa.novacore.commons.log.Log;
@@ -48,6 +49,7 @@ public class GameListeners extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameLoaded(GameLoadedEvent e) {
 		NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + GameManager.getInstance().getDisplayName());
+		TabListMessage.setServerType(GameManager.getInstance().getDisplayName());
 
 		if (e.getGame().getName().equalsIgnoreCase("survivalgames")) {
 			if (ModuleManager.loadModule(TournamentSystem.getInstance(), SurvivalGamesManager.class, true)) {
