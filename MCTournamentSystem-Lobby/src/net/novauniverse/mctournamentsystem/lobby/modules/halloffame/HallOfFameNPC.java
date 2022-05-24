@@ -6,6 +6,7 @@ import org.bukkit.entity.EntityType;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
+import net.novauniverse.mctournamentsystem.lobby.npc.trait.TournamentLobbyRemoveOnLoadTrait;
 import net.zeeraa.novacore.commons.log.Log;
 
 public class HallOfFameNPC {
@@ -16,6 +17,7 @@ public class HallOfFameNPC {
 		this.location = location;
 		this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "HALL_OF_FAME");
 		this.npc.spawn(location, SpawnReason.PLUGIN);
+		this.npc.addTrait(TournamentLobbyRemoveOnLoadTrait.class);
 		Log.info("HallOfFameNPC", "Initialised npc with id: " + npc.getId());
 	}
 

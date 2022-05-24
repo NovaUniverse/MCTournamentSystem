@@ -16,6 +16,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.TraitInfo;
 import net.novauniverse.mctournamentsystem.lobby.command.duel.AcceptDuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.duel.DuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.givemefireworks.GiveMeFireworksCommand;
@@ -26,6 +29,7 @@ import net.novauniverse.mctournamentsystem.lobby.modules.halloffame.HallOfFameCo
 import net.novauniverse.mctournamentsystem.lobby.modules.halloffame.HallOfFameNPC;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.Lobby;
 import net.novauniverse.mctournamentsystem.lobby.modules.scoreboard.TSLeaderboard;
+import net.novauniverse.mctournamentsystem.lobby.npc.trait.TournamentLobbyRemoveOnLoadTrait;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabListMessage;
 import net.zeeraa.novacore.commons.log.Log;
@@ -89,12 +93,23 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 			CommandRegistry.registerCommand(new GiveMeFireworksCommand());
 		}
 
+		CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TournamentLobbyRemoveOnLoadTrait.class));
 		/* ----- Misc ----- */
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				/* ----- Run after load ----- */
 				System.out.println(lobbyLocation);
+				List<NPC> toRemove = new ArrayList<>();
+				CitizensAPI.getNPCRegistry().iterator().forEachRemaining(npc -> {
+					if (npc.hasTrait(TournamentLobbyRemoveOnLoadTrait.class)) {
+						toRemove.add(npc);
+					}
+				});
+				toRemove.forEach(npc -> {
+					npc.destroy();
+					CitizensAPI.getNPCRegistry().deregister(npc);
+				});
 			}
 		}.runTask(this);
 
@@ -132,7 +147,6 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 			HallOfFameConfig hallOfFameConfig = new HallOfFameConfig(nameHologramLocation, npcs, url, debug);
 
 			new BukkitRunnable() {
-
 				@Override
 				public void run() {
 					HallOfFame hof = (HallOfFame) ModuleManager.getModule(HallOfFame.class);

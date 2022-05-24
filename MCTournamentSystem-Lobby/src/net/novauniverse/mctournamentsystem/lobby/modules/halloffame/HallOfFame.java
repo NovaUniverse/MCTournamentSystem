@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.trait.SkinTrait;
@@ -68,9 +69,13 @@ public class HallOfFame extends NovaModule {
 	@Override
 	public void onDisable() throws Exception {
 		Task.tryStopTask(task);
-		
-		if(initialized) {
-			this.config.getNpcs().forEach(npc -> npc.getNPC().destroy());
+
+		if (initialized) {
+			this.config.getNpcs().forEach(npc -> {
+				npc.getNPC().destroy();
+				
+				CitizensAPI.getNPCRegistry().deregister(npc.getNPC());
+			});
 			this.config.getNpcs().clear();
 		}
 	}
