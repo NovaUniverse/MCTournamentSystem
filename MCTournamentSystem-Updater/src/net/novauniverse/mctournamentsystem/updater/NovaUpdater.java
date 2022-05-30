@@ -17,6 +17,7 @@ import net.lingala.zip4j.ZipFile;
 import net.novauniverse.mctournamentsystem.updater.api.NovaApi;
 import net.novauniverse.mctournamentsystem.updater.license.LicenseData;
 import net.novauniverse.mctournamentsystem.updater.license.LicenseUtils;
+import net.novauniverse.mctournamentsystem.updater.utils.ConsoleColor;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 
 public class NovaUpdater implements Runnable {
@@ -31,16 +32,16 @@ public class NovaUpdater implements Runnable {
 	public static String[] args = {};
 
 	private static void fatalError(String message) {
-		System.err.println(message);
+		System.err.println(ConsoleColor.RED + message + ConsoleColor.RESET);
 		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.INFORMATION_MESSAGE);
 		System.exit(0);
 	}
 
 	@Override
 	public void run() {
-		System.out.println("Checking internet connection...");
+		System.out.println(ConsoleColor.BLUE + "Checking internet connection..." + ConsoleColor.RESET);
 		if (NovaApi.connectivityCheck()) {
-			System.out.println("Sucessfully connected to the novauniverse api");
+			System.out.println(ConsoleColor.GREEN + "Sucessfully connected to the novauniverse api" + ConsoleColor.RESET);
 		} else {
 			fatalError("Error: Could not connect to the novauniverse api. check that you have a working internet connection and that novauniverse.net is not blocked");
 			return;
@@ -58,12 +59,12 @@ public class NovaUpdater implements Runnable {
 			licenseKey = FileUtils.readFileToString(licenseFile, StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			e.printStackTrace();
-			fatalError("Error: Could not find read license_key.txt");
+			fatalError("Error: Could not read license_key.txt");
 			return;
 		}
 
 		try {
-			System.out.println("Checking if license is valid");
+			System.out.println(ConsoleColor.BLUE + "Checking if license is valid" + ConsoleColor.RESET);
 			LicenseData data = LicenseUtils.CheckLicense(licenseKey);
 
 			if (data.isValid()) {
@@ -81,15 +82,15 @@ public class NovaUpdater implements Runnable {
 				return;
 			}
 
-			System.out.println("Valid license found. Nice >:]");
-			System.out.println("Licensed to: " + data.getOwner());
+			System.out.println(ConsoleColor.GREEN + "Valid license found. Nice >:]" + ConsoleColor.RESET);
+			System.out.println(ConsoleColor.BLUE + "Licensed to: " + data.getOwner() + ConsoleColor.RESET);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fatalError("Error: Failed to validate the license key");
 			return;
 		}
 
-		System.out.println("Setting up temporary directory");
+		System.out.println(ConsoleColor.BLUE + "Setting up temporary directory" + ConsoleColor.RESET);
 		try {
 			tempDir = new File("updater_temp_data");
 			if (tempDir.exists()) {
@@ -102,7 +103,7 @@ public class NovaUpdater implements Runnable {
 			return;
 		}
 
-		System.out.println("Downloading update...");
+		System.out.println(ConsoleColor.BLUE + "Downloading update..." + ConsoleColor.RESET);
 		File contentZipFile = new File(tempDir.getAbsolutePath() + File.separator + "content.zip");
 		try {
 			String url = "https://novauniverse.net/cdn/tournament_system/dist/index.php?key=" + licenseKey;
@@ -112,7 +113,7 @@ public class NovaUpdater implements Runnable {
 			fatalError("Error: Failed to download update");
 			return;
 		}
-		System.out.println("Content downloaded. Extracting...");
+		System.out.println(ConsoleColor.GREEN + "Content downloaded. Extracting..." + ConsoleColor.RESET);
 
 		try {
 			ZipFile zipFile = new ZipFile(contentZipFile);
@@ -143,13 +144,13 @@ public class NovaUpdater implements Runnable {
 			File to = new File(fileData.getString("to"));
 
 			if (!to.getParentFile().exists()) {
-				System.err.println("Cant extract " + from.getAbsolutePath() + " since the target directory " + to.getParentFile().getAbsolutePath() + " does not exits");
+				System.err.println(ConsoleColor.RED + "Cant extract " + from.getAbsolutePath() + " since the target directory " + to.getParentFile().getAbsolutePath() + " does not exits" + ConsoleColor.RESET);
 				continue;
 			}
 
 			try {
 				if (to.exists()) {
-					System.out.println("Deleting " + to.getAbsolutePath());
+					System.out.println(ConsoleColor.BLUE + "Deleting " + to.getAbsolutePath() + ConsoleColor.RESET);
 					if (to.isDirectory()) {
 						FileUtils.deleteDirectory(to);
 					} else {
@@ -158,12 +159,12 @@ public class NovaUpdater implements Runnable {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.err.println("Failed to delete " + from.getAbsolutePath());
+				System.err.println(ConsoleColor.RED + "Failed to delete " + from.getAbsolutePath() + ConsoleColor.RESET);
 				continue;
 			}
 
 			try {
-				System.out.println("Copying " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+				System.out.println(ConsoleColor.CYAN + "Copying " + from.getAbsolutePath() + " to " + to.getAbsolutePath() + ConsoleColor.RESET);
 				if (from.isDirectory()) {
 					FileUtils.copyDirectory(from, to);
 				} else {
@@ -171,7 +172,7 @@ public class NovaUpdater implements Runnable {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.err.println("Failed to copy " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+				System.err.println(ConsoleColor.RED + "Failed to copy " + from.getAbsolutePath() + " to " + to.getAbsolutePath() + ConsoleColor.RESET);
 			}
 		}
 
@@ -186,18 +187,18 @@ public class NovaUpdater implements Runnable {
 				to = new File(contentDir.getAbsolutePath() + File.separator + split[1]);
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.err.println("Failed to parse extra argument " + i);
+				System.err.println(ConsoleColor.RED + "Failed to parse extra argument " + i + ConsoleColor.RESET);
 				continue;
 			}
 
 			if (!to.getParentFile().exists()) {
-				System.err.println("Cant extract " + from.getAbsolutePath() + " since the target directory " + to.getParentFile().getAbsolutePath() + " does not exits");
+				System.err.println(ConsoleColor.RED + "Cant extract " + from.getAbsolutePath() + " since the target directory " + to.getParentFile().getAbsolutePath() + " does not exits" + ConsoleColor.RESET);
 				continue;
 			}
 
 			try {
 				if (to.exists()) {
-					System.out.println("Deleting " + to.getAbsolutePath());
+					System.out.println(ConsoleColor.BLUE + "Deleting " + to.getAbsolutePath() + ConsoleColor.RESET);
 					if (to.isDirectory()) {
 						FileUtils.deleteDirectory(to);
 					} else {
@@ -206,12 +207,12 @@ public class NovaUpdater implements Runnable {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.err.println("Failed to delete " + from.getAbsolutePath());
+				System.err.println(ConsoleColor.RED + "Failed to delete " + from.getAbsolutePath() + ConsoleColor.RESET);
 				continue;
 			}
 
 			try {
-				System.out.println("Copying " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+				System.out.println(ConsoleColor.CYAN + "Copying " + from.getAbsolutePath() + " to " + to.getAbsolutePath() + ConsoleColor.RESET);
 				if (from.isDirectory()) {
 					FileUtils.copyDirectory(from, to);
 				} else {
@@ -219,7 +220,7 @@ public class NovaUpdater implements Runnable {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.err.println("Failed to copy " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+				System.err.println(ConsoleColor.RED + "Failed to copy " + from.getAbsolutePath() + " to " + to.getAbsolutePath() + ConsoleColor.RESET);
 			}
 		}
 	}
