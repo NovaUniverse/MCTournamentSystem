@@ -47,7 +47,7 @@ public class NovaUpdater implements Runnable {
 			return;
 		}
 
-		System.out.println("Checking license key");
+		System.out.println(ConsoleColor.BLUE + "Checking license key" + ConsoleColor.RESET);
 		File licenseFile = new File("license_key.txt");
 		if (!licenseFile.exists()) {
 			fatalError("Error: Could not find license_key.txt. Check that this program is loacated in the same directory as license_key.txt");
