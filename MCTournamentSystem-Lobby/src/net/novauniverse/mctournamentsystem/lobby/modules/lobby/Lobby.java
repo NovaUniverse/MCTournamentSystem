@@ -40,10 +40,10 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.NovaCoreGameVersion;
-import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantMetarial;
-import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentMetarial;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
@@ -133,8 +133,8 @@ public class Lobby extends NovaModule implements Listener {
 					if (spleefDeathArea.isInsideBlock(player.getLocation().toVector())) {
 						player.teleport(spleefRespawnLocation, TeleportCause.PLUGIN);
 						player.setFireTicks(0);
-						VersionIndependantSound.WITHER_HURT.play(player);
-						VersionIndependantUtils.getInstance().sendTitle(player, "", ChatColor.RED + "You died", 10, 20, 10);
+						VersionIndependentSound.WITHER_HURT.play(player);
+						VersionIndependentUtils.getInstance().sendTitle(player, "", ChatColor.RED + "You died", 10, 20, 10);
 					}
 
 					if (spleefArena.isInsideBlock(player.getLocation().toVector())) {
@@ -142,8 +142,8 @@ public class Lobby extends NovaModule implements Listener {
 							player.setGameMode(GameMode.SURVIVAL);
 						}
 
-						if (!player.getInventory().contains(VersionIndependantMetarial.DIAMOND_SHOVEL.toBukkitVersion())) {
-							ItemBuilder builder = new ItemBuilder(VersionIndependantMetarial.DIAMOND_SHOVEL.toBukkitVersion());
+						if (!player.getInventory().contains(VersionIndependentMetarial.DIAMOND_SHOVEL.toBukkitVersion())) {
+							ItemBuilder builder = new ItemBuilder(VersionIndependentMetarial.DIAMOND_SHOVEL.toBukkitVersion());
 							builder.setUnbreakable(true);
 							player.getInventory().addItem(builder.build());
 						}
@@ -161,7 +161,7 @@ public class Lobby extends NovaModule implements Listener {
 							getWorld().getBlockAt(x, y, z).setType(Material.SNOW_BLOCK);
 							getWorld().getPlayers().forEach(player -> {
 								if (spleefArena.isInsideBlock(player.getLocation().toVector())) {
-									VersionIndependantUtils.getInstance().sendActionBarMessage(player, ChatColor.GOLD + "" + ChatColor.BOLD + "Arena reset");
+									VersionIndependentUtils.getInstance().sendActionBarMessage(player, ChatColor.GOLD + "" + ChatColor.BOLD + "Arena reset");
 								}
 							});
 						}
@@ -298,7 +298,7 @@ public class Lobby extends NovaModule implements Listener {
 		}
 
 		if (spleefEnabled == true) {
-			if (e.getItemDrop().getItemStack().getType() == VersionIndependantMetarial.DIAMOND_SHOVEL.toBukkitVersion()) {
+			if (e.getItemDrop().getItemStack().getType() == VersionIndependentMetarial.DIAMOND_SHOVEL.toBukkitVersion()) {
 				if (e.getPlayer().getGameMode() == GameMode.SURVIVAL || e.getPlayer().getGameMode() == GameMode.ADVENTURE) {
 					e.setCancelled(true);
 				}
@@ -311,7 +311,7 @@ public class Lobby extends NovaModule implements Listener {
 		Player player = e.getPlayer();
 
 		// Prevent the press e to open inventory message from showing all the time
-		NovaCoreGameVersion version = VersionIndependantUtils.get().getNovaCoreGameVersion();
+		NovaCoreGameVersion version = VersionIndependentUtils.get().getNovaCoreGameVersion();
 		if (version == NovaCoreGameVersion.V_1_8 || version == NovaCoreGameVersion.V_1_12) {
 			Pre_1_13_Utils.giveOpenInventoryAchivement(player);
 		}
@@ -359,7 +359,7 @@ public class Lobby extends NovaModule implements Listener {
 				if (spleefEnabled) {
 					if (spleefArena.isInsideBlock(e.getLocation().toVector())) {
 						Item item = (Item) e.getEntity();
-						if (item.getItemStack().getType() == VersionIndependantMetarial.SNOWBALL.toBukkitVersion()) {
+						if (item.getItemStack().getType() == VersionIndependentMetarial.SNOWBALL.toBukkitVersion()) {
 							e.setCancelled(true);
 						}
 					}
@@ -417,7 +417,7 @@ public class Lobby extends NovaModule implements Listener {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			// if (e.getClickedBlock().getType() == Material.SIGN_POST ||
 			// e.getClickedBlock().getType() == Material.WALL_SIGN) {
-			if (VersionIndependantUtils.get().isSign(e.getClickedBlock())) {
+			if (VersionIndependentUtils.get().isSign(e.getClickedBlock())) {
 				if (e.getPlayer().getGameMode() != GameMode.SPECTATOR) {
 					if (e.getClickedBlock().getState() instanceof Sign) {
 						Sign sign = (Sign) e.getClickedBlock().getState();

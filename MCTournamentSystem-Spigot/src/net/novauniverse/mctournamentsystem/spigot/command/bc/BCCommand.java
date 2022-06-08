@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
-import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaCommand;
 
@@ -28,7 +28,7 @@ public class BCCommand extends NovaCommand {
 		message = ChatColor.translateAlternateColorCodes('&', message);
 
 		Bukkit.getServer().broadcastMessage(message);
-		Bukkit.getServer().getOnlinePlayers().forEach(player -> VersionIndependantSound.NOTE_PLING.play(player, player.getLocation()));
+		Bukkit.getServer().getOnlinePlayers().forEach(player -> VersionIndependentSound.NOTE_PLING.play(player, player.getLocation()));
 
 		return true;
 	}

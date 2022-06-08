@@ -18,7 +18,7 @@ import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.UUIDUtils;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
@@ -102,7 +102,7 @@ public class LabymodIntegration extends NovaModule implements Listener {
 	private void sendTabImage(Player player, String url) {
 		JsonObject object = new JsonObject();
 		object.addProperty("url", url);
-		VersionIndependantUtils.get().getLabyModProtocol().sendLabyModMessage(player, "server_banner", object);
+		VersionIndependentUtils.get().getLabyModProtocol().sendLabyModMessage(player, "server_banner", object);
 
 		Log.trace("Sending banner " + url + " to player " + player.getName() + "(" + player.getUniqueId().toString() + ")");
 	}
@@ -130,7 +130,7 @@ public class LabymodIntegration extends NovaModule implements Listener {
 		array.add(subtitle);
 
 		// Send to LabyMod using the API
-		VersionIndependantUtils.get().getLabyModProtocol().sendLabyModMessage(receiver, "account_subtitle", array);
+		VersionIndependentUtils.get().getLabyModProtocol().sendLabyModMessage(receiver, "account_subtitle", array);
 	}
 
 	/*
@@ -183,7 +183,7 @@ public class LabymodIntegration extends NovaModule implements Listener {
 		economyObject.add(type.getKey(), cashObject);
 
 		// Send to LabyMod using the API
-		VersionIndependantUtils.get().getLabyModProtocol().sendLabyModMessage(player, "economy", economyObject);
+		VersionIndependentUtils.get().getLabyModProtocol().sendLabyModMessage(player, "economy", economyObject);
 	}
 
 	public void setMiddleClickActions(Player player) {
@@ -195,7 +195,7 @@ public class LabymodIntegration extends NovaModule implements Listener {
 		entry.addProperty("value", "duel {name}");
 		array.add(entry);
 
-		VersionIndependantUtils.get().getLabyModProtocol().sendLabyModMessage(player, "user_menu_actions", array);
+		VersionIndependentUtils.get().getLabyModProtocol().sendLabyModMessage(player, "user_menu_actions", array);
 	}
 
 	public void sendCurrentPlayingGamemode(Player player, boolean visible, String gamemodeName) {
@@ -204,6 +204,6 @@ public class LabymodIntegration extends NovaModule implements Listener {
 		object.addProperty("gamemode_name", gamemodeName); // Name of the current playing gamemode
 
 		// Send to LabyMod using the API
-		VersionIndependantUtils.get().getLabyModProtocol().sendLabyModMessage(player, "server_gamemode", object);
+		VersionIndependentUtils.get().getLabyModProtocol().sendLabyModMessage(player, "server_gamemode", object);
 	}
 }

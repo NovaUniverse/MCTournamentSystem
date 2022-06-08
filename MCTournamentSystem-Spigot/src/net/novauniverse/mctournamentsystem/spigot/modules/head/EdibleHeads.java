@@ -13,7 +13,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.NovaCoreGameVersion;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
@@ -33,9 +33,9 @@ public class EdibleHeads extends NovaModule implements Listener {
 			if (p.getItemInHand() != null) {
 
 				boolean isPlayerSkull = false;
-				ItemStack item = VersionIndependantUtils.get().getItemInMainHand(p);
+				ItemStack item = VersionIndependentUtils.get().getItemInMainHand(p);
 
-				if (VersionIndependantUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_12 || VersionIndependantUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_8) {
+				if (VersionIndependentUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_12 || VersionIndependentUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_8) {
 					if (item.getType().name().equals("SKULL_ITEM")) {
 						MaterialData data = e.getItem().getData();
 						if (data.getData() == 3) {
@@ -56,7 +56,7 @@ public class EdibleHeads extends NovaModule implements Listener {
 						if (item.getAmount() > 1) {
 							item.setAmount(item.getAmount() - 1);
 						} else {
-							VersionIndependantUtils.get().setItemInMainHand(p, ItemBuilder.AIR);
+							VersionIndependentUtils.get().setItemInMainHand(p, ItemBuilder.AIR);
 						}
 
 						p.getLocation().getWorld().playSound(p.getLocation(), Sound.EAT, 1F, 1F);

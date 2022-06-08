@@ -16,7 +16,7 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
@@ -95,7 +95,7 @@ public class YBorder extends NovaModule implements Listener {
 									String message = LanguageManager.getString(player, "tournamentsystem.yborder.above_limit.info", (player.getLocation().getBlockY() - yLimit) + "");
 
 									if (message.length() <= 40) {
-										VersionIndependantUtils.get().sendActionBarMessage(player, message);
+										VersionIndependentUtils.get().sendActionBarMessage(player, message);
 									}
 								} else {
 									if (aboveLimit.contains(player)) {

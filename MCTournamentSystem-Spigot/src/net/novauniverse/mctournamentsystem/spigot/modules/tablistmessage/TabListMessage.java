@@ -10,7 +10,7 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
@@ -79,7 +79,7 @@ public class TabListMessage extends NovaModule {
 			footer += ChatColor.GOLD + "Ping: " + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : "") + "\n\n";
 			footer += ChatColor.AQUA + "Tournament developed by NovaUniverse. Join our discord server for weekly tournaments https://discord.gg/4gZSVJ7";
 
-			VersionIndependantUtils.get().sendTabList(player, finalTitle, footer);
+			VersionIndependentUtils.get().sendTabList(player, finalTitle, footer);
 		});
 	}
 }

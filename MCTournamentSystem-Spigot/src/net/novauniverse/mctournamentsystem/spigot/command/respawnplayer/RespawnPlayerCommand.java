@@ -12,8 +12,8 @@ import org.bukkit.permissions.PermissionDefault;
 
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.NovaCore;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
-import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaCommand;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
@@ -54,8 +54,8 @@ public class RespawnPlayerCommand extends NovaCommand {
 										player.teleport(((Player) sender).getLocation());
 										player.setGameMode(GameMode.SURVIVAL);
 										player.sendMessage(ChatColor.GREEN + "Respawned by a staff member");
-										VersionIndependantSound.NOTE_PLING.play(player, player.getLocation());
-										VersionIndependantUtils.get().sendTitle(player, ChatColor.GREEN + "Respawned", ChatColor.GREEN + "A staff member respawned you", 10, 60, 10);
+										VersionIndependentSound.NOTE_PLING.play(player, player.getLocation());
+										VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + "Respawned", ChatColor.GREEN + "A staff member respawned you", 10, 60, 10);
 										TournamentSystem.getInstance().onRespawnPlayerCommand(player);
 										sender.sendMessage(ChatColor.GREEN + "Respawn successful");
 									} else {

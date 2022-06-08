@@ -19,7 +19,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import io.github.bananapuncher714.nbteditor.NBTEditor;
 import net.novauniverse.mctournamentsystem.spigot.textures.Textures;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
@@ -37,7 +37,7 @@ public class GoldenHead extends NovaModule implements Listener {
 		recipe.shape("AAA", "ABA", "AAA");
 		recipe.setIngredient('A', Material.GOLD_INGOT);
 
-		VersionIndependantUtils.get().setShapedRecipeIngredientAsPlayerSkull(recipe, 'B');
+		VersionIndependentUtils.get().setShapedRecipeIngredientAsPlayerSkull(recipe, 'B');
 
 		Bukkit.getServer().addRecipe(recipe);
 	}

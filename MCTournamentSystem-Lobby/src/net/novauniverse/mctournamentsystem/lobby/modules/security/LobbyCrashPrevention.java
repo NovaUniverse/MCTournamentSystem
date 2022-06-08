@@ -6,7 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.NovaCoreGameVersion;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
@@ -20,8 +20,8 @@ public class LobbyCrashPrevention extends NovaModule implements Listener {
 	// Prevent crash exploit with using too many tnt minecarts
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntitySpawn(PlayerInteractEvent e) {
-		Material material = VersionIndependantUtils.get().getItemInMainHand(e.getPlayer()).getType();
-		if (VersionIndependantUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_8) {
+		Material material = VersionIndependentUtils.get().getItemInMainHand(e.getPlayer()).getType();
+		if (VersionIndependentUtils.get().getNovaCoreGameVersion() == NovaCoreGameVersion.V_1_8) {
 			if (material == Material.EXPLOSIVE_MINECART) {
 				e.setCancelled(true);
 			}

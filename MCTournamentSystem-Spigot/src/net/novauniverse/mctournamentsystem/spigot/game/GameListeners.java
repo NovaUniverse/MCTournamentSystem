@@ -13,6 +13,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.BingoManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.ChickenOutManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.DropperManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.SurvivalGamesManager;
@@ -22,8 +23,8 @@ import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelem
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.TNTTagMetadataProvider;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.TextUtils;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
-import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependantSound;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.DefaultGameCountdownStartEvent;
@@ -92,6 +93,14 @@ public class GameListeners extends NovaModule implements Listener {
 				Log.error(getName(), "Failed to enable game specific module: TNTTagManager (" + TNTTagManager.class.getName() + ")");
 			}
 		}
+		
+		if (e.getGame().getName().equalsIgnoreCase("chickenout")) {
+			if (ModuleManager.loadModule(TournamentSystem.getInstance(), ChickenOutManager.class, true)) {
+				Log.success(getName(), "Enabled game specific module: ChickenOutManager (" + ChickenOutManager.class.getName() + ")");
+			} else {
+				Log.error(getName(), "Failed to enable game specific module: ChickenOutManager (" + ChickenOutManager.class.getName() + ")");
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -119,7 +128,7 @@ public class GameListeners extends NovaModule implements Listener {
 		e.getTeam().getMembers().forEach(uuid -> {
 			Player player = Bukkit.getServer().getPlayer(uuid);
 			if (player != null) {
-				VersionIndependantUtils.get().sendTitle(player, ChatColor.GREEN + "Winner", ChatColor.GREEN + "Your team won", 10, 40, 10);
+				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + "Winner", ChatColor.GREEN + "Your team won", 10, 40, 10);
 				player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1F, 2F);
 			}
 		});
@@ -135,7 +144,7 @@ public class GameListeners extends NovaModule implements Listener {
 			}
 
 			// player.playSound(player.getLocation(), Sound.WITHER_HURT, 1F, 1F);
-			VersionIndependantSound.WITHER_HURT.play(player);
+			VersionIndependentSound.WITHER_HURT.play(player);
 
 			String subtitle = ChatColor.RED + TextUtils.ordinal(e.getPlacement() + 1) + " place";
 
@@ -179,7 +188,7 @@ public class GameListeners extends NovaModule implements Listener {
 				break;
 			}
 
-			VersionIndependantUtils.get().sendTitle(player, ChatColor.RED + "Eliminated", subtitle, 10, 60, 10);
+			VersionIndependentUtils.get().sendTitle(player, ChatColor.RED + "Eliminated", subtitle, 10, 60, 10);
 		}
 	}
 
@@ -229,6 +238,6 @@ public class GameListeners extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onGUIMapSelectorPlayerVoted(GUIMapSelectorPlayerVotedEvent e) {
 		Player player = e.getPlayer();
-		VersionIndependantUtils.getInstance().sendTitle(player, "", ChatColor.GOLD + "Voted for " + e.getMap().getDisplayName(), 10, 40, 10);
+		VersionIndependentUtils.getInstance().sendTitle(player, "", ChatColor.GOLD + "Voted for " + e.getMap().getDisplayName(), 10, 40, 10);
 	}
 }
