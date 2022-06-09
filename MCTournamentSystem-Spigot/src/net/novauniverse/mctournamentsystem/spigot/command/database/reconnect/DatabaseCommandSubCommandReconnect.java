@@ -13,7 +13,7 @@ public class DatabaseCommandSubCommandReconnect extends NovaSubCommand {
 		super("reconnect");
 
 		setDescription("Reconnect the database");
-		setUseage("/database reconnect");
+		setUsage("/database reconnect");
 		setAllowedSenders(AllowedSenders.ALL);
 
 		setPermission("tournamentcore.command.database.reconnect");

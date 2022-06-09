@@ -19,7 +19,7 @@ public class PurgeCacheCommand extends NovaCommand {
 		setPermission("tournamentcore.command.purgecache");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setEmptyTabMode(true);
-		setUseage("/purgecache");
+		setUsage("/purgecache");
 		setDescription("Purge the cached database content");
 		addHelpSubCommand();
 	}
