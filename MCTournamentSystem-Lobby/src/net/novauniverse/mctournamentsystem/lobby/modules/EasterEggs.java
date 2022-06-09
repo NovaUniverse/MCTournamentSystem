@@ -6,7 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import net.novauniverse.mctournamentsystem.spigot.textures.Textures;
-import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentMetarial;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentMaterial;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
@@ -21,7 +21,7 @@ public class EasterEggs extends NovaModule implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		// Give Noahkup a boat
 		if (e.getPlayer().getUniqueId().toString().equalsIgnoreCase("c8fbbcdf-2224-4db6-bd97-fcdbfeda8647")) {
-			ItemBuilder builder = new ItemBuilder(VersionIndependentMetarial.OAK_BOAT);
+			ItemBuilder builder = new ItemBuilder(VersionIndependentMaterial.OAK_BOAT);
 
 			builder.setAmount(1);
 
