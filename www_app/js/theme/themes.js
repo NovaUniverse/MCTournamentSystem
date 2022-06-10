@@ -82,5 +82,12 @@ const themes = [
 		"css": "pulse.css",
 		"css_fix": undefined,
 		"is_dark": false
+	},
+	{
+		"name": "sketchy",
+		"display_name": "Sketchy",
+		"css": "sketchy.css",
+		"css_fix": undefined,
+		"is_dark": false
 	}
 ]
