@@ -694,6 +694,12 @@ const TournamentSystem = {
 			$("#stats_cores").text(data.system.cores);
 			$("#stats_os").text(data.system.os_name);
 
+			if(data.system.linux_distro == null) {
+				$("#distro_info_full").hide();
+			} else {
+				$("#distro_info").text(data.system.linux_distro);
+			}
+
 			$("#stats_torurnament_name").text(data.system.tournament_name);
 			$("#stats_scoreboard_link").text(data.system.scoreboard_url);
 

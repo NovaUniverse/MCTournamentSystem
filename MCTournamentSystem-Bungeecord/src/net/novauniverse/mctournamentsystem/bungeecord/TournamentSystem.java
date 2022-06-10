@@ -26,6 +26,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener
 import net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
 import net.zeeraa.novacore.commons.database.DBConnection;
@@ -41,10 +42,12 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private List<String> staffRoles;
 	private List<String> quickMessages;
 	private int teamSize;
-	
+
 	private String commentatorGuestKey;
 
 	private String phpmyadminURL;
+
+	private String distroName;
 
 	private boolean openMode;
 
@@ -86,19 +89,24 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return commentatorGuestKey;
 	}
 
+	public String getDistroName() {
+		return distroName;
+	}
+
 	@Override
 	public void onEnable() {
 		TournamentSystem.instance = this;
 		staffRoles = new ArrayList<>();
 		openMode = false;
-		
+		distroName = null;
+
 		// Init session id
 		TournamentSystemCommons.getSessionId();
 
 		saveDefaultConfiguration();
 
 		commentatorGuestKey = UUID.randomUUID().toString();
-		
+
 		quickMessages = new ArrayList<>();
 
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
@@ -233,6 +241,11 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		this.getProxy().registerChannel(TournamentSystemCommons.DATA_CHANNEL);
 		Log.info("Registering channel " + TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
 		this.getProxy().registerChannel(TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
+
+		distroName = LinuxUtils.getLinuxDistroPrettyName();
+		if (distroName != null) {
+			Log.info("TournamentSystem", "Seems like we are running on " + distroName);
+		}
 	}
 
 	@Override

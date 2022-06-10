@@ -200,6 +200,7 @@ public class StatusHandler extends APIEndpoint {
 		system.put("team_size", TournamentSystem.getInstance().getTeamSize());
 
 		system.put("os_name", System.getProperty("os.name"));
+		system.put("linux_distro", TournamentSystem.getInstance().getDistroName());
 
 		json.put("system", system);
 
