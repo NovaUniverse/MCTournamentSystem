@@ -8,8 +8,8 @@ $(function () {
 
 	$(".btn-fetch-chat-log").on("click", () => TournamentSystem.fetchChatLog());
 
-	$("#snapshot_file_uppload").on("change", function () {
-		let files = $("#snapshot_file_uppload").get(0).files;
+	$("#snapshot_file_upload").on("change", function () {
+		let files = $("#snapshot_file_upload").get(0).files;
 
 		//console.log(files);
 
@@ -32,7 +32,7 @@ $(function () {
 
 	$("#btn_import_snapshot_clear").on("click", function () {
 		$("#snapshot_json_data").val("");
-		$("#snapshot_file_uppload").val("");
+		$("#snapshot_file_upload").val("");
 	});
 
 	$("#btn_export_snapshot").on("click", function () {
@@ -92,7 +92,7 @@ $(function () {
 							if (data.success) {
 								toastr.info("Snapshot imported");
 							} else {
-								toastr.error("Failed to uppload snapshot\n" + data.message);
+								toastr.error("Failed to upload snapshot\n" + data.message);
 							}
 						},
 						dataType: "json"
@@ -589,7 +589,7 @@ const TournamentSystem = {
 					if (data.success) {
 						toastr.info("Staff updated");
 					} else {
-						toastr.error("Failed to uppload staff settings. " + data.message);
+						toastr.error("Failed to upload staff settings. " + data.message);
 					}
 				},
 				dataType: "json"

@@ -118,14 +118,14 @@ $(function () {
 	$("#btn_upload_team_data").on("click", function () {
 		$.ajax({
 			type: "POST",
-			url: "/api/team/uppload_team?access_token=" + localStorage.getItem("token"),
+			url: "/api/team/upload_team?access_token=" + localStorage.getItem("token"),
 			data: $("#json_output").text(),
 			success: function (data) {
 				console.log(data);
 				if (data.success) {
-					toastr.info("Team upploaded to TournamentSystem");
+					toastr.info("Team uploaded to TournamentSystem");
 				} else {
-					toastr.error("Failed to uppload team\n" + data.message);
+					toastr.error("Failed to upload team\n" + data.message);
 				}
 			},
 			dataType: "json"
@@ -168,8 +168,8 @@ $(function () {
 		$("#import_team_modal").modal('show');
 	});
 
-	$("#json_file_uppload").on("change", function () {
-		let files = $("#json_file_uppload").get(0).files;
+	$("#json_file_upload").on("change", function () {
+		let files = $("#json_file_upload").get(0).files;
 
 		//console.log(files);
 
@@ -199,7 +199,7 @@ $(function () {
 			$("#import_team_modal").modal('hide');
 
 			$("#team_json_data").val("");
-			$("#json_file_uppload").val("");
+			$("#json_file_upload").val("");
 		} catch (err) {
 			toastr.error("Invalid JSON provided. Check if the data is valid and try again");
 			console.error(err);
@@ -208,7 +208,7 @@ $(function () {
 
 	$("#btn_cancel_import_team").on("click", function () {
 		$("#team_json_data").val("");
-		$("#json_file_uppload").val("");
+		$("#json_file_upload").val("");
 	});
 
 	$(".hidden-until-loaded").removeClass("hidden-until-loaded");

@@ -20,8 +20,8 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
 @SuppressWarnings("restriction")
-public class UpploadTeamHandler extends APIEndpoint {
-	public UpploadTeamHandler() {
+public class UploadTeamHandler extends APIEndpoint {
+	public UploadTeamHandler() {
 		super(true);
 	}
 
@@ -60,7 +60,7 @@ public class UpploadTeamHandler extends APIEndpoint {
 					sql = "CALL `set_player_team`(?, ?, ?)";
 
 					if (player.getInt("team_number") == 0) {
-						Log.error("UpploadTeamHandler", "Invalid team number: 0");
+						Log.error("UploadTeamHandler", "Invalid team number: 0");
 						continue;
 					}
 

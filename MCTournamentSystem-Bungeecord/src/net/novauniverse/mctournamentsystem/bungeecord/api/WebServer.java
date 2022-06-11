@@ -28,7 +28,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.Se
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.SetTournamentNameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.StatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.ExportTeamDataHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.UpploadTeamHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.UploadTeamHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.user.LoginHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.user.WhoAmIHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.whitelist.AddWhitelistHandler;
@@ -61,7 +61,7 @@ public class WebServer {
 
 		// Team
 		createContext("/api/team/export_team_data", new ExportTeamDataHandler());
-		createContext("/api/team/uppload_team", new UpploadTeamHandler());
+		createContext("/api/team/upload_team", new UploadTeamHandler());
 
 		// Send
 		createContext("/api/send/send_player", new SendPlayerHandler());
