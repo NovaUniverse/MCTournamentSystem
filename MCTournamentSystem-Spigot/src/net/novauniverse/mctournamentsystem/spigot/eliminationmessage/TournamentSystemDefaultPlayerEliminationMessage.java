@@ -69,7 +69,7 @@ public class TournamentSystemDefaultPlayerEliminationMessage implements ITournam
 			}
 
 			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.killed", playerColor.toString(), player.getName(), killerColor + "" + ChatColor.BOLD + killerName);
-
+			
 		case QUIT:
 			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.quit", playerColor.toString(), player.getName());
 
