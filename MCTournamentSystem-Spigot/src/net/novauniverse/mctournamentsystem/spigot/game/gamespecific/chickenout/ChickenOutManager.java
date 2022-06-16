@@ -16,6 +16,7 @@ import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
@@ -82,17 +83,28 @@ public class ChickenOutManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onChickenOutTeamPlacement(ChickenOutTeamPlacementEvent e) {
+		if (e.getScore() <= 0) {
+			return;
+		}
+
 		int[] winScore = TournamentSystem.getInstance().getWinScore();
 		if ((e.getPlacement() - 1) < winScore.length) {
 			int score = winScore[e.getPlacement() - 1];
 
-			ScoreManager.getInstance().addTeamScore((TournamentSystemTeam) e.getTeam(), score);
-			e.getTeam().sendMessage(ChatColor.GRAY + "+" + score + " points");
+			TournamentSystemTeam team = (TournamentSystemTeam)e.getTeam();
+
+			ScoreManager.getInstance().addTeamScore(team, score);
+			team.sendMessage(ChatColor.GRAY + "+" + score + " points");
+			team.sendTitle(ChatColor.GREEN +  TextUtils.ordinal(e.getPlacement()) + " place", getClassName(), 20, 60, 20);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onChickenOutPlayerPlacement(ChickenOutPlayerPlacementEvent e) {
+		if (e.getScore() <= 0) {
+			return;
+		}
+
 		int[] winScore = TournamentSystem.getInstance().getWinScore();
 		if ((e.getPlacement() - 1) < winScore.length) {
 			int score = winScore[e.getPlacement() - 1];
@@ -100,6 +112,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 			ScoreManager.getInstance().addPlayerScore(e.getUuid(), score);
 			Player player = Bukkit.getServer().getPlayer(e.getUuid());
 			if (player != null) {
+				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN +  TextUtils.ordinal(e.getPlacement()) + " place", getClassName(), 20, 60, 20);
 				player.sendMessage(ChatColor.GRAY + "+" + score + " points");
 			}
 		}
@@ -109,6 +122,9 @@ public class ChickenOutManager extends NovaModule implements Listener {
 	public void onChickenOutPlayerChickenOut(ChickenOutPlayerChickenOutEvent e) {
 		Player player = e.getPlayer();
 		int score = (int) Math.ceil(((double) e.getFeathers()) * TournamentSystem.getInstance().getChickenOutFeatherScoreMultiplier());
+		if (score <= 0) {
+			return;
+		}
 		if (TeamManager.hasTeamManager()) {
 			Team team = TeamManager.getTeamManager().getPlayerTeam(player);
 			if (team != null) {
