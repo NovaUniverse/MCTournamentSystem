@@ -2,6 +2,8 @@ package net.novauniverse.mctournamentsystem.missilewars.lobby.gamestarter;
 
 import org.bukkit.event.Listener;
 
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameLoadedEvent;
+
 public abstract class GameStarter implements Listener {
 	/**
 	 * Get the name of the {@link GameStarter}
