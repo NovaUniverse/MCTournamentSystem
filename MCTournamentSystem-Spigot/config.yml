@@ -44,3 +44,8 @@ enable_edible_heads: true
 # -=-=-=  Dropper settings =-=-=-
 # ===============================
 dropper_level_complete_score: 10
+
+# ===================================
+# -=-=-=  Chicken Out settings =-=-=-
+# ===================================
+chicken_out_feather_score_multiplier: 0.5

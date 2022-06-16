@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.game.gamespecific;
+package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgames;
 
 import net.novauniverse.games.survivalgames.NovaSurvivalGames;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;

@@ -68,6 +68,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private String serverName;
 	private String lobbyServer;
 
+	private boolean builtInScoreSystemDisabled;
+	
 	private int[] winScore;
 
 	private int dropperCompleteLevelScore;
@@ -77,7 +79,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean celebrationMode;
 	private boolean replaceEz;
 	private boolean noTeamsMode;
-
+	
+	private double chickenOutFeatherScoreMultiplier;
+	
 	private List<Consumer<Player>> respawnPlayerCallbacks;
 	
 	private ScoreListener scoreListener;
@@ -187,6 +191,18 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return cachedTournamentName;
 	}
 	
+	public void setBuiltInScoreSystemDisabled(boolean builtInScoreSystemDisabled) {
+		this.builtInScoreSystemDisabled = builtInScoreSystemDisabled;
+	}
+	
+	public boolean isBuiltInScoreSystemDisabled() {
+		return builtInScoreSystemDisabled;
+	}
+	
+	public double getChickenOutFeatherScoreMultiplier() {
+		return chickenOutFeatherScoreMultiplier;
+	}
+	
 	@Override
 	public void onEnable() {
 		// Init session id
@@ -203,6 +219,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.playerEliminationMessageProvider = new TournamentSystemDefaultPlayerEliminationMessage();
 
 		this.scoreListener = null;
+		
+		this.builtInScoreSystemDisabled = false;
+		
+		this.chickenOutFeatherScoreMultiplier = 0;
 		
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
@@ -294,6 +314,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		celebrationMode = config.getBoolean("celebration_mode");
 		replaceEz = config.getBoolean("replace_ez");
 
+		chickenOutFeatherScoreMultiplier = config.getDouble("chicken_out_feather_score_multiplier");
+		
 		if (config.has("no_teams")) {
 			noTeamsMode = config.getBoolean("no_teams");
 			if (noTeamsMode) {

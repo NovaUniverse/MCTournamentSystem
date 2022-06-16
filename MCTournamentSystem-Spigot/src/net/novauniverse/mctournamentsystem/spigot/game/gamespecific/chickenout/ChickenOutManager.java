@@ -1,16 +1,27 @@
-package net.novauniverse.mctournamentsystem.spigot.game.gamespecific;
+package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.chickenout;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import net.novauniverse.games.chickenout.game.ChickenOut;
+import net.novauniverse.games.chickenout.game.event.ChickenOutPlayerChickenOutEvent;
+import net.novauniverse.games.chickenout.game.event.ChickenOutPlayerPlacementEvent;
+import net.novauniverse.games.chickenout.game.event.ChickenOutTeamPlacementEvent;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
+import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
+import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
+import net.zeeraa.novacore.spigot.teams.Team;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class ChickenOutManager extends NovaModule implements Listener {
 	public static final int TIME_LINE = 5;
@@ -25,6 +36,11 @@ public class ChickenOutManager extends NovaModule implements Listener {
 
 	@Override
 	public void onLoad() {
+		// We use custom messages here instead
+		GameSetup.disableEliminationMessages();
+		GameManager.getInstance().setPlayerEliminationMessage(new ChickenOutEliminationMessages());
+		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
+
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
@@ -62,6 +78,47 @@ public class ChickenOutManager extends NovaModule implements Listener {
 				}
 			}
 		}, 5L);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onChickenOutTeamPlacement(ChickenOutTeamPlacementEvent e) {
+		int[] winScore = TournamentSystem.getInstance().getWinScore();
+		if ((e.getPlacement() - 1) < winScore.length) {
+			int score = winScore[e.getPlacement() - 1];
+
+			ScoreManager.getInstance().addTeamScore((TournamentSystemTeam) e.getTeam(), score);
+			e.getTeam().sendMessage(ChatColor.GRAY + "+" + score + " points");
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onChickenOutPlayerPlacement(ChickenOutPlayerPlacementEvent e) {
+		int[] winScore = TournamentSystem.getInstance().getWinScore();
+		if ((e.getPlacement() - 1) < winScore.length) {
+			int score = winScore[e.getPlacement() - 1];
+
+			ScoreManager.getInstance().addPlayerScore(e.getUuid(), score);
+			Player player = Bukkit.getServer().getPlayer(e.getUuid());
+			if (player != null) {
+				player.sendMessage(ChatColor.GRAY + "+" + score + " points");
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onChickenOutPlayerChickenOut(ChickenOutPlayerChickenOutEvent e) {
+		Player player = e.getPlayer();
+		int score = (int) Math.ceil(((double) e.getFeathers()) * TournamentSystem.getInstance().getChickenOutFeatherScoreMultiplier());
+		if (TeamManager.hasTeamManager()) {
+			Team team = TeamManager.getTeamManager().getPlayerTeam(player);
+			if (team != null) {
+				team.sendMessage(ChatColor.GRAY + "+" + score + " points added to team");
+			}
+		} else {
+			player.sendMessage(ChatColor.GRAY + "+" + score + " points added to team");
+		}
+
+		ScoreManager.getInstance().addPlayerScore(player, score, true);
 	}
 
 	@Override

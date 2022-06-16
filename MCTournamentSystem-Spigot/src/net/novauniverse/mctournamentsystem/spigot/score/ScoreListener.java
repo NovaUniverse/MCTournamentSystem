@@ -59,7 +59,6 @@ public class ScoreListener implements Listener {
 	public int getKillScore() {
 		return killScore;
 	}
-	
 
 	public int[] getWinScore() {
 		return winScore;
@@ -83,7 +82,11 @@ public class ScoreListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerEliminated(PlayerEliminatedEvent e) {
-		Log.trace("PlayerEliminatedEvent. " + e.getPlayer().getUniqueId());
+		if(TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
+			return;
+		}
+		
+		Log.trace("ScoreListener", "PlayerEliminatedEvent. " + e.getPlayer().getUniqueId());
 		if (participationScoreEnabled) {
 			if (GameManager.getInstance().hasGame()) {
 				if (GameManager.getInstance().getActiveGame().hasStarted()) {
@@ -142,7 +145,11 @@ public class ScoreListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onTeamEliminated(TeamEliminatedEvent e) {
-		Log.trace("TeamEliminatedEvent. " + e.getTeam().getTeamUuid());
+		if(TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
+			return;
+		}
+		
+		Log.trace("ScoreListener", "TeamEliminatedEvent. " + e.getTeam().getTeamUuid());
 		if (winScoreEnabled) {
 			if (e.getPlacement() > 1) {
 				addTeamPlacementScore(e.getTeam(), e.getPlacement());
@@ -152,18 +159,26 @@ public class ScoreListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onTeamWin(TeamWinEvent e) {
-		Log.trace("TeamWinEvent called");
+		if(TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
+			return;
+		}
+		
+		Log.trace("ScoreListener", "TeamWinEvent called");
 		addTeamPlacementScore(e.getTeam(), 1);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerWin(PlayerWinEvent e) {
-		Log.trace("PlayerWinEvent called");
+		if(TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
+			return;
+		}
+		
+		Log.trace("ScoreListener", "PlayerWinEvent called");
 		addPlayerPlacementScore(e.getPlayer(), 1);
 	}
 
 	private void addPlayerPlacementScore(OfflinePlayer player, int placement) {
-		Log.trace("ScoreListener.addPlayerPlacementScore()");
+		Log.trace("ScoreListener", "ScoreListener.addPlayerPlacementScore()");
 		if (!GameManager.getInstance().isUseTeams()) {
 			if (placement <= winScore.length) {
 				int score = winScore[placement - 1];
@@ -177,7 +192,7 @@ public class ScoreListener implements Listener {
 	}
 
 	private void addTeamPlacementScore(Team team, int placement) {
-		Log.trace("ScoreListener.addTeamPlacementScore()");
+		Log.trace("ScoreListener", "ScoreListener.addTeamPlacementScore()");
 		if (placement <= winScore.length) {
 			int score = winScore[placement - 1];
 

@@ -5,6 +5,7 @@ import java.io.File;
 import org.bukkit.Bukkit;
 
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.NOPEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSActionBarCombatTagMessage;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSPlayerEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSTeamEliminationMessage;
@@ -48,5 +49,10 @@ public class GameSetup {
 		GameLobby.getInstance().getMapReader().loadAll(dataFileDirectory, worldFileDirectory);
 
 		Log.success("GameSetup", "Game support enabled");
+	}
+	
+	public static void disableEliminationMessages() {
+		GameManager.getInstance().setTeamEliminationMessage(new NOPEliminationMessage());
+		GameManager.getInstance().setPlayerEliminationMessage(new NOPEliminationMessage());
 	}
 }

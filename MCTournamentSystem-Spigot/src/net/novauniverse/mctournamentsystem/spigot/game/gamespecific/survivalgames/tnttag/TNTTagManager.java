@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.game.gamespecific;
+package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgames.tnttag;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
