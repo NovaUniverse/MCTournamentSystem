@@ -14,6 +14,7 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
@@ -90,6 +91,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onChickenOutTeamPlacement(ChickenOutTeamPlacementEvent e) {
+		Log.trace("ChickenOutManager", "ChickenOutTeamPlacementEvent score: " + e.getScore());
 		if (e.getScore() <= 0) {
 			return;
 		}
@@ -108,6 +110,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onChickenOutPlayerPlacement(ChickenOutPlayerPlacementEvent e) {
+		Log.trace("ChickenOutManager", "ChickenOutPlayerPlacementEvent score: " + e.getScore());
 		if (e.getScore() <= 0) {
 			return;
 		}
