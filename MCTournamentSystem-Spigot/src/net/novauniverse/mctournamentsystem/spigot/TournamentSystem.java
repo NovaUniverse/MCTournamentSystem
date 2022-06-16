@@ -29,6 +29,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.bc.BCCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.cinvsee.CInvseeCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.csp.CSPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.ctp.CTPCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.copylocation.CopyLocationCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
@@ -414,6 +415,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new CInvseeCommand());
 		CommandRegistry.registerCommand(new BCCommand());
 		CommandRegistry.registerCommand(new RespawnPlayerCommand());
+		CommandRegistry.registerCommand(new CopyLocationCommand());
 
 		/* ----- Permissions ----- */
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commantator access", PermissionDefault.FALSE);
