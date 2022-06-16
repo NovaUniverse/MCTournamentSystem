@@ -42,6 +42,13 @@ public class ChickenOutManager extends NovaModule implements Listener {
 		GameManager.getInstance().setPlayerEliminationMessage(new ChickenOutEliminationMessages());
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
 
+		TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
+			ChickenOut game = (ChickenOut) GameManager.getInstance().getActiveGame();
+			if (!game.getAllParticipatingPlayers().contains(player.getUniqueId())) {
+				game.getAllParticipatingPlayers().add(player.getUniqueId());
+			}
+		});
+
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
@@ -63,7 +70,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 						}
 
 						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-							if (GameManager.getInstance().getActiveGame().getPlayers().contains(player.getUniqueId())) {
+							if (game.getAllParticipatingPlayers().contains(player.getUniqueId())) {
 								int feathers = game.getPlayerFeathers(player);
 								int finalFeathers = game.getFinalScoreForDisplay(player.getUniqueId());
 								String featherCountMessage = ChatColor.GOLD + "Feathers: " + ChatColor.AQUA + feathers;
@@ -91,11 +98,11 @@ public class ChickenOutManager extends NovaModule implements Listener {
 		if ((e.getPlacement() - 1) < winScore.length) {
 			int score = winScore[e.getPlacement() - 1];
 
-			TournamentSystemTeam team = (TournamentSystemTeam)e.getTeam();
+			TournamentSystemTeam team = (TournamentSystemTeam) e.getTeam();
 
 			ScoreManager.getInstance().addTeamScore(team, score);
 			team.sendMessage(ChatColor.GRAY + "+" + score + " points");
-			team.sendTitle(ChatColor.GREEN +  TextUtils.ordinal(e.getPlacement()) + " place", getClassName(), 20, 60, 20);
+			team.sendTitle(ChatColor.GREEN + TextUtils.ordinal(e.getPlacement()) + " place", getClassName(), 20, 60, 20);
 		}
 	}
 
@@ -112,7 +119,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 			ScoreManager.getInstance().addPlayerScore(e.getUuid(), score);
 			Player player = Bukkit.getServer().getPlayer(e.getUuid());
 			if (player != null) {
-				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN +  TextUtils.ordinal(e.getPlacement()) + " place", getClassName(), 20, 60, 20);
+				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + TextUtils.ordinal(e.getPlacement()) + " place", getClassName(), 20, 60, 20);
 				player.sendMessage(ChatColor.GRAY + "+" + score + " points");
 			}
 		}
