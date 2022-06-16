@@ -314,7 +314,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		celebrationMode = config.getBoolean("celebration_mode");
 		replaceEz = config.getBoolean("replace_ez");
 
-		chickenOutFeatherScoreMultiplier = config.getDouble("chicken_out_feather_score_multiplier");
+		chickenOutFeatherScoreMultiplier = getConfig().getDouble("chicken_out_feather_score_multiplier");
 		
 		if (config.has("no_teams")) {
 			noTeamsMode = config.getBoolean("no_teams");
