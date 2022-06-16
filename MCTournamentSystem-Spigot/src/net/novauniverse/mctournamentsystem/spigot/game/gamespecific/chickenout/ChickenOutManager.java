@@ -122,7 +122,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 			ScoreManager.getInstance().addPlayerScore(e.getUuid(), score);
 			Player player = Bukkit.getServer().getPlayer(e.getUuid());
 			if (player != null) {
-				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + TextUtils.ordinal(e.getPlacement()) + " place", getClassName(), 20, 60, 20);
+				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + TextUtils.ordinal(e.getPlacement()) + " place", "", 20, 60, 20);
 				player.sendMessage(ChatColor.GRAY + "+" + score + " points");
 			}
 		}
