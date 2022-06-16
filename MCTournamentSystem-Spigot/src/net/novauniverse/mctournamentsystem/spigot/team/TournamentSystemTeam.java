@@ -2,6 +2,7 @@ package net.novauniverse.mctournamentsystem.spigot.team;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerNameCache;
+import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.zeeraa.novacore.commons.utils.UUIDUtils;
 import net.zeeraa.novacore.spigot.teams.Team;
 
@@ -24,6 +25,17 @@ public class TournamentSystemTeam extends Team {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	/**
+	 * Add score distributed to members. Note that this does not add the score to
+	 * the team
+	 * 
+	 * @param score The amount to distribute
+	 */
+	public void distributePointsToPlayers(int score) {
+		int toAdd = (int) Math.floor(score / members.size());
+		members.forEach(uuid -> ScoreManager.getInstance().addPlayerScore(uuid, toAdd, false));
 	}
 
 	public String getMemberString() {
