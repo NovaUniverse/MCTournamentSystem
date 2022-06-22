@@ -30,7 +30,7 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 	}
 
 	public PlayerNameCache() {
-		super("TournamentSystem-PlayerNameCache");
+		super("TournamentSystem.PlayerNameCache");
 	}
 
 	@Override
