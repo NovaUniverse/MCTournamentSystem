@@ -2,7 +2,6 @@ package net.novauniverse.mctournamentsystem.spigot.game;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -93,7 +92,7 @@ public class GameListeners extends NovaModule implements Listener {
 				Log.error(getName(), "Failed to enable game specific module: TNTTagManager (" + TNTTagManager.class.getName() + ")");
 			}
 		}
-		
+
 		if (e.getGame().getName().equalsIgnoreCase("chickenout")) {
 			if (ModuleManager.loadModule(TournamentSystem.getInstance(), ChickenOutManager.class, true)) {
 				Log.success(getName(), "Enabled game specific module: ChickenOutManager (" + ChickenOutManager.class.getName() + ")");
@@ -129,7 +128,8 @@ public class GameListeners extends NovaModule implements Listener {
 			Player player = Bukkit.getServer().getPlayer(uuid);
 			if (player != null) {
 				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + "Winner", ChatColor.GREEN + "Your team won", 10, 40, 10);
-				player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1F, 2F);
+				// player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1F, 2F);
+				VersionIndependentSound.ORB_PICKUP.play(player, 1F, 2F);
 			}
 		});
 	}
