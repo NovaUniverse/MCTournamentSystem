@@ -1,12 +1,10 @@
 package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourtail;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.behindyourtail.NovaBehindYourTail;
-import net.novauniverse.behindyourtail.game.BehindYourTail;
 import net.novauniverse.behindyourtail.game.role.Role;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.CustomDefaultPlayerEliminationMessaageProvider;
