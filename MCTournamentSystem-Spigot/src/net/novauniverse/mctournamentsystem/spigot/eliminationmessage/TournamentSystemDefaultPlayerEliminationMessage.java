@@ -1,5 +1,8 @@
 package net.novauniverse.mctournamentsystem.spigot.eliminationmessage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,8 +17,26 @@ import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class TournamentSystemDefaultPlayerEliminationMessage implements ITournamentSystemPlayerEliminationMessageProvider {
+	private Map<PlayerEliminationReason, CustomDefaultPlayerEliminationMessaageProvider> customProviders;
+
+	public TournamentSystemDefaultPlayerEliminationMessage() {
+		this.customProviders = new HashMap<>();
+	}
+
+	public void addCustomProvider(PlayerEliminationReason reason, CustomDefaultPlayerEliminationMessaageProvider provider) {
+		this.customProviders.put(reason, provider);
+	}
+
+	public Map<PlayerEliminationReason, CustomDefaultPlayerEliminationMessaageProvider> getCustomProviders() {
+		return customProviders;
+	}
+
 	@Override
 	public String getEliminationMessage(OfflinePlayer player, Entity killer, PlayerEliminationReason reason, int placement) {
+		if (customProviders.containsKey(reason)) {
+			return customProviders.get(reason).getEliminationMessage(player, killer, reason, placement);
+		}
+
 		ChatColor playerColor = ChatColor.AQUA;
 		ChatColor killerColor = ChatColor.RED;
 
@@ -69,7 +90,7 @@ public class TournamentSystemDefaultPlayerEliminationMessage implements ITournam
 			}
 
 			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.killed", playerColor.toString(), player.getName(), killerColor + "" + ChatColor.BOLD + killerName);
-			
+
 		case QUIT:
 			return LanguageManager.getString(LanguageManager.getPrimaryLanguage(), "novacore.game.elimination.player.quit", playerColor.toString(), player.getName());
 

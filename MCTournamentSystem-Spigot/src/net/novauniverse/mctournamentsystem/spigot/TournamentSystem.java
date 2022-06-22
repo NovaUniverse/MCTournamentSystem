@@ -70,7 +70,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private String lobbyServer;
 
 	private boolean builtInScoreSystemDisabled;
-	
+
 	private int[] winScore;
 
 	private int dropperCompleteLevelScore;
@@ -80,14 +80,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean celebrationMode;
 	private boolean replaceEz;
 	private boolean noTeamsMode;
-	
+
 	private double chickenOutFeatherScoreMultiplier;
-	
+
 	private List<Consumer<Player>> respawnPlayerCallbacks;
-	
+
 	private ScoreListener scoreListener;
 
 	private ITournamentSystemPlayerEliminationMessageProvider playerEliminationMessageProvider;
+
+	private TournamentSystemDefaultPlayerEliminationMessage defaultPlayerEliminationMessage;
 
 	private String labymodBanner;
 
@@ -95,7 +97,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private Group defaultGroup;
 
 	private File mapDataFolder;
-	
+
 	private String cachedTournamentName;
 	private String cachedTournamentLink;
 
@@ -175,35 +177,39 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public void setScoreListener(ScoreListener scoreListener) {
 		this.scoreListener = scoreListener;
 	}
-	
+
 	public ScoreListener getScoreListener() {
 		return scoreListener;
 	}
-	
+
 	public boolean hasScoreListener() {
 		return scoreListener != null;
 	}
-	
+
 	public String getCachedTournamentLink() {
 		return cachedTournamentLink;
 	}
-	
+
 	public String getCachedTournamentName() {
 		return cachedTournamentName;
 	}
-	
+
 	public void setBuiltInScoreSystemDisabled(boolean builtInScoreSystemDisabled) {
 		this.builtInScoreSystemDisabled = builtInScoreSystemDisabled;
 	}
-	
+
 	public boolean isBuiltInScoreSystemDisabled() {
 		return builtInScoreSystemDisabled;
 	}
-	
+
 	public double getChickenOutFeatherScoreMultiplier() {
 		return chickenOutFeatherScoreMultiplier;
 	}
-	
+
+	public TournamentSystemDefaultPlayerEliminationMessage getDefaultPlayerEliminationMessage() {
+		return defaultPlayerEliminationMessage;
+	}
+
 	@Override
 	public void onEnable() {
 		// Init session id
@@ -217,14 +223,15 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.respawnPlayerCallbacks = new ArrayList<>();
 
-		this.playerEliminationMessageProvider = new TournamentSystemDefaultPlayerEliminationMessage();
+		this.defaultPlayerEliminationMessage = new TournamentSystemDefaultPlayerEliminationMessage();
+		this.playerEliminationMessageProvider = this.getDefaultPlayerEliminationMessage();
 
 		this.scoreListener = null;
-		
+
 		this.builtInScoreSystemDisabled = false;
-		
+
 		this.chickenOutFeatherScoreMultiplier = 0;
-		
+
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
@@ -316,7 +323,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		replaceEz = config.getBoolean("replace_ez");
 
 		chickenOutFeatherScoreMultiplier = getConfig().getDouble("chicken_out_feather_score_multiplier");
-		
+
 		if (config.has("no_teams")) {
 			noTeamsMode = config.getBoolean("no_teams");
 			if (noTeamsMode) {
@@ -364,7 +371,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		Log.info(getName(), "Tournament name: " + tournamentName);
 		Log.info(getName(), "Scoreboard url: " + scoreboardUrl);
-		
+
 		this.cachedTournamentLink = scoreboardUrl;
 		this.cachedTournamentName = tournamentName;
 

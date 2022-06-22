@@ -16,7 +16,7 @@ import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboar
 
 public class SpleefManager extends NovaModule implements Listener {
 	public SpleefManager() {
-		super("TournamentSystem.SpleefManager");
+		super("TournamentSystem.GameSpecific.SpleefManager");
 	}
 
 	public static final int SPLEEF_DECAY_LINE = 5;

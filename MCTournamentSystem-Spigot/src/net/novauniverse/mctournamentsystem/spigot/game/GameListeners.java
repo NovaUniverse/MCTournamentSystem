@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourtail.BehindYourTailManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bingo.BingoManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.chickenout.ChickenOutManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.dropper.DropperManager;
@@ -98,6 +99,14 @@ public class GameListeners extends NovaModule implements Listener {
 				Log.success(getName(), "Enabled game specific module: ChickenOutManager (" + ChickenOutManager.class.getName() + ")");
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: ChickenOutManager (" + ChickenOutManager.class.getName() + ")");
+			}
+		}
+
+		if (e.getGame().getName().equalsIgnoreCase("behindyourtail")) {
+			if (ModuleManager.loadModule(TournamentSystem.getInstance(), BehindYourTailManager.class, true)) {
+				Log.success(getName(), "Enabled game specific module: BehindYourTailManager (" + BehindYourTailManager.class.getName() + ")");
+			} else {
+				Log.error(getName(), "Failed to enable game specific module: BehindYourTailManager (" + BehindYourTailManager.class.getName() + ")");
 			}
 		}
 	}

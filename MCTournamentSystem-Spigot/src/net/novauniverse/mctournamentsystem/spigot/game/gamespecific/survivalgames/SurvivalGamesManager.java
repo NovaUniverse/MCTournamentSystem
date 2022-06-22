@@ -7,7 +7,7 @@ import net.zeeraa.novacore.spigot.module.NovaModule;
 
 public class SurvivalGamesManager extends NovaModule {
 	public SurvivalGamesManager() {
-		super("TournamentSystem.SurvivalGamesManager");
+		super("TournamentSystem.GameSpecific.SurvivalGamesManager");
 	}
 
 	@Override

@@ -33,7 +33,7 @@ public class DropperManager extends NovaModule implements Listener {
 	private boolean timeLeftLineShown;
 
 	public DropperManager() {
-		super("TournamentSystem.DropperManager");
+		super("TournamentSystem.GameSpecific.DropperManager");
 	}
 
 	@Override

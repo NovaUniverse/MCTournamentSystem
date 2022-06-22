@@ -33,7 +33,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 	private Task task;
 
 	public ChickenOutManager() {
-		super("TournamentSystem.ChickenOutManager");
+		super("TournamentSystem.GameSpecific.ChickenOutManager");
 	}
 
 	@Override

@@ -32,7 +32,7 @@ public class BingoManager extends NovaModule implements Listener {
 	private boolean timeLeftLineShown;
 
 	public BingoManager() {
-		super("TournamentSystem.BingoManager");
+		super("TournamentSystem.GameSpecific.BingoManager");
 	}
 
 	@Override
