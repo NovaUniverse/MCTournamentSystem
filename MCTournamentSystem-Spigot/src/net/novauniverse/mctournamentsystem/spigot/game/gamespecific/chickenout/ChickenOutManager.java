@@ -103,7 +103,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 			TournamentSystemTeam team = (TournamentSystemTeam) e.getTeam();
 			ScoreManager.getInstance().addTeamScore(team, score);
 			team.sendMessage(ChatColor.GRAY + "+" + score + " points");
-			team.sendTitle(ChatColor.GREEN + TextUtils.ordinal(e.getPlacement()) + " place", getClassName(), 20, 60, 20);
+			team.sendTitle(ChatColor.GREEN + TextUtils.ordinal(e.getPlacement()) + " place", "", 20, 60, 20);
 			team.distributePointsToPlayers(score);
 		}
 	}
