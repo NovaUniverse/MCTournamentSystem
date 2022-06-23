@@ -12,6 +12,7 @@ import net.novauniverse.games.chickenout.game.event.ChickenOutPlayerPlacementEve
 import net.novauniverse.games.chickenout.game.event.ChickenOutTeamPlacementEvent;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
+import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
@@ -19,6 +20,7 @@ import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
@@ -42,6 +44,8 @@ public class ChickenOutManager extends NovaModule implements Listener {
 		GameSetup.disableEliminationMessages();
 		GameManager.getInstance().setPlayerEliminationMessage(new ChickenOutEliminationMessages());
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
+		
+		ModuleManager.disable(PlayerHeadDrop.class);
 
 		TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
 			ChickenOut game = (ChickenOut) GameManager.getInstance().getActiveGame();
