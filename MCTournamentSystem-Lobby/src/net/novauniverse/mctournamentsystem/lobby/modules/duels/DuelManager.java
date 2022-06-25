@@ -123,13 +123,7 @@ public class DuelManager extends NovaModule implements Listener {
 	}
 
 	public boolean isInDuel(Player player) {
-		for (DuelInstance i : duelInstances) {
-			if (i.getPlayers().contains(player)) {
-				return true;
-			}
-		}
-
-		return false;
+		return duelInstances.stream().filter(duel -> duel.getPlayers().contains(player)).count() > 0;
 	}
 
 	public boolean duel(Player player1, Player player2) {

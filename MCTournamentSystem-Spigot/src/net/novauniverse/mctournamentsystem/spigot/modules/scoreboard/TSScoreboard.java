@@ -48,7 +48,6 @@ public class TSScoreboard extends NovaModule implements Listener {
 	public void onEnable() {
 		if (taskId == -1) {
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(TournamentSystem.getInstance(), new Runnable() {
-
 				@Override
 				public void run() {
 					final double[] recentTps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps();

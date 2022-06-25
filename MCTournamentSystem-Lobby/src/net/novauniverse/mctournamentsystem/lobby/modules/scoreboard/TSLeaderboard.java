@@ -1,6 +1,5 @@
 package net.novauniverse.mctournamentsystem.lobby.modules.scoreboard;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -88,7 +87,7 @@ public class TSLeaderboard extends NovaModule {
 				playerHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top player scores");
 			}
 
-			ArrayList<PlayerScoreData> scores = TopScore.getPlayerTopScore(lines);
+			List<PlayerScoreData> scores = TopScore.getPlayerTopScore(lines);
 
 			for (PlayerScoreData scoreData : scores) {
 				lineIndex++;

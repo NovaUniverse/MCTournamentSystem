@@ -32,7 +32,6 @@ public class WhatIsDogeWorthCommand extends NovaCommand {
 		sender.sendMessage(ChatColor.GREEN + "Checking price...");
 
 		AsyncManager.runAsync(new Runnable() {
-
 			@Override
 			public void run() {
 				try {
@@ -79,7 +78,6 @@ public class WhatIsDogeWorthCommand extends NovaCommand {
 				}
 			}
 		});
-
 		return true;
 	}
 }

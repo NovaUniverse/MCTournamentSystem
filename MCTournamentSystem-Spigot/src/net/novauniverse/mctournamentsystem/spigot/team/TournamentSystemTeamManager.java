@@ -56,7 +56,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			public void run() {
 				updateTeams();
 
-				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+				Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 					Team team = getPlayerTeam(player);
 
 					if (team == null) {
@@ -78,7 +78,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 							NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, team.getTeamColor());
 						}
 					}
-				}
+				});
 			}
 		}, 100L, 100L);
 
@@ -124,7 +124,6 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 
 	private void updateTeams() {
 		// Update players
-
 		List<UUID> fullPlayerList = new ArrayList<>();
 
 		try {
@@ -204,13 +203,8 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 	}
 
 	public TournamentSystemTeam getTeam(int teamNumber) {
-		for (Team team : teams) {
-			if (((TournamentSystemTeam) team).getTeamNumber() == teamNumber) {
-				return (TournamentSystemTeam) team;
-			}
-		}
-
-		return null;
+		// ream is not a typo. its an inside joke in our discord server
+		return (TournamentSystemTeam) teams.stream().filter(ream -> ((TournamentSystemTeam) ream).getTeamNumber() == teamNumber).findFirst().orElse(null);
 	}
 
 	public void updatePlayerName(Player player) {

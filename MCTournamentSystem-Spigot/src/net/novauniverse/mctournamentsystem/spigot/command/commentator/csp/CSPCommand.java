@@ -25,7 +25,6 @@ public class CSPCommand extends NovaCommand {
 	@Override
 	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
 		((Player) sender).setGameMode(GameMode.SPECTATOR);
-
 		return true;
 	}
 }

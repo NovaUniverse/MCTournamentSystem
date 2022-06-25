@@ -1,8 +1,6 @@
 package net.novauniverse.mctournamentsystem.lobby.modules.lobby;
 
 import java.io.File;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -51,7 +49,6 @@ import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseWorld;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.WorldUnloadOption;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
-import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 import net.zeeraa.novacore.spigot.utils.LocationUtils;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
@@ -190,7 +187,7 @@ public class Lobby extends NovaModule implements Listener {
 		lobbyTask = new SimpleTask(TournamentSystemLobby.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				for (Player player : lobbyLocation.getWorld().getPlayers()) {
+				lobbyLocation.getWorld().getPlayers().forEach(player -> {
 					player.setFoodLevel(20);
 					if (player.getLocation().getY() < -3) {
 						if (player.getGameMode() == GameMode.SURVIVAL) {
@@ -199,7 +196,7 @@ public class Lobby extends NovaModule implements Listener {
 						player.teleport(lobbyLocation);
 						player.setFallDistance(0);
 					}
-				}
+				});
 			}
 		}, 5L);
 		lobbyTask.start();
@@ -208,13 +205,9 @@ public class Lobby extends NovaModule implements Listener {
 			@Override
 			public void run() {
 				if (NovaCore.getInstance().hasTeamManager()) {
-					for (Team team : NovaCore.getInstance().getTeamManager().getTeams()) {
-						for (UUID uuid : team.getMembers()) {
-							// Load all players into score cache so that they get displayed in the leader
-							// board
-							ScoreManager.getInstance().getPlayerScore(uuid);
-						}
-					}
+					// Load all players into score cache so that they get displayed in the leader
+					// board
+					NovaCore.getInstance().getTeamManager().getTeams().forEach(team -> team.getMembers().forEach(uuid -> ScoreManager.getInstance().getPlayerScore(uuid)));
 				}
 			}
 		}, 200L);

@@ -72,7 +72,7 @@ public class YBorder extends NovaModule implements Listener {
 		damageTask = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+				Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 					boolean showMessage = false;
 
 					if (NovaCore.isNovaGameEngineEnabled()) {
@@ -105,7 +105,7 @@ public class YBorder extends NovaModule implements Listener {
 							}
 						}
 					}
-				}
+				});
 			}
 		}, 20L, 20L);
 

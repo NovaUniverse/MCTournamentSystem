@@ -27,9 +27,7 @@ public class DuelInstance {
 
 	public void sendMessage(String message) {
 		if (world != null) {
-			for (Player player : world.getWorld().getPlayers()) {
-				player.sendMessage(message);
-			}
+			world.getWorld().getPlayers().forEach(player -> player.sendMessage(message));
 		}
 	}
 
