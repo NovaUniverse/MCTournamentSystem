@@ -16,7 +16,7 @@ import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class BehindYourTailManager extends NovaModule{
-	public BehindYourTailManager(String name) {
+	public BehindYourTailManager() {
 		super("TournamentSystem.GameSpecific.BehindYourTailManager");
 	}
 	
