@@ -17,7 +17,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.chickenout.C
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.dropper.DropperManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.spleef.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgames.SurvivalGamesManager;
-import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgames.tnttag.TNTTagManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.tnttag.TNTTagManager;
 import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabListMessage;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.TNTTagMetadataProvider;
