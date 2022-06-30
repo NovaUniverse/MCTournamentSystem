@@ -82,8 +82,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			}
 		}, 100L, 100L);
 
-		ArrayList<Integer> missingTeams = new ArrayList<Integer>();
-
+		List<Integer> missingTeams = new ArrayList<Integer>();
 		for (int i = 0; i < teamCount; i++) {
 			missingTeams.add((Integer) i + 1);
 		}

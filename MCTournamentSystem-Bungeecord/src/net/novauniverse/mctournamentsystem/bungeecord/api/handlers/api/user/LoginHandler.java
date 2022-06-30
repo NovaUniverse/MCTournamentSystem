@@ -27,14 +27,7 @@ public class LoginHandler extends APIEndpoint {
 				String username = params.get("username");
 				String password = params.get("password");
 
-				APIUser user = null;
-
-				for (APIUser u : APIUserStore.getUsers()) {
-					if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
-						user = u;
-						break;
-					}
-				}
+				APIUser user = APIUserStore.getUsers().stream().filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password)).findFirst().orElse(null);
 
 				if (user != null) {
 					APIAccessToken token = APITokenStore.createToken(user);

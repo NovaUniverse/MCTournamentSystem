@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.misc.MissingTeamFixer;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
@@ -38,7 +39,6 @@ public class ResetHandler extends APIEndpoint {
 			json.put("message", e.getClass().getName() + " " + e.getMessage());
 		}
 
-		// TODO: Add this query to reset_data
 		try {
 			String sql = "DELETE FROM teams";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
@@ -54,6 +54,8 @@ public class ResetHandler extends APIEndpoint {
 			json.put("message", e.getClass().getName() + " " + e.getMessage());
 		}
 
+		MissingTeamFixer.fixTeams();
+		
 		json.put("success", success);
 
 		return json;

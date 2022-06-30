@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.misc.MissingTeamFixer;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
@@ -34,6 +35,8 @@ public class ClearPlayersHandler extends APIEndpoint {
 			json.put("error", e.getClass().getName());
 			json.put("message", e.getClass().getName() + " " + e.getMessage());
 		}
+		
+		MissingTeamFixer.fixTeams();
 
 		return json;
 	}

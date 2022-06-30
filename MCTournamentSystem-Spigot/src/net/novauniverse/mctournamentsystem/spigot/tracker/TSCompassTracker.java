@@ -61,11 +61,7 @@ public class TSCompassTracker implements CompassTrackerTarget {
 								result = new CompassTarget(p.getLocation(), LanguageManager.getString(player, "tournamentsystem.game.tracker.tracking_player", p.getName()));
 							}
 						}
-					} else {
-						// Log.trace(player.getName() + " Ignoring offline " + uuid.toString());
 					}
-				} else {
-					// Log.trace(player.getName() + " Ignoring missing " + uuid.toString());
 				}
 			}
 

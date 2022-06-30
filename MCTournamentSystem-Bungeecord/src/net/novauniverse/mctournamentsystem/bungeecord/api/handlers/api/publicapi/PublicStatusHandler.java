@@ -35,7 +35,7 @@ public class PublicStatusHandler extends APIEndpoint {
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
-		
+
 		/* ===== Servers ===== */
 		JSONArray servers = new JSONArray();
 		for (String key : ProxyServer.getInstance().getServers().keySet()) {
@@ -160,7 +160,7 @@ public class PublicStatusHandler extends APIEndpoint {
 		});
 
 		json.put("online_players", onlinePlayers);
-		
+
 		json.put("active_server", TournamentSystemCommons.getActiveServer());
 
 		return json;

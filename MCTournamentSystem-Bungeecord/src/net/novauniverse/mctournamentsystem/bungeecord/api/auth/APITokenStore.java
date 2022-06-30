@@ -24,13 +24,7 @@ public class APITokenStore {
 	}
 
 	public static final APIAccessToken getToken(String uuid) {
-		for (APIAccessToken token : APITokenStore.tokens) {
-			if (token.getUuid().toString().equalsIgnoreCase(uuid)) {
-				return token;
-			}
-		}
-
-		return null;
+		return APITokenStore.tokens.stream().filter(token -> token.getUuid().toString().equalsIgnoreCase(uuid)).findFirst().orElse(null);
 	}
 
 	public static final APIAccessToken getToken(UUID uuid) {

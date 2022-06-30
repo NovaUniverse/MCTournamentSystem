@@ -2,8 +2,6 @@ package net.novauniverse.mctournamentsystem.missilewars.lobby.modules;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import net.novauniverse.mctournamentsystem.missilewars.lobby.utils.TextUtils;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
@@ -45,10 +43,10 @@ public class MissilewarsScoreboard extends NovaModule {
 					NetherBoardScoreboard.getInstance().setGlobalLine(5, ChatColor.GOLD + "TPS: " + ChatColor.AQUA + "--");
 				}
 
-				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+				Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 					int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
 					NetherBoardScoreboard.getInstance().setPlayerLine(6, player, ChatColor.GOLD + "Ping: " + TextUtils.formatPing(ping));
-				}
+				});
 			}
 		}, 20L);
 	}

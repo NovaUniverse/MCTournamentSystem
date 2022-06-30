@@ -2,7 +2,6 @@ package net.novauniverse.mctournamentsystem.missilewars.lobby.modules;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import net.zeeraa.novacore.commons.tasks.Task;
@@ -47,7 +46,7 @@ public class MissileWarsHandler extends NovaModule implements Listener {
 					}
 				}
 
-				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+				Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 					Team team = TeamManager.getTeamManager().getPlayerTeam(player);
 
 					if (team == null) {
@@ -55,7 +54,7 @@ public class MissileWarsHandler extends NovaModule implements Listener {
 					} else {
 						NetherBoardScoreboard.getInstance().setPlayerLine(TEAM_LINE, player, team.getDisplayName() + " team");
 					}
-				}
+				});
 			}
 		}, 5L);
 	}
@@ -65,11 +64,6 @@ public class MissileWarsHandler extends NovaModule implements Listener {
 		updateTask.start();
 
 		GameStartScoreboardCountdown.getInstance().setCountdownLine(2);
-
-		// NetherBoardScoreboard.getInstance().setGlobalLine(12, ChatColor.GRAY +
-		// "Missile Wars made by");
-		// NetherBoardScoreboard.getInstance().setGlobalLine(13, ChatColor.GRAY +
-		// "SethBling & Cubehamster");
 	}
 
 	@Override
