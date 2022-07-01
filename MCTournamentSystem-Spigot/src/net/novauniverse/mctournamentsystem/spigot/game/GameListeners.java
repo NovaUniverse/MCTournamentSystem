@@ -28,6 +28,7 @@ import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.DefaultGameCountdownStartEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameBeginEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameLoadedEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
@@ -109,6 +110,13 @@ public class GameListeners extends NovaModule implements Listener {
 				Log.error(getName(), "Failed to enable game specific module: BehindYourTailManager (" + BehindYourTailManager.class.getName() + ")");
 			}
 		}
+
+		Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onGameBegin(GameBeginEvent e) {
+		Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

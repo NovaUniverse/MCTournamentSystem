@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -122,83 +123,93 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 	}
 
 	private void updateTeams() {
-		// Update players
-		List<UUID> fullPlayerList = new ArrayList<>();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				// Update players
+				List<UUID> fullPlayerList = new ArrayList<>();
 
-		try {
-			String sql = "SELECT uuid, team_number FROM players";
-			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+				try {
+					String sql = "SELECT uuid, team_number FROM players";
+					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				UUID uuid = UUID.fromString(rs.getString("uuid"));
-				int teamNumber = rs.getInt("team_number");
+					ResultSet rs = ps.executeQuery();
+					while (rs.next()) {
+						UUID uuid = UUID.fromString(rs.getString("uuid"));
+						int teamNumber = rs.getInt("team_number");
 
-				fullPlayerList.add(uuid);
+						fullPlayerList.add(uuid);
 
-				for (Team team : teams) {
-					if (teamNumber <= 0 || ((TournamentSystemTeam) team).getTeamNumber() != teamNumber) {
-						if (team.getMembers().contains(uuid)) {
-							team.getMembers().remove(uuid);
-							Log.trace("TournamentCoreTeamManager", "Removing player with uuid " + uuid.toString() + " from team " + ((TournamentSystemTeam) team).getTeamNumber());
-						}
-					} else {
-						if (teamNumber == ((TournamentSystemTeam) team).getTeamNumber()) {
-							if (!team.getMembers().contains(uuid)) {
-								team.getMembers().add(uuid);
-								Log.trace("TournamentCoreTeamManager", "Adding player with uuid " + uuid.toString() + " to team " + ((TournamentSystemTeam) team).getTeamNumber());
+						for (Team team : teams) {
+							if (teamNumber <= 0 || ((TournamentSystemTeam) team).getTeamNumber() != teamNumber) {
+								if (team.getMembers().contains(uuid)) {
+									team.getMembers().remove(uuid);
+									Log.trace("TournamentCoreTeamManager", "Removing player with uuid " + uuid.toString() + " from team " + ((TournamentSystemTeam) team).getTeamNumber());
+								}
+							} else {
+								if (teamNumber == ((TournamentSystemTeam) team).getTeamNumber()) {
+									if (!team.getMembers().contains(uuid)) {
+										team.getMembers().add(uuid);
+										Log.trace("TournamentCoreTeamManager", "Adding player with uuid " + uuid.toString() + " to team " + ((TournamentSystemTeam) team).getTeamNumber());
+									}
+								}
 							}
 						}
 					}
+
+					rs.close();
+					ps.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.warn("TournamentCoreTeamManager", "Failed to update teams");
+					return;
 				}
+
+				getTeams().forEach(team -> {
+					List<UUID> toRemove = new ArrayList<>();
+					team.getMembers().forEach(member -> {
+						if (!fullPlayerList.contains(member)) {
+							toRemove.add(member);
+						}
+					});
+
+					toRemove.forEach(uuid -> {
+						Log.trace("TournamentCoreTeamManager", "Removing player with uuid " + uuid.toString() + " from team " + ((TournamentSystemTeam) team).getTeamNumber() + " since they are no longer in the team list");
+						team.getMembers().remove(uuid);
+					});
+				});
+
+				// Update score
+				try {
+					String sql = "SELECT score, team_number FROM teams";
+					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+
+					ResultSet rs = ps.executeQuery();
+					while (rs.next()) {
+						TournamentSystemTeam team = getTeam(rs.getInt("team_number"));
+
+						if (team != null) {
+							team.setScore(rs.getInt("score"));
+						}
+					}
+
+					rs.close();
+					ps.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.warn("TournamentCoreTeamManager", "Failed to update team score");
+					return;
+				}
+
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						// Update player names
+						Bukkit.getServer().getOnlinePlayers().forEach(player -> updatePlayerName(player));
+					}
+				}.runTask(TournamentSystem.getInstance());
 			}
-
-			rs.close();
-			ps.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.warn("TournamentCoreTeamManager", "Failed to update teams");
-			return;
-		}
-
-		this.getTeams().forEach(team -> {
-			List<UUID> toRemove = new ArrayList<>();
-			team.getMembers().forEach(member -> {
-				if (!fullPlayerList.contains(member)) {
-					toRemove.add(member);
-				}
-			});
-
-			toRemove.forEach(uuid -> {
-				Log.trace("TournamentCoreTeamManager", "Removing player with uuid " + uuid.toString() + " from team " + ((TournamentSystemTeam) team).getTeamNumber() + " since they are no longer in the team list");
-				team.getMembers().remove(uuid);
-			});
-		});
-
-		// Update score
-		try {
-			String sql = "SELECT score, team_number FROM teams";
-			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
-
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				TournamentSystemTeam team = getTeam(rs.getInt("team_number"));
-
-				if (team != null) {
-					team.setScore(rs.getInt("score"));
-				}
-			}
-
-			rs.close();
-			ps.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.warn("TournamentCoreTeamManager", "Failed to update team score");
-			return;
-		}
-
-		// Update player names
-		Bukkit.getServer().getOnlinePlayers().forEach(player -> this.updatePlayerName(player));
+		}.runTaskAsynchronously(TournamentSystem.getInstance());
 	}
 
 	public TournamentSystemTeam getTeam(int teamNumber) {

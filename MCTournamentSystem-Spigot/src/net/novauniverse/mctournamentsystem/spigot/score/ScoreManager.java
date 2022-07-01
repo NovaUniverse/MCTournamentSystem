@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
@@ -53,7 +54,7 @@ public class ScoreManager extends NovaModule implements Listener {
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(TournamentSystem.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					playerScoreCache.keySet().forEach(uuid -> updatePlayerScore(uuid));
+					playerScoreCache.keySet().forEach(uuid -> asyncScoreUpdate(uuid));
 				}
 			}, 100L, 100L);
 		}
@@ -67,28 +68,64 @@ public class ScoreManager extends NovaModule implements Listener {
 		}
 	}
 
-	public int updatePlayerScore(UUID uuid) {
-		int score = 0;
-		try {
-			String sql = "SELECT score FROM players WHERE uuid = ?";
-			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+	/*
+	 * public int updatePlayerScore(UUID uuid) { int score = 0; try { String sql =
+	 * "SELECT score FROM players WHERE uuid = ?"; PreparedStatement ps =
+	 * TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(
+	 * sql);
+	 * 
+	 * ps.setString(1, uuid.toString());
+	 * 
+	 * ResultSet rs = ps.executeQuery(); if (rs.next()) { score =
+	 * rs.getInt("score"); playerScoreCache.put(uuid, score); }
+	 * 
+	 * rs.close(); ps.close(); } catch (Exception e) { e.printStackTrace();
+	 * Log.warn("ScoreManager", "Failed to fetch the score of player with uuid: " +
+	 * uuid.toString()); } return score; }
+	 */
 
-			ps.setString(1, uuid.toString());
+	public void asyncScoreUpdate(UUID uuid) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				int score = 0;
+				try {
+					String sql = "SELECT score FROM players WHERE uuid = ?";
+					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				score = rs.getInt("score");
-				playerScoreCache.put(uuid, score);
+					ps.setString(1, uuid.toString());
+
+					ResultSet rs = ps.executeQuery();
+					if (rs.next()) {
+						score = rs.getInt("score");
+						playerScoreCache.put(uuid, score);
+					}
+
+					rs.close();
+					ps.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.warn("ScoreManager", "Failed to fetch the score of player with uuid: " + uuid.toString());
+				}
 			}
-
-			rs.close();
-			ps.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.warn("ScoreManager", "Failed to fetch the score of player with uuid: " + uuid.toString());
-		}
-		return score;
+		}.runTaskAsynchronously(TournamentSystem.getInstance());
 	}
+
+	/*
+	 * public int updatePlayerScore(UUID uuid) { int score = 0; try { String sql =
+	 * "SELECT score FROM players WHERE uuid = ?"; PreparedStatement ps =
+	 * TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(
+	 * sql);
+	 * 
+	 * ps.setString(1, uuid.toString());
+	 * 
+	 * ResultSet rs = ps.executeQuery(); if (rs.next()) { score =
+	 * rs.getInt("score"); playerScoreCache.put(uuid, score); }
+	 * 
+	 * rs.close(); ps.close(); } catch (Exception e) { e.printStackTrace();
+	 * Log.warn("ScoreManager", "Failed to fetch the score of player with uuid: " +
+	 * uuid.toString()); } return score; }
+	 */
 
 	public HashMap<UUID, Integer> getPlayerScoreCache() {
 		return playerScoreCache;
@@ -103,19 +140,19 @@ public class ScoreManager extends NovaModule implements Listener {
 			return playerScoreCache.get(uuid);
 		}
 
-		return updatePlayerScore(uuid);
+		return 0;// updatePlayerScore(uuid);
 	}
 
-	public boolean addPlayerScore(OfflinePlayer player, int score) {
-		return this.addPlayerScore(player, score, true);
+	public void addPlayerScore(OfflinePlayer player, int score) {
+		this.addPlayerScore(player, score, true);
 	}
 
-	public boolean addPlayerScore(OfflinePlayer player, int score, boolean addToTeam) {
-		return addPlayerScore(player.getUniqueId(), score, addToTeam);
+	public void addPlayerScore(OfflinePlayer player, int score, boolean addToTeam) {
+		this.addPlayerScore(player.getUniqueId(), score, addToTeam);
 	}
 
-	public boolean addPlayerScore(UUID uuid, int score) {
-		return this.addPlayerScore(uuid, score, true);
+	public void addPlayerScore(UUID uuid, int score) {
+		this.addPlayerScore(uuid, score, true);
 	}
 
 	public int getTeamScore(TournamentSystemTeam team) {
@@ -130,84 +167,82 @@ public class ScoreManager extends NovaModule implements Listener {
 		return getTeamScore(TournamentSystem.getInstance().getTeamManager().getTeam(teamId));
 	}
 
-	public boolean addPlayerScore(UUID uuid, int score, boolean addToTeam) {
-		try {
-			String sql = "UPDATE players SET score = score + ? WHERE uuid = ?";
-			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+	public void addPlayerScore(UUID uuid, int score, boolean addToTeam) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					String sql = "CALL increment_player_score(?, ?)"; // "UPDATE players SET score = score + ? WHERE uuid = ?";
+					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-			ps.setInt(1, score);
-			ps.setString(2, uuid.toString());
+					ps.setString(1, uuid.toString());
+					ps.setInt(2, score);
 
-			if (playerScoreCache.containsKey(uuid)) {
-				int oldScore = playerScoreCache.get(uuid);
+					if (playerScoreCache.containsKey(uuid)) {
+						int oldScore = playerScoreCache.get(uuid);
 
-				playerScoreCache.put(uuid, oldScore + score);
-			}
-
-			int count = ps.executeUpdate();
-
-			ps.close();
-
-			if (count == 0) {
-				return false;
-			}
-
-			if (addToTeam) {
-				if (TeamManager.hasTeamManager()) {
-					TournamentSystemTeam team = (TournamentSystemTeam) TournamentSystem.getInstance().getTeamManager().getPlayerTeam(uuid);
-					if (team != null) {
-						this.addTeamScore(team, score);
+						playerScoreCache.put(uuid, oldScore + score);
 					}
+
+					ps.executeUpdate();
+
+					ps.close();
+
+					if (addToTeam) {
+						if (TeamManager.hasTeamManager()) {
+							TournamentSystemTeam team = (TournamentSystemTeam) TournamentSystem.getInstance().getTeamManager().getPlayerTeam(uuid);
+							if (team != null) {
+								addTeamScore(team, score);
+							}
+						}
+					}
+				} catch (Exception ee) {
+					ee.printStackTrace();
+
+					String message = "!!!Score update failure!!! Player with uuid: " + uuid.toString() + " failed to add " + score + " score";
+					String query = "CALL increment_player_score(" + uuid.toString() + ", " + score + ")"; // "UPDATE players SET score = score + " + score + " WHERE uuid = '" +
+																											// uuid.toString() + "';";
+
+					Log.error("Failed to add score to a player. Please check the sql_fix.sql file");
+					Bukkit.getConsoleSender().sendMessage(ChatColor.RED + message);
+
+					logFailedQuery(query);
 				}
 			}
-
-			return true;
-		} catch (Exception ee) {
-			ee.printStackTrace();
-
-			String message = "!!!Score update failure!!! Player with uuid: " + uuid.toString() + " failed to add " + score + " score";
-			String query = "UPDATE players SET score = score + " + score + " WHERE uuid = '" + uuid.toString() + "';";
-
-			Log.error("Failed to add score to a player. Please check the sql_fix.sql file");
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + message);
-
-			logFailedQuery(query);
-		}
-		return false;
+		}.runTaskAsynchronously(TournamentSystem.getInstance());
 	}
 
-	public boolean addTeamScore(TournamentSystemTeam team, int score) {
-		return this.addTeamScore(team.getTeamNumber(), score);
+	public void addTeamScore(TournamentSystemTeam team, int score) {
+		this.addTeamScore(team.getTeamNumber(), score);
 	}
 
-	public boolean addTeamScore(int teamId, int score) {
-		try {
-			String sql = "UPDATE teams SET score = score + ? WHERE team_number = ?";
-			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+	public void addTeamScore(int teamId, int score) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					String sql = "CALL increment_team_score(?, ?)"; // "UPDATE teams SET score = score + ? WHERE team_number = ?";
+					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-			ps.setInt(1, score);
-			ps.setInt(2, teamId);
+					ps.setInt(1, teamId);
+					ps.setInt(2, score);
 
-			int count = ps.executeUpdate();
+					ps.executeUpdate();
 
-			ps.close();
+					ps.close();
+				} catch (Exception ee) {
+					ee.printStackTrace();
+					String message = "!!!Score update failure!!! Team with id: " + teamId + " failed to add " + score + " score";
+					String query = "CALL increment_team_score(" + teamId + ", " + score + ")"; // "UPDATE teams SET score = score + " + score + " WHERE team_number = " +
+																								// teamId + ";";
 
-			if (count == 0) {
-				return false;
+					Log.error("Failed to add score to a team. Please check the sql_fix.sql file");
+					Bukkit.getConsoleSender().sendMessage(ChatColor.RED + message);
+
+					logFailedQuery(query);
+				}
 			}
-			return true;
-		} catch (Exception ee) {
-			ee.printStackTrace();
-			String message = "!!!Score update failure!!! Team with id: " + teamId + " failed to add " + score + " score";
-			String query = "UPDATE teams SET score = score + " + score + " WHERE team_number = " + teamId + ";";
-
-			Log.error("Failed to add score to a team. Please check the sql_fix.sql file");
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + message);
-
-			logFailedQuery(query);
-		}
-
-		return false;
+		}.runTaskAsynchronously(TournamentSystem.getInstance());
 	}
 
 	private void logFailedQuery(String query) {

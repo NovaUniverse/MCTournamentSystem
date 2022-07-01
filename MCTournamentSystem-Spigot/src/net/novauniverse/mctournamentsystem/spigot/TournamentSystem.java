@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -441,6 +442,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		// Register debug commands
 		new DebugCommands();
+
+		// Final stuff
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
+			}
+		}.runTaskLater(this, 1L);
 	}
 
 	@Override

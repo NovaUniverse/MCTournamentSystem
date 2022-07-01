@@ -24,7 +24,7 @@ public class CopyLocationCommand extends NovaCommand {
 		setPermission("gamemapdesigntoolkit.copylocation");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setPermissionDescription("Allow the player to use the copy location command");
-		setUsage("/copylocation [indent] [-v | --verbose] [-c | --center]");
+		setUsage("/copylocation [-v | --verbose] [-c | --center] [-l | --location-only]");
 		setDescription("Copy the player location as json to the server clipboard");
 		addHelpSubCommand();
 	}
@@ -34,27 +34,15 @@ public class CopyLocationCommand extends NovaCommand {
 		int indent = 4;
 		boolean verbose = false;
 		boolean center = false;
-
-		if (args.length > 0) {
-			try {
-				if (args[0].equalsIgnoreCase("-v") || args[0].equalsIgnoreCase("--verbose")) {
-					verbose = true;
-				} else if (args[0].equalsIgnoreCase("-c") || args[0].equalsIgnoreCase("--center")) {
-					center = true;
-				} else {
-					indent = Integer.parseInt(args[0]);
-				}
-			} catch (Exception e) {
-				sender.sendMessage(ChatColor.RED + "Please provide a valid number");
-				return false;
-			}
-		}
+		boolean onlyLocation = false;
 
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-v") || args[i].equalsIgnoreCase("--verbose")) {
 				verbose = true;
 			} else if (args[i].equalsIgnoreCase("-c") || args[i].equalsIgnoreCase("--center")) {
 				center = true;
+			} else if (args[i].equalsIgnoreCase("-l") || args[i].equalsIgnoreCase("--location-only")) {
+				onlyLocation = true;
 			}
 		}
 
@@ -80,8 +68,10 @@ public class CopyLocationCommand extends NovaCommand {
 		json.put("y", y);
 		json.put("z", z);
 
-		json.put("yaw", location.getYaw());
-		json.put("pitch", location.getPitch());
+		if (!onlyLocation) {
+			json.put("yaw", location.getYaw());
+			json.put("pitch", location.getPitch());
+		}
 
 		String string;
 
