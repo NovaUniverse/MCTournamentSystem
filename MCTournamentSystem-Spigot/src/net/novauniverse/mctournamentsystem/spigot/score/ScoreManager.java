@@ -54,9 +54,9 @@ public class ScoreManager extends NovaModule implements Listener {
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(TournamentSystem.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					playerScoreCache.keySet().forEach(uuid -> asyncScoreUpdate(uuid));
+					Bukkit.getServer().getOnlinePlayers().forEach(player -> asyncScoreUpdate(player.getUniqueId()));
 				}
-			}, 100L, 100L);
+			}, 40L, 40L);
 		}
 	}
 
