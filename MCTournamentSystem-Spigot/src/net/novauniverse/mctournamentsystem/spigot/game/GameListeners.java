@@ -1,5 +1,8 @@
 package net.novauniverse.mctournamentsystem.spigot.game;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
@@ -15,12 +18,11 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourta
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bingo.BingoManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.chickenout.ChickenOutManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.dropper.DropperManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.hive.HiveManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.spleef.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgames.SurvivalGamesManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.tnttag.TNTTagManager;
 import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabListMessage;
-import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
-import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.TNTTagMetadataProvider;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
@@ -44,6 +46,23 @@ import net.zeeraa.novacore.spigot.teams.TeamManager;
 import net.zeeraa.novacore.spigot.utils.BungeecordUtils;
 
 public class GameListeners extends NovaModule implements Listener {
+	public static final Map<String, Class<? extends NovaModule>> GAME_SPECIFIC_MODULES = new HashMap<>();
+
+	static {
+		// Original MCF games
+		GAME_SPECIFIC_MODULES.put("survivalgames", SurvivalGamesManager.class);
+		GAME_SPECIFIC_MODULES.put("bingo", BingoManager.class);
+		GAME_SPECIFIC_MODULES.put("spleef", SpleefManager.class);
+		GAME_SPECIFIC_MODULES.put("dropper", DropperManager.class);
+		GAME_SPECIFIC_MODULES.put("tnttag", TNTTagManager.class);
+		
+		// NovaGames games
+		GAME_SPECIFIC_MODULES.put("chickenout", ChickenOutManager.class);
+		GAME_SPECIFIC_MODULES.put("behindyourtail", BehindYourTailManager.class);
+		GAME_SPECIFIC_MODULES.put("hive", HiveManager.class);
+
+	}
+
 	public GameListeners() {
 		super("TournamentSystem.GameListeners");
 	}
@@ -53,61 +72,13 @@ public class GameListeners extends NovaModule implements Listener {
 		NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + GameManager.getInstance().getDisplayName());
 		TabListMessage.setServerType(GameManager.getInstance().getDisplayName());
 
-		if (e.getGame().getName().equalsIgnoreCase("survivalgames")) {
-			if (ModuleManager.loadModule(TournamentSystem.getInstance(), SurvivalGamesManager.class, true)) {
-				Log.success(getName(), "Enabled game specific module: SurvivalGamesManager (" + SurvivalGamesManager.class.getName() + ")");
+		String name = e.getGame().getName().toLowerCase();
+		if (GAME_SPECIFIC_MODULES.containsKey(name)) {
+			Class<? extends NovaModule> clazz = GAME_SPECIFIC_MODULES.get(name);
+			if (ModuleManager.loadModule(TournamentSystem.getInstance(), clazz, true)) {
+				Log.success(getName(), "Enabled game specific module: " + clazz.getName());
 			} else {
-				Log.error(getName(), "Failed to enable game specific module: SurvivalGamesManager (" + SurvivalGamesManager.class.getName() + ")");
-			}
-		}
-
-		if (e.getGame().getName().equalsIgnoreCase("bingo")) {
-			if (ModuleManager.loadModule(TournamentSystem.getInstance(), BingoManager.class, true)) {
-				Log.success(getName(), "Enabled game specific module: BingoManager (" + BingoManager.class.getName() + ")");
-			} else {
-				Log.error(getName(), "Failed to enable game specific module: BingoManager (" + BingoManager.class.getName() + ")");
-			}
-		}
-
-		if (e.getGame().getName().equalsIgnoreCase("spleef")) {
-			if (ModuleManager.loadModule(TournamentSystem.getInstance(), SpleefManager.class, true)) {
-				Log.success(getName(), "Enabled game specific module: SpleefManager (" + SpleefManager.class.getName() + ")");
-			} else {
-				Log.error(getName(), "Failed to enable game specific module: SpleefManager (" + SpleefManager.class.getName() + ")");
-			}
-		}
-
-		if (e.getGame().getName().equalsIgnoreCase("dropper")) {
-			if (ModuleManager.loadModule(TournamentSystem.getInstance(), DropperManager.class, true)) {
-				Log.success(getName(), "Enabled game specific module: DropperManager (" + DropperManager.class.getName() + ")");
-			} else {
-				Log.error(getName(), "Failed to enable game specific module: DropperManager (" + DropperManager.class.getName() + ")");
-			}
-		}
-
-		if (e.getGame().getName().equalsIgnoreCase("tnttag")) {
-			if (ModuleManager.loadModule(TournamentSystem.getInstance(), TNTTagManager.class, true)) {
-				Log.success(getName(), "Enabled game specific module: TNTTagManager (" + TNTTagManager.class.getName() + ")");
-				PlayerTelementryManager telementryManager = (PlayerTelementryManager) ModuleManager.getModule(PlayerTelementryManager.class);
-				telementryManager.addMetadataProvider(new TNTTagMetadataProvider());
-			} else {
-				Log.error(getName(), "Failed to enable game specific module: TNTTagManager (" + TNTTagManager.class.getName() + ")");
-			}
-		}
-
-		if (e.getGame().getName().equalsIgnoreCase("chickenout")) {
-			if (ModuleManager.loadModule(TournamentSystem.getInstance(), ChickenOutManager.class, true)) {
-				Log.success(getName(), "Enabled game specific module: ChickenOutManager (" + ChickenOutManager.class.getName() + ")");
-			} else {
-				Log.error(getName(), "Failed to enable game specific module: ChickenOutManager (" + ChickenOutManager.class.getName() + ")");
-			}
-		}
-
-		if (e.getGame().getName().equalsIgnoreCase("behindyourtail")) {
-			if (ModuleManager.loadModule(TournamentSystem.getInstance(), BehindYourTailManager.class, true)) {
-				Log.success(getName(), "Enabled game specific module: BehindYourTailManager (" + BehindYourTailManager.class.getName() + ")");
-			} else {
-				Log.error(getName(), "Failed to enable game specific module: BehindYourTailManager (" + BehindYourTailManager.class.getName() + ")");
+				Log.error(getName(), "Failed to enable game specific module: " + clazz.getName());
 			}
 		}
 
@@ -249,6 +220,7 @@ public class GameListeners extends NovaModule implements Listener {
 					}
 				}, 200L);
 			}
+
 		}, 100L);
 	}
 
