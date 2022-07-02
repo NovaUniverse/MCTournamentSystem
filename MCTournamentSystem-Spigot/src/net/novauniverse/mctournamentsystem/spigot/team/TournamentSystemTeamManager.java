@@ -228,7 +228,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		} else {
 			if (((TournamentSystemTeam) team).getTeamNumber() >= 1) {
 				color = team.getTeamColor();
-				name = color + "Team " + ((TournamentSystemTeam) team).getTeamNumber() + " : " + ChatColor.RESET + player.getName();
+				name = color + team.getDisplayName() + " : " + ChatColor.RESET + player.getName();
 			}
 		}
 
@@ -241,7 +241,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			if (team == null) {
 				teamName = ChatColor.YELLOW + "No team";
 			} else {
-				teamName = color + "Team " + ((TournamentSystemTeam) team).getTeamNumber();
+				teamName = color + team.getDisplayName();
 			}
 
 			NetherBoardScoreboard.getInstance().setPlayerLine(1, player, teamName);

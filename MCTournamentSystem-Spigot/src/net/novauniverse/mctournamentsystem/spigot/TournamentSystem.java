@@ -101,6 +101,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private File mapDataFolder;
 
+	private boolean forceShowTeamNameInLeaderboard;
+	
 	private String cachedTournamentName;
 	private String cachedTournamentLink;
 
@@ -213,6 +215,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return chickenOutFeatherScoreMultiplier;
 	}
 
+	public boolean isForceShowTeamNameInLeaderboard() {
+		return forceShowTeamNameInLeaderboard;
+	}
+	
 	public TournamentSystemDefaultPlayerEliminationMessage getDefaultPlayerEliminationMessage() {
 		return defaultPlayerEliminationMessage;
 	}
@@ -238,6 +244,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.builtInScoreSystemDisabled = false;
 
 		this.chickenOutFeatherScoreMultiplier = 0;
+		
+		this.forceShowTeamNameInLeaderboard = false;
 
 		this.teamNameOverrides = new HashMap<>();
 
@@ -357,6 +365,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			if (noTeamsMode) {
 				Log.info("TournamentSystem", "No teams mode enabled");
 			}
+		}
+		
+		if(config.has("force_show_team_name_in_leaderboard")) {
+			forceShowTeamNameInLeaderboard = config.getBoolean("force_show_team_name_in_leaderboard");
 		}
 
 		JSONObject labymodBanner = config.getJSONObject("labymod_banner");

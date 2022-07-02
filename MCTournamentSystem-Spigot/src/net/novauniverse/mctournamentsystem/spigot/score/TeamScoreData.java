@@ -2,6 +2,7 @@ package net.novauniverse.mctournamentsystem.spigot.score;
 
 import org.bukkit.ChatColor;
 
+import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 
 public class TeamScoreData extends ScoreData {
@@ -29,10 +30,14 @@ public class TeamScoreData extends ScoreData {
 	public String toString() {
 		String teamName;
 
-		if (team.getMembers().size() > 0) {
-			teamName = team.getTeamColor() + team.getMemberString();
+		if (TournamentSystem.getInstance().isForceShowTeamNameInLeaderboard()) {
+			teamName = team.getTeamColor() + team.getDisplayName();
 		} else {
-			teamName = team.getTeamColor() + "Team " + team.getTeamNumber();
+			if (team.getMembers().size() > 0) {
+				teamName = team.getTeamColor() + team.getMemberString();
+			} else {
+				teamName = team.getTeamColor() + team.getDisplayName();
+			}
 		}
 
 		return teamName + ChatColor.GOLD + " : " + ChatColor.AQUA + this.getScore();
