@@ -228,7 +228,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		} else {
 			if (((TournamentSystemTeam) team).getTeamNumber() >= 1) {
 				color = team.getTeamColor();
-				name = color + team.getDisplayName() + " : " + ChatColor.RESET + player.getName();
+				name = color + team.getDisplayName() + ChatColor.WHITE + " : " + ChatColor.RESET + player.getName();
 			}
 		}
 
