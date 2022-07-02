@@ -20,6 +20,8 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
 @NovaAutoLoad(shouldEnable = true)
 public class PlayerNameCache extends NovaModule implements Listener, TSDataCache {
+	private static final long REFRESH_TIME = 60 * 60 * 20; // 1 hour
+
 	private static PlayerNameCache instance;
 
 	private HashMap<String, String> cache;
@@ -48,7 +50,7 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 				public void run() {
 					updateCache();
 				}
-			}, 12000L, 12000L);
+			}, REFRESH_TIME, REFRESH_TIME);
 		}
 		updateCache();
 	}
@@ -103,9 +105,7 @@ public class PlayerNameCache extends NovaModule implements Listener, TSDataCache
 	public void updateCache() {
 		Log.trace("Updating player name cache");
 		cache.clear();
-		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			cache.put(player.getUniqueId().toString(), player.getName());
-		}
+		Bukkit.getServer().getOnlinePlayers().forEach(player -> cache.put(player.getUniqueId().toString(), player.getName()));
 	}
 
 	@Override

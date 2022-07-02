@@ -172,11 +172,11 @@ public class ScoreManager extends NovaModule implements Listener {
 			@Override
 			public void run() {
 				try {
-					String sql = "CALL increment_player_score(?, ?)"; // "UPDATE players SET score = score + ? WHERE uuid = ?";
+					String sql = "UPDATE players SET score = score + ? WHERE uuid = ?";
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-					ps.setString(1, uuid.toString());
-					ps.setInt(2, score);
+					ps.setInt(1, score);
+					ps.setString(2, uuid.toString());
 
 					if (playerScoreCache.containsKey(uuid)) {
 						int oldScore = playerScoreCache.get(uuid);
@@ -200,8 +200,7 @@ public class ScoreManager extends NovaModule implements Listener {
 					ee.printStackTrace();
 
 					String message = "!!!Score update failure!!! Player with uuid: " + uuid.toString() + " failed to add " + score + " score";
-					String query = "CALL increment_player_score(" + uuid.toString() + ", " + score + ")"; // "UPDATE players SET score = score + " + score + " WHERE uuid = '" +
-																											// uuid.toString() + "';";
+					String query = "UPDATE players SET score = score + " + score + " WHERE uuid = '" + uuid.toString() + "';";
 
 					Log.error("Failed to add score to a player. Please check the sql_fix.sql file");
 					Bukkit.getConsoleSender().sendMessage(ChatColor.RED + message);
@@ -221,11 +220,11 @@ public class ScoreManager extends NovaModule implements Listener {
 			@Override
 			public void run() {
 				try {
-					String sql = "CALL increment_team_score(?, ?)"; // "UPDATE teams SET score = score + ? WHERE team_number = ?";
+					String sql = "UPDATE teams SET score = score + ? WHERE team_number = ?";
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-					ps.setInt(1, teamId);
-					ps.setInt(2, score);
+					ps.setInt(1, score);
+					ps.setInt(2, teamId);
 
 					ps.executeUpdate();
 
@@ -233,8 +232,7 @@ public class ScoreManager extends NovaModule implements Listener {
 				} catch (Exception ee) {
 					ee.printStackTrace();
 					String message = "!!!Score update failure!!! Team with id: " + teamId + " failed to add " + score + " score";
-					String query = "CALL increment_team_score(" + teamId + ", " + score + ")"; // "UPDATE teams SET score = score + " + score + " WHERE team_number = " +
-																								// teamId + ";";
+					String query = "UPDATE teams SET score = score + " + score + " WHERE team_number = " + teamId + ";";
 
 					Log.error("Failed to add score to a team. Please check the sql_fix.sql file");
 					Bukkit.getConsoleSender().sendMessage(ChatColor.RED + message);

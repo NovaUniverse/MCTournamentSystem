@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
@@ -20,6 +21,8 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
 @NovaAutoLoad(shouldEnable = true)
 public class PlayerKillCache extends NovaModule implements Listener, TSDataCache {
+	private static final long REFRESH_TIME = 20 * 20; // 20 seconds
+
 	private static PlayerKillCache instance;
 
 	private HashMap<UUID, Integer> cache;
@@ -46,9 +49,9 @@ public class PlayerKillCache extends NovaModule implements Listener, TSDataCache
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(TournamentSystem.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					clearCache();
+					Bukkit.getServer().getOnlinePlayers().forEach(player -> updateFromDatabase(player));
 				}
-			}, 36000L, 36000L); // 30 minutes
+			}, REFRESH_TIME, REFRESH_TIME);
 		}
 		clearCache();
 	}
@@ -63,36 +66,36 @@ public class PlayerKillCache extends NovaModule implements Listener, TSDataCache
 		clearCache();
 	}
 
-	public Integer getPlayerKills(UUID uuid) {
-		Integer kills = 0;
+	public void updateFromDatabase(Player player) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					String sql = "SELECT kills, uuid FROM players WHERE uuid = ?";
+					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-		if (cache.containsKey(uuid)) {
-			kills = cache.get(uuid);
-		} else {
-			Log.trace("Fetching player kill count from database");
-			try {
-				String sql = "SELECT kills, uuid FROM players WHERE uuid = ?";
-				PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+					ps.setString(1, player.getUniqueId().toString());
 
-				ps.setString(1, uuid.toString());
+					ResultSet rs = ps.executeQuery();
+					if (rs.next()) {
+						cache.put(player.getUniqueId(), rs.getInt("kills"));
 
-				ResultSet rs = ps.executeQuery();
-				if (rs.next()) {
-					kills = rs.getInt("kills");
+					}
 
+					rs.close();
+					ps.close();
+				} catch (Exception ee) {
+					ee.printStackTrace();
 				}
-
-				rs.close();
-				ps.close();
-			} catch (Exception ee) {
-				ee.printStackTrace();
-				return 0;
 			}
+		}.runTaskAsynchronously(TournamentSystem.getInstance());
+	}
 
-			cache.put(uuid, kills);
+	public Integer getPlayerKills(UUID uuid) {
+		if (cache.containsKey(uuid)) {
+			return cache.get(uuid);
 		}
-
-		return kills;
+		return 0;
 	}
 
 	@Override
