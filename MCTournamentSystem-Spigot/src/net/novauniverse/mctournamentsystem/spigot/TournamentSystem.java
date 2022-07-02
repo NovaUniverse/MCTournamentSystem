@@ -94,6 +94,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private String labymodBanner;
 
+	private Map<Integer, String> teamNameOverrides;
+
 	private Map<String, Group> staffGroups;
 	private Group defaultGroup;
 
@@ -144,6 +146,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public boolean isReplaceEz() {
 		return replaceEz;
+	}
+
+	public Map<Integer, String> getTeamNameOverrides() {
+		return teamNameOverrides;
 	}
 
 	@Override
@@ -233,6 +239,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.chickenOutFeatherScoreMultiplier = 0;
 
+		this.teamNameOverrides = new HashMap<>();
+
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
@@ -242,6 +250,25 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
 
 		this.mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
+
+		File teamNameOverrideFile = new File(globalConfigPath + File.separator + "team_names.json");
+		if (teamNameOverrideFile.exists()) {
+			try {
+				JSONObject overrides = JSONFileUtils.readJSONObjectFromFile(teamNameOverrideFile);
+				overrides.keySet().forEach(key -> {
+					try {
+						Integer teamId = Integer.parseInt(key);
+						teamNameOverrides.put(teamId, overrides.getString(key));
+					} catch (NumberFormatException e) {
+						Log.error("TournamentSystem", "Invalid team number " + key + " in team_names.json");
+					}
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.error("TournamentSystem", "Failed to read team_names.json");
+			}
+		}
+		Log.info("TournamentSystem", teamNameOverrides.size() + " custom team names loaded");
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;
