@@ -8,7 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import net.novauniverse.games.hive.NovaHive;
 import net.novauniverse.games.hive.game.Hive;
 import net.novauniverse.games.hive.game.event.HiveTeamCompletedEvent;
 import net.novauniverse.games.hive.game.object.hive.HiveData;
@@ -45,6 +47,15 @@ public class HiveManager extends NovaModule implements Listener {
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
 
 		ModuleManager.disable(PlayerHeadDrop.class);
+
+		TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					NovaHive.getInstance().getGame().spawnPlayer(player);
+				}
+			}.runTaskLater(getPlugin(), 2L);
+		});
 
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
