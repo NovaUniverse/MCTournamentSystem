@@ -59,7 +59,7 @@ public class GameListeners extends NovaModule implements Listener {
 		// NovaGames games
 		GAME_SPECIFIC_MODULES.put("chickenout", ChickenOutManager.class);
 		GAME_SPECIFIC_MODULES.put("behindyourtail", BehindYourTailManager.class);
-		GAME_SPECIFIC_MODULES.put("hive", HiveManager.class);
+		GAME_SPECIFIC_MODULES.put("ng_hive", HiveManager.class);
 
 	}
 
