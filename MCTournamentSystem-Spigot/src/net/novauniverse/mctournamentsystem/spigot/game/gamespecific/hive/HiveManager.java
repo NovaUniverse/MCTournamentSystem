@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.novauniverse.games.hive.NovaHive;
 import net.novauniverse.games.hive.game.Hive;
+import net.novauniverse.games.hive.game.event.HivePlayerDepositHoneyEvent;
 import net.novauniverse.games.hive.game.event.HiveTeamCompletedEvent;
 import net.novauniverse.games.hive.game.object.hive.HiveData;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
@@ -96,7 +97,16 @@ public class HiveManager extends NovaModule implements Listener {
 		Task.tryStopTask(task);
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onHivePlayerDepositHoney(HivePlayerDepositHoneyEvent e) {
+		Player player = e.getPlayer();
+		int score = e.getAmount();
+
+		ScoreManager.getInstance().addPlayerScore(player, score, true);
+		player.sendMessage(ChatColor.GRAY + "+" + score + " points");
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onHiveTeamCompleted(HiveTeamCompletedEvent e) {
 		TournamentSystemTeam team = (TournamentSystemTeam) e.getTeam();
 		int score = 0;
