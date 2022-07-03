@@ -74,7 +74,7 @@ public class HiveManager extends NovaModule implements Listener {
 	@Override
 	public void onEnable() throws Exception {
 		Task.tryStartTask(task);
-		
+
 		ModuleManager.disable(CompassTracker.class);
 		ModuleManager.disable(EdibleHeads.class);
 		ModuleManager.disable(PlayerHeadDrop.class);
@@ -96,6 +96,7 @@ public class HiveManager extends NovaModule implements Listener {
 		}
 
 		if (score > 0) {
+			team.sendMessage(ChatColor.GRAY + "+" + score + " points");
 			ScoreManager.getInstance().addTeamScore(team, score);
 			List<Player> members = team.getOnlinePlayers();
 			int playerScore = (int) Math.floor(score / members.size());
