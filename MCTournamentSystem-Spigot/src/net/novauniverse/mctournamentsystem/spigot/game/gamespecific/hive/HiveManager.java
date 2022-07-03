@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
 import net.novauniverse.games.hive.game.Hive;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
@@ -24,6 +25,8 @@ public class HiveManager extends NovaModule implements Listener {
 
 	@Override
 	public void onLoad() {
+		GameSetup.disableEliminationMessages();
+		GameManager.getInstance().setPlayerEliminationMessage(new HiveEliminationMessages());
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
 
 		ModuleManager.disable(PlayerHeadDrop.class);
