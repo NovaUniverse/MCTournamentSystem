@@ -694,7 +694,7 @@ const TournamentSystem = {
 			$("#stats_cores").text(data.system.cores);
 			$("#stats_os").text(data.system.os_name);
 
-			if(data.system.linux_distro == null) {
+			if (data.system.linux_distro == null) {
 				$("#distro_info_full").hide();
 			} else {
 				$("#distro_info").text(data.system.linux_distro);
@@ -736,10 +736,19 @@ const TournamentSystem = {
 					});
 				}
 
+				let playerTeamInfo = $("<span></span>");
+				playerTeamInfo.text("Team " + player.team_number);
+				let team = data.teams.find(team => team.team_number == player.team_number);
+				if (team != null) {
+					if (team.display_name != ("Team " + player.team_number)) {
+						playerTeamInfo.append($("<span></span>").text(" (" + team.display_name + ")").css('color', "rgb(" + team.color.r + "," + team.color.g + "," + team.color.b + ")"))
+					}
+				}
+
 				playerElement.find(".player-name").text(player.username);
 				playerElement.find(".player-score").text(player.score);
 				playerElement.find(".player-kills").text(player.kills);
-				playerElement.find(".player-team").text("Team " + player.team_number);
+				playerElement.find(".player-team").html(playerTeamInfo);
 				playerElement.find(".player-team-score").text(player.team_score);
 
 				if (player.online) {
