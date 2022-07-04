@@ -140,7 +140,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 
 						fullPlayerList.add(uuid);
 
-						for (Team team : teams) {
+						teams.forEach(team -> {
 							if (teamNumber <= 0 || ((TournamentSystemTeam) team).getTeamNumber() != teamNumber) {
 								if (team.getMembers().contains(uuid)) {
 									team.getMembers().remove(uuid);
@@ -154,7 +154,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 									}
 								}
 							}
-						}
+						});
 					}
 
 					rs.close();

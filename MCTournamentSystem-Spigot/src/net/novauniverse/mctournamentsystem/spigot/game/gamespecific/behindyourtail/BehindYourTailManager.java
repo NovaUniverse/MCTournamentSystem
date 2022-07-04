@@ -5,6 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.behindyourtail.NovaBehindYourTail;
@@ -20,7 +21,7 @@ import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
-public class BehindYourTailManager extends NovaModule {
+public class BehindYourTailManager extends NovaModule implements Listener {
 	private static final int PLAYER_ATTACK_FOX_SCORE = 10;
 
 	public BehindYourTailManager() {
