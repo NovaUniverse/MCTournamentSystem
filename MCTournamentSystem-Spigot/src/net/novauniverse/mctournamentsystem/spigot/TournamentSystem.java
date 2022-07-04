@@ -103,6 +103,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private File mapDataFolder;
 
 	private boolean forceShowTeamNameInLeaderboard;
+	private boolean makeTeamNamesBold;
 
 	private String cachedTournamentName;
 	private String cachedTournamentLink;
@@ -231,6 +232,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public void disableEliminationTitleMessage() {
 		eliminationTitleMessageEnabled = false;
 	}
+	
+	public boolean isMakeTeamNamesBold() {
+		return makeTeamNamesBold;
+	}
 
 	@Override
 	public void onEnable() {
@@ -256,6 +261,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.chickenOutFeatherScoreMultiplier = 0;
 
 		this.forceShowTeamNameInLeaderboard = false;
+		this.makeTeamNamesBold = false;
 
 		this.teamNameOverrides = new HashMap<>();
 
@@ -379,6 +385,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		if (config.has("force_show_team_name_in_leaderboard")) {
 			forceShowTeamNameInLeaderboard = config.getBoolean("force_show_team_name_in_leaderboard");
+		}
+		
+		if (config.has("make_team_names_bold")) {
+			makeTeamNamesBold = config.getBoolean("make_team_names_bold");
 		}
 
 		JSONObject labymodBanner = config.getJSONObject("labymod_banner");

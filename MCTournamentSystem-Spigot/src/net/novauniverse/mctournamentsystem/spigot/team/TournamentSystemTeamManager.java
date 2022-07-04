@@ -239,9 +239,9 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			String teamName = "";
 
 			if (team == null) {
-				teamName = ChatColor.YELLOW + "No team";
+				teamName = ChatColor.YELLOW + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? org.bukkit.ChatColor.BOLD + "" : "") + "No team";
 			} else {
-				teamName = color + team.getDisplayName();
+				teamName = color + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? org.bukkit.ChatColor.BOLD + "" : "") + team.getDisplayName();
 			}
 
 			NetherBoardScoreboard.getInstance().setPlayerLine(1, player, teamName);
