@@ -2,7 +2,7 @@ package net.novauniverse.mctournamentsystem.spigot.team;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
-import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerNameCache;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.zeeraa.novacore.commons.utils.UUIDUtils;
@@ -57,10 +57,7 @@ public class TournamentSystemTeam extends Team {
 
 	@Override
 	public String getDisplayName() {
-		if (TournamentSystem.getInstance().getTeamNameOverrides().containsKey(teamNumber)) {
-			return TournamentSystem.getInstance().getTeamNameOverrides().get(teamNumber);
-		}
-		return "Team " + this.getTeamNumber();
+		return TeamNameProvider.getDisplayName(teamNumber);
 	}
 
 	@Override
