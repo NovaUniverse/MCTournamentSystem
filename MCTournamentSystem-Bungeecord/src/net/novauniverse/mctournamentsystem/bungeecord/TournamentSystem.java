@@ -26,6 +26,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener
 import net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
@@ -110,6 +111,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		quickMessages = new ArrayList<>();
 
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
+
+		TeamOverrides.readOverrides(getDataFolder());
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;

@@ -20,6 +20,9 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.PlayerData;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.TeamData;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
+import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
+import net.zeeraa.novacore.bungeecord.utils.ChatColorRGBMapper;
 
 @SuppressWarnings("restriction")
 public class StatusHandler extends APIEndpoint {
@@ -138,6 +141,8 @@ public class StatusHandler extends APIEndpoint {
 
 			team.put("team_number", td.getTeamNumber());
 			team.put("score", td.getScore());
+			team.put("color", ChatColorRGBMapper.chatColorToRGBColorData(TeamColorProvider.getTeamColor(td.getTeamNumber())).toJSON());
+			team.put("display_name", TeamNameProvider.getDisplayName(td.getTeamNumber()));
 
 			teams.put(team);
 		});

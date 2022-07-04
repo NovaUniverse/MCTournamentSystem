@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.spigot.command.bc.BCCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.cinvsee.CInvseeCommand;
@@ -95,8 +96,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private String labymodBanner;
 
-	private Map<Integer, String> teamNameOverrides;
-
 	private Map<String, Group> staffGroups;
 	private Group defaultGroup;
 
@@ -150,10 +149,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public boolean isReplaceEz() {
 		return replaceEz;
-	}
-
-	public Map<Integer, String> getTeamNameOverrides() {
-		return teamNameOverrides;
 	}
 
 	@Override
@@ -232,7 +227,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public void disableEliminationTitleMessage() {
 		eliminationTitleMessageEnabled = false;
 	}
-	
+
 	public boolean isMakeTeamNamesBold() {
 		return makeTeamNamesBold;
 	}
@@ -263,8 +258,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.forceShowTeamNameInLeaderboard = false;
 		this.makeTeamNamesBold = false;
 
-		this.teamNameOverrides = new HashMap<>();
-
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
@@ -275,24 +268,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
-		File teamNameOverrideFile = new File(globalConfigPath + File.separator + "team_names.json");
-		if (teamNameOverrideFile.exists()) {
-			try {
-				JSONObject overrides = JSONFileUtils.readJSONObjectFromFile(teamNameOverrideFile);
-				overrides.keySet().forEach(key -> {
-					try {
-						Integer teamId = Integer.parseInt(key);
-						teamNameOverrides.put(teamId, overrides.getString(key));
-					} catch (NumberFormatException e) {
-						Log.error("TournamentSystem", "Invalid team number " + key + " in team_names.json");
-					}
-				});
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.error("TournamentSystem", "Failed to read team_names.json");
-			}
-		}
-		Log.info("TournamentSystem", teamNameOverrides.size() + " custom team names loaded");
+		TeamOverrides.readOverrides(getDataFolder());
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;
@@ -386,7 +362,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		if (config.has("force_show_team_name_in_leaderboard")) {
 			forceShowTeamNameInLeaderboard = config.getBoolean("force_show_team_name_in_leaderboard");
 		}
-		
+
 		if (config.has("make_team_names_bold")) {
 			makeTeamNamesBold = config.getBoolean("make_team_names_bold");
 		}
