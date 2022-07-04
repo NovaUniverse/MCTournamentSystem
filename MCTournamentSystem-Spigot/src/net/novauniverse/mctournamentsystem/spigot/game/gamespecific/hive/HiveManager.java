@@ -23,7 +23,9 @@ import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.compass.CompassTracker;
@@ -46,6 +48,7 @@ public class HiveManager extends NovaModule implements Listener {
 		GameSetup.disableEliminationMessages();
 		GameManager.getInstance().setPlayerEliminationMessage(new HiveEliminationMessages());
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
+		TournamentSystem.getInstance().disableEliminationTitleMessage();
 
 		ModuleManager.disable(PlayerHeadDrop.class);
 
@@ -97,6 +100,14 @@ public class HiveManager extends NovaModule implements Listener {
 		Task.tryStopTask(task);
 	}
 
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerEliminated(PlayerEliminatedEvent e) {
+		if (e.getPlayer().isOnline()) {
+			Player player = e.getPlayer().getPlayer();
+			VersionIndependentUtils.get().sendTitle(player, ChatColor.RED + "Eliminated", "", 10, 60, 10);
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onHivePlayerDepositHoney(HivePlayerDepositHoneyEvent e) {
 		Player player = e.getPlayer();

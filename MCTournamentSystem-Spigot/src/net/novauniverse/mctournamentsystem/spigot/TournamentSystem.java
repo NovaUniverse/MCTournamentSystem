@@ -81,6 +81,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean celebrationMode;
 	private boolean replaceEz;
 	private boolean noTeamsMode;
+	private boolean eliminationTitleMessageEnabled;
 
 	private double chickenOutFeatherScoreMultiplier;
 
@@ -102,7 +103,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private File mapDataFolder;
 
 	private boolean forceShowTeamNameInLeaderboard;
-	
+
 	private String cachedTournamentName;
 	private String cachedTournamentLink;
 
@@ -218,9 +219,17 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public boolean isForceShowTeamNameInLeaderboard() {
 		return forceShowTeamNameInLeaderboard;
 	}
-	
+
 	public TournamentSystemDefaultPlayerEliminationMessage getDefaultPlayerEliminationMessage() {
 		return defaultPlayerEliminationMessage;
+	}
+
+	public boolean isEliminationTitleMessageEnabled() {
+		return eliminationTitleMessageEnabled;
+	}
+
+	public void disableEliminationTitleMessage() {
+		eliminationTitleMessageEnabled = false;
 	}
 
 	@Override
@@ -242,9 +251,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.scoreListener = null;
 
 		this.builtInScoreSystemDisabled = false;
+		this.eliminationTitleMessageEnabled = true;
 
 		this.chickenOutFeatherScoreMultiplier = 0;
-		
+
 		this.forceShowTeamNameInLeaderboard = false;
 
 		this.teamNameOverrides = new HashMap<>();
@@ -366,8 +376,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				Log.info("TournamentSystem", "No teams mode enabled");
 			}
 		}
-		
-		if(config.has("force_show_team_name_in_leaderboard")) {
+
+		if (config.has("force_show_team_name_in_leaderboard")) {
 			forceShowTeamNameInLeaderboard = config.getBoolean("force_show_team_name_in_leaderboard");
 		}
 

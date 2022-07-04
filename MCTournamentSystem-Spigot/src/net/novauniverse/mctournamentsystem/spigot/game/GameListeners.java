@@ -55,7 +55,7 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("spleef", SpleefManager.class);
 		GAME_SPECIFIC_MODULES.put("dropper", DropperManager.class);
 		GAME_SPECIFIC_MODULES.put("tnttag", TNTTagManager.class);
-		
+
 		// NovaGames games
 		GAME_SPECIFIC_MODULES.put("chickenout", ChickenOutManager.class);
 		GAME_SPECIFIC_MODULES.put("behindyourtail", BehindYourTailManager.class);
@@ -134,49 +134,51 @@ public class GameListeners extends NovaModule implements Listener {
 			// player.playSound(player.getLocation(), Sound.WITHER_HURT, 1F, 1F);
 			VersionIndependentSound.WITHER_HURT.play(player);
 
-			String subtitle = ChatColor.RED + TextUtils.ordinal(e.getPlacement() + 1) + " place";
+			if (TournamentSystem.getInstance().isEliminationTitleMessageEnabled()) {
+				String subtitle = ChatColor.RED + TextUtils.ordinal(e.getPlacement() + 1) + " place";
 
-			Entity killerEntity = null;
-			if (e.getKiller() != null) {
-				if (e.getKiller() instanceof Projectile) {
-					Entity theBoiWhoFirered = (Entity) ((Projectile) e.getKiller()).getShooter();
+				Entity killerEntity = null;
+				if (e.getKiller() != null) {
+					if (e.getKiller() instanceof Projectile) {
+						Entity theBoiWhoFirered = (Entity) ((Projectile) e.getKiller()).getShooter();
 
-					if (theBoiWhoFirered != null) {
-						killerEntity = theBoiWhoFirered;
+						if (theBoiWhoFirered != null) {
+							killerEntity = theBoiWhoFirered;
+						} else {
+							killerEntity = e.getKiller();
+						}
 					} else {
 						killerEntity = e.getKiller();
 					}
-				} else {
-					killerEntity = e.getKiller();
 				}
-			}
 
-			ChatColor killerColor = ChatColor.RED;
-			Team killerTeam = null;
-			if (killerEntity != null) {
-				if (killerEntity instanceof Player) {
-					killerTeam = TeamManager.getTeamManager().getPlayerTeam((Player) killerEntity);
+				ChatColor killerColor = ChatColor.RED;
+				Team killerTeam = null;
+				if (killerEntity != null) {
+					if (killerEntity instanceof Player) {
+						killerTeam = TeamManager.getTeamManager().getPlayerTeam((Player) killerEntity);
+					}
 				}
+
+				if (killerTeam != null) {
+					killerColor = killerTeam.getTeamColor();
+				}
+
+				switch (e.getReason()) {
+				case KILLED:
+					subtitle = ChatColor.RED + "Killed by " + killerColor + killerEntity.getName() + ChatColor.RED + ". " + TextUtils.ordinal(e.getPlacement() + 1) + " place";
+					break;
+
+				case COMMAND:
+					subtitle = ChatColor.RED + "Eliminated by an admin";
+					break;
+
+				default:
+					break;
+				}
+
+				VersionIndependentUtils.get().sendTitle(player, ChatColor.RED + "Eliminated", subtitle, 10, 60, 10);
 			}
-
-			if (killerTeam != null) {
-				killerColor = killerTeam.getTeamColor();
-			}
-
-			switch (e.getReason()) {
-			case KILLED:
-				subtitle = ChatColor.RED + "Killed by " + killerColor + killerEntity.getName() + ChatColor.RED + ". " + TextUtils.ordinal(e.getPlacement() + 1) + " place";
-				break;
-
-			case COMMAND:
-				subtitle = ChatColor.RED + "Eliminated by an admin";
-				break;
-
-			default:
-				break;
-			}
-
-			VersionIndependentUtils.get().sendTitle(player, ChatColor.RED + "Eliminated", subtitle, 10, 60, 10);
 		}
 	}
 

@@ -20,6 +20,7 @@ import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
@@ -44,7 +45,8 @@ public class ChickenOutManager extends NovaModule implements Listener {
 		GameSetup.disableEliminationMessages();
 		GameManager.getInstance().setPlayerEliminationMessage(new ChickenOutEliminationMessages());
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
-		
+		TournamentSystem.getInstance().disableEliminationTitleMessage();
+
 		ModuleManager.disable(PlayerHeadDrop.class);
 
 		TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
@@ -91,6 +93,14 @@ public class ChickenOutManager extends NovaModule implements Listener {
 				}
 			}
 		}, 5L);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerEliminated(PlayerEliminatedEvent e) {
+		if (e.getPlayer().isOnline()) {
+			Player player = e.getPlayer().getPlayer();
+			VersionIndependentUtils.get().sendTitle(player, ChatColor.RED + "Eliminated", "", 10, 60, 10);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
