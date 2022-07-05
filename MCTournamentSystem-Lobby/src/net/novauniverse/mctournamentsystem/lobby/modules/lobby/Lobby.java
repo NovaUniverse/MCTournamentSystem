@@ -1,6 +1,9 @@
 package net.novauniverse.mctournamentsystem.lobby.modules.lobby;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -28,9 +31,14 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONObject;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+
 import me.rayzr522.jsonmessage.JSONMessage;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
+import net.novauniverse.mctournamentsystem.lobby.modules.lobby.kotl.score.KingOfTheLadderScore;
+import net.novauniverse.mctournamentsystem.lobby.modules.lobby.kotl.score.KingOfTheLadderScoreComparator;
 import net.novauniverse.mctournamentsystem.lobby.versionspecific.Pre_1_13_Utils;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
@@ -49,6 +57,8 @@ import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseWorld;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.WorldUnloadOption;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
+import net.zeeraa.novacore.spigot.teams.Team;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 import net.zeeraa.novacore.spigot.utils.LocationUtils;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
@@ -56,22 +66,30 @@ import net.zeeraa.novacore.spigot.utils.VectorArea;
 
 @NovaAutoLoad(shouldEnable = true)
 public class Lobby extends NovaModule implements Listener {
+
 	private static Lobby instance;
 
 	private Location lobbyLocation;
-	private Location kotlLocation;
 
+	private KingOfTheLadderScoreComparator kingOfTheLadderScoreComparator;
+	private Location kotlLocation;
 	private double kotlRadius;
+	private int kotlScoreHeightMin;
+	private int kotlScoreHeightMax;
+	private int kotlHologramLines;
+	private Task kotlScoreTask;
+	private List<KingOfTheLadderScore> kotlScore;
+	private Hologram kotlHologram;
 
 	private SimpleTask calmDownCageResetTimer;
 
 	private MultiverseWorld multiverseWorld;
 
 	private boolean gameRunningMessageSent;
-	private SimpleTask gameRunningCheckTask;
+	private Task gameRunningCheckTask;
 
-	private SimpleTask loadScoreTask;
-	private SimpleTask lobbyTask;
+	private Task loadScoreTask;
+	private Task lobbyTask;
 
 	private boolean spleefEnabled;
 	private VectorArea spleefArena;
@@ -107,13 +125,17 @@ public class Lobby extends NovaModule implements Listener {
 		this.spleefFloor = null;
 		this.spleefDeathArea = null;
 		this.spleefRespawnLocation = null;
+
+		this.kingOfTheLadderScoreComparator = new KingOfTheLadderScoreComparator();
+		this.kotlScoreHeightMin = Integer.MAX_VALUE;
+		this.kotlScoreHeightMax = Integer.MAX_VALUE;
+		this.kotlHologramLines = 10;
+		this.kotlHologram = null;
+		this.kotlScore = new ArrayList<KingOfTheLadderScore>();
 	}
 
 	@Override
 	public void onEnable() throws Exception {
-		System.out.println("DBG:PRINT_TS_INSTANCE");
-		System.out.println(TournamentSystem.getInstance());
-		System.out.println("---------------------");
 		File worldFolder = TournamentSystem.getInstance().getMapDataFolder();
 		Log.debug(getName(), "World folder is: " + worldFolder.getAbsolutePath());
 		multiverseWorld = MultiverseManager.getInstance().createFromFile(new File(worldFolder.getAbsolutePath() + File.separator + "Worlds" + File.separator + "lobby_world"), WorldUnloadOption.DELETE);
@@ -166,6 +188,43 @@ public class Lobby extends NovaModule implements Listener {
 				}
 			}
 		}, 20 * 20);
+
+		this.kotlScoreTask = new SimpleTask(getPlugin(), new Runnable() {
+			@Override
+			public void run() {
+				Bukkit.getServer().getOnlinePlayers().stream().filter(player -> player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE).filter(player -> isInKOTLArena(player)).forEach(player -> {
+					int playerY = player.getLocation().getBlockY();
+					if (playerY >= kotlScoreHeightMin && playerY <= kotlScoreHeightMax) {
+						KingOfTheLadderScore pScore = kotlScore.stream().filter(s -> s.getUuid().equals(player.getUniqueId())).findFirst().orElse(null);
+						if (pScore != null) {
+							pScore.incrementScore();
+						} else {
+							Log.debug("KOTL", "Adding player " + player.getName() + " to the score list");
+							KingOfTheLadderScore pScoreNew = new KingOfTheLadderScore(player);
+							pScoreNew.incrementScore();
+							kotlScore.add(pScoreNew);
+						}
+					}
+				});
+
+				kotlHologram.clearLines();
+				kotlHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top KOTL Players");
+				kotlScore.stream().sorted(kingOfTheLadderScoreComparator).limit(kotlHologramLines).forEach(score -> {
+					net.md_5.bungee.api.ChatColor color = net.md_5.bungee.api.ChatColor.AQUA;
+					if (TeamManager.hasTeamManager()) {
+						Team team = TeamManager.getTeamManager().getPlayerTeam(score.getUuid());
+						if (team != null) {
+							color = team.getTeamColor();
+						}
+					}
+					kotlHologram.appendTextLine(color + score.getName() + ChatColor.WHITE + " : " + ChatColor.AQUA + score.getScore());
+				});
+				while (kotlHologram.size() - 1 < kotlHologramLines) {
+					kotlHologram.appendTextLine(ChatColor.GRAY + "Empty");
+				}
+			}
+		}, 20L);
+		kotlScoreTask.start();
 
 		File spleefFile = new File(multiverseWorld.getWorld().getWorldFolder().getAbsolutePath() + File.separator + "spleefconfig.json");
 		if (spleefFile.exists()) {
@@ -265,9 +324,23 @@ public class Lobby extends NovaModule implements Listener {
 		return multiverseWorld.getWorld();
 	}
 
-	public void setKOTLLocation(double x, double z, double radius) {
+	public void setKOTLLocation(double x, double z, double radius, int scoreHeightMin, int scoreHeightMax) {
 		this.kotlRadius = radius;
 		this.kotlLocation = new Location(multiverseWorld.getWorld(), x, 0, z);
+
+		this.kotlScoreHeightMin = scoreHeightMin;
+		this.kotlScoreHeightMax = scoreHeightMax;
+	}
+
+	public void setKOTLHologramLines(int kotlHologramLines) {
+		this.kotlHologramLines = kotlHologramLines;
+	}
+
+	public void setupKOTLHologram(double x, double y, double z) {
+		Location hologramLocation = new Location(multiverseWorld.getWorld(), x, y, z);
+		this.kotlHologram = HologramsAPI.createHologram(getPlugin(), hologramLocation);
+
+		kotlHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top KOTL Players");
 	}
 
 	private boolean isInKOTLArena(Entity entity) {

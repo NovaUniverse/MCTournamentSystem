@@ -5,7 +5,6 @@ import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerNameCache;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
-import net.zeeraa.novacore.commons.utils.UUIDUtils;
 import net.zeeraa.novacore.spigot.teams.Team;
 
 public class TournamentSystemTeam extends Team {
@@ -71,7 +70,7 @@ public class TournamentSystemTeam extends Team {
 		if (obj instanceof Team) {
 			Team team2 = (Team) obj;
 
-			return UUIDUtils.isSame(this.getTeamUuid(), team2.getTeamUuid());
+			return this.getTeamUuid().equals(team2.getTeamUuid());
 		}
 
 		return this == obj;

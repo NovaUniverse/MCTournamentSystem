@@ -74,7 +74,18 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 		lobbyLocation = new Location(Lobby.getInstance().getWorld(), getConfig().getDouble("spawn_x"), getConfig().getDouble("spawn_y"), getConfig().getDouble("spawn_z"), (float) getConfig().getDouble("spawn_yaw"), (float) getConfig().getDouble("spawn_pitch"));
 		Lobby.getInstance().setLobbyLocation(lobbyLocation);
 
-		Lobby.getInstance().setKOTLLocation(getConfig().getDouble("kotl_x"), getConfig().getDouble("kotl_z"), getConfig().getDouble("kotl_radius"));
+		Lobby.getInstance().setKOTLLocation(getConfig().getDouble("kotl_x"), getConfig().getDouble("kotl_z"), getConfig().getDouble("kotl_radius"), getConfig().getInt("kotl_score_height_min"), getConfig().getInt("kotl_score_height_max"));
+
+		ConfigurationSection kotlHologram = getConfig().getConfigurationSection("ktol_hologram");
+		if (kotlHologram.getBoolean("enabled")) {
+			double x = kotlHologram.getDouble("x");
+			double y = kotlHologram.getDouble("y");
+			double z = kotlHologram.getDouble("z");
+
+			Log.info(getName(), "Setting up KOTL hologram at X: " + x + " Y: " + y + " Z: " + z);
+			Lobby.getInstance().setupKOTLHologram(x, y, z);
+			Lobby.getInstance().setKOTLHologramLines(kotlHologram.getInt("lines"));
+		}
 
 		ConfigurationSection playerLeaderboard = getConfig().getConfigurationSection("lobby_player_leaderboard");
 		ConfigurationSection teamLeaderboard = getConfig().getConfigurationSection("lobby_team_leaderboard");

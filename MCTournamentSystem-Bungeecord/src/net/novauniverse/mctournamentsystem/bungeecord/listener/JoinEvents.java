@@ -16,7 +16,6 @@ import net.md_5.bungee.event.EventPriority;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
-import net.zeeraa.novacore.commons.utils.UUIDUtils;
 
 public class JoinEvents implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -51,7 +50,7 @@ public class JoinEvents implements Listener {
 		}
 
 		ProxyServer.getInstance().getPlayers().forEach(p -> {
-			if (UUIDUtils.isSame(p.getUniqueId(), e.getPlayer().getUniqueId())) {
+			if ((p.getUniqueId().equals(e.getPlayer().getUniqueId()))) {
 				return;
 			}
 

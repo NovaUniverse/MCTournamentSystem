@@ -17,7 +17,6 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
-import net.zeeraa.novacore.commons.utils.UUIDUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
@@ -83,7 +82,7 @@ public class LabymodIntegration extends NovaModule implements Listener {
 
 	private void sendPlayerTeamTitles(Player player) {
 		Bukkit.getServer().getOnlinePlayers().forEach(target -> {
-			if (!UUIDUtils.isSame(player.getUniqueId(), target.getUniqueId())) {
+			if (!player.getUniqueId().equals(target.getUniqueId())) {
 				String text = ChatColor.YELLOW + "No team";
 				Team t = TournamentSystem.getInstance().getTeamManager().getPlayerTeam(target);
 				if (t != null) {

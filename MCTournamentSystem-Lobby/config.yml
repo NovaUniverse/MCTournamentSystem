@@ -12,7 +12,17 @@ kotl_enabled: true
 kotl_x: 25
 kotl_z: 11
 
+kotl_score_height_min: 10000
+kotl_score_height_max: 10000
+
 kotl_radius: 5
+
+ktol_hologram:
+    enabled: true
+    lines: 10
+    x: 10000.5
+    y: 0
+    z: 10000.5
 
 # Lobby leaderboard
 lobby_player_leaderboard:
