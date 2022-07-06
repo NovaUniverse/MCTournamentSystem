@@ -19,6 +19,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bingo.BingoM
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.chickenout.ChickenOutManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.dropper.DropperManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.hive.HiveManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.parkourrace.ParkourRaceManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.spleef.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgames.SurvivalGamesManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.tnttag.TNTTagManager;
@@ -60,6 +61,7 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("chickenout", ChickenOutManager.class);
 		GAME_SPECIFIC_MODULES.put("behindyourtail", BehindYourTailManager.class);
 		GAME_SPECIFIC_MODULES.put("ng_hive", HiveManager.class);
+		GAME_SPECIFIC_MODULES.put("parkour_race", ParkourRaceManager.class);
 
 	}
 

@@ -224,11 +224,11 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 
 		ChatColor color = ChatColor.YELLOW;
 		if (team == null) {
-			name = color + "No team : " + ChatColor.RESET + player.getName();
+			name = color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + "No team : " + ChatColor.RESET + player.getName();
 		} else {
 			if (((TournamentSystemTeam) team).getTeamNumber() >= 1) {
 				color = team.getTeamColor();
-				name = color + team.getDisplayName() + ChatColor.WHITE + " : " + ChatColor.RESET + player.getName();
+				name = color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + team.getDisplayName() + ChatColor.WHITE + " : " + ChatColor.RESET + player.getName();
 			}
 		}
 
