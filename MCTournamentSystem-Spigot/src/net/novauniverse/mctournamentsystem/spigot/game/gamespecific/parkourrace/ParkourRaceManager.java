@@ -8,6 +8,8 @@ import net.novauniverse.games.parkourrace.game.ParkourRace;
 import net.novauniverse.games.parkourrace.game.data.PlayerData;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.tasks.Task;
+import net.zeeraa.novacore.commons.utils.Callback;
+import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
@@ -30,6 +32,13 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 
 		TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
 			NovaParkourRace.getInstance().getGame().setupPlayerData(player);
+		});
+
+		NovaParkourRace.getInstance().getGame().addTimerDecrementCallback(new Callback() {
+			@Override
+			public void execute() {
+				NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
+			}
 		});
 
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
