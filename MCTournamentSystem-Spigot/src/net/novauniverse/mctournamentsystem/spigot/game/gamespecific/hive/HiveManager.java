@@ -68,7 +68,7 @@ public class HiveManager extends NovaModule implements Listener {
 					Hive game = (Hive) GameManager.getInstance().getActiveGame();
 
 					if (GameManager.getInstance().getActiveGame().hasStarted()) {
-						NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + TextUtils.secondsToTime(game.getTimeLeft()));
+						NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + TextUtils.secondsToTime(game.getTimeLeft() + 1));
 
 						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 							TournamentSystemTeam team = (TournamentSystemTeam) TeamManager.getTeamManager().getPlayerTeam(player);
@@ -107,7 +107,7 @@ public class HiveManager extends NovaModule implements Listener {
 			VersionIndependentUtils.get().sendTitle(player, ChatColor.RED + "Eliminated", "", 10, 60, 10);
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onHivePlayerDepositHoney(HivePlayerDepositHoneyEvent e) {
 		Player player = e.getPlayer();
