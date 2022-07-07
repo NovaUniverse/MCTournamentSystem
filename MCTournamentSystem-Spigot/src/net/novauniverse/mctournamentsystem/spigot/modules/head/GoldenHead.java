@@ -3,7 +3,6 @@ package net.novauniverse.mctournamentsystem.spigot.modules.head;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,6 +19,7 @@ import org.bukkit.potion.PotionEffectType;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
 import net.novauniverse.mctournamentsystem.spigot.textures.Textures;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
@@ -69,16 +69,16 @@ public class GoldenHead extends NovaModule implements Listener {
 			if (NBTEditor.contains(e.getItem(), "tournamentsystem", "goldenhead")) {
 				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					e.setCancelled(true);
-					Player p = e.getPlayer();
+					Player player = e.getPlayer();
 					if (e.getItem().getAmount() > 1) {
 						e.getItem().setAmount(e.getItem().getAmount() - 1);
 					} else {
-						if (p.getItemInHand().getAmount() == 1) {
-							p.setItemInHand(null);
+						if (player.getItemInHand().getAmount() == 1) {
+							player.setItemInHand(null);
 						} else {
 							boolean removed = false;
-							for (int i = 0; i < p.getInventory().getSize(); i++) {
-								ItemStack item = p.getInventory().getItem(i);
+							for (int i = 0; i < player.getInventory().getSize(); i++) {
+								ItemStack item = player.getInventory().getItem(i);
 								if (item != null) {
 									if (item.getType() != Material.AIR) {
 										if (NBTEditor.contains(item, "tournamentsystem", "goldenhead")) {
@@ -87,7 +87,7 @@ public class GoldenHead extends NovaModule implements Listener {
 												removed = true;
 												break;
 											} else {
-												p.getInventory().setItem(i, null);
+												player.getInventory().setItem(i, null);
 												removed = true;
 												break;
 											}
@@ -101,11 +101,12 @@ public class GoldenHead extends NovaModule implements Listener {
 							}
 						}
 					}
-					p.getWorld().playSound(p.getLocation(), Sound.EAT, 1F, 1F);
-
-					p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 30 * 20, 1));
-					p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 15 * 20, 1));
-					p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 60 * 20, 1));
+					//p.getWorld().playSound(p.getLocation(), Sound.EAT, 1F, 1F);
+					VersionIndependentSound.EAT.play(player);
+					
+					player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 30 * 20, 1));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 15 * 20, 1));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 60 * 20, 1));
 				}
 			}
 		}
