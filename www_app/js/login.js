@@ -1,4 +1,4 @@
-$(function () {
+$(() => {
 	$("#login_failure").hide();
 
 	$("#btn_login").on("click", function () {
@@ -15,7 +15,7 @@ $(function () {
 });
 
 function login(username, password, isStored = false) {
-	$.getJSON("/api/user/login?username=" + username + "&password=" + password, function (data) {
+	$.getJSON("/api/user/login?username=" + username + "&password=" + password, (data) => {
 		if (!data.success) {
 			if (isStored) {
 				toastr.error("Stored credentials seems so be invalid");
