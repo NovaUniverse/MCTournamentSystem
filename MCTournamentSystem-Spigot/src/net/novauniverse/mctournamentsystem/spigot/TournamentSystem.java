@@ -28,7 +28,6 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.spigot.command.bc.BCCommand;
-import net.novauniverse.mctournamentsystem.spigot.command.commentator.cinvsee.CInvseeCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.csp.CSPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.ctp.CTPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.copylocation.CopyLocationCommand;
@@ -455,7 +454,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new WhatIsDogeWorthCommand());
 		CommandRegistry.registerCommand(new CSPCommand());
 		CommandRegistry.registerCommand(new CTPCommand());
-		CommandRegistry.registerCommand(new CInvseeCommand());
 		CommandRegistry.registerCommand(new BCCommand());
 		CommandRegistry.registerCommand(new RespawnPlayerCommand());
 		CommandRegistry.registerCommand(new CopyLocationCommand());
