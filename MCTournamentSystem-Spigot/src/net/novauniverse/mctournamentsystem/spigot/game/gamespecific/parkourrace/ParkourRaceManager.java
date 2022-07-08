@@ -2,11 +2,16 @@ package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.parkourrace
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import net.novauniverse.games.parkourrace.NovaParkourRace;
 import net.novauniverse.games.parkourrace.game.ParkourRace;
 import net.novauniverse.games.parkourrace.game.data.PlayerData;
+import net.novauniverse.games.parkourrace.game.event.ParkourRacePlayerCompleteEvent;
+import net.novauniverse.games.parkourrace.game.event.ParkourRacePlayerCompleteLapEvent;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.Callback;
 import net.zeeraa.novacore.commons.utils.TextUtils;
@@ -72,5 +77,21 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 	@Override
 	public void onDisable() throws Exception {
 		Task.tryStopTask(task);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onParkourRacePlayerComplete(ParkourRacePlayerCompleteLapEvent e) {
+		e.getPlayer().sendMessage(ChatColor.GRAY + "+10 points");
+		ScoreManager.getInstance().addPlayerScore(e.getPlayer(), 10, true);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onParkourRacePlayerComplete(ParkourRacePlayerCompleteEvent e) {
+		int[] winScore = TournamentSystem.getInstance().getWinScore();
+		if (e.getPlecement() <= winScore.length) {
+			int score = winScore[e.getPlecement() - 1];
+			e.getPlayer().sendMessage(ChatColor.GRAY + "+" + score + " points");
+			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), score, true);
+		}
 	}
 }
