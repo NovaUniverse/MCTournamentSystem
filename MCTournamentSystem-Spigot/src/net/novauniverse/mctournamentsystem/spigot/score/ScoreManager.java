@@ -19,9 +19,11 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.EssentialModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
+import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 @NovaAutoLoad(shouldEnable = true)
@@ -30,7 +32,8 @@ public class ScoreManager extends NovaModule implements Listener {
 	private static ScoreManager instance;
 	private HashMap<UUID, Integer> playerScoreCache;
 
-	private int taskId;
+	private Task fastUpdate;
+	private Task slowUpdate;
 
 	public static ScoreManager getInstance() {
 		return instance;
@@ -45,27 +48,44 @@ public class ScoreManager extends NovaModule implements Listener {
 		ScoreManager.instance = this;
 		this.playerScoreCache = new HashMap<UUID, Integer>();
 
-		this.taskId = -1;
+		this.fastUpdate = null;
+		this.slowUpdate = null;
 	}
 
 	@Override
 	public void onEnable() {
-		if (taskId == -1) {
-			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(TournamentSystem.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					Bukkit.getServer().getOnlinePlayers().forEach(player -> asyncScoreUpdate(player.getUniqueId()));
-				}
-			}, 40L, 40L);
+		if(fastUpdate != null) {
+			Task.tryStartTask(fastUpdate);
 		}
+		
+		if(slowUpdate != null) {
+			Task.tryStartTask(slowUpdate);
+		}
+		
+		fastUpdate = new SimpleTask(getPlugin(), new Runnable() {			
+			@Override
+			public void run() {
+				Bukkit.getServer().getOnlinePlayers().forEach(player -> asyncScoreUpdate(player.getUniqueId()));
+			}
+		}, 40L);
+		
+		slowUpdate = new SimpleTask(getPlugin(), new Runnable() {			
+			@Override
+			public void run() {
+				asyncUpdateAll();
+			}
+		}, 20 * 60);
+		
+		Task.tryStartTask(fastUpdate);
+		Task.tryStartTask(slowUpdate);
+		
+		asyncUpdateAll();
 	}
 
 	@Override
 	public void onDisable() {
-		if (taskId != -1) {
-			Bukkit.getScheduler().cancelTask(taskId);
-			taskId = -1;
-		}
+		Task.tryStopTask(fastUpdate);
+		Task.tryStopTask(slowUpdate);
 	}
 
 	/*
@@ -88,7 +108,6 @@ public class ScoreManager extends NovaModule implements Listener {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				int score = 0;
 				try {
 					String sql = "SELECT score FROM players WHERE uuid = ?";
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
@@ -97,7 +116,7 @@ public class ScoreManager extends NovaModule implements Listener {
 
 					ResultSet rs = ps.executeQuery();
 					if (rs.next()) {
-						score = rs.getInt("score");
+						int score = rs.getInt("score");
 						playerScoreCache.put(uuid, score);
 					}
 
@@ -106,6 +125,32 @@ public class ScoreManager extends NovaModule implements Listener {
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.warn("ScoreManager", "Failed to fetch the score of player with uuid: " + uuid.toString());
+				}
+			}
+		}.runTaskAsynchronously(TournamentSystem.getInstance());
+	}
+
+	public void asyncUpdateAll() {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					String sql = "SELECT score, uuid FROM players";
+					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+
+					ResultSet rs = ps.executeQuery();
+					while (rs.next()) {
+						UUID uuid = UUID.fromString(rs.getString("uuid"));
+						int score = rs.getInt("score");
+
+						playerScoreCache.put(uuid, score);
+					}
+
+					rs.close();
+					ps.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.warn("ScoreManager", "Failed to fetch the score of all player");
 				}
 			}
 		}.runTaskAsynchronously(TournamentSystem.getInstance());

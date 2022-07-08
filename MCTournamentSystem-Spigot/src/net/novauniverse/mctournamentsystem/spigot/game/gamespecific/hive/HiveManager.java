@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.novauniverse.games.hive.NovaHive;
@@ -17,6 +18,7 @@ import net.novauniverse.games.hive.game.event.HiveTeamCompletedEvent;
 import net.novauniverse.games.hive.game.object.hive.HiveData;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
+import net.novauniverse.mctournamentsystem.spigot.kills.KillManager;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
@@ -98,6 +100,18 @@ public class HiveManager extends NovaModule implements Listener {
 	@Override
 	public void onDisable() throws Exception {
 		Task.tryStopTask(task);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerDeath(PlayerDeathEvent e) {
+		if (!NovaHive.getInstance().getGame().hasEnded() && NovaHive.getInstance().getGame().hasStarted()) {
+			Player killer = e.getEntity().getKiller();
+			if (killer != null) {
+				if (NovaHive.getInstance().getGame().getPlayers().contains(killer.getUniqueId())) {
+					KillManager.addPlayerKill(killer);
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
