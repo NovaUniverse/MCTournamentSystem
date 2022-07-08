@@ -6,7 +6,7 @@ const lowHealthMatters = ["survivalgames", "skywars"];
 $(() => {
 	setTimeout(() => {
 		accessKey = localStorage.getItem("commentator_key");
-		console.log(accessKey);
+		//console.log(accessKey);
 		if (accessKey == null) {
 			console.log("No access token in localstorage");
 			showLogin();
@@ -85,7 +85,16 @@ function update() {
 		if(topTeamId == -1) {
 			$("#top_team").text("N/A");
 		} else {
-			$("#top_team").text("Team " + topTeamId + " with " + topTeamScore + " points");
+			let topTeamInfo = $("<span></span>");
+			topTeamInfo.text("Team " + topTeamId);
+			let team = data.teams.find(team => team.team_number == topTeamId);
+			if (team != null) {
+				if (team.display_name != ("Team " + topTeamId)) {
+					topTeamInfo.append($("<span></span>").text(" (" + team.display_name + ")").css('color', "rgb(" + team.color.r + "," + team.color.g + "," + team.color.b + ")"))
+				}
+			}
+
+			$("#top_team").html(topTeamInfo);
 		}
 
 		if(topPlayerName == null) {
@@ -117,7 +126,7 @@ function update() {
 
 			let playerElement = null;
 
-			console.log(player);
+			//console.log(player);
 
 			$(".player").each(function () {
 				if ($(this).data("uuid") == player.uuid) {
@@ -167,7 +176,19 @@ function update() {
 			if(playerExtraData != null) {
 				playerElement.find(".player-score").text(playerExtraData.score);
 				playerElement.find(".player-team-score").text(playerExtraData.team_score);
-				playerElement.find(".player-team").text("Team " + playerExtraData.team_number);				
+
+				//console.log(playerExtraData);
+
+				let playerTeamInfo = $("<span></span>");
+				playerTeamInfo.text("Team " + playerExtraData.team_number);
+				let team = data.teams.find(team => team.team_number == playerExtraData.team_number);
+				if (team != null) {
+					if (team.display_name != ("Team " + playerExtraData.team_number)) {
+						playerTeamInfo.append($("<span></span>").text(" (" + team.display_name + ")").css('color', "rgb(" + team.color.r + "," + team.color.g + "," + team.color.b + ")"))
+					}
+				}
+
+				playerElement.find(".player-team").html(playerTeamInfo);				
 			} else {
 				playerElement.find(".player-score").text("N/A");
 				playerElement.find(".player-team-score").text("N/A");
