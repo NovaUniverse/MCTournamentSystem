@@ -91,6 +91,12 @@ public class PlayerKillCache extends NovaModule implements Listener, TSDataCache
 		}.runTaskAsynchronously(TournamentSystem.getInstance());
 	}
 
+	public void tryIncrement(UUID uuid) {
+		if (cache.containsKey(uuid)) {
+			cache.put(uuid, cache.get(uuid) + 1);
+		}
+	}
+
 	public Integer getPlayerKills(UUID uuid) {
 		if (cache.containsKey(uuid)) {
 			return cache.get(uuid);
@@ -118,5 +124,6 @@ public class PlayerKillCache extends NovaModule implements Listener, TSDataCache
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		this.invalidate(e.getPlayer());
+		this.updateFromDatabase(e.getPlayer());
 	}
 }

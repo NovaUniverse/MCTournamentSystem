@@ -26,7 +26,7 @@ public class KillManager {
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							PlayerKillCache.getInstance().invalidate(player);
+							PlayerKillCache.getInstance().tryIncrement(player.getUniqueId());
 						}
 					}.runTask(TournamentSystem.getInstance());
 				} catch (Exception ex) {
