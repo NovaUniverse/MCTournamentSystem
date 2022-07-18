@@ -14,6 +14,7 @@ import net.novauniverse.mctournamentsystem.spigot.tracker.TSCompassTracker;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.gamelobby.GameLobby;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.gamelobby.mapselector.selectors.RandomLobbyMapSelector;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.compass.CompassTracker;
 
@@ -46,7 +47,11 @@ public class GameSetup {
 		File dataFileDirectory = new File(TournamentSystem.getInstance().getMapDataFolder() + File.separator + "GameLobbyData");
 		File worldFileDirectory = new File(TournamentSystem.getInstance().getMapDataFolder() + File.separator + "Worlds");
 
+		dataFileDirectory.mkdirs();
+		worldFileDirectory.mkdirs();
+		
 		GameLobby.getInstance().getMapReader().loadAll(dataFileDirectory, worldFileDirectory);
+		GameLobby.getInstance().setMapSelector(new RandomLobbyMapSelector());
 
 		Log.success("GameSetup", "Game support enabled");
 	}

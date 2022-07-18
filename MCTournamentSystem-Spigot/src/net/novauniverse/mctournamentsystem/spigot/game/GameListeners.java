@@ -196,9 +196,7 @@ public class GameListeners extends NovaModule implements Listener {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-					p.sendMessage(LanguageManager.getString(p, "tournamentsystem.game.sending_you_to_lobby_10_seconds"));
-				}
+				Bukkit.getServer().getOnlinePlayers().forEach(player -> player.sendMessage(LanguageManager.getString(player, "tournamentsystem.game.sending_you_to_lobby_20_seconds")));
 
 				Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
 					@Override
@@ -215,14 +213,12 @@ public class GameListeners extends NovaModule implements Listener {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
 							@Override
 							public void run() {
-								for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-									p.kickPlayer(LanguageManager.getString(p, "tournamentsystem.game.server.restarting", e.getGame()));
-								}
+								Bukkit.getServer().getOnlinePlayers().forEach(player -> player.kickPlayer(LanguageManager.getString(player, "tournamentsystem.game.server.restarting", e.getGame())));
 								Bukkit.getServer().shutdown();
 							}
-						}, 40L);
+						}, 200L);
 					}
-				}, 200L);
+				}, 400L);
 			}
 
 		}, 100L);

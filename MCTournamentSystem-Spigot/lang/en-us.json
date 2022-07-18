@@ -20,7 +20,7 @@
 		"tournamentsystem.command.reconnect.no_game": "§cThere is no active game right now",
 		
 		"tournamentsystem.game.elimination.team.eliminated": "§c§lTeam Eliminated> %s§l%s §6§l%s place",
-		"tournamentsystem.game.sending_you_to_lobby_10_seconds": "§bSending you to the lobby in 10 seconds",
+		"tournamentsystem.game.sending_you_to_lobby_20_seconds": "§bSending you to the lobby in 20 seconds",
 		"tournamentsystem.game.server.restarting": "§b%s server restarting, Please reconnect",
 		
 		"tournamentsystem.game.gameover.winner.player": "§a§lGAME OVER> §6§lWinning player: %s§l%s",
