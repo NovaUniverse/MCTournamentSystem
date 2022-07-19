@@ -14,8 +14,6 @@
 		"tournamentsystem.yborder.above_limit.warning": "§c§lYou are above the height limit of Y: %s. You will continue to take damage until you get below the limit",
 		"tournamentsystem.yborder.above_limit.info": "§c§l%s blocks above the height limit",
 
-		"tournamentsystem.game.tracker.tracking_player": "§aTracking player §b%s",
-
 		"tournamentsystem.command.reconnect.connecting": "§aConnecting to the server...",
 		"tournamentsystem.command.reconnect.no_game": "§cThere is no active game right now",
 		
