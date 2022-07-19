@@ -39,16 +39,6 @@
 		</repository>
 
 		<repository>
-			<id>zeeraas-snapshots</id>
-			<url>https://nexus.zeeraa.net/repository/maven-snapshots/</url>
-		</repository>
-
-		<repository>
-			<id>zeeraas-releases</id>
-			<url>https://nexus.zeeraa.net/repository/maven-releases/</url>
-		</repository>
-
-		<repository>
 			<id>codemc-repo</id>
 			<url>https://repo.codemc.io/repository/maven-public/</url>
 		</repository>
