@@ -1,6 +1,7 @@
 package net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
@@ -17,13 +18,27 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 @NovaAutoLoad(shouldEnable = true)
-public class TabListMessage extends NovaModule {
+public class TabListMessage extends NovaModule implements TabHeaderProvider, TabFooterProvider {
 	private Task task;
 	private String serverType;
 	private RGBColorAnimation rgbColorAnimation;
 
+	private TabHeaderProvider headerProvider;
+	private TabFooterProvider footerProvider;
+
 	public TabListMessage() {
 		super("TournamentSystem.TabListMessage");
+
+		this.headerProvider = this;
+		this.footerProvider = this;
+	}
+
+	public void setHeaderProvider(TabHeaderProvider headerProvider) {
+		this.headerProvider = headerProvider;
+	}
+
+	public void setFooterProvider(TabFooterProvider footerProvider) {
+		this.footerProvider = footerProvider;
 	}
 
 	public static void setServerType(String serverType) {
@@ -35,6 +50,10 @@ public class TabListMessage extends NovaModule {
 		}
 	}
 
+	public RGBColorAnimation getRgbColorAnimation() {
+		return rgbColorAnimation;
+	}
+	
 	@Override
 	public void onLoad() {
 		serverType = "Unknown server type. Set it with TabListMessage#setServerType(serverType)";
@@ -59,27 +78,39 @@ public class TabListMessage extends NovaModule {
 	}
 
 	public void update() {
-		final double[] recentTps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps();
+		Bukkit.getServer().getOnlinePlayers().forEach(player -> VersionIndependentUtils.get().sendTabList(player, headerProvider.getTabHeader(player), footerProvider.getTabFooter(player)));
+	}
 
+	@Override
+	public String getTabFooter(Player player) {
+		double[] recentTps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps();
+		int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
+
+		String footer = "";
+
+		if (recentTps.length > 0) {
+			double tps = recentTps[0];
+			footer += formatTPS(tps) + " ";
+			tps = recentTps[0];
+		}
+
+		footer += formatPing(ping) + "\n\n";
+		footer += ChatColor.AQUA + "Tournament developed by NovaUniverse. Join our discord server for weekly tournaments https://discord.gg/4gZSVJ7";
+		return footer;
+	}
+
+	@Override
+	public String getTabHeader(Player player) {
 		String title = rgbColorAnimation.getChatColor() + "" + ChatColor.BOLD + ChatColor.stripColor(TournamentSystem.getInstance().getCachedTournamentName()) + ChatColor.WHITE + " - " + rgbColorAnimation.getChatColor() + serverType + "\n";
 		title += ChatColor.AQUA + "" + ChatColor.BOLD + TournamentSystem.getInstance().getCachedTournamentLink();
+		return title;
+	}
 
-		final String finalTitle = title;
-		Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-			int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
+	public static final String formatTPS(double tps) {
+		return ChatColor.GOLD + "TPS: " + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : "");
+	}
 
-			String footer = "";
-
-			if (recentTps.length > 0) {
-				double tps = recentTps[0];
-				footer += ChatColor.GOLD + "TPS: " + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : "") + " ";
-				tps = recentTps[0];
-			}
-
-			footer += ChatColor.GOLD + "Ping: " + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : "") + "\n\n";
-			footer += ChatColor.AQUA + "Tournament developed by NovaUniverse. Join our discord server for weekly tournaments https://discord.gg/4gZSVJ7";
-
-			VersionIndependentUtils.get().sendTabList(player, finalTitle, footer);
-		});
+	public static final String formatPing(int ping) {
+		return ChatColor.GOLD + "Ping: " + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : "");
 	}
 }
