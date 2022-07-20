@@ -46,6 +46,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
+import net.novauniverse.mctournamentsystem.spigot.modules.resourcepack.ResourcePackManager;
 import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissions;
 import net.novauniverse.mctournamentsystem.spigot.pluginmessages.TSPluginMessageListnener;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
@@ -105,6 +106,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private String cachedTournamentName;
 	private String cachedTournamentLink;
+	
+	private String resourcePackUrl;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -230,6 +233,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public boolean isMakeTeamNamesBold() {
 		return makeTeamNamesBold;
 	}
+	
+	public String getResourcePackUrl() {
+		return resourcePackUrl;
+	}
 
 	@Override
 	public void onEnable() {
@@ -256,6 +263,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.forceShowTeamNameInLeaderboard = false;
 		this.makeTeamNamesBold = false;
+		
+		this.resourcePackUrl = null;
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
@@ -365,6 +374,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		if (config.has("make_team_names_bold")) {
 			makeTeamNamesBold = config.getBoolean("make_team_names_bold");
 		}
+		
+		if (config.has("resource_pack")) {
+			resourcePackUrl = config.getString("resource_pack");
+		}
 
 		JSONObject labymodBanner = config.getJSONObject("labymod_banner");
 		if (labymodBanner.getBoolean("enabled")) {
@@ -433,6 +446,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		if (getConfig().getBoolean("enable_edible_heads")) {
 			ModuleManager.enable(EdibleHeads.class);
+		}
+		
+		if(resourcePackUrl != null) {
+			ModuleManager.enable(ResourcePackManager.class);
+			// Allow empty string to be treated as no pack
+			if(resourcePackUrl.length() == 0) {
+				resourcePackUrl = null;
+			}
 		}
 
 		/* ----- Events ----- */
