@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,6 +45,8 @@ import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.ITournamentSystemPlayerEliminationMessageProvider;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.TournamentSystemDefaultPlayerEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
+import net.novauniverse.mctournamentsystem.spigot.game.util.DefaultPlayerEliminatedTitleProvider;
+import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
@@ -111,8 +115,19 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private String resourcePackUrl;
 
+	private PlayerEliminatedTitleProvider playerEliminatedTitleProvider;
+
 	public static TournamentSystem getInstance() {
 		return instance;
+	}
+
+	@Nullable
+	public PlayerEliminatedTitleProvider getPlayerEliminatedTitleProvider() {
+		return playerEliminatedTitleProvider;
+	}
+
+	public void setPlayerEliminatedTitleProvider(@Nullable PlayerEliminatedTitleProvider playerEliminatedTitleProvider) {
+		this.playerEliminatedTitleProvider = playerEliminatedTitleProvider;
 	}
 
 	public File getSqlFixFile() {
@@ -259,6 +274,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.defaultPlayerEliminationMessage = new TournamentSystemDefaultPlayerEliminationMessage();
 		this.playerEliminationMessageProvider = this.getDefaultPlayerEliminationMessage();
+
+		this.playerEliminatedTitleProvider = new DefaultPlayerEliminatedTitleProvider();
 
 		this.scoreListener = null;
 

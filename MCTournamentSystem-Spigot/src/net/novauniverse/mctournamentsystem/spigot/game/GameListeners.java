@@ -5,9 +5,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,9 +21,9 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.parkourrace.
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.spleef.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgames.SurvivalGamesManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.tnttag.TNTTagManager;
+import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabListMessage;
 import net.zeeraa.novacore.commons.log.Log;
-import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
@@ -42,8 +40,6 @@ import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
-import net.zeeraa.novacore.spigot.teams.Team;
-import net.zeeraa.novacore.spigot.teams.TeamManager;
 import net.zeeraa.novacore.spigot.utils.BungeecordUtils;
 
 public class GameListeners extends NovaModule implements Listener {
@@ -137,49 +133,10 @@ public class GameListeners extends NovaModule implements Listener {
 			VersionIndependentSound.WITHER_HURT.play(player);
 
 			if (TournamentSystem.getInstance().isEliminationTitleMessageEnabled()) {
-				String subtitle = ChatColor.RED + TextUtils.ordinal(e.getPlacement() + 1) + " place";
-
-				Entity killerEntity = null;
-				if (e.getKiller() != null) {
-					if (e.getKiller() instanceof Projectile) {
-						Entity theBoiWhoFirered = (Entity) ((Projectile) e.getKiller()).getShooter();
-
-						if (theBoiWhoFirered != null) {
-							killerEntity = theBoiWhoFirered;
-						} else {
-							killerEntity = e.getKiller();
-						}
-					} else {
-						killerEntity = e.getKiller();
-					}
+				PlayerEliminatedTitleProvider provider = TournamentSystem.getInstance().getPlayerEliminatedTitleProvider();
+				if (provider != null) {
+					provider.show(e);
 				}
-
-				ChatColor killerColor = ChatColor.RED;
-				Team killerTeam = null;
-				if (killerEntity != null) {
-					if (killerEntity instanceof Player) {
-						killerTeam = TeamManager.getTeamManager().getPlayerTeam((Player) killerEntity);
-					}
-				}
-
-				if (killerTeam != null) {
-					killerColor = killerTeam.getTeamColor();
-				}
-
-				switch (e.getReason()) {
-				case KILLED:
-					subtitle = ChatColor.RED + "Killed by " + killerColor + killerEntity.getName() + ChatColor.RED + ". " + TextUtils.ordinal(e.getPlacement() + 1) + " place";
-					break;
-
-				case COMMAND:
-					subtitle = ChatColor.RED + "Eliminated by an admin";
-					break;
-
-				default:
-					break;
-				}
-
-				VersionIndependentUtils.get().sendTitle(player, ChatColor.RED + "Eliminated", subtitle, 10, 60, 10);
 			}
 		}
 	}
