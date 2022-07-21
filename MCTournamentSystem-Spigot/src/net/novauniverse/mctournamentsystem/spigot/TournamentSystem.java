@@ -106,7 +106,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private String cachedTournamentName;
 	private String cachedTournamentLink;
-	
+
+	private String globalConfigPath;
+
 	private String resourcePackUrl;
 
 	public static TournamentSystem getInstance() {
@@ -233,9 +235,13 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public boolean isMakeTeamNamesBold() {
 		return makeTeamNamesBold;
 	}
-	
+
 	public String getResourcePackUrl() {
 		return resourcePackUrl;
+	}
+
+	public String getGlobalConfigPath() {
+		return globalConfigPath;
 	}
 
 	@Override
@@ -263,14 +269,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.forceShowTeamNameInLeaderboard = false;
 		this.makeTeamNamesBold = false;
-		
+
 		this.resourcePackUrl = null;
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
 
-		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
+		globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 		// new File(new
 		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
 
@@ -374,7 +380,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		if (config.has("make_team_names_bold")) {
 			makeTeamNamesBold = config.getBoolean("make_team_names_bold");
 		}
-		
+
 		if (config.has("resource_pack")) {
 			resourcePackUrl = config.getString("resource_pack");
 		}
@@ -447,11 +453,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		if (getConfig().getBoolean("enable_edible_heads")) {
 			ModuleManager.enable(EdibleHeads.class);
 		}
-		
-		if(resourcePackUrl != null) {
+
+		if (resourcePackUrl != null) {
 			ModuleManager.enable(ResourcePackManager.class);
 			// Allow empty string to be treated as no pack
-			if(resourcePackUrl.length() == 0) {
+			if (resourcePackUrl.length() == 0) {
 				resourcePackUrl = null;
 			}
 		}
