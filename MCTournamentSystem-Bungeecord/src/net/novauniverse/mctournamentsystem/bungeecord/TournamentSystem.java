@@ -25,6 +25,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.TSPluginMessageLi
 import net.novauniverse.mctournamentsystem.bungeecord.listener.WhitelistListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
+import net.novauniverse.mctournamentsystem.bungeecord.misc.SlowPlayerSender;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
@@ -55,6 +56,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private File globalConfigFolder;
 
 	private PlayerTelementryManager playerTelementryManager;
+
+	private SlowPlayerSender slowPlayerSender;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -98,6 +101,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	public File getGlobalConfigFolder() {
 		return globalConfigFolder;
+	}
+	
+	public SlowPlayerSender getSlowPlayerSender() {
+		return slowPlayerSender;
 	}
 
 	@Override
@@ -166,9 +173,11 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		}
 
 		playerTelementryManager = new PlayerTelementryManager();
+		slowPlayerSender = new SlowPlayerSender(this);
 
 		ProxyServer.getInstance().getPluginManager().registerListener(this, this);
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new TSPluginMessageListener());
+		ProxyServer.getInstance().getPluginManager().registerListener(this, slowPlayerSender);
 		ProxyServer.getInstance().getPluginManager().registerListener(this, playerTelementryManager);
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new JoinEvents());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new WhitelistListener());
@@ -260,8 +269,15 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
+		slowPlayerSender.destroy();
+
 		if (webServer != null) {
 			webServer.stop();
 		}
+
+		this.getProxy().unregisterChannel(TournamentSystemCommons.DATA_CHANNEL);
+		this.getProxy().unregisterChannel(TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
+		
+		ProxyServer.getInstance().getScheduler().cancel(this);
 	}
 }
