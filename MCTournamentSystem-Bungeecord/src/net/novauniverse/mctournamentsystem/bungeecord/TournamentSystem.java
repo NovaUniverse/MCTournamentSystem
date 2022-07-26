@@ -52,6 +52,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	private boolean openMode;
 
+	private File globalConfigFolder;
+
 	private PlayerTelementryManager playerTelementryManager;
 
 	public static TournamentSystem getInstance() {
@@ -94,6 +96,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return distroName;
 	}
 
+	public File getGlobalConfigFolder() {
+		return globalConfigFolder;
+	}
+
 	@Override
 	public void onEnable() {
 		TournamentSystem.instance = this;
@@ -111,8 +117,9 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		quickMessages = new ArrayList<>();
 
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
+		globalConfigFolder = new File(globalConfigPath);
 
-		TeamOverrides.readOverrides(getDataFolder());
+		TeamOverrides.readOverrides(globalConfigFolder);
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;

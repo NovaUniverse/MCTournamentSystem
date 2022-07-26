@@ -108,6 +108,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private File sqlFixFile;
 	private File mapDataFolder;
 	private File nbsFolder;
+	private File globalDataFolder;
 
 	private boolean forceShowTeamNameInLeaderboard;
 	private boolean makeTeamNamesBold;
@@ -172,11 +173,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public boolean isReplaceEz() {
 		return replaceEz;
-	}
-
-	@Override
-	public void onLoad() {
-		System.out.println("TournamentSystem#onLoad()");
 	}
 
 	public ITournamentSystemPlayerEliminationMessageProvider getPlayerEliminationMessageProvider() {
@@ -283,6 +279,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return winScore;
 	}
 
+	public File getGlobalDataFolder() {
+		return globalDataFolder;
+	}
+
 	public String readResourceFromJARAsString(String filename) throws IOException {
 		InputStream is = getClass().getResourceAsStream(filename);
 		InputStreamReader isr = new InputStreamReader(is);
@@ -339,9 +339,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.nbsFolder = new File(TournamentSystem.getInstance().getGlobalConfigPath() + File.separator + "nbs");
 		this.nbsFolder.mkdirs();
 
+		this.globalDataFolder = new File(globalConfigPath);
 		this.mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
-		TeamOverrides.readOverrides(getDataFolder());
+		TeamOverrides.readOverrides(globalDataFolder);
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;
