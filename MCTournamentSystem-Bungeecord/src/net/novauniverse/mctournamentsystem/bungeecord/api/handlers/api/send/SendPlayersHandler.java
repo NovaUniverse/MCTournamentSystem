@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 
@@ -26,8 +26,18 @@ public class SendPlayersHandler extends APIEndpoint {
 			ServerInfo server = ProxyServer.getInstance().getServerInfo(params.get("server"));
 
 			if (server != null) {
-				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-					player.connect(server);
+				boolean fast = false;
+				
+				if(params.containsKey("fast")) {
+					if(params.get("fast").equalsIgnoreCase("true") || params.get("fast").equalsIgnoreCase("1")) {
+						fast = true;
+					}
+				}
+				
+				if(fast) {
+					ProxyServer.getInstance().getPlayers().forEach(p -> p.connect(server));
+				} else {
+					TournamentSystem.getInstance().getSlowPlayerSender().sendAll(server);
 				}
 
 				json.put("success", true);
