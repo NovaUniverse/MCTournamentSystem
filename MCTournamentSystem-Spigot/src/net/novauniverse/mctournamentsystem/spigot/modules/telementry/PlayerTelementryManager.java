@@ -26,18 +26,25 @@ import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 
 @NovaAutoLoad(shouldEnable = true)
 public class PlayerTelementryManager extends NovaModule {
+	private static PlayerTelementryManager instance;
+
 	private Task task;
 
 	private List<ITelementryMetadataProvider> telementryMetadataProviders;
 
 	public PlayerTelementryManager() {
 		super("TournamentSystem.PlayerTelementryManager");
+		PlayerTelementryManager.instance = this;
 		telementryMetadataProviders = new ArrayList<ITelementryMetadataProvider>();
 	}
 
 	public void addMetadataProvider(ITelementryMetadataProvider provider) {
 		telementryMetadataProviders.add(provider);
 		Log.debug("PlayerTelementryManager", "Added telementry metadata provider " + provider.getClass().getName());
+	}
+
+	public static PlayerTelementryManager getInstance() {
+		return instance;
 	}
 
 	@Override

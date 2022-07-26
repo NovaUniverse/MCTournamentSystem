@@ -23,6 +23,11 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgame
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.tnttag.TNTTagManager;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabListMessage;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.ITelementryMetadataProvider;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.behindyourtail.BehindYourTailMetadataProvider;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.tntrun.TNTRunMetadataProvider;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.tnttag.TNTTagMetadataProvider;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
@@ -44,6 +49,7 @@ import net.zeeraa.novacore.spigot.utils.BungeecordUtils;
 
 public class GameListeners extends NovaModule implements Listener {
 	public static final Map<String, Class<? extends NovaModule>> GAME_SPECIFIC_MODULES = new HashMap<>();
+	public static final Map<String, Class<? extends ITelementryMetadataProvider>> TELEMENTRY_METADATA_PROVIDERS = new HashMap<>();
 
 	static {
 		// Original MCF games
@@ -58,7 +64,15 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("behindyourtail", BehindYourTailManager.class);
 		GAME_SPECIFIC_MODULES.put("ng_hive", HiveManager.class);
 		GAME_SPECIFIC_MODULES.put("parkour_race", ParkourRaceManager.class);
+	}
 
+	static {
+		// Original MCF games
+		TELEMENTRY_METADATA_PROVIDERS.put("tnttag", TNTTagMetadataProvider.class);
+		TELEMENTRY_METADATA_PROVIDERS.put("tntrun", TNTRunMetadataProvider.class);
+
+		// NovaGames games
+		TELEMENTRY_METADATA_PROVIDERS.put("behindyourtail", BehindYourTailMetadataProvider.class);
 	}
 
 	public GameListeners() {
@@ -77,6 +91,20 @@ public class GameListeners extends NovaModule implements Listener {
 				Log.success(getName(), "Enabled game specific module: " + clazz.getName());
 			} else {
 				Log.error(getName(), "Failed to enable game specific module: " + clazz.getName());
+			}
+		}
+
+		if (TELEMENTRY_METADATA_PROVIDERS.containsKey(name)) {
+			Class<? extends ITelementryMetadataProvider> clazz = TELEMENTRY_METADATA_PROVIDERS.get(name);
+			try {
+				ITelementryMetadataProvider provider = clazz.getConstructor().newInstance();
+
+				Log.info(getName(), "Adding telementry metadata provider " + provider.getClass().getName());
+
+				PlayerTelementryManager.getInstance().addMetadataProvider(provider);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				Log.error(getName(), "Failed to enable telementry metadata provider: " + clazz.getName());
 			}
 		}
 
