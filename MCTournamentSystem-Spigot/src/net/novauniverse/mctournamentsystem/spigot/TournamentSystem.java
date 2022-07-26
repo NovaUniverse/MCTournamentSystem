@@ -121,6 +121,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private PlayerEliminatedTitleProvider playerEliminatedTitleProvider;
 
+	private boolean showSensitiveTelementryData;
+
 	public static TournamentSystem getInstance() {
 		return instance;
 	}
@@ -282,6 +284,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return globalDataFolder;
 	}
 
+	public boolean isShowSensitiveTelementryData() {
+		return showSensitiveTelementryData;
+	}
+
 	public String readResourceFromJARAsString(String filename) throws IOException {
 		InputStream is = getClass().getResourceAsStream(filename);
 		InputStreamReader isr = new InputStreamReader(is);
@@ -326,6 +332,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.makeTeamNamesBold = false;
 
 		this.resourcePackUrl = null;
+
+		this.showSensitiveTelementryData = false;
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
@@ -429,6 +437,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		replaceEz = config.getBoolean("replace_ez");
 
 		chickenOutFeatherScoreMultiplier = getConfig().getDouble("chicken_out_feather_score_multiplier");
+
+		JSONObject webSettings = config.getJSONObject("web_ui");
+		if (webSettings.has("show_sensitive_telementry_data")) {
+			showSensitiveTelementryData = webSettings.getBoolean("show_sensitive_telementry_data");
+		}
 
 		if (config.has("no_teams")) {
 			noTeamsMode = config.getBoolean("no_teams");

@@ -24,7 +24,8 @@
 				"password": "admin"
 			}
 		],
-		"api_keys": []
+		"api_keys": [],
+		"show_sensitive_telementry_data": false
 	},
 	"quick_messages": [
 		"hello world"

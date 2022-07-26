@@ -108,6 +108,14 @@ public class GameListeners extends NovaModule implements Listener {
 		List<GameSpecificTelementryModule> providersToLoad = TELEMENTRY_METADATA_PROVIDERS.stream().filter(p -> p.getGameName().equals(name)).collect(Collectors.toList());
 		providersToLoad.forEach(p -> {
 			Class<? extends ITelementryMetadataProvider> clazz = p.getProviderClass();
+
+			if (p.isSensitive()) {
+				if (!TournamentSystem.getInstance().isShowSensitiveTelementryData()) {
+					Log.info(getName(), "Ignoring metadata provider " + clazz.getName() + " since sentitive metadata is disabled");
+					return;
+				}
+			}
+
 			try {
 				ITelementryMetadataProvider provider = clazz.getConstructor().newInstance();
 

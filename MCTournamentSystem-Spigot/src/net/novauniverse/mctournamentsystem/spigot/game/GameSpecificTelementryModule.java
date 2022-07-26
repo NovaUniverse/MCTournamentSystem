@@ -5,10 +5,16 @@ import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.IT
 public class GameSpecificTelementryModule {
 	private Class<? extends ITelementryMetadataProvider> providerClass;
 	private String gameName;
+	private boolean sensitive;
 
 	public GameSpecificTelementryModule(String gameName, Class<? extends ITelementryMetadataProvider> providerClass) {
+		this(gameName, providerClass, false);
+	}
+
+	public GameSpecificTelementryModule(String gameName, Class<? extends ITelementryMetadataProvider> providerClass, boolean sensitive) {
 		this.gameName = gameName;
 		this.providerClass = providerClass;
+		this.sensitive = sensitive;
 	}
 
 	public Class<? extends ITelementryMetadataProvider> getProviderClass() {
@@ -17,5 +23,9 @@ public class GameSpecificTelementryModule {
 
 	public String getGameName() {
 		return gameName;
+	}
+
+	public boolean isSensitive() {
+		return sensitive;
 	}
 }
