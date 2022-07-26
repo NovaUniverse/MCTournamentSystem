@@ -67,6 +67,7 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.language.LanguageReader;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
@@ -577,12 +578,15 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		/* ----- Music ----- */
 		if (config.has("music")) {
 			JSONObject musicConfig = config.getJSONObject("music");
-			if (musicConfig.has("game_end_nbs")) {
-				String endNBSFile = musicConfig.getString("game_end_nbs");
-				if (endNBSFile.length() > 0) {
-					Log.info(getName(), "Loading game end soundtrack " + endNBSFile);
-					gameEndMusic = NBSDecoder.parse(getNBSFile(endNBSFile));
-					ModuleManager.loadModule(this, GameEndSoundtrackManager.class, true);
+
+			if (NovaCore.isNovaGameEngineEnabled()) {
+				if (musicConfig.has("game_end_nbs")) {
+					String endNBSFile = musicConfig.getString("game_end_nbs");
+					if (endNBSFile.length() > 0) {
+						Log.info(getName(), "Loading game end soundtrack " + endNBSFile);
+						gameEndMusic = NBSDecoder.parse(getNBSFile(endNBSFile));
+						ModuleManager.loadModule(this, GameEndSoundtrackManager.class, true);
+					}
 				}
 			}
 		}
