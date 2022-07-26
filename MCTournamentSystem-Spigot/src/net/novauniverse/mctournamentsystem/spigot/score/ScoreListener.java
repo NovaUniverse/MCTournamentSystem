@@ -82,10 +82,10 @@ public class ScoreListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerEliminated(PlayerEliminatedEvent e) {
-		if(TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
+		if (TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
 			return;
 		}
-		
+
 		Log.trace("ScoreListener", "PlayerEliminatedEvent. " + e.getPlayer().getUniqueId());
 		if (participationScoreEnabled) {
 			if (GameManager.getInstance().hasGame()) {
@@ -145,10 +145,10 @@ public class ScoreListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onTeamEliminated(TeamEliminatedEvent e) {
-		if(TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
+		if (TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
 			return;
 		}
-		
+
 		Log.trace("ScoreListener", "TeamEliminatedEvent. " + e.getTeam().getTeamUuid());
 		if (winScoreEnabled) {
 			if (e.getPlacement() > 1) {
@@ -159,20 +159,20 @@ public class ScoreListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onTeamWin(TeamWinEvent e) {
-		if(TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
+		if (TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
 			return;
 		}
-		
+
 		Log.trace("ScoreListener", "TeamWinEvent called");
 		addTeamPlacementScore(e.getTeam(), 1);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerWin(PlayerWinEvent e) {
-		if(TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
+		if (TournamentSystem.getInstance().isBuiltInScoreSystemDisabled()) {
 			return;
 		}
-		
+
 		Log.trace("ScoreListener", "PlayerWinEvent called");
 		addPlayerPlacementScore(e.getPlayer(), 1);
 	}

@@ -54,31 +54,31 @@ public class ScoreManager extends NovaModule implements Listener {
 
 	@Override
 	public void onEnable() {
-		if(fastUpdate != null) {
+		if (fastUpdate != null) {
 			Task.tryStartTask(fastUpdate);
 		}
-		
-		if(slowUpdate != null) {
+
+		if (slowUpdate != null) {
 			Task.tryStartTask(slowUpdate);
 		}
-		
-		fastUpdate = new SimpleTask(getPlugin(), new Runnable() {			
+
+		fastUpdate = new SimpleTask(getPlugin(), new Runnable() {
 			@Override
 			public void run() {
 				Bukkit.getServer().getOnlinePlayers().forEach(player -> asyncScoreUpdate(player.getUniqueId()));
 			}
 		}, 40L);
-		
-		slowUpdate = new SimpleTask(getPlugin(), new Runnable() {			
+
+		slowUpdate = new SimpleTask(getPlugin(), new Runnable() {
 			@Override
 			public void run() {
 				asyncUpdateAll();
 			}
 		}, 20 * 60);
-		
+
 		Task.tryStartTask(fastUpdate);
 		Task.tryStartTask(slowUpdate);
-		
+
 		asyncUpdateAll();
 	}
 
@@ -87,22 +87,6 @@ public class ScoreManager extends NovaModule implements Listener {
 		Task.tryStopTask(fastUpdate);
 		Task.tryStopTask(slowUpdate);
 	}
-
-	/*
-	 * public int updatePlayerScore(UUID uuid) { int score = 0; try { String sql =
-	 * "SELECT score FROM players WHERE uuid = ?"; PreparedStatement ps =
-	 * TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(
-	 * sql);
-	 * 
-	 * ps.setString(1, uuid.toString());
-	 * 
-	 * ResultSet rs = ps.executeQuery(); if (rs.next()) { score =
-	 * rs.getInt("score"); playerScoreCache.put(uuid, score); }
-	 * 
-	 * rs.close(); ps.close(); } catch (Exception e) { e.printStackTrace();
-	 * Log.warn("ScoreManager", "Failed to fetch the score of player with uuid: " +
-	 * uuid.toString()); } return score; }
-	 */
 
 	public void asyncScoreUpdate(UUID uuid) {
 		new BukkitRunnable() {
@@ -156,22 +140,6 @@ public class ScoreManager extends NovaModule implements Listener {
 		}.runTaskAsynchronously(TournamentSystem.getInstance());
 	}
 
-	/*
-	 * public int updatePlayerScore(UUID uuid) { int score = 0; try { String sql =
-	 * "SELECT score FROM players WHERE uuid = ?"; PreparedStatement ps =
-	 * TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(
-	 * sql);
-	 * 
-	 * ps.setString(1, uuid.toString());
-	 * 
-	 * ResultSet rs = ps.executeQuery(); if (rs.next()) { score =
-	 * rs.getInt("score"); playerScoreCache.put(uuid, score); }
-	 * 
-	 * rs.close(); ps.close(); } catch (Exception e) { e.printStackTrace();
-	 * Log.warn("ScoreManager", "Failed to fetch the score of player with uuid: " +
-	 * uuid.toString()); } return score; }
-	 */
-
 	public HashMap<UUID, Integer> getPlayerScoreCache() {
 		return playerScoreCache;
 	}
@@ -185,7 +153,7 @@ public class ScoreManager extends NovaModule implements Listener {
 			return playerScoreCache.get(uuid);
 		}
 
-		return 0;// updatePlayerScore(uuid);
+		return 0; // Return 0 until we successfully fetch the correct score
 	}
 
 	public void addPlayerScore(OfflinePlayer player, int score) {
@@ -202,7 +170,7 @@ public class ScoreManager extends NovaModule implements Listener {
 
 	public int getTeamScore(TournamentSystemTeam team) {
 		if (team == null) {
-			return 0;
+			return 0; // No team, score is 0
 		}
 
 		return team.getScore();

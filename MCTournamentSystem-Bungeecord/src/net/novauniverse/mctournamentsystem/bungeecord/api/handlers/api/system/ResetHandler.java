@@ -55,7 +55,7 @@ public class ResetHandler extends APIEndpoint {
 		}
 
 		MissingTeamFixer.fixTeams();
-		
+
 		json.put("success", success);
 
 		return json;

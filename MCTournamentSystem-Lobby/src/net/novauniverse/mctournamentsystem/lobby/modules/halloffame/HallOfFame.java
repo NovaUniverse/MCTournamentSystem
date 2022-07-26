@@ -73,7 +73,7 @@ public class HallOfFame extends NovaModule {
 		if (initialized) {
 			this.config.getNpcs().forEach(npc -> {
 				npc.getNPC().destroy();
-				
+
 				CitizensAPI.getNPCRegistry().deregister(npc.getNPC());
 			});
 			this.config.getNpcs().clear();

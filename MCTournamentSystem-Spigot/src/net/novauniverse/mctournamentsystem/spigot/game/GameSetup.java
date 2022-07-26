@@ -49,13 +49,13 @@ public class GameSetup {
 
 		dataFileDirectory.mkdirs();
 		worldFileDirectory.mkdirs();
-		
+
 		GameLobby.getInstance().getMapReader().loadAll(dataFileDirectory, worldFileDirectory);
 		GameLobby.getInstance().setMapSelector(new RandomLobbyMapSelector());
 
 		Log.success("GameSetup", "Game support enabled");
 	}
-	
+
 	public static void disableEliminationMessages() {
 		GameManager.getInstance().setTeamEliminationMessage(new NOPEliminationMessage());
 		GameManager.getInstance().setPlayerEliminationMessage(new NOPEliminationMessage());

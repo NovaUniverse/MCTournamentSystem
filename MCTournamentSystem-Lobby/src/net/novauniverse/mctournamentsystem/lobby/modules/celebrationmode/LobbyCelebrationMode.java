@@ -24,7 +24,7 @@ public class LobbyCelebrationMode extends NovaModule implements Listener {
 	public void onLoad() {
 		this.random = new Random();
 	}
-	
+
 	public LobbyCelebrationMode() {
 		super("TournamentSystem.Lobby.CelebrationMode");
 	}

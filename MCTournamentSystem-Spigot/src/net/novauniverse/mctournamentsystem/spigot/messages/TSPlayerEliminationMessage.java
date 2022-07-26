@@ -12,7 +12,7 @@ public class TSPlayerEliminationMessage implements PlayerEliminationMessage {
 	@Override
 	public void showPlayerEliminatedMessage(OfflinePlayer player, Entity killer, PlayerEliminationReason reason, int placement) {
 		String message = TournamentSystem.getInstance().getPlayerEliminationMessageProvider().getEliminationMessage(player, killer, reason, placement);
-		//Log.trace("TSPlayerEliminationMessage", "Using message: " + message);
+		// Log.trace("TSPlayerEliminationMessage", "Using message: " + message);
 		Bukkit.getServer().broadcastMessage(message);
 	}
 }

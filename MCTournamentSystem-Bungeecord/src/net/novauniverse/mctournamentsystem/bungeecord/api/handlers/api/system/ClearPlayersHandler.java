@@ -35,7 +35,7 @@ public class ClearPlayersHandler extends APIEndpoint {
 			json.put("error", e.getClass().getName());
 			json.put("message", e.getClass().getName() + " " + e.getMessage());
 		}
-		
+
 		MissingTeamFixer.fixTeams();
 
 		return json;
