@@ -1,7 +1,10 @@
 package net.novauniverse.mctournamentsystem.spigot;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +73,6 @@ import net.zeeraa.novacore.spigot.permission.PermissionRegistrator;
 public class TournamentSystem extends JavaPlugin implements Listener {
 	private static TournamentSystem instance;
 
-	private File sqlFixFile;
 	private TournamentSystemTeamManager teamManager;
 	private String serverName;
 	private String lobbyServer;
@@ -103,7 +105,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private Map<String, Group> staffGroups;
 	private Group defaultGroup;
 
+	private File sqlFixFile;
 	private File mapDataFolder;
+	private File nbsFolder;
 
 	private boolean forceShowTeamNameInLeaderboard;
 	private boolean makeTeamNamesBold;
@@ -259,6 +263,41 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return globalConfigPath;
 	}
 
+	public File getNBSFolder() {
+		return nbsFolder;
+	}
+
+	public File getNBSFile(String name) {
+		return new File(getNBSFolder().getAbsolutePath() + File.separator + name);
+	}
+
+	public String getServerName() {
+		return serverName;
+	}
+
+	public String getLobbyServer() {
+		return lobbyServer;
+	}
+
+	public int[] getWinScore() {
+		return winScore;
+	}
+
+	public String readResourceFromJARAsString(String filename) throws IOException {
+		InputStream is = getClass().getResourceAsStream(filename);
+		InputStreamReader isr = new InputStreamReader(is);
+		BufferedReader br = new BufferedReader(isr);
+		StringBuffer sb = new StringBuffer();
+		String line;
+		while ((line = br.readLine()) != null) {
+			sb.append(line);
+		}
+		br.close();
+		isr.close();
+		is.close();
+		return sb.toString();
+	}
+
 	@Override
 	public void onEnable() {
 		// Init session id
@@ -297,6 +336,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		// new File(new
 		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
 
+		this.nbsFolder = new File(TournamentSystem.getInstance().getGlobalConfigPath() + File.separator + "nbs");
+		this.nbsFolder.mkdirs();
+
 		this.mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
 		TeamOverrides.readOverrides(getDataFolder());
@@ -305,6 +347,13 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		JSONObject config;
 		try {
 			if (!configFile.exists()) {
+				Log.warn("TournamentSystem", "Config file " + configFile.getAbsolutePath() + " does not exits. Attempting to create it...");
+
+				String defaultConfig = readResourceFromJARAsString("/default_config.json");
+				JSONFileUtils.saveJson(configFile, new JSONObject(defaultConfig), 4);
+			}
+
+			if (!configFile.exists()) {
 				Log.fatal("TournamentSystem", "Config file not found at " + configFile.getAbsolutePath());
 				Bukkit.getPluginManager().disablePlugin(this);
 				return;
@@ -312,7 +361,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 			config = JSONFileUtils.readJSONObjectFromFile(configFile);
 		} catch (Exception e) {
-			Log.fatal("TournamentSystem", "Failed to parse the config file at " + configFile.getAbsolutePath());
+			Log.fatal("TournamentSystem", "Failed to parse/save the config file at " + configFile.getAbsolutePath());
 			e.printStackTrace();
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
@@ -533,17 +582,5 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public void onDisable() {
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
-	}
-
-	public String getServerName() {
-		return serverName;
-	}
-
-	public String getLobbyServer() {
-		return lobbyServer;
-	}
-
-	public int[] getWinScore() {
-		return winScore;
 	}
 }

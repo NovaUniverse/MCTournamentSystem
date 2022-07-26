@@ -23,6 +23,8 @@
 				<includes>
 					<include>plugin.yml</include>
 					<include>config.yml</include>
+					
+					<include>default_config.json</include>
 
 					<include>lang/en-us.json</include>
 				</includes>

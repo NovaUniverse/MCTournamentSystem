@@ -118,7 +118,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		JSONObject config;
 		try {
 			if (!configFile.exists()) {
-				Log.fatal("TournamentSystem", "Config file not found at " + configFile.getAbsolutePath());
+				Log.fatal("TournamentSystem", "Config file not found at " + configFile.getAbsolutePath() + ". Start the lobby once to generate a default config file");
 				ProxyServer.getInstance().stop("Failed to enable tournament system: No config file found");
 				return;
 			}

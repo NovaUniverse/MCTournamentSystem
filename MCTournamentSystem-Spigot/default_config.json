@@ -1,0 +1,49 @@
+{
+	"database": {
+		"mysql": {
+			"driver": "com.mysql.jdbc.Driver",
+			"host": "jdbc:mysql://localhost",
+			"username": "root",
+			"password": "root",
+			"database": "tournamentsystem"
+		}
+	},
+	"staff_roles": [
+		"commentator",
+		"staff",
+		"moderator",
+		"helper",
+		"host"
+	],
+	"web_ui": {
+		"port": 8080,
+		"development_mode": false,
+		"users": [
+			{
+				"username": "admin",
+				"password": "admin"
+			}
+		],
+		"api_keys": []
+	},
+	"quick_messages": [
+		"hello world"
+	],
+	"commentator_keys": {
+	},
+	"lobby_server": "lobby",
+	"team_size": 24,
+	"labymod_banner": {
+		"enabled": false,
+		"url": ""
+	},
+	"phpmyadmin_url": "http://localhost/mysql",
+	"extended_spawn_locations": true,
+	"celebration_mode": false,
+	"replace_ez": true,
+	"no_teams": false,
+	"open_mode": false,
+	"force_show_team_name_in_leaderboard": false,
+	"make_team_names_bold": false,
+	"resource_pack": ""
+}
