@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers;
+package net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.tnttag;
 
 import org.bukkit.entity.Player;
 import org.json.JSONObject;

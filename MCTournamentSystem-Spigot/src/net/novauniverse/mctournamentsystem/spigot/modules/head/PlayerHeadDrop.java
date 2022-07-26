@@ -19,7 +19,7 @@ public class PlayerHeadDrop extends NovaModule implements Listener {
 	public PlayerHeadDrop() {
 		super("TournamentSystem.PlayerHeadDrop");
 	}
-	
+
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		Player p = e.getEntity();

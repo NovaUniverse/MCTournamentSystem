@@ -10,6 +10,7 @@ import net.zeeraa.novacore.spigot.teams.Team;
 
 /**
  * Used to hide elimination messages
+ * 
  * @author Zeeraa
  *
  */

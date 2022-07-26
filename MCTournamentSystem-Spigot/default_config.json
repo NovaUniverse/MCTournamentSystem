@@ -24,7 +24,8 @@
 				"password": "admin"
 			}
 		],
-		"api_keys": []
+		"api_keys": [],
+		"show_sensitive_telementry_data": false
 	},
 	"quick_messages": [
 		"hello world"
@@ -36,6 +37,9 @@
 	"labymod_banner": {
 		"enabled": false,
 		"url": ""
+	},
+	"music": {
+		"game_end_nbs": "" 
 	},
 	"phpmyadmin_url": "http://localhost/mysql",
 	"extended_spawn_locations": true,

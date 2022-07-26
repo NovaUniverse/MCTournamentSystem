@@ -24,7 +24,7 @@ public class EdibleHeads extends NovaModule implements Listener {
 	public EdibleHeads() {
 		super("TournamentSystem.EdibleHeads");
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e) {
@@ -59,7 +59,7 @@ public class EdibleHeads extends NovaModule implements Listener {
 							VersionIndependentUtils.get().setItemInMainHand(player, ItemBuilder.AIR);
 						}
 
-						//p.getLocation().getWorld().playSound(p.getLocation(), Sound.EAT, 1F, 1F);
+						// p.getLocation().getWorld().playSound(p.getLocation(), Sound.EAT, 1F, 1F);
 						VersionIndependentSound.EAT.play(player);
 						player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 10 * 20, 0));
 					}

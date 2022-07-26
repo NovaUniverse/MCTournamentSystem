@@ -27,6 +27,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.xxmicloxx.NoteBlockAPI.model.Song;
+import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
+
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -39,7 +42,6 @@ import net.novauniverse.mctournamentsystem.spigot.command.copylocation.CopyLocat
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
-import net.novauniverse.mctournamentsystem.spigot.command.misc.WhatIsDogeWorthCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.respawnplayer.RespawnPlayerCommand;
@@ -48,6 +50,7 @@ import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.ITournamentSystemPlayerEliminationMessageProvider;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.TournamentSystemDefaultPlayerEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.misc.GameEndSoundtrackManager;
 import net.novauniverse.mctournamentsystem.spigot.game.util.DefaultPlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
@@ -64,6 +67,7 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.language.LanguageReader;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
@@ -108,6 +112,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private File sqlFixFile;
 	private File mapDataFolder;
 	private File nbsFolder;
+	private File globalDataFolder;
 
 	private boolean forceShowTeamNameInLeaderboard;
 	private boolean makeTeamNamesBold;
@@ -120,6 +125,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private String resourcePackUrl;
 
 	private PlayerEliminatedTitleProvider playerEliminatedTitleProvider;
+
+	private boolean showSensitiveTelementryData;
+
+	private Song gameEndMusic;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -172,11 +181,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public boolean isReplaceEz() {
 		return replaceEz;
-	}
-
-	@Override
-	public void onLoad() {
-		System.out.println("TournamentSystem#onLoad()");
 	}
 
 	public ITournamentSystemPlayerEliminationMessageProvider getPlayerEliminationMessageProvider() {
@@ -283,6 +287,18 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return winScore;
 	}
 
+	public File getGlobalDataFolder() {
+		return globalDataFolder;
+	}
+
+	public boolean isShowSensitiveTelementryData() {
+		return showSensitiveTelementryData;
+	}
+
+	public Song getGameEndMusic() {
+		return gameEndMusic;
+	}
+
 	public String readResourceFromJARAsString(String filename) throws IOException {
 		InputStream is = getClass().getResourceAsStream(filename);
 		InputStreamReader isr = new InputStreamReader(is);
@@ -328,20 +344,21 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.resourcePackUrl = null;
 
+		this.showSensitiveTelementryData = false;
+
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
 
 		globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
-		// new File(new
-		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
 
 		this.nbsFolder = new File(TournamentSystem.getInstance().getGlobalConfigPath() + File.separator + "nbs");
 		this.nbsFolder.mkdirs();
 
+		this.globalDataFolder = new File(globalConfigPath);
 		this.mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
-		TeamOverrides.readOverrides(getDataFolder());
+		TeamOverrides.readOverrides(globalDataFolder);
 
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;
@@ -431,6 +448,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		replaceEz = config.getBoolean("replace_ez");
 
 		chickenOutFeatherScoreMultiplier = getConfig().getDouble("chicken_out_feather_score_multiplier");
+
+		JSONObject webSettings = config.getJSONObject("web_ui");
+		if (webSettings.has("show_sensitive_telementry_data")) {
+			showSensitiveTelementryData = webSettings.getBoolean("show_sensitive_telementry_data");
+		}
 
 		if (config.has("no_teams")) {
 			noTeamsMode = config.getBoolean("no_teams");
@@ -544,7 +566,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new PurgeCacheCommand());
 		CommandRegistry.registerCommand(new ReconnectCommand());
 		CommandRegistry.registerCommand(new YBorderCommand());
-		CommandRegistry.registerCommand(new WhatIsDogeWorthCommand());
 		CommandRegistry.registerCommand(new CSPCommand());
 		CommandRegistry.registerCommand(new CTPCommand());
 		CommandRegistry.registerCommand(new BCCommand());
@@ -553,6 +574,22 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		/* ----- Permissions ----- */
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commantator access", PermissionDefault.FALSE);
+
+		/* ----- Music ----- */
+		if (config.has("music")) {
+			JSONObject musicConfig = config.getJSONObject("music");
+
+			if (NovaCore.isNovaGameEngineEnabled()) {
+				if (musicConfig.has("game_end_nbs")) {
+					String endNBSFile = musicConfig.getString("game_end_nbs");
+					if (endNBSFile.length() > 0) {
+						Log.info(getName(), "Loading game end soundtrack " + endNBSFile);
+						gameEndMusic = NBSDecoder.parse(getNBSFile(endNBSFile));
+						ModuleManager.loadModule(this, GameEndSoundtrackManager.class, true);
+					}
+				}
+			}
+		}
 
 		/* ----- Misc ----- */
 		if (replaceEz) {

@@ -1,7 +1,10 @@
 package net.novauniverse.mctournamentsystem.spigot.game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -23,6 +26,11 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgame
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.tnttag.TNTTagManager;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabListMessage;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.ITelementryMetadataProvider;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.behindyourtail.BehindYourTailMetadataProvider;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.common.PlayerYMetadataProvider;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.tnttag.TNTTagMetadataProvider;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
@@ -44,6 +52,7 @@ import net.zeeraa.novacore.spigot.utils.BungeecordUtils;
 
 public class GameListeners extends NovaModule implements Listener {
 	public static final Map<String, Class<? extends NovaModule>> GAME_SPECIFIC_MODULES = new HashMap<>();
+	public static final List<GameSpecificTelementryModule> TELEMENTRY_METADATA_PROVIDERS = new ArrayList<>();
 
 	static {
 		// Original MCF games
@@ -58,7 +67,18 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("behindyourtail", BehindYourTailManager.class);
 		GAME_SPECIFIC_MODULES.put("ng_hive", HiveManager.class);
 		GAME_SPECIFIC_MODULES.put("parkour_race", ParkourRaceManager.class);
+	}
 
+	static {
+		// TNT tag state
+		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("tnttag", TNTTagMetadataProvider.class));
+
+		// Y location
+		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("tntrun", PlayerYMetadataProvider.class));
+		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("spleef", PlayerYMetadataProvider.class));
+
+		// Hunter or fox
+		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("behindyourtail", BehindYourTailMetadataProvider.class));
 	}
 
 	public GameListeners() {
@@ -79,6 +99,29 @@ public class GameListeners extends NovaModule implements Listener {
 				Log.error(getName(), "Failed to enable game specific module: " + clazz.getName());
 			}
 		}
+
+		List<GameSpecificTelementryModule> providersToLoad = TELEMENTRY_METADATA_PROVIDERS.stream().filter(p -> p.getGameName().equals(name)).collect(Collectors.toList());
+		providersToLoad.forEach(p -> {
+			Class<? extends ITelementryMetadataProvider> clazz = p.getProviderClass();
+
+			if (p.isSensitive()) {
+				if (!TournamentSystem.getInstance().isShowSensitiveTelementryData()) {
+					Log.info(getName(), "Ignoring metadata provider " + clazz.getName() + " since sentitive metadata is disabled");
+					return;
+				}
+			}
+
+			try {
+				ITelementryMetadataProvider provider = clazz.getConstructor().newInstance();
+
+				Log.info(getName(), "Adding telementry metadata provider " + provider.getClass().getName());
+
+				PlayerTelementryManager.getInstance().addMetadataProvider(provider);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				Log.error(getName(), "Failed to enable telementry metadata provider: " + clazz.getName());
+			}
+		});
 
 		Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
 	}

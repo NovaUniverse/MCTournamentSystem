@@ -65,9 +65,9 @@ public class PlayerTelementryManager implements Listener {
 							pData.setInGame(in.readBoolean());
 
 							pData.setServer(player.getServer().getInfo().getName());
-							
+
 							JSONObject metadata = new JSONObject(in.readUTF());
-							
+
 							pData.setMetadata(metadata);
 						}
 

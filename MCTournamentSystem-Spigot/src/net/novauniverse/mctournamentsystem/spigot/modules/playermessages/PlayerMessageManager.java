@@ -16,7 +16,7 @@ public class PlayerMessageManager extends NovaModule implements Listener {
 	public PlayerMessageManager() {
 		super("TournamentSystem.PlayerMessageManager");
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
