@@ -39,7 +39,6 @@ import net.novauniverse.mctournamentsystem.spigot.command.copylocation.CopyLocat
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
-import net.novauniverse.mctournamentsystem.spigot.command.misc.WhatIsDogeWorthCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.respawnplayer.RespawnPlayerCommand;
@@ -333,8 +332,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
 
 		globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
-		// new File(new
-		// File(getDataFolder().getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath()).getParentFile().getAbsolutePath();
 
 		this.nbsFolder = new File(TournamentSystem.getInstance().getGlobalConfigPath() + File.separator + "nbs");
 		this.nbsFolder.mkdirs();
@@ -545,7 +542,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new PurgeCacheCommand());
 		CommandRegistry.registerCommand(new ReconnectCommand());
 		CommandRegistry.registerCommand(new YBorderCommand());
-		CommandRegistry.registerCommand(new WhatIsDogeWorthCommand());
 		CommandRegistry.registerCommand(new CSPCommand());
 		CommandRegistry.registerCommand(new CTPCommand());
 		CommandRegistry.registerCommand(new BCCommand());
