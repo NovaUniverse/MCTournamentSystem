@@ -29,7 +29,6 @@ import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabList
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.ITelementryMetadataProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.behindyourtail.BehindYourTailMetadataProvider;
-import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.common.PlayerHungerProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.common.PlayerYMetadataProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.tnttag.TNTTagMetadataProvider;
 import net.zeeraa.novacore.commons.log.Log;
@@ -77,10 +76,6 @@ public class GameListeners extends NovaModule implements Listener {
 		// Y location
 		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("tntrun", PlayerYMetadataProvider.class));
 		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("spleef", PlayerYMetadataProvider.class));
-
-		// Hunger
-		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("survivalgames", PlayerHungerProvider.class));
-		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("skywars", PlayerHungerProvider.class));
 
 		// Hunter or fox
 		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("behindyourtail", BehindYourTailMetadataProvider.class));
