@@ -27,6 +27,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.xxmicloxx.NoteBlockAPI.model.Song;
+import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
+
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -47,6 +50,7 @@ import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.ITournamentSystemPlayerEliminationMessageProvider;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.TournamentSystemDefaultPlayerEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.misc.GameEndSoundtrackManager;
 import net.novauniverse.mctournamentsystem.spigot.game.util.DefaultPlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
@@ -122,6 +126,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private PlayerEliminatedTitleProvider playerEliminatedTitleProvider;
 
 	private boolean showSensitiveTelementryData;
+
+	private Song gameEndMusic;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -286,6 +292,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public boolean isShowSensitiveTelementryData() {
 		return showSensitiveTelementryData;
+	}
+
+	public Song getGameEndMusic() {
+		return gameEndMusic;
 	}
 
 	public String readResourceFromJARAsString(String filename) throws IOException {
@@ -563,6 +573,19 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		/* ----- Permissions ----- */
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commantator access", PermissionDefault.FALSE);
+
+		/* ----- Music ----- */
+		if (config.has("music")) {
+			JSONObject musicConfig = config.getJSONObject("music");
+			if (musicConfig.has("game_end_nbs")) {
+				String endNBSFile = musicConfig.getString("game_end_nbs");
+				if (endNBSFile.length() > 0) {
+					Log.info(getName(), "Loading game end soundtrack " + endNBSFile);
+					gameEndMusic = NBSDecoder.parse(getNBSFile(endNBSFile));
+					ModuleManager.loadModule(this, GameEndSoundtrackManager.class, true);
+				}
+			}
+		}
 
 		/* ----- Misc ----- */
 		if (replaceEz) {

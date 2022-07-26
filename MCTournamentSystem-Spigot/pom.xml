@@ -23,7 +23,7 @@
 				<includes>
 					<include>plugin.yml</include>
 					<include>config.yml</include>
-					
+
 					<include>default_config.json</include>
 
 					<include>lang/en-us.json</include>
@@ -78,7 +78,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.3.1</version>
@@ -92,7 +92,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<!-- explicitly define maven-deploy-plugin after other to force exec 
 					order -->
@@ -164,21 +164,21 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>NovaSurvivalGames</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>NovaTNTTag</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>NovaDropper</artifactId>
@@ -243,6 +243,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.xxmicloxx</groupId>
+			<artifactId>NoteBlockAPI</artifactId>
+			<version>1.6.2-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>com.github.ConnorLinfoot</groupId>
 			<artifactId>TitleAPI</artifactId>
 			<version>1.7.6</version>
@@ -269,28 +276,28 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>ChickenOut</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>Hive</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>BehindYourTail</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>NovaParkourRace</artifactId>
