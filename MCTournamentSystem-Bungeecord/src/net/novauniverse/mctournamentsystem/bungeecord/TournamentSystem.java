@@ -199,7 +199,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		JSONArray webUsers = webConfig.getJSONArray("users");
 
 		if (webUsers.length() == 0) {
-			Log.warn("TournamentSystem", "No users defined for web server in " + configFile.getAbsolutePath() + ". The web ui might not work");
+			Log.warn("TournamentSystem", "No users defined for web server in " + configFile.getAbsolutePath() + ". The web ui wont be accessible unless you are in dev mode (and thats not a good idea for prod env)");
 		}
 
 		commentatorKeys.keySet().forEach(key -> {
