@@ -28,7 +28,7 @@ public class GameEndSoundtrackManager extends NovaModule implements Listener {
 		endSongPlayer = new RadioSongPlayer(TournamentSystem.getInstance().getGameEndMusic());
 		endSongPlayer.setRepeatMode(RepeatMode.NO);
 		endSongPlayer.setAutoDestroy(false);
-		endSongPlayer.setCategory(SoundCategory.RECORDS);
+		endSongPlayer.setCategory(SoundCategory.MASTER);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
