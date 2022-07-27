@@ -9,7 +9,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 public class TSPluginMessageListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPluginMessage(PluginMessageEvent e) {
-		if (e.getTag().equalsIgnoreCase(TournamentSystemCommons.DATA_CHANNEL)) {
+		if (e.getTag().equalsIgnoreCase(TournamentSystemCommons.DATA_CHANNEL) || e.getTag().equalsIgnoreCase(TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL)) {
 			e.setCancelled(true);
 		}
 	}
