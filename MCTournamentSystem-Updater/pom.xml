@@ -72,8 +72,8 @@
 
 	<repositories>
 		<repository>
-			<id>novauniverse-group</id>
-			<url>https://nexus.novauniverse.net/repository/novauniverse-group/</url>
+			<id>novauniverse2</id>
+			<url>https://nexus2.novauniverse.net/repository/novauniverse/</url>
 		</repository>
 	</repositories>
 
