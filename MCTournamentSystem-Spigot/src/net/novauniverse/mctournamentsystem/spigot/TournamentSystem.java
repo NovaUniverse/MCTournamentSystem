@@ -584,7 +584,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new CopyLocationCommand());
 
 		/* ----- Permissions ----- */
-		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commantator access", PermissionDefault.FALSE);
+		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commentator access", PermissionDefault.FALSE);
 
 		/* ----- Music ----- */
 		if (config.has("music")) {
