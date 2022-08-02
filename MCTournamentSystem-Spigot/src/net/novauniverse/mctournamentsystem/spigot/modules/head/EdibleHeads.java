@@ -17,6 +17,7 @@ import net.zeeraa.novacore.spigot.abstraction.enums.NovaCoreGameVersion;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
+import net.zeeraa.novacore.spigot.module.modules.customitems.CustomItemManager;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 
 @NovaAutoLoad(shouldEnable = false)
@@ -46,6 +47,10 @@ public class EdibleHeads extends NovaModule implements Listener {
 					if (item.getType().name().equals("PLAYER_HEAD")) {
 						isPlayerSkull = true;
 					}
+				}
+
+				if (CustomItemManager.getInstance().isCustomItem(e.getItem())) {
+					return;
 				}
 
 				if (isPlayerSkull) {
