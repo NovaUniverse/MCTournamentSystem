@@ -7,9 +7,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
+import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
-import net.novauniverse.mctournamentsystem.spigot.hastebin.Hastebin;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
+import net.zeeraa.novacore.commons.utils.Hastebin;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.debug.DebugCommandRegistrator;
 import net.zeeraa.novacore.spigot.debug.DebugTrigger;
@@ -36,13 +37,13 @@ public class DebugCommands {
 					data += "--------------------\n";
 				}
 
-				Hastebin hastebin = new Hastebin();
+				Hastebin hastebin = new Hastebin(TournamentSystemCommons.HASTEBIN_BASE_URL);
 
 				try {
 					String url = hastebin.post(data, true);
 					sender.sendMessage(ChatColor.GREEN + "Data dump complete. " + url);
 				} catch (Exception e) {
-					sender.sendMessage(ChatColor.DARK_RED + "Failed to post data. " + e.getClass().getName() + " " + e.getMessage() + ". Check if " + Hastebin.HASTEBIN_BASE_URL + " is working");
+					sender.sendMessage(ChatColor.DARK_RED + "Failed to post data. " + e.getClass().getName() + " " + e.getMessage() + ". Check if " + hastebin.getBaseUrl() + " is working");
 					sender.sendMessage(ChatColor.GREEN + "Data dump sent in the console due to the server not being able to post the data on hastebin");
 					Bukkit.getServer().getConsoleSender().sendMessage(data);
 					e.printStackTrace();

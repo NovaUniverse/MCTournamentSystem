@@ -10,6 +10,7 @@ import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.log.Log;
 
 public class TournamentSystemCommons {
+	public static final String HASTEBIN_BASE_URL = "https://hastebin.novauniverse.net";
 	public static final char CHAT_COLOR_CHAR = (char) 0xA7;
 	public static final String DATA_CHANNEL = "mcts:controller";
 	public static final String PLAYER_TELEMENTRY_CHANNEL = "mcts:ptelementry";
