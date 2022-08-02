@@ -58,8 +58,11 @@ public class GoldenHead extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPlace(BlockPlaceEvent e) {
-		if (NBTEditor.contains(e.getItemInHand(), "tournamentsystem", "goldenhead")) {
-			e.setCancelled(true);
+		ItemStack item = VersionIndependentUtils.get().getItemInMainHand(e.getPlayer());
+		if (item != null) {
+			if (NBTEditor.contains(item, "tournamentsystem", "goldenhead")) {
+				e.setCancelled(true);
+			}
 		}
 	}
 
