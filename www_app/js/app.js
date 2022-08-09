@@ -223,23 +223,29 @@ $(function () {
 	});
 
 	$("#btn_search_staff_user").on("click", function () {
-		$.getJSON("https://novauniverse.net/api/private/mojang/name_to_uuid/" + $("#tbx_add_staff_username").val(), function (data) {
-			if (data.data == null) {
-				toastr.error("User not found");
-				return;
-			}
-
-			let uuid = data.data.full_uuid;
+		$.getJSON("https://mojangapi.novauniverse.net/username_to_uuid/" + $("#tbx_add_staff_username").val(), function (data) {
+			let uuid = data.uuid;
 
 			TournamentSystem.addStaffUUID = uuid;
-			TournamentSystem.addStaffUsername = data.data.name;
 
-			$("#add_staff_username").text(data.name);
-			$("#add_staff_uuid").text(uuid);
-			$("#add_staff_head").attr("src", "https://mc-heads.net/avatar/" + uuid)
+			$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (profileData) {
+				TournamentSystem.addStaffUsername = profileData.data.name;
 
-			$("#add_staff_modal").modal("hide");
-			$("#add_staff_role_modal").modal("show");
+				$("#add_staff_username").text(TournamentSystem.addStaffUsername);
+				$("#add_staff_uuid").text(uuid);
+				$("#add_staff_head").attr("src", "https://mc-heads.net/avatar/" + uuid)
+
+				$("#add_staff_modal").modal("hide");
+				$("#add_staff_role_modal").modal("show");
+			});
+		}).fail(function (e) {
+			if (e.status == 404) {
+				toastr.error("Could not find player")
+			} else if (e.status == 400) {
+				toastr.error("Invalid username")
+			} else {
+				toastr.error("Failed to fetch data from https://mojangapi.novauniverse.net")
+			}
 		});
 	});
 
@@ -264,13 +270,8 @@ $(function () {
 	$("#btn_search_whitelist_user").on("click", function () {
 		let username = $("#tbx_add_whitlelist_username").val();
 
-		$.getJSON("https://novauniverse.net/api/private/mojang/name_to_uuid/" + username, function (data) {
-			if (data.data == null) {
-				toastr.error("User not found");
-				return;
-			}
-
-			let uuid = data.data.full_uuid;
+		$.getJSON("https://mojangapi.novauniverse.net/username_to_uuid/" + username, function (data) {
+			let uuid = data.uuid;
 
 			$.getJSON("/api/whitelist/add?access_token=" + TournamentSystem.token + "&uuid=" + uuid, function (data) {
 				if (data.success) {
@@ -280,6 +281,14 @@ $(function () {
 					toastr.error("Failed to add user. " + data.message);
 				}
 			});
+		}).fail(function (e) {
+			if(e.status == 404) {
+				toastr.error("Could not find player")
+			} else if(e.status == 400) {
+				toastr.error("Invalid username")
+			} else {
+				toastr.error("Failed to fetch data from https://mojangapi.novauniverse.net")
+			}
 		});
 	});
 
@@ -563,8 +572,8 @@ const TournamentSystem = {
 			});
 
 
-			$.getJSON("https://novauniverse.net/api/private/mojang/profile/" + uuid, function (data) {
-				newElement.find(".staff-name").text(data.data.name);
+			$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (data) {
+				newElement.find(".staff-name").text(data.name);
 			});
 
 			$("#staff_tbody").append(newElement);
@@ -624,8 +633,8 @@ const TournamentSystem = {
 				newElem.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + uuid);
 				newElem.find(".uuid").text(uuid);
 
-				$.getJSON("https://novauniverse.net/api/private/mojang/profile/" + uuid, function (data) {
-					newElem.find(".name").text(data.data.name);
+				$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (data) {
+					newElem.find(".name").text(data.name);
 				});
 
 				newElem.find(".btn-whitelist-remove").on("click", function () {

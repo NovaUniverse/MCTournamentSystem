@@ -72,7 +72,7 @@ $(function () {
 		}
 	});
 
-	$("#btn_update_usernames").on("click", function() {
+	$("#btn_update_usernames").on("click", function () {
 		$.confirm({
 			title: 'Please confirm',
 			theme: 'dark',
@@ -274,35 +274,38 @@ function searchPlayer() {
 	let username = $("#add_player_username").val();
 
 	if (username.length > 0) {
-		$.getJSON("https://novauniverse.net/api/private/mojang/name_to_uuid/" + username, function (data) {
-			//console.log(data);
-			if (data.data != null) {
-				let uuid = data.data.full_uuid
-				//console.log("The uuid of " + username + " is " + uuid);
-				$.getJSON("https://novauniverse.net/api/private/mojang/profile/" + uuid, function (profileData) {
-					let realUsername = profileData.data.name;
+		$.getJSON("https://mojangapi.novauniverse.net/username_to_uuid/" + username, function (data) {
+			let uuid = data.uuid
+			//console.log("The uuid of " + username + " is " + uuid);
+			$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (profileData) {
+				let realUsername = profileData.name;
 
-					//console.log("The real username is " + realUsername);
+				//console.log("The real username is " + realUsername);
 
-					if (uuid == "980dbf7d-0904-426f-9c02-d9af3c099fb2") {
-						toastr.warning("Warning: This player has to be in team 4. NO EXCEPTIONS");
-					}
+				if (uuid == "980dbf7d-0904-426f-9c02-d9af3c099fb2") {
+					toastr.warning("Warning: This player has to be in team 4. NO EXCEPTIONS");
+				}
 
-					$("#preview_image").attr("src", "https://crafatar.com/avatars/" + uuid);
-					$("#preview_uuid").text(uuid);
-					$("#preview_username").text(realUsername);
+				$("#preview_image").attr("src", "https://crafatar.com/avatars/" + uuid);
+				$("#preview_uuid").text(uuid);
+				$("#preview_username").text(realUsername);
 
-					addPlayerUUID = uuid;
-					addPlayerUsername = realUsername;
+				addPlayerUUID = uuid;
+				addPlayerUsername = realUsername;
 
-					$("#btn_add_player").prop('disabled', false);
+				$("#btn_add_player").prop('disabled', false);
 
-					$("#player_preview_div").show();
+				$("#player_preview_div").show();
 
-					$("#btn_add_player").trigger('focus');
-				});
+				$("#btn_add_player").trigger('focus');
+			});
+		}).fail(function (e) {
+			if(e.status == 404) {
+				toastr.error("Could not find player")
+			} else if(e.status == 400) {
+				toastr.error("Invalid username")
 			} else {
-				toastr.error("Could not find player");
+				toastr.error("Failed to fetch data from https://mojangapi.novauniverse.net")
 			}
 		});
 	} else {
@@ -342,8 +345,8 @@ function updateUsernames() {
 
 		let element = $(this);
 
-		$.getJSON("https://novauniverse.net/api/private/mojang/profile/" + uuid, function (profileData) {
-			let realUsername = profileData.data.name;
+		$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (profileData) {
+			let realUsername = profileData.username;
 			element.find(".player-username").text(realUsername);
 			element.attr("data-username", realUsername);
 		});
