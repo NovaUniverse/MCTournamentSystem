@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bedwars.BedwarsManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourtail.BehindYourTailManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bingo.BingoManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.chickenout.ChickenOutManager;
@@ -61,6 +62,7 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("spleef", SpleefManager.class);
 		GAME_SPECIFIC_MODULES.put("dropper", DropperManager.class);
 		GAME_SPECIFIC_MODULES.put("tnttag", TNTTagManager.class);
+		GAME_SPECIFIC_MODULES.put("nova_bedwars", BedwarsManager.class);
 
 		// NovaGames games
 		GAME_SPECIFIC_MODULES.put("chickenout", ChickenOutManager.class);
