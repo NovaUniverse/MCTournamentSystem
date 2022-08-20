@@ -1,5 +1,6 @@
 package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bedwars;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
 
@@ -15,6 +16,7 @@ import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class BedwarsManager extends NovaModule implements Listener {
 	public static final int BEDWARS_COUNTDOWN_LINE = 5;
+	public static final int HAS_BED_LINE = 6;
 
 	private GeneratorUpgradeSorter sorter = new GeneratorUpgradeSorter();
 	private Task task;
@@ -38,6 +40,10 @@ public class BedwarsManager extends NovaModule implements Listener {
 					} else {
 						NetherBoardScoreboard.getInstance().clearGlobalLine(BEDWARS_COUNTDOWN_LINE);
 					}
+
+					Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+						NetherBoardScoreboard.getInstance().setPlayerLine(HAS_BED_LINE, player, ChatColor.GOLD + "Has bed: " + (game.hasBed(player) ? ChatColor.GREEN + "Yes" : ChatColor.RED + "No"));
+					});
 				}
 			}
 		}, 10L);
