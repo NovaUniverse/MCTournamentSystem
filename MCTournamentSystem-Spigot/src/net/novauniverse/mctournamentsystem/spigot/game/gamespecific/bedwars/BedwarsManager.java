@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import net.novauniverse.bedwars.NovaBedwars;
@@ -55,7 +56,7 @@ public class BedwarsManager extends NovaModule implements Listener {
 		}, 10L);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBedDestruction(BedDestructionEvent e) {
 		Player player = e.getPlayer();
 		player.sendMessage(ChatColor.GRAY + "Enemy bed destroyed. +" + BED_DESTRUCTION_SCORE + " points");
