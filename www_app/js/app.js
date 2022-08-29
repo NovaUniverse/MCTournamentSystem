@@ -229,7 +229,7 @@ $(function () {
 			TournamentSystem.addStaffUUID = uuid;
 
 			$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (profileData) {
-				TournamentSystem.addStaffUsername = profileData.data.name;
+				TournamentSystem.addStaffUsername = profileData.name;
 
 				$("#add_staff_username").text(TournamentSystem.addStaffUsername);
 				$("#add_staff_uuid").text(uuid);
