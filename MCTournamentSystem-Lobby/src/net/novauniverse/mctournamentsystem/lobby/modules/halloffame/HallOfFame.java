@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,6 +18,9 @@ import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.trait.SkinTrait;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.Lobby;
+import net.zeeraa.novacore.commons.api.novauniverse.NovaUniverseAPI;
+import net.zeeraa.novacore.commons.api.novauniverse.callback.IAsyncProfileCallback;
+import net.zeeraa.novacore.commons.api.novauniverse.data.MojangPlayerProfile;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
@@ -38,6 +42,13 @@ public class HallOfFame extends NovaModule {
 
 	private boolean debug;
 
+	private Task updateTask;
+
+	private Task profileUpdateTask;
+	private boolean fetchingProfile;
+
+	private List<UUID> toUpdate;
+
 	public HallOfFame() {
 		super("TournamentSystem.Lobby.HallOfFame");
 	}
@@ -49,12 +60,41 @@ public class HallOfFame extends NovaModule {
 		initialized = false;
 		cachedResults = new ArrayList<>();
 		index = -1;
-		task = new SimpleTask(TournamentSystemLobby.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				showNext();
+
+		fetchingProfile = false;
+
+		toUpdate = new ArrayList<>();
+
+		task = new SimpleTask(TournamentSystemLobby.getInstance(), () -> showNext(), 10 * 20);
+
+		updateTask = new SimpleTask(TournamentSystemLobby.getInstance(), () -> {
+			Log.info("HallOfFame", "Updating data");
+			updateData();
+		}, 20 * 60 * 60 * 5); // 5 hours
+
+		profileUpdateTask = new SimpleTask(TournamentSystemLobby.getInstance(), () -> {
+			if (toUpdate.size() > 0) {
+				if (!fetchingProfile) {
+					UUID uuid = toUpdate.remove(0);
+					fetchingProfile = true;
+
+					NovaUniverseAPI.getProfileAsync(uuid, new IAsyncProfileCallback() {
+						@Override
+						public void onResult(MojangPlayerProfile profile, Exception exception) {
+							fetchingProfile = false;
+							if (profile != null) {
+								cachedResults.forEach(cr -> cr.getTeams().forEach(t -> t.getPlayers().stream().filter(p -> p.getUuid().equals(profile.getUuid())).forEach(p -> p.setUsername(profile.getName()))));
+							} else {
+								if (exception != null) {
+									Log.error("HallOfFame", "Failed to fetch profile for " + uuid.toString() + ". " + exception.getClass().getName() + " " + exception.getMessage());
+								}
+							}
+						}
+					});
+				}
 			}
-		}, 10 * 20);
+		}, 5L);
+
 		showNext();
 	}
 
@@ -62,6 +102,8 @@ public class HallOfFame extends NovaModule {
 	public void onEnable() throws Exception {
 		if (initialized) {
 			Task.tryStartTask(task);
+			Task.tryStartTask(profileUpdateTask);
+			Task.tryStartTask(updateTask);
 			showNext();
 		}
 	}
@@ -69,6 +111,8 @@ public class HallOfFame extends NovaModule {
 	@Override
 	public void onDisable() throws Exception {
 		Task.tryStopTask(task);
+		Task.tryStopTask(updateTask);
+		Task.tryStopTask(profileUpdateTask);
 
 		if (initialized) {
 			this.config.getNpcs().forEach(npc -> {
@@ -157,6 +201,18 @@ public class HallOfFame extends NovaModule {
 						Log.info("HallOfFame", "Fetching data from from " + config.getUrl());
 						cachedResults = ResultFetcher.fetch(config.getUrl());
 						Log.info("HallOfFame", cachedResults.size() + " sessions loaded");
+
+						toUpdate.clear();
+						cachedResults.forEach(cr -> {
+							cr.getTeams().forEach(t -> {
+								t.getPlayers().forEach(p -> {
+									if (!toUpdate.contains(p.getUuid())) {
+										toUpdate.add(p.getUuid());
+									}
+								});
+							});
+						});
+						Log.info("HallOfFame", toUpdate.size() + " profiles will be fetched");
 					} catch (Exception e) {
 						Log.error("HallOfFame", "Failed to fetch hall of fame data from " + config.getUrl());
 					}
