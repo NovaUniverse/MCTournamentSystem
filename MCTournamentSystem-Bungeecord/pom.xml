@@ -21,6 +21,7 @@
 				<filtering>true</filtering>
 				<directory>.</directory>
 				<includes>
+					<include>chat_filter.txt</include>
 					<include>plugin.yml</include>
 					<include>config.yml</include>
 					<include>favicon.ico</include>
@@ -157,7 +158,7 @@
 		<dependency>
 			<groupId>net.md-5</groupId>
 			<artifactId>bungeecord-api</artifactId>
-			<version>1.18-R0.1-SNAPSHOT</version>
+			<version>1.19-R0.1-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>

@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.bungeecord.listener;
+package net.novauniverse.mctournamentsystem.bungeecord.listener.pluginmessages;
 
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;

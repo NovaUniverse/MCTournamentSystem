@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.bungeecord.listener;
+package net.novauniverse.mctournamentsystem.bungeecord.listener.whitelist;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

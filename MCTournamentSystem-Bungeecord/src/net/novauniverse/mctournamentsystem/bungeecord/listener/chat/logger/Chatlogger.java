@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.bungeecord.listener;
+package net.novauniverse.mctournamentsystem.bungeecord.listener.chat.logger;
 
 import java.sql.PreparedStatement;
 
