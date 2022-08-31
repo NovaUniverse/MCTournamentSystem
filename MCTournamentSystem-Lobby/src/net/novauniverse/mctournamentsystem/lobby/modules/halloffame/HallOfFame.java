@@ -123,6 +123,15 @@ public class HallOfFame extends NovaModule {
 			this.config.getNpcs().clear();
 		}
 	}
+	
+	public void updateUsernames() {
+		toUpdate.clear();
+		cachedResults.forEach(tournamentResult -> {
+			TournamentTeamResult top = Collections.max(tournamentResult.getTeams(), Comparator.comparing(s -> s.getScore()));
+			top.getPlayers().forEach(p -> toUpdate.add(p.getUuid()));
+		});
+		Log.info("HallOfFame", toUpdate.size() + " profiles will be fetched");
+	}
 
 	public void init(HallOfFameConfig config) {
 		this.config = config;
@@ -202,17 +211,7 @@ public class HallOfFame extends NovaModule {
 						cachedResults = ResultFetcher.fetch(config.getUrl());
 						Log.info("HallOfFame", cachedResults.size() + " sessions loaded");
 
-						toUpdate.clear();
-						cachedResults.forEach(cr -> {
-							cr.getTeams().forEach(t -> {
-								t.getPlayers().forEach(p -> {
-									if (!toUpdate.contains(p.getUuid())) {
-										toUpdate.add(p.getUuid());
-									}
-								});
-							});
-						});
-						Log.info("HallOfFame", toUpdate.size() + " profiles will be fetched");
+						updateUsernames();
 					} catch (Exception e) {
 						Log.error("HallOfFame", "Failed to fetch hall of fame data from " + config.getUrl());
 					}

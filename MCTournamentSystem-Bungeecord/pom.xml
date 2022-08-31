@@ -21,7 +21,6 @@
 				<filtering>true</filtering>
 				<directory>.</directory>
 				<includes>
-					<include>chat_filter.txt</include>
 					<include>plugin.yml</include>
 					<include>config.yml</include>
 					<include>favicon.ico</include>

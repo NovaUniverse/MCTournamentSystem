@@ -1,14 +1,9 @@
 package net.novauniverse.mctournamentsystem.bungeecord;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -25,7 +20,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUserStore
 import net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere.SendHereCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.OpenModeListeners;
-import net.novauniverse.mctournamentsystem.bungeecord.listener.chat.filter.ChatFilter;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.chat.logger.Chatlogger;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.pluginmessages.TSPluginMessageListener;
@@ -178,48 +172,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			return;
 		}
 
-		/* ----- Chat Filter ----- */
-		File chatFilterFile = new File(getDataFolder().getAbsolutePath() + File.separator + "chat_filter.txt");
-
-		if (!chatFilterFile.exists()) {
-			try {
-				InputStream in = getClass().getResourceAsStream("/chat_filter.txt");
-				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-				StringBuilder data = new StringBuilder();
-				String line;
-				while ((line = reader.readLine()) != null) {
-					data.append(line + "\n");
-				}
-
-				reader.close();
-				in.close();
-
-				FileWriter myWriter = new FileWriter(chatFilterFile.getAbsolutePath());
-				myWriter.write(data.toString());
-				myWriter.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		ChatFilter chatFiler = new ChatFilter();
-
-		Log.info("Reading chat filter file " + chatFilterFile.getAbsolutePath());
-		try {
-			Scanner sc = new Scanner(chatFilterFile);
-			while (sc.hasNext()) {
-				String line = sc.next();
-				if (line.length() > 0) {
-					chatFiler.getFilter().add(line);
-				}
-			}
-			sc.close();
-		} catch (Exception e) {
-			Log.error("Failed to read chat_filter.txt " + e.getClass().getName() + " " + e.getMessage());
-			e.printStackTrace();
-		}
-
 		/* ----- Listeners ----- */
 
 		playerTelementryManager = new PlayerTelementryManager();
@@ -228,7 +180,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		ProxyServer.getInstance().getPluginManager().registerListener(this, this);
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new TSPluginMessageListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, slowPlayerSender);
-		ProxyServer.getInstance().getPluginManager().registerListener(this, chatFiler);
 		ProxyServer.getInstance().getPluginManager().registerListener(this, playerTelementryManager);
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new JoinEvents());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new WhitelistListener());
