@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.command.yborder;
+package net.novauniverse.mctournamentsystem.spigot.command.chatfilter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -8,14 +8,14 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaCommand;
 
-public class YBorderCommand extends NovaCommand {
-	public YBorderCommand() {
-		super("yborder", TournamentSystem.getInstance());
+public class ChatfilterCommand extends NovaCommand {
+	public ChatfilterCommand() {
+		super("chatfilter", TournamentSystem.getInstance());
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.yborder");
+		setPermission("tournamentcore.command.chatfilter");
 		setPermissionDefaultValue(PermissionDefault.OP);
-		setDescription("Command to manage y border");
+		setDescription("Command to manage chat filter");
 
 		setEmptyTabMode(true);
 		setFilterAutocomplete(true);
@@ -28,7 +28,7 @@ public class YBorderCommand extends NovaCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-		Bukkit.getServer().dispatchCommand(sender, "yborder help");
+		Bukkit.getServer().dispatchCommand(sender, "chatfilter help");
 		return true;
 	}
 }

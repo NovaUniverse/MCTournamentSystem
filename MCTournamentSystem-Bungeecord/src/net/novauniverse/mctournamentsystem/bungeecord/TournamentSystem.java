@@ -20,7 +20,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUserStore
 import net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere.SendHereCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.OpenModeListeners;
-import net.novauniverse.mctournamentsystem.bungeecord.listener.chat.logger.Chatlogger;
+import net.novauniverse.mctournamentsystem.bungeecord.listener.chat.ChatListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.pluginmessages.TSPluginMessageListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
@@ -44,6 +44,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private List<String> staffRoles;
 	private List<String> quickMessages;
 	private int teamSize;
+
+	private ChatListener chatListener;
 
 	private String commentatorGuestKey;
 
@@ -119,6 +121,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		saveDefaultConfiguration();
 
+		chatListener = new ChatListener();
+
 		commentatorGuestKey = UUID.randomUUID().toString();
 
 		quickMessages = new ArrayList<>();
@@ -145,7 +149,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			return;
 		}
 
-		// Read configuration values
 		this.phpmyadminURL = config.getString("phpmyadmin_url");
 		this.teamSize = config.getInt("team_size");
 
@@ -184,7 +187,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new JoinEvents());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new WhitelistListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new Log4JRCEFix());
-		ProxyServer.getInstance().getPluginManager().registerListener(this, new Chatlogger());
+		ProxyServer.getInstance().getPluginManager().registerListener(this, chatListener);
 
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new SendHereCommand());
 

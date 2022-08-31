@@ -1,23 +1,23 @@
-package net.novauniverse.mctournamentsystem.spigot.command.yborder;
+package net.novauniverse.mctournamentsystem.spigot.command.chatfilter;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
-import net.novauniverse.mctournamentsystem.spigot.modules.yborder.YBorder;
+import net.novauniverse.mctournamentsystem.spigot.modules.chatfilter.ChatFilter;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaSubCommand;
 import net.zeeraa.novacore.spigot.module.ModuleEnableFailureReason;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 
-public class YBorderEnable extends NovaSubCommand {
-	public YBorderEnable() {
+public class Enable extends NovaSubCommand {
+	public Enable() {
 		super("enable");
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.yborder");
+		setPermission("tournamentcore.command.chatfilter");
 		setPermissionDefaultValue(PermissionDefault.OP);
-		setDescription("Enable y border");
+		setDescription("Enable chat filter");
 
 		setEmptyTabMode(true);
 		setFilterAutocomplete(true);
@@ -27,13 +27,13 @@ public class YBorderEnable extends NovaSubCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-		if (ModuleManager.isEnabled(YBorder.class)) {
-			sender.sendMessage(ChatColor.RED + "Y Border is already enabled");
+		if (ModuleManager.isEnabled(ChatFilter.class)) {
+			sender.sendMessage(ChatColor.RED + "Chat filter is already enabled");
 		} else {
-			if (ModuleManager.enable(YBorder.class)) {
-				sender.sendMessage(ChatColor.GREEN + "Y Border enabled");
+			if (ModuleManager.enable(ChatFilter.class)) {
+				sender.sendMessage(ChatColor.GREEN + "Chat filter Border enabled");
 			} else {
-				ModuleEnableFailureReason reason = ModuleManager.getEnableFailureReason(YBorder.class);
+				ModuleEnableFailureReason reason = ModuleManager.getEnableFailureReason(ChatFilter.class);
 				sender.sendMessage(ChatColor.DARK_RED + "Failed to enable module. Check logs for more info. Reason: " + reason.name());
 			}
 		}

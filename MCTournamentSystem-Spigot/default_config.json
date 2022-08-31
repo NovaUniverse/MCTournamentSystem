@@ -49,5 +49,10 @@
 	"open_mode": false,
 	"force_show_team_name_in_leaderboard": false,
 	"make_team_names_bold": false,
-	"resource_pack": ""
+	"resource_pack": "",
+	"chat_filter": {
+		"enabled": true,
+		"url": "",
+		"filtered_commands": ["r", "er", "reply", "ereply", "msg", "emsg", "tell", "etell"]
+	}
 }

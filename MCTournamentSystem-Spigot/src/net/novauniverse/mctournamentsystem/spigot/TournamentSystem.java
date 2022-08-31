@@ -37,6 +37,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.spigot.command.bc.BCCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.chatfilter.ChatfilterCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.csp.CSPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.ctp.CTPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.copylocation.CopyLocationCommand;
@@ -55,6 +56,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.misc.GameEnd
 import net.novauniverse.mctournamentsystem.spigot.game.util.DefaultPlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.misc.CustomItemTest;
+import net.novauniverse.mctournamentsystem.spigot.modules.chatfilter.ChatFilter;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
@@ -582,9 +584,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new BCCommand());
 		CommandRegistry.registerCommand(new RespawnPlayerCommand());
 		CommandRegistry.registerCommand(new CopyLocationCommand());
+		CommandRegistry.registerCommand(new ChatfilterCommand());
 
 		/* ----- Permissions ----- */
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commentator access", PermissionDefault.FALSE);
+		PermissionRegistrator.registerPermission(ChatFilter.NOTIFY_PERMISSION, "Get notifications about players trying to use bad words in chat", PermissionDefault.OP);
 
 		/* ----- Music ----- */
 		if (config.has("music")) {
@@ -599,6 +603,29 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 						ModuleManager.loadModule(this, GameEndSoundtrackManager.class, true);
 					}
 				}
+			}
+		}
+
+		/* ----- Chat Filter ----- */
+		if (config.has("chat_filter")) {
+			JSONObject filter = config.getJSONObject("chat_filter");
+
+			if (filter.has("url")) {
+				String filterUrl = filter.getString("url");
+				if (filterUrl.length() > 0) {
+					((ChatFilter) ModuleManager.getModule(ChatFilter.class)).setFilterUrl(filterUrl);
+				}
+			}
+
+			if (filter.has("filtered_commands")) {
+				JSONArray filteredCommands = filter.getJSONArray("filtered_commands");
+				for (int i = 0; i < filteredCommands.length(); i++) {
+					((ChatFilter) ModuleManager.getModule(ChatFilter.class)).getFilteredCommands().add(filteredCommands.getString(i));
+				}
+			}
+
+			if (filter.has("enabled")) {
+				ModuleManager.enable(ChatFilter.class);
 			}
 		}
 

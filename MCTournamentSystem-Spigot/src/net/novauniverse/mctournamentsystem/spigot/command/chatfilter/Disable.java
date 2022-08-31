@@ -1,22 +1,22 @@
-package net.novauniverse.mctournamentsystem.spigot.command.yborder;
+package net.novauniverse.mctournamentsystem.spigot.command.chatfilter;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
-import net.novauniverse.mctournamentsystem.spigot.modules.yborder.YBorder;
+import net.novauniverse.mctournamentsystem.spigot.modules.chatfilter.ChatFilter;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaSubCommand;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 
-public class YBorderDisable extends NovaSubCommand {
-	public YBorderDisable() {
+public class Disable extends NovaSubCommand {
+	public Disable() {
 		super("disable");
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.yborder");
+		setPermission("tournamentcore.command.chatfilter");
 		setPermissionDefaultValue(PermissionDefault.OP);
-		setDescription("Enable y border");
+		setDescription("Enable the chat filter");
 
 		setEmptyTabMode(true);
 		setFilterAutocomplete(true);
@@ -26,11 +26,11 @@ public class YBorderDisable extends NovaSubCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-		if (!ModuleManager.isEnabled(YBorder.class)) {
-			sender.sendMessage(ChatColor.RED + "Y Border is already disabled");
+		if (!ModuleManager.isEnabled(ChatFilter.class)) {
+			sender.sendMessage(ChatColor.RED + "Chat filter is already disabled");
 		} else {
-			if (ModuleManager.disable(YBorder.class)) {
-				sender.sendMessage(ChatColor.GREEN + "Y Border disabled");
+			if (ModuleManager.disable(ChatFilter.class)) {
+				sender.sendMessage(ChatColor.GREEN + "Chat filter disabled");
 			} else {
 				sender.sendMessage(ChatColor.DARK_RED + "Failed to disable module");
 			}

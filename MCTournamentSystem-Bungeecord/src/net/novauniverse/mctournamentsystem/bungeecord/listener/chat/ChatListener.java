@@ -1,7 +1,6 @@
-package net.novauniverse.mctournamentsystem.bungeecord.listener.chat.logger;
+package net.novauniverse.mctournamentsystem.bungeecord.listener.chat;
 
 import java.sql.PreparedStatement;
-
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -10,9 +9,9 @@ import net.md_5.bungee.event.EventPriority;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
-public class Chatlogger implements Listener {
+public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onChat(ChatEvent e) {
+	public void onChatFinal(ChatEvent e) {
 		if (e.isCancelled()) {
 			return;
 		}

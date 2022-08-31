@@ -121,7 +121,7 @@
 			<id>novauniverse2</id>
 			<url>https://nexus2.novauniverse.net/repository/novauniverse-group/</url>
 		</repository>
-		
+
 		<repository>
 			<id>novauniverse-thirdparty</id>
 			<url>https://nexus2.novauniverse.net/repository/third-party-proxy-group/</url>
@@ -217,6 +217,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.13</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>NovaSpleef</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
@@ -271,7 +278,7 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>bedwars</artifactId>
