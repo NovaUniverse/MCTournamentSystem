@@ -9,6 +9,8 @@ import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.NOPEliminat
 import net.novauniverse.mctournamentsystem.spigot.messages.TSActionBarCombatTagMessage;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSPlayerEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSTeamEliminationMessage;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
+import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.triggers.TriggerProvider;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
 import net.novauniverse.mctournamentsystem.spigot.tracker.EnemyPlayerCompassTracker;
 import net.zeeraa.novacore.commons.log.Log;
@@ -54,6 +56,8 @@ public class GameSetup {
 		GameLobby.getInstance().setMapSelector(new RandomLobbyMapSelector());
 
 		Log.success("GameSetup", "Game support enabled");
+
+		PlayerTelementryManager.getInstance().addMetadataProvider(new TriggerProvider());
 	}
 
 	public static void disableEliminationMessages() {
