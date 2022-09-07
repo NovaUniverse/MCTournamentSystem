@@ -35,6 +35,8 @@ public class TriggerProvider implements ITelementryMetadataProvider {
 					if (trigger instanceof ITickingGameTrigger) {
 						triggerData.put("ticks_left", ((ITickingGameTrigger) trigger).getTicksLeft());
 					}
+					
+					triggers.put(trigger);
 				});
 			}
 		}
