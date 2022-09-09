@@ -23,17 +23,17 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.Trigge
 
 public class TSPluginMessageListnener implements PluginMessageListener {
 	public static final int DEFAULT_REQUEST_EXPIRE_TIME = 10; // 10 seconds
-	
+
 	private List<ExpirablePluginMessageRequest> requests;
 
 	public TSPluginMessageListnener() {
 		requests = new ArrayList<ExpirablePluginMessageRequest>();
 	}
-	
+
 	public boolean hasRequest(UUID requestId) {
 		return requests.stream().filter(r -> r.getRequestId().equals(requestId)).findAny().isPresent();
 	}
-	
+
 	public void addRequest(UUID requestId) {
 		this.requests.add(new ExpirablePluginMessageRequest(requestId, TSPluginMessageListnener.DEFAULT_REQUEST_EXPIRE_TIME));
 	}
@@ -49,7 +49,7 @@ public class TSPluginMessageListnener implements PluginMessageListener {
 			ByteArrayDataInput in = ByteStreams.newDataInput(message);
 			String subchannel = in.readUTF();
 
-			Log.trace("Received message on sub channel ", subchannel);
+			// Log.trace("Received message on sub channel ", subchannel);
 
 			switch (subchannel.toLowerCase()) {
 			case "start_game":
@@ -72,16 +72,16 @@ public class TSPluginMessageListnener implements PluginMessageListener {
 					if (GameManager.getInstance().isEnabled()) {
 						if (GameManager.getInstance().hasGame()) {
 							UUID requestUUID = UUID.fromString(in.readUTF());
-							if(this.hasRequest(requestUUID)) {
+							if (this.hasRequest(requestUUID)) {
 								return;
 							}
-							
+
 							this.addRequest(requestUUID);
-							
+
 							String name = in.readUTF();
-							
+
 							GameTrigger trigger = GameManager.getInstance().getActiveGame().getTrigger(name);
-							
+
 							trigger.trigger(TriggerFlag.COMMAND_ACTIVATION);
 						}
 					}
