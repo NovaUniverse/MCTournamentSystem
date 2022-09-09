@@ -108,6 +108,9 @@
 				<a class="nav-link page-link active" data-page="overview_page" href="#">Overview</a>
 			</li>
 			<li class="nav-item">
+				<a class="nav-link page-link" data-page="trigger_page" href="#">Game triggers</a>
+			</li>
+			<li class="nav-item">
 				<a class="nav-link page-link" data-page="staff_page" href="#">Staff settings</a>
 			</li>
 			<li class="nav-item">
@@ -127,6 +130,40 @@
 			</li>
 		</ul>
 
+		<div id="trigger_page" class="nav-page d-none">
+			<div class="d-none">
+				<!-- Template -->
+				<div class="col-12 col-sm-12 col-md-6 col-lg-3 mt-2" id="trigger_sample" data-trigger-name="novauniverse.example">
+					<div class="card">
+						<div class="card-body">
+							<h3 class="card-title trigger-name">novauniverse.example</h3>
+							<p class="card-text">
+								Status: <span class="trigger-running-status badge">Not running</span><br>
+								Activation count: <span class="trigger-activation-count badge bg-info">0</span><br>
+								Seconds left: <span class="trigger-seconds-left badge bg-primary">0</span><br>
+								Ticks left: <span class="trigger-ticks-left badge bg-primary">0</span><br><br><br>
+								Flags: <span class="trigger-flags badge bg-secondary"></span><br>
+							</p>
+							<a href="#" class="btn btn-primary trigger-button">Trigger</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="container-fluid">
+				<div class="row mt-2">
+					<div class="col-12">
+						<h1>Game triggers</h1>
+						<p>This page shows all game events</p>
+					</div>
+				</div>
+
+				<div class="row mt-2" id="game_trigger_list">
+					
+				</div>
+			</div>
+		</div>
+
 		<div id="commentator_guest_key_page" class="nav-page d-none">
 			<div class="container-fluid">
 				<div class="row mt-2">
@@ -137,11 +174,12 @@
 				<div class="row">
 					<div class="col-sm-12 col-md-6 mt-2">
 						<input type="password" class="form-control" id="commentator_guest_key" readonly="1">
-						
+
 					</div>
 					<div class="col-sm-12 col-md-6 mt-2">
 						<button class="btn btn-primary" id="toggle_commentator_guest_key">Show key</button>
-						<button class="btn btn-primary mx-2" id="copy_commentator_guest_key" data-clipboard-target="#commentator_guest_key">Copy key</button>
+						<button class="btn btn-primary mx-2" id="copy_commentator_guest_key"
+							data-clipboard-target="#commentator_guest_key">Copy key</button>
 					</div>
 				</div>
 			</div>

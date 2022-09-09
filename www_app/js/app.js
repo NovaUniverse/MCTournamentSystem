@@ -282,9 +282,9 @@ $(function () {
 				}
 			});
 		}).fail(function (e) {
-			if(e.status == 404) {
+			if (e.status == 404) {
 				toastr.error("Could not find player")
-			} else if(e.status == 400) {
+			} else if (e.status == 400) {
 				toastr.error("Invalid username")
 			} else {
 				toastr.error("Failed to fetch data from https://mojangapi.novauniverse.net")
@@ -466,6 +466,16 @@ const TournamentSystem = {
 	startGame: () => {
 		$.getJSON("/api/game/start_game" + "?access_token=" + TournamentSystem.token, function (data) {
 			//console.log(data);
+			if (data.success) {
+				toastr.success("Success");
+			} else {
+				toastr.error(data.message);
+			}
+		});
+	},
+
+	activateTrigger: (triggerId) => {
+		$.getJSON("/api/game/trigger" + "?access_token=" + TournamentSystem.token + "&triggerId=" + triggerId, function (data) {
 			if (data.success) {
 				toastr.success("Success");
 			} else {
@@ -789,6 +799,83 @@ const TournamentSystem = {
 			});
 
 			TournamentSystem.updateWhitelist();
+
+			let triggers = [];
+
+			data.player_server_data.forEach(psd => {
+				if (psd.metadata.triggers != null) {
+					psd.metadata.triggers.forEach(trigger => {
+						if (triggers.filter(t => t.name == trigger.name).length == 0) {
+							triggers.push(trigger);
+						}
+					});
+				}
+			});
+
+			let displayedTriggers = [];
+
+			$(".trigger-col").each(function () {
+				let name = $(this).data("trigger-name");
+				if (triggers.filter(t => t.name == name).length == 0) {
+					$(this).remove();
+				}
+				displayedTriggers.push(name);
+			});
+
+			triggers.forEach(trigger => {
+				if (!displayedTriggers.includes(trigger.name)) {
+					let newElement = $("#trigger_sample").clone();
+					newElement.removeAttr("id");
+					newElement.addClass("trigger-col");
+					newElement.attr("data-trigger-name", trigger.name);
+
+					newElement.find(".trigger-name").text(trigger.name);
+
+					newElement.find(".trigger-button").attr("data-trigger-name", trigger.name);
+					newElement.find(".trigger-button").on("click", function () {
+						let name = $(this).data("trigger-name");
+						TournamentSystem.activateTrigger(name);
+					});
+
+					$("#game_trigger_list").append(newElement);
+				}
+			})
+
+			$(".trigger-col").each(function () {
+				let name = $(this).data("trigger-name");
+				let trigger = triggers.filter(t => t.name == name)[0];
+
+				$(this).find(".trigger-activation-count").text(trigger.trigger_count);
+
+				if(trigger.running == null) {
+					$(this).find(".trigger-running-status").hide();
+				} else {
+					$(this).find(".trigger-running-status").show();
+					if(trigger.running) {
+						$(this).find(".trigger-running-status").removeClass("bg-danger");
+						$(this).find(".trigger-running-status").addClass("bg-success");
+						$(this).find(".trigger-running-status").text("Running");
+					} else {
+						$(this).find(".trigger-running-status").addClass("bg-danger");
+						$(this).find(".trigger-running-status").removeClass("bg-success");
+						$(this).find(".trigger-running-status").text("Stopped");
+					}
+				}
+
+				$(this).find(".trigger-flags").text(trigger.flags.join(", "));
+
+				if(trigger.ticks_left == null) {
+					$(this).find(".trigger-ticks-left").hide();
+					$(this).find(".trigger-seconds-left").hide();
+				} else {
+					$(this).find(".trigger-ticks-left").show();
+					$(this).find(".trigger-seconds-left").show();
+					$(this).find(".trigger-ticks-left").text(trigger.ticks_left);
+					$(this).find(".trigger-seconds-left").text(Math.trunc(trigger.ticks_left / 20));
+				}
+
+				console.log(trigger);
+			});
 		});
 	}
 }

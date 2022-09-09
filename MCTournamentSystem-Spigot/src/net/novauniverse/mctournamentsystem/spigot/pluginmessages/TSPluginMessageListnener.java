@@ -1,5 +1,7 @@
 package net.novauniverse.mctournamentsystem.spigot.pluginmessages;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -16,8 +18,31 @@ import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissi
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.GameTrigger;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.TriggerFlag;
 
 public class TSPluginMessageListnener implements PluginMessageListener {
+	public static final int DEFAULT_REQUEST_EXPIRE_TIME = 10; // 10 seconds
+	
+	private List<ExpirablePluginMessageRequest> requests;
+
+	public TSPluginMessageListnener() {
+		requests = new ArrayList<ExpirablePluginMessageRequest>();
+	}
+	
+	public boolean hasRequest(UUID requestId) {
+		return requests.stream().filter(r -> r.getRequestId().equals(requestId)).findAny().isPresent();
+	}
+	
+	public void addRequest(UUID requestId) {
+		this.requests.add(new ExpirablePluginMessageRequest(requestId, TSPluginMessageListnener.DEFAULT_REQUEST_EXPIRE_TIME));
+	}
+
+	public void tickSecond() {
+		requests.forEach(ExpirablePluginMessageRequest::decrement);
+		requests.removeIf(ExpirablePluginMessageRequest::hasExpired);
+	}
+
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
 		if (channel.equalsIgnoreCase(TournamentSystemCommons.DATA_CHANNEL)) {
@@ -37,6 +62,27 @@ public class TSPluginMessageListnener implements PluginMessageListener {
 								Log.info("TSPluginMessageListnener", "Setting reconnect server");
 								TournamentSystemCommons.setActiveServer(TournamentSystem.getInstance().getServerName());
 							}
+						}
+					}
+				}
+				break;
+
+			case "trigger":
+				if (NovaCore.isNovaGameEngineEnabled()) {
+					if (GameManager.getInstance().isEnabled()) {
+						if (GameManager.getInstance().hasGame()) {
+							UUID requestUUID = UUID.fromString(in.readUTF());
+							if(this.hasRequest(requestUUID)) {
+								return;
+							}
+							
+							this.addRequest(requestUUID);
+							
+							String name = in.readUTF();
+							
+							GameTrigger trigger = GameManager.getInstance().getActiveGame().getTrigger(name);
+							
+							trigger.trigger(TriggerFlag.COMMAND_ACTIVATION);
 						}
 					}
 				}

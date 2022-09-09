@@ -68,6 +68,7 @@ import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManag
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
@@ -77,6 +78,7 @@ import net.zeeraa.novacore.spigot.module.modules.customitems.CustomItemManager;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.permission.PermissionRegistrator;
+import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class TournamentSystem extends JavaPlugin implements Listener {
 	private static TournamentSystem instance;
@@ -133,6 +135,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean showSensitiveTelementryData;
 
 	private Song gameEndMusic;
+
+	private Task timerSeconds;
+
+	private TSPluginMessageListnener pluginMessageListener;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -567,10 +573,12 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 
 		/* ----- Plugin Channels ----- */
+		this.pluginMessageListener = new TSPluginMessageListnener();
+
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
 
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, TournamentSystemCommons.DATA_CHANNEL);
-		this.getServer().getMessenger().registerIncomingPluginChannel(this, TournamentSystemCommons.DATA_CHANNEL, new TSPluginMessageListnener());
+		this.getServer().getMessenger().registerIncomingPluginChannel(this, TournamentSystemCommons.DATA_CHANNEL, this.pluginMessageListener);
 
 		/* ----- Commands ----- */
 		CommandRegistry.registerCommand(new DatabaseCommand());
@@ -641,6 +649,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			}
 		}
 
+		/* ----- Timers ----- */
+		this.timerSeconds = new SimpleTask(this, () -> {
+			pluginMessageListener.tickSecond();
+		}, 20L);
+
 		// Register debug commands
 		new DebugCommands();
 
@@ -651,10 +664,13 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
 			}
 		}.runTaskLater(this, 1L);
+
+		Task.tryStartTask(timerSeconds);
 	}
 
 	@Override
 	public void onDisable() {
+		Task.tryStopTask(timerSeconds);
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
 	}
