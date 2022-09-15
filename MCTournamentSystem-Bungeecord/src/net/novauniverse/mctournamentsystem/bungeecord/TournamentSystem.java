@@ -18,6 +18,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIKeyStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUserStore;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere.SendHereCommand;
+import net.novauniverse.mctournamentsystem.bungeecord.commands.timeout.TimeoutCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.OpenModeListeners;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.chat.ChatListener;
@@ -180,6 +181,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		playerTelementryManager = new PlayerTelementryManager();
 		slowPlayerSender = new SlowPlayerSender(this);
 
+		Log.info("Registering listeners");
 		ProxyServer.getInstance().getPluginManager().registerListener(this, this);
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new TSPluginMessageListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, slowPlayerSender);
@@ -189,7 +191,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new Log4JRCEFix());
 		ProxyServer.getInstance().getPluginManager().registerListener(this, chatListener);
 
+		/* ----- Commands ----- */
+		Log.info("Registering commands");
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new SendHereCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new TimeoutCommand());
 
 		File wwwAppFile = new File(getDataFolder().getPath() + File.separator + "www_app");
 
