@@ -109,6 +109,11 @@
 			<id>novauniverse2</id>
 			<url>https://nexus2.novauniverse.net/repository/novauniverse-group/</url>
 		</repository>
+
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
 	</repositories>
 
 	<dependencyManagement>
@@ -188,6 +193,13 @@
 			<groupId>net.novauniverse.dependencies</groupId>
 			<artifactId>BungeeMessages</artifactId>
 			<version>1.1.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.DevLeoko</groupId>
+			<artifactId>AdvancedBan</artifactId>
+			<version>v2.3.0</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
