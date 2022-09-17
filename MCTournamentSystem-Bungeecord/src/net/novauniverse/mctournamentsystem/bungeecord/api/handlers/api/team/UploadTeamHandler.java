@@ -51,13 +51,17 @@ public class UploadTeamHandler extends APIEndpoint {
 			try {
 				for (int i = 0; i < teamData.length(); i++) {
 					JSONObject player = teamData.getJSONObject(i);
+					
+					if(!player.has("metadata")) {
+						player.put("metadata", new JSONObject());
+					}
 
 					keep.add(player.getString("uuid"));
 
 					String sql;
 					PreparedStatement ps;
 
-					sql = "CALL `set_player_team`(?, ?, ?)";
+					sql = "CALL `set_player_team`(?, ?, ?, ?)";
 
 					if (player.getInt("team_number") == 0) {
 						Log.error("UploadTeamHandler", "Invalid team number: 0");
@@ -69,6 +73,7 @@ public class UploadTeamHandler extends APIEndpoint {
 					ps.setString(1, player.getString("uuid"));
 					ps.setString(2, player.getString("username"));
 					ps.setInt(3, player.getInt("team_number"));
+					ps.setString(4, player.getJSONObject("metadata").toString());
 
 					// System.out.println("p1: " + player.getString("uuid") + " p2: " +
 					// player.getString("username") + " p3: " + player.getInt("team_number"));

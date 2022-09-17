@@ -5,6 +5,8 @@ var addPlayerUsername = null;
 
 var sortDirection = true;
 
+var showMetadata = false;
+
 function expandTeamSize(size) {
 	if (size > 12) {
 		size = size - 12;
@@ -12,6 +14,16 @@ function expandTeamSize(size) {
 			$(".player-team-select").append(new Option("Team " + (i + 12), i + 12));
 		}
 	}
+}
+
+function updateMetadataDisplayState() {
+	$(".player-metadata-objects").each(function() {
+		if(showMetadata) {
+			$(this).show();
+		} else {
+			$(this).hide();
+		}
+	});
 }
 
 $(function () {
@@ -148,7 +160,8 @@ $(function () {
 
 			$.getJSON("/api/team/export_team_data?access_token=" + localStorage.getItem("token"), function (data) {
 				data.teams_data.forEach(element => {
-					addPlayer(element.uuid, element.username, element.team_number);
+					//console.log(element);
+					addPlayer(element.uuid, element.username, element.team_number, element.metadata);
 				});
 
 				toastr.info("Team data loaded from TournamentSystem");
@@ -211,6 +224,21 @@ $(function () {
 		$("#json_file_upload").val("");
 	});
 
+	if(localStorage.getItem("editor_show_metadata") == "true") {
+		showMetadata = true;
+	}
+
+	if(showMetadata) {
+		$("#showMetadataCheckbox").attr("checked", true);
+	}
+	updateMetadataDisplayState();
+
+	$("#showMetadataCheckbox").on("change", function() {
+		showMetadata = $("#showMetadataCheckbox").is(":checked");
+		localStorage.setItem("editor_show_metadata", showMetadata ? "true" : "false");
+		updateMetadataDisplayState();
+	});
+
 	$(".hidden-until-loaded").removeClass("hidden-until-loaded");
 });
 
@@ -236,7 +264,7 @@ function getCookie(cname) {
 	return "";
 }
 
-function addPlayer(uuid, username, teamNumber) {
+function addPlayer(uuid, username, teamNumber, metadata = {}) {
 	let newPlayer = $("#player_tr_template").clone();
 
 	newPlayer.removeAttr('id');
@@ -247,6 +275,7 @@ function addPlayer(uuid, username, teamNumber) {
 
 	newPlayer.find(".player-uuid").text(uuid);
 	newPlayer.find(".player-username").text(username);
+	newPlayer.find(".metadata-input").val(JSON.stringify(metadata));
 
 	newPlayer.find(".player-avatar").attr("src", "https://crafatar.com/avatars/" + uuid);
 
@@ -268,6 +297,8 @@ function addPlayer(uuid, username, teamNumber) {
 	$("#player_thead").append(newPlayer);
 
 	newPlayer.find(".player-team-select").val(teamNumber).change();
+
+	updateMetadataDisplayState();
 }
 
 function searchPlayer() {
@@ -334,7 +365,7 @@ function loadData(data) {
 	for (let i = 0; i < data.length; i++) {
 		let player = data[i];
 
-		addPlayer(player.uuid, player.username, player.team_number);
+		addPlayer(player.uuid, player.username, player.team_number, data.metadata);
 	}
 }
 
@@ -360,6 +391,13 @@ function getData() {
 		let uuid = $(this).attr("data-uuid");
 		let username = $(this).attr("data-username");
 		let teamNumber = $(this).attr("data-team-number");
+		let metadata =  "" + $(this).find(".metadata-input").val();
+
+		if(metadata.length == 0) {
+			metadata = "{}";
+		}
+
+		metadata = JSON.parse(metadata);
 
 		if (teamNumber == -1) {
 			return;
@@ -368,7 +406,8 @@ function getData() {
 		data.push({
 			uuid: uuid,
 			username: username,
-			team_number: teamNumber
+			team_number: teamNumber,
+			metadata: metadata
 		});
 	});
 

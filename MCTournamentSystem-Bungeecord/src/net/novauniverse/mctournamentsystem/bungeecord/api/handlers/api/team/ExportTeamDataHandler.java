@@ -26,7 +26,7 @@ public class ExportTeamDataHandler extends APIEndpoint {
 		JSONArray teamEntries = new JSONArray();
 
 		try {
-			String sql = "SELECT p.uuid AS uuid, p.username AS username, p.team_number AS team_number FROM players AS p LEFT JOIN teams AS t ON t.team_number = p.team_number";
+			String sql = "SELECT p.metadata AS metadata, p.uuid AS uuid, p.username AS username, p.team_number AS team_number FROM players AS p LEFT JOIN teams AS t ON t.team_number = p.team_number";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
@@ -36,6 +36,14 @@ public class ExportTeamDataHandler extends APIEndpoint {
 				teamEntry.put("uuid", rs.getString("uuid"));
 				teamEntry.put("username", rs.getString("username"));
 				teamEntry.put("team_number", rs.getInt("team_number"));
+
+				JSONObject metadata = new JSONObject();
+				String metadataString = rs.getString("metadata");
+				if (metadataString != null) {
+					metadata = new JSONObject(metadataString);
+				}
+
+				teamEntry.put("metadata", metadata);
 
 				teamEntries.put(teamEntry);
 			}

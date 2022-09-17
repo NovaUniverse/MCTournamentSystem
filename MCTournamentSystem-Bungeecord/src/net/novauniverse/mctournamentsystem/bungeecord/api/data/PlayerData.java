@@ -2,6 +2,8 @@ package net.novauniverse.mctournamentsystem.bungeecord.api.data;
 
 import java.util.UUID;
 
+import org.json.JSONObject;
+
 public class PlayerData {
 	private UUID uuid;
 
@@ -10,14 +12,16 @@ public class PlayerData {
 	private int teamScore;
 	private int teamNumber;
 	private String username;
+	private JSONObject metadata;
 
-	public PlayerData(UUID uuid, int kills, int score, int teamScore, int teamNumber, String username) {
+	public PlayerData(UUID uuid, int kills, int score, int teamScore, int teamNumber, String username, JSONObject metadata) {
 		this.uuid = uuid;
 		this.kills = kills;
 		this.score = score;
 		this.teamScore = teamScore;
 		this.teamNumber = teamNumber;
 		this.username = username;
+		this.metadata = metadata;
 	}
 
 	public UUID getUuid() {
@@ -42,5 +46,9 @@ public class PlayerData {
 
 	public String getUsername() {
 		return username;
+	}
+	
+	public JSONObject getMetadata() {
+		return metadata;
 	}
 }

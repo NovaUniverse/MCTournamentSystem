@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 11, 2022 at 09:46 AM
+-- Generation Time: Sep 17, 2022 at 12:10 PM
 -- Server version: 5.7.11
--- PHP Version: 5.6.18
+-- PHP Version: 7.2.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -26,6 +26,18 @@ DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `increment_player_score` (IN `player_uuid` VARCHAR(36), IN `score_to_add` INT)  NO SQL
+BEGIN
+	SELECT score INTO @old_score FROM players WHERE uuid = player_uuid LIMIT 1;
+    	UPDATE players SET score = @old_score + score_to_add WHERE uuid = player_uuid;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `increment_team_score` (IN `team_id` INT, IN `score_to_add` INT)  NO SQL
+BEGIN
+	SELECT score INTO @old_score FROM `teams` WHERE team_number = team_id LIMIT 1;
+    	UPDATE teams SET score = @old_score + score_to_add WHERE team_number = team_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `reset_data` ()  BEGIN
 	UPDATE teams SET score = 0;
     
@@ -34,15 +46,30 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `reset_data` ()  BEGIN
     UPDATE tsdata SET data_value = null WHERE data_key = "active_server";
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_player_team` (`player_uuid` VARCHAR(36), `player_username` VARCHAR(16), `player_team_number` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `set_player_team` (IN `player_uuid` VARCHAR(36), IN `player_username` VARCHAR(16), IN `player_team_number` INT, IN `metadata` TEXT)  BEGIN
 	IF NOT EXISTS (SELECT id FROM players WHERE uuid = player_uuid) THEN
-		INSERT INTO players (uuid, username) VALUES (player_uuid, player_username);
+		INSERT INTO players (uuid, username, metadata) VALUES (player_uuid, player_username, metadata);
     END IF;
     
-    UPDATE players SET username = player_username, team_number = player_team_number WHERE uuid = player_uuid;
+    UPDATE players SET metadata = metadata, username = player_username, team_number = player_team_number WHERE uuid = player_uuid;
 END$$
 
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_log`
+--
+
+CREATE TABLE `chat_log` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `session_id` varchar(36) COLLATE utf8_bin NOT NULL,
+  `uuid` varchar(36) COLLATE utf8_bin NOT NULL,
+  `username` varchar(16) COLLATE utf8_bin NOT NULL,
+  `content` text COLLATE utf8_bin NOT NULL,
+  `sent_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -61,82 +88,6 @@ CREATE TABLE `luckperms_actions` (
   `action` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `luckperms_actions`
---
-
-INSERT INTO `luckperms_actions` (`id`, `time`, `actor_uuid`, `actor_name`, `type`, `acted_uuid`, `acted_name`, `action`) VALUES
-(1, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'moderator', 'webeditor add group.helper true'),
-(2, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'moderator', 'webeditor add weight.100 true'),
-(3, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'moderator', 'webeditor add prefix.100.moderator true'),
-(4, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'moderator', 'webeditor add displayname.Moderator true'),
-(5, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'helper', 'webeditor add weight.10 true'),
-(6, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'helper', 'webeditor add group.default true'),
-(7, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'helper', 'webeditor add prefix.10.Helper true'),
-(8, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'helper', 'webeditor add displayname.Helper true'),
-(9, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'staff', 'webeditor add group.moderator true'),
-(10, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'staff', 'webeditor add prefix.1000.staff true'),
-(11, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'staff', 'webeditor add weight.1000 true'),
-(12, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'staff', 'webeditor add displayname.Staff true'),
-(13, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'host', 'webeditor add weight.10000 true'),
-(14, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'host', 'webeditor add displayname.Host true'),
-(15, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'host', 'webeditor add prefix.10000.Host true'),
-(16, 1633954140, '00000000-0000-0000-0000-000000000000', 'Console', 'G', 'null', 'host', 'webeditor add group.staff true'),
-(17, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'default', 'webeditor add prefix.0.§1Player §r true'),
-(18, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add prefix.100.§l§eModerator §r true'),
-(19, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor remove prefix.100.moderator true'),
-(20, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'helper', 'webeditor add prefix.10.§l§dHelper §r true'),
-(21, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'helper', 'webeditor remove prefix.10.Helper true'),
-(22, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'helper', 'webeditor add novacore.loglevel.auto.warn true'),
-(23, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add bukkit.* true'),
-(24, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add holograms.* true'),
-(25, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add novacore.command.* true'),
-(26, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add tournamentcore.command.* true'),
-(27, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add vault.update true'),
-(28, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add fawe.* true'),
-(29, 1633955242, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add prefix.1000.§l§bStaff §r true'),
-(30, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add vault.admin true'),
-(31, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add minecraft.command.* true'),
-(32, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add protocol.* true'),
-(33, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add citizens.citizens.* true'),
-(34, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add supervanish.* true'),
-(35, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add luckperms.* true'),
-(36, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add signedit.admin true'),
-(37, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add worldedit.* true'),
-(38, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor remove prefix.1000.staff true'),
-(39, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'host', 'webeditor add prefix.10000.§l§aHost §r true'),
-(40, 1633955243, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'host', 'webeditor remove prefix.10000.Host true'),
-(41, 1633955289, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor remove prefix.100.§l§eModerator §r true'),
-(42, 1633955289, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add prefix.100.§e§lModerator §r true'),
-(43, 1633955289, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'helper', 'webeditor add prefix.10.§d§lHelper §r true'),
-(44, 1633955289, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'helper', 'webeditor remove prefix.10.§l§dHelper §r true'),
-(45, 1633955289, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add prefix.1000.§b§lStaff §r true'),
-(46, 1633955289, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor remove prefix.1000.§l§bStaff §r true'),
-(47, 1633955289, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'host', 'webeditor add prefix.10000.§a§lHost §r true'),
-(48, 1633955289, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'host', 'webeditor remove prefix.10000.§l§aHost §r true'),
-(49, 1634893105, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add bungeecord.command.* true'),
-(50, 1634893105, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add bungeecord.command.list true'),
-(51, 1634893105, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add bungeecord.command.find true'),
-(52, 1634893105, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add bungeecord.command.send true'),
-(53, 1634893105, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add bungeecord.command.ip true'),
-(54, 1634893105, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add bungeecord.command.server true'),
-(55, 1635410160, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add messages.command.socialspy true'),
-(56, 1635410213, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'host', 'webeditor add messages.command.socialspy true'),
-(57, 1635410213, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'staff', 'webeditor add messages.command.socialspy true'),
-(58, 1635410322, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01@bungee', 'G', 'null', 'host', 'webeditor add bungeemessages.command.socialspy true'),
-(59, 1635410322, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01@bungee', 'G', 'null', 'host', 'webeditor remove messages.command.socialspy true'),
-(60, 1635410322, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01@bungee', 'G', 'null', 'moderator', 'webeditor add bungeemessages.command.socialspy true'),
-(61, 1635416693, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add tournamentcore.autosocialspy true'),
-(62, 1642152409, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'helper', 'webeditor add bukkit.command.version true'),
-(63, 1642152409, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'helper', 'webeditor add minecraft.command.me true'),
-(64, 1642152409, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'helper', 'webeditor add bukkit.command.plugins true'),
-(65, 1642152409, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'default', 'webeditor add bukkit.command.plugins false'),
-(66, 1642152409, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'default', 'webeditor add minecraft.command.me false'),
-(67, 1642152409, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'default', 'webeditor add bukkit.command.version false'),
-(68, 1642152409, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'default', 'webeditor add minecraft.command.tell false'),
-(69, 1642153872, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01', 'G', 'null', 'moderator', 'webeditor add tournamentcore.command.yborder true'),
-(70, 1642185873, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'Zeeraa01@bungee', 'U', 'cb128b6b-400d-4e5b-baf3-3a15c9792ccd', 'vlc_mediaplayer', 'webeditor add * true');
-
 -- --------------------------------------------------------
 
 --
@@ -152,6 +103,7 @@ CREATE TABLE `luckperms_groups` (
 --
 
 INSERT INTO `luckperms_groups` (`name`) VALUES
+('commentator'),
 ('default'),
 ('helper'),
 ('host'),
@@ -230,7 +182,60 @@ INSERT INTO `luckperms_group_permissions` (`id`, `name`, `permission`, `value`, 
 (57, 'default', 'bukkit.command.version', 0, 'global', 'global', 0, '{}'),
 (58, 'default', 'minecraft.command.me', 0, 'global', 'global', 0, '{}'),
 (59, 'default', 'minecraft.command.tell', 0, 'global', 'global', 0, '{}'),
-(60, 'moderator', 'tournamentcore.command.yborder', 1, 'global', 'global', 0, '{}');
+(60, 'moderator', 'tournamentcore.command.yborder', 1, 'global', 'global', 0, '{}'),
+(61, 'moderator', 'ab.changeReason', 1, 'global', 'global', 0, '{}'),
+(62, 'moderator', 'ab.notify.note', 1, 'global', 'global', 0, '{}'),
+(63, 'moderator', 'ab.undoNotify.note', 1, 'global', 'global', 0, '{}'),
+(64, 'moderator', 'ab.warns.other', 1, 'global', 'global', 0, '{}'),
+(65, 'moderator', 'ab.ban.perma', 1, 'global', 'global', 0, '{}'),
+(66, 'moderator', 'ab.ban.undo', 1, 'global', 'global', 0, '{}'),
+(67, 'moderator', 'ab.note.use', 1, 'global', 'global', 0, '{}'),
+(68, 'moderator', 'ab.check.ip', 1, 'global', 'global', 0, '{}'),
+(69, 'moderator', 'ab.notify.tempmute', 1, 'global', 'global', 0, '{}'),
+(70, 'moderator', 'ab.ban.temp', 1, 'global', 'global', 0, '{}'),
+(71, 'moderator', 'ab.notify.warn', 1, 'global', 'global', 0, '{}'),
+(72, 'moderator', 'ab.reload', 1, 'global', 'global', 0, '{}'),
+(73, 'moderator', 'ab.ipban.temp', 1, 'global', 'global', 0, '{}'),
+(74, 'moderator', 'ab.check', 1, 'global', 'global', 0, '{}'),
+(75, 'moderator', 'ab.mute.undo', 1, 'global', 'global', 0, '{}'),
+(76, 'moderator', 'ab.undoNotify.mute', 1, 'global', 'global', 0, '{}'),
+(77, 'moderator', 'ab.warn.temp', 1, 'global', 'global', 0, '{}'),
+(78, 'moderator', 'ab.notify.kick', 1, 'global', 'global', 0, '{}'),
+(79, 'moderator', 'ab.undoNotify.warn', 1, 'global', 'global', 0, '{}'),
+(80, 'moderator', 'ab.ipban.perma', 1, 'global', 'global', 0, '{}'),
+(81, 'moderator', 'ab.note.undo', 1, 'global', 'global', 0, '{}'),
+(82, 'moderator', 'ab.banlist', 1, 'global', 'global', 0, '{}'),
+(83, 'moderator', 'ab.kick.use', 1, 'global', 'global', 0, '{}'),
+(84, 'moderator', 'ab.all.undo', 1, 'global', 'global', 0, '{}'),
+(85, 'moderator', 'ab.warn.perma', 1, 'global', 'global', 0, '{}'),
+(86, 'moderator', 'ab.systemprefs', 1, 'global', 'global', 0, '{}'),
+(87, 'moderator', 'ab.mute.temp', 1, 'global', 'global', 0, '{}'),
+(88, 'moderator', 'ab.mute.perma', 1, 'global', 'global', 0, '{}'),
+(89, 'moderator', 'ab.notify.ban', 1, 'global', 'global', 0, '{}'),
+(90, 'moderator', 'ab.history', 1, 'global', 'global', 0, '{}'),
+(91, 'moderator', 'ab.help', 1, 'global', 'global', 0, '{}'),
+(92, 'moderator', 'ab.notify.tempipban', 1, 'global', 'global', 0, '{}'),
+(93, 'moderator', 'ab.notify.mute', 1, 'global', 'global', 0, '{}'),
+(94, 'moderator', 'ab.warn.undo', 1, 'global', 'global', 0, '{}'),
+(95, 'moderator', 'ab.notes.other', 1, 'global', 'global', 0, '{}'),
+(96, 'moderator', 'ab.notes.own', 1, 'global', 'global', 0, '{}'),
+(97, 'moderator', 'ab.notify.ipban', 1, 'global', 'global', 0, '{}'),
+(98, 'moderator', 'ab.notify.tempwarn', 1, 'global', 'global', 0, '{}'),
+(99, 'moderator', 'ab.warns.own', 1, 'global', 'global', 0, '{}'),
+(100, 'moderator', 'ab.undoNotify.ban', 1, 'global', 'global', 0, '{}'),
+(101, 'moderator', 'ab.notify.tempban', 1, 'global', 'global', 0, '{}'),
+(102, 'commentator', 'group.default', 1, 'global', 'global', 0, '{}'),
+(103, 'commentator', 'weight.10', 1, 'global', 'global', 0, '{}'),
+(105, 'commentator', 'tournamentcore.command.csp', 1, 'global', 'global', 0, '{}'),
+(106, 'commentator', 'displayname.Commentator', 1, 'global', 'global', 0, '{}'),
+(107, 'commentator', 'tournamentcore.command.ctp', 1, 'global', 'global', 0, '{}'),
+(108, 'commentator', 'prefix.10.§b§lCommentator §r', 1, 'global', 'global', 0, '{}'),
+(109, 'commentator', 'tournamentcore.commentator', 1, 'global', 'global', 0, '{}'),
+(110, 'moderator', 'novauniverse.tntrun.aggressivedecay', 1, 'global', 'global', 0, '{}'),
+(111, 'moderator', 'tournamentcore.command.respawnplayer', 1, 'global', 'global', 0, '{}'),
+(112, 'moderator', 'mcf.restoredeathmessages', 1, 'global', 'global', 0, '{}'),
+(113, 'moderator', 'tournamentcore.notify.swear', 1, 'global', 'global', 0, '{}'),
+(114, 'moderator', 'tournamentsystem.command.timeout', 1, 'global', 'global', 0, '{}');
 
 -- --------------------------------------------------------
 
@@ -255,36 +260,6 @@ CREATE TABLE `luckperms_players` (
   `username` varchar(16) NOT NULL,
   `primary_group` varchar(36) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `luckperms_players`
---
-
-INSERT INTO `luckperms_players` (`uuid`, `username`, `primary_group`) VALUES
-('0f3157cf-99a4-4bf9-beed-ce83096ebfcf', 'afteryesterday', 'default'),
-('22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'zeeraa01', 'default'),
-('31370aa2-2978-4072-9c2d-dbd7dba00ff1', 'smarttortoise', 'default'),
-('37dc6e39-2ef9-47ad-ba8a-1f1a162800ba', 'footi_', 'default'),
-('45c49c88-950c-4f4b-afe0-55ca5d0593d8', 'aleksa445', 'default'),
-('5203face-89ca-49b7-a5a0-f2cf0fe230e7', 'woltry', 'default'),
-('5457678e-c69d-4438-be87-a986f351f6d0', '_certifiedrat', 'default'),
-('7b63903d-397a-4876-80a5-e63786195b40', 'weneedsnow', 'default'),
-('83c3d18d-3b17-4e9e-ba7b-8887d5fc5183', 'killjo12323', 'default'),
-('866a6931-a503-48b1-9d6f-0dde92c05918', 'nissemosserud', 'default'),
-('8ec663e7-9a3d-4014-9bc6-a6915e629a56', 'debianbtw', 'default'),
-('93eb833c-c09b-42c7-8776-7b7cfa6dfebe', 'two_towers', 'default'),
-('980dbf7d-0904-426f-9c02-d9af3c099fb2', 'istromus', 'default'),
-('9bb529cc-8681-4698-8c3a-e25d802bb1ca', 'penguinslippers', 'default'),
-('ac7fd064-b4e7-43d0-85de-a9e701019afc', 'youhomehugg', 'default'),
-('c1c832fe-e522-47a4-8de3-d197a81b0ec9', 'mangoplayz', 'default'),
-('c53c296d-c8ba-4cca-9b0b-44565efc9d84', 'notander', 'default'),
-('c68b842c-7092-466f-b2ea-cdf6f6f8f011', 'huefiho', 'default'),
-('ca2e347b-025a-4e7b-8019-752b83661f7f', 'i_got_your_ip', 'default'),
-('cb128b6b-400d-4e5b-baf3-3a15c9792ccd', 'vlc_mediaplayer', 'default'),
-('cceec271-0a6c-422b-a2b4-bc3e4b6ca666', 'llizzybeth', 'default'),
-('f0602181-c6b7-49ff-a541-2c7960adb85a', 'zerlandgamer', 'default'),
-('f19a7ebb-5ab7-4866-a320-c46869732101', 'awre_', 'default'),
-('f4ca2a40-c926-4b37-9a41-46bc1613152f', 'entity_666', 'default');
 
 -- --------------------------------------------------------
 
@@ -314,17 +289,6 @@ CREATE TABLE `luckperms_user_permissions` (
   `contexts` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `luckperms_user_permissions`
---
-
-INSERT INTO `luckperms_user_permissions` (`id`, `uuid`, `permission`, `value`, `server`, `world`, `expiry`, `contexts`) VALUES
-(1, '22a9eca8-2221-4bc9-b463-de0f3a0cc652', 'group.host', 1, 'global', 'global', 0, '{}'),
-(4, '866a6931-a503-48b1-9d6f-0dde92c05918', 'group.default', 1, 'global', 'global', 0, '{}'),
-(5, 'cb128b6b-400d-4e5b-baf3-3a15c9792ccd', 'group.moderator', 1, 'global', 'global', 0, '{}'),
-(6, '37dc6e39-2ef9-47ad-ba8a-1f1a162800ba', 'group.helper', 1, 'global', 'global', 0, '{}'),
-(7, 'cb128b6b-400d-4e5b-baf3-3a15c9792ccd', '*', 1, 'global', 'global', 0, '{}');
-
 -- --------------------------------------------------------
 
 --
@@ -337,7 +301,44 @@ CREATE TABLE `players` (
   `username` varchar(16) COLLATE utf8_bin NOT NULL,
   `score` int(11) NOT NULL DEFAULT '0',
   `team_number` int(10) UNSIGNED DEFAULT NULL,
-  `kills` int(10) UNSIGNED NOT NULL DEFAULT '0'
+  `kills` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `metadata` text COLLATE utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `punishmenthistory`
+--
+
+CREATE TABLE `punishmenthistory` (
+  `id` int(11) NOT NULL,
+  `name` varchar(16) COLLATE utf8_bin DEFAULT NULL,
+  `uuid` varchar(35) COLLATE utf8_bin DEFAULT NULL,
+  `reason` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `operator` varchar(16) COLLATE utf8_bin DEFAULT NULL,
+  `punishmentType` varchar(16) COLLATE utf8_bin DEFAULT NULL,
+  `start` mediumtext COLLATE utf8_bin,
+  `end` mediumtext COLLATE utf8_bin,
+  `calculation` varchar(50) COLLATE utf8_bin DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `punishments`
+--
+
+CREATE TABLE `punishments` (
+  `id` int(11) NOT NULL,
+  `name` varchar(16) COLLATE utf8_bin DEFAULT NULL,
+  `uuid` varchar(35) COLLATE utf8_bin DEFAULT NULL,
+  `reason` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `operator` varchar(16) COLLATE utf8_bin DEFAULT NULL,
+  `punishmentType` varchar(16) COLLATE utf8_bin DEFAULT NULL,
+  `start` mediumtext COLLATE utf8_bin,
+  `end` mediumtext COLLATE utf8_bin,
+  `calculation` varchar(50) COLLATE utf8_bin DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -361,7 +362,8 @@ CREATE TABLE `staff` (
 CREATE TABLE `teams` (
   `id` int(10) UNSIGNED NOT NULL,
   `team_number` int(10) UNSIGNED NOT NULL,
-  `score` int(11) NOT NULL DEFAULT '0'
+  `score` int(11) NOT NULL DEFAULT '0',
+  `metadata` text COLLATE utf8_bin
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -399,6 +401,14 @@ CREATE TABLE `whitelist` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `chat_log`
+--
+ALTER TABLE `chat_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `session_id` (`session_id`),
+  ADD KEY `uuid` (`uuid`);
 
 --
 -- Indexes for table `luckperms_actions`
@@ -455,6 +465,18 @@ ALTER TABLE `players`
   ADD KEY `username` (`username`);
 
 --
+-- Indexes for table `punishmenthistory`
+--
+ALTER TABLE `punishmenthistory`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `punishments`
+--
+ALTER TABLE `punishments`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `staff`
 --
 ALTER TABLE `staff`
@@ -487,15 +509,20 @@ ALTER TABLE `whitelist`
 --
 
 --
+-- AUTO_INCREMENT for table `chat_log`
+--
+ALTER TABLE `chat_log`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+--
 -- AUTO_INCREMENT for table `luckperms_actions`
 --
 ALTER TABLE `luckperms_actions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 --
 -- AUTO_INCREMENT for table `luckperms_group_permissions`
 --
 ALTER TABLE `luckperms_group_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 --
 -- AUTO_INCREMENT for table `luckperms_messenger`
 --
@@ -505,22 +532,32 @@ ALTER TABLE `luckperms_messenger`
 -- AUTO_INCREMENT for table `luckperms_user_permissions`
 --
 ALTER TABLE `luckperms_user_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `players`
 --
 ALTER TABLE `players`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+--
+-- AUTO_INCREMENT for table `punishmenthistory`
+--
+ALTER TABLE `punishmenthistory`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `punishments`
+--
+ALTER TABLE `punishments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `staff`
 --
 ALTER TABLE `staff`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `teams`
 --
 ALTER TABLE `teams`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 --
 -- AUTO_INCREMENT for table `tsdata`
 --
@@ -530,7 +567,7 @@ ALTER TABLE `tsdata`
 -- AUTO_INCREMENT for table `whitelist`
 --
 ALTER TABLE `whitelist`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -62,13 +62,17 @@ public class StatusHandler extends APIEndpoint {
 		List<PlayerData> playerDataList = new ArrayList<PlayerData>();
 
 		try {
-			String sql = "SELECT p.uuid AS uuid, p.username AS username, p.score AS player_score, p.kills AS kills, t.team_number AS team_number, t.score AS team_score FROM players AS p LEFT JOIN teams AS t ON t.team_number = p.team_number";
+			String sql = "SELECT p.metadata AS metadata, p.uuid AS uuid, p.username AS username, p.score AS player_score, p.kills AS kills, t.team_number AS team_number, t.score AS team_score FROM players AS p LEFT JOIN teams AS t ON t.team_number = p.team_number";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				int teamNumber = rs.getInt("team_number");
-				PlayerData playerData = new PlayerData(UUID.fromString(rs.getString("uuid")), rs.getInt("kills"), rs.getInt("player_score"), rs.getInt("team_score"), (teamNumber == 0 ? -1 : teamNumber), rs.getString("username"));
+				JSONObject metadata = new JSONObject();
+				if (rs.getString("metadata") != null) {
+					metadata = new JSONObject(rs.getString("metadata"));
+				}
+				PlayerData playerData = new PlayerData(UUID.fromString(rs.getString("uuid")), rs.getInt("kills"), rs.getInt("player_score"), rs.getInt("team_score"), (teamNumber == 0 ? -1 : teamNumber), rs.getString("username"), metadata);
 
 				playerDataList.add(playerData);
 			}
@@ -131,6 +135,7 @@ public class StatusHandler extends APIEndpoint {
 			p.put("score", pd.getScore());
 			p.put("team_score", pd.getTeamScore());
 			p.put("team_number", pd.getTeamNumber());
+			p.put("metadata", pd.getMetadata());
 
 			players.put(p);
 		});

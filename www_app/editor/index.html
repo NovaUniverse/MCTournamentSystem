@@ -87,12 +87,22 @@
 							<span class="float-end sort-direction sort-direction-asc">&downarrow;</span>
 							<span class="float-end sort-direction sort-direction-desc">&uparrow;</span>
 						</th>
+						<th class="player-metadata-objects">Metadata</th>
 						<th class="t-fit"></th>
 					</tr>
 				</thead>
 
 				<tbody id="player_thead"></tbody>
 			</table>
+		</div>
+
+		<div class="mx-2">
+			<div class="form-check">
+				<input class="form-check-input" type="checkbox" value="" id="showMetadataCheckbox">
+				<label class="form-check-label" for="showMetadataCheckbox">
+					Show metadata field (Advanced users only)
+				</label>
+			</div>
 		</div>
 	</div>
 
@@ -206,6 +216,9 @@
 						<select class="player-team-select form-control">
 							<option value="-1" selected>None (Not included)</option>
 						</select>
+					</td>
+					<td class="player-metadata player-metadata-objects">
+						<input type="text" class="metadata-input form-control" placeholder="{}">
 					</td>
 					<td>
 						<button class="btn btn-danger btn-remove-player">Remove</button>

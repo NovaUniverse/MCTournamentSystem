@@ -64,7 +64,7 @@ public class PublicStatusHandler extends APIEndpoint {
 
 			while (rs.next()) {
 				int teamNumber = rs.getInt("team_number");
-				PlayerData playerData = new PlayerData(UUID.fromString(rs.getString("uuid")), rs.getInt("kills"), rs.getInt("player_score"), rs.getInt("team_score"), (teamNumber == 0 ? -1 : teamNumber), rs.getString("username"));
+				PlayerData playerData = new PlayerData(UUID.fromString(rs.getString("uuid")), rs.getInt("kills"), rs.getInt("player_score"), rs.getInt("team_score"), (teamNumber == 0 ? -1 : teamNumber), rs.getString("username"), new JSONObject());
 
 				playerDataList.add(playerData);
 			}
