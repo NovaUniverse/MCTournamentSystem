@@ -713,6 +713,8 @@ const TournamentSystem = {
 			$("#stats_cores").text(data.system.cores);
 			$("#stats_os").text(data.system.os_name);
 
+			$("#stats_public_ip").text(data.system.public_ip);
+
 			if (data.system.linux_distro == null) {
 				$("#distro_info_full").hide();
 			} else {

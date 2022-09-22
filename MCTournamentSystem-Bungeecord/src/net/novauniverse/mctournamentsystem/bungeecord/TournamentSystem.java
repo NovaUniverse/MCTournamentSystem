@@ -36,6 +36,7 @@ import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
+import net.zeeraa.novacore.commons.utils.network.api.ip.IPFetcher;
 
 public class TournamentSystem extends NovaPlugin implements Listener {
 	private static TournamentSystem instance;
@@ -61,6 +62,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private PlayerTelementryManager playerTelementryManager;
 
 	private SlowPlayerSender slowPlayerSender;
+	
+	private String publicIp;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -109,6 +112,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	public SlowPlayerSender getSlowPlayerSender() {
 		return slowPlayerSender;
 	}
+	
+	public String getPublicIp() {
+		return publicIp;
+	}
 
 	@Override
 	public void onEnable() {
@@ -116,6 +123,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		staffRoles = new ArrayList<>();
 		openMode = false;
 		distroName = null;
+		
+		publicIp = "Unknown";
 
 		// Init session id
 		TournamentSystemCommons.getSessionId();
@@ -265,6 +274,16 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			ProxyServer.getInstance().stop("Failed to enable tournament system: Webserver failed to start");
 			return;
 		}
+		
+		IPFetcher.getIPAsync((ip, err) -> {
+			if(err != null) {
+				Log.error("TournamentSystem", "Failed to fetch public ip. " + err.getClass().getName() + " " + err.getMessage());
+				return;
+			}
+			
+			Log.info("TournamentSystem", "Public ip is: " + ip);
+			publicIp = ip;
+		});
 
 		Log.info("Registering channel " + TournamentSystemCommons.DATA_CHANNEL);
 		this.getProxy().registerChannel(TournamentSystemCommons.DATA_CHANNEL);
