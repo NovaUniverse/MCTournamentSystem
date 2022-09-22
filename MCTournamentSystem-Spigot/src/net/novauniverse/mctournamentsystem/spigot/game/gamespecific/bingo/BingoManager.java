@@ -25,8 +25,8 @@ import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboar
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class BingoManager extends NovaModule implements Listener {
-	public static final int POINTS_PER_ITEM = 10;
-	public static final int TIME_LEFT_LINE = 5;
+	public static int POINTS_PER_ITEM = 10;
+	public static int TIME_LEFT_LINE = 5;
 
 	private Task task;
 	private boolean timeLeftLineShown;
@@ -42,37 +42,39 @@ public class BingoManager extends NovaModule implements Listener {
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				boolean didShow = false;
-				if (GameManager.getInstance().hasGame()) {
-					if (GameManager.getInstance().getActiveGame().hasStarted() && !GameManager.getInstance().getActiveGame().hasEnded()) {
-						long totalSecs = ((Bingo) GameManager.getInstance().getActiveGame()).getTimeLeft();
+				if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+					boolean didShow = false;
+					if (GameManager.getInstance().hasGame()) {
+						if (GameManager.getInstance().getActiveGame().hasStarted() && !GameManager.getInstance().getActiveGame().hasEnded()) {
+							long totalSecs = ((Bingo) GameManager.getInstance().getActiveGame()).getTimeLeft();
 
-						long hours = totalSecs / 3600;
-						long minutes = (totalSecs % 3600) / 60;
-						long seconds = totalSecs % 60;
+							long hours = totalSecs / 3600;
+							long minutes = (totalSecs % 3600) / 60;
+							long seconds = totalSecs % 60;
 
-						ChatColor color;
+							ChatColor color;
 
-						if (totalSecs > (NovaBingo.getInstance().getGameDuration() * 60) / 2) {
-							color = ChatColor.GREEN;
-						} else if (totalSecs > (NovaBingo.getInstance().getGameDuration() * 60) / 4) {
-							color = ChatColor.YELLOW;
-						} else {
-							color = ChatColor.RED;
+							if (totalSecs > (NovaBingo.getInstance().getGameDuration() * 60) / 2) {
+								color = ChatColor.GREEN;
+							} else if (totalSecs > (NovaBingo.getInstance().getGameDuration() * 60) / 4) {
+								color = ChatColor.YELLOW;
+							} else {
+								color = ChatColor.RED;
+							}
+
+							String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + color + timeString);
+
+							timeLeftLineShown = true;
+							didShow = true;
 						}
-
-						String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-
-						NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + color + timeString);
-
-						timeLeftLineShown = true;
-						didShow = true;
 					}
-				}
 
-				if (!didShow && timeLeftLineShown) {
-					NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LEFT_LINE);
-					timeLeftLineShown = false;
+					if (!didShow && timeLeftLineShown) {
+						NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LEFT_LINE);
+						timeLeftLineShown = false;
+					}
 				}
 			}
 		}, 10L);

@@ -20,10 +20,10 @@ import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboar
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class BedwarsManager extends NovaModule implements Listener {
-	public static final int BEDWARS_COUNTDOWN_LINE = 5;
-	public static final int HAS_BED_LINE = 6;
+	public static int BEDWARS_COUNTDOWN_LINE = 5;
+	public static int HAS_BED_LINE = 6;
 
-	public static final int BED_DESTRUCTION_SCORE = 20;
+	public static int BED_DESTRUCTION_SCORE = 20;
 
 	private GeneratorUpgradeSorter sorter = new GeneratorUpgradeSorter();
 	private Task task;
@@ -40,17 +40,19 @@ public class BedwarsManager extends NovaModule implements Listener {
 				Bedwars game = NovaBedwars.getInstance().getGame();
 				if (game.hasStarted()) {
 					GeneratorUpgrade nextUpgrade = game.getGeneratorUpgrades().stream().filter(u -> u.getTimeLeft() > 0).sorted(sorter).findFirst().orElse(null);
-					if (nextUpgrade != null) {
-						NetherBoardScoreboard.getInstance().setGlobalLine(BEDWARS_COUNTDOWN_LINE, ChatColor.GOLD + nextUpgrade.getName() + " in: " + ChatColor.AQUA + TextUtils.secondsToTime(nextUpgrade.getTimeLeft()));
-					} else if (game.getBedDestructionTime() > 0) {
-						NetherBoardScoreboard.getInstance().setGlobalLine(BEDWARS_COUNTDOWN_LINE, ChatColor.GOLD + "Bed destruction: " + ChatColor.AQUA + TextUtils.secondsToTime(game.getBedDestructionTime()));
-					} else {
-						NetherBoardScoreboard.getInstance().clearGlobalLine(BEDWARS_COUNTDOWN_LINE);
-					}
+					if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+						if (nextUpgrade != null) {
+							NetherBoardScoreboard.getInstance().setGlobalLine(BEDWARS_COUNTDOWN_LINE, ChatColor.GOLD + nextUpgrade.getName() + " in: " + ChatColor.AQUA + TextUtils.secondsToTime(nextUpgrade.getTimeLeft()));
+						} else if (game.getBedDestructionTime() > 0) {
+							NetherBoardScoreboard.getInstance().setGlobalLine(BEDWARS_COUNTDOWN_LINE, ChatColor.GOLD + "Bed destruction: " + ChatColor.AQUA + TextUtils.secondsToTime(game.getBedDestructionTime()));
+						} else {
+							NetherBoardScoreboard.getInstance().clearGlobalLine(BEDWARS_COUNTDOWN_LINE);
+						}
 
-					Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-						NetherBoardScoreboard.getInstance().setPlayerLine(HAS_BED_LINE, player, ChatColor.GOLD + "Has bed: " + (game.hasBed(player) ? ChatColor.GREEN + "Yes" : ChatColor.RED + "No"));
-					});
+						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+							NetherBoardScoreboard.getInstance().setPlayerLine(HAS_BED_LINE, player, ChatColor.GOLD + "Has bed: " + (game.hasBed(player) ? ChatColor.GREEN + "Yes" : ChatColor.RED + "No"));
+						});
+					}
 				}
 			}
 		}, 10L);

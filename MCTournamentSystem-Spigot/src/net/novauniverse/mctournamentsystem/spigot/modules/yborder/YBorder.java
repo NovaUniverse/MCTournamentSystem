@@ -34,7 +34,7 @@ public class YBorder extends NovaModule implements Listener {
 
 	private boolean color;
 
-	private static final int SCOREBOARD_LINE = 7;
+	public static final int SCOREBOARD_LINE = 7;
 
 	public YBorder() {
 		super("TournamentSystem.YBorder");
@@ -122,11 +122,15 @@ public class YBorder extends NovaModule implements Listener {
 		LanguageManager.broadcast("tournamentsystem.yborder.remove");
 		Task.tryStopTask(decreaseTask);
 		Task.tryStopTask(damageTask);
-		NetherBoardScoreboard.getInstance().clearGlobalLine(SCOREBOARD_LINE);
+		if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+			NetherBoardScoreboard.getInstance().clearGlobalLine(SCOREBOARD_LINE);
+		}
 	}
 
 	private void showLimit() {
-		NetherBoardScoreboard.getInstance().setGlobalLine(SCOREBOARD_LINE, (color ? ChatColor.RED : ChatColor.YELLOW) + TextUtils.ICON_WARNING + ChatColor.RED + " Height limit Y: " + ChatColor.AQUA + yLimit + " " + (color ? ChatColor.RED : ChatColor.YELLOW) + TextUtils.ICON_WARNING);
+		if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+			NetherBoardScoreboard.getInstance().setGlobalLine(SCOREBOARD_LINE, (color ? ChatColor.RED : ChatColor.YELLOW) + TextUtils.ICON_WARNING + ChatColor.RED + " Height limit Y: " + ChatColor.AQUA + yLimit + " " + (color ? ChatColor.RED : ChatColor.YELLOW) + TextUtils.ICON_WARNING);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

@@ -22,7 +22,7 @@ import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class BehindYourTailManager extends NovaModule implements Listener {
-	private static final int PLAYER_ATTACK_FOX_SCORE = 10;
+	private static int PLAYER_ATTACK_FOX_SCORE = 10;
 
 	public BehindYourTailManager() {
 		super("TournamentSystem.GameSpecific.BehindYourTailManager");

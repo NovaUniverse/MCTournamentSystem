@@ -50,57 +50,59 @@ public class TSScoreboard extends NovaModule implements Listener {
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(TournamentSystem.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					final double[] recentTps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps();
+					if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+						final double[] recentTps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps();
 
-					Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-						int playerScore = ScoreManager.getInstance().getPlayerScore(player);
-						int teamScore = 0;
+						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+							int playerScore = ScoreManager.getInstance().getPlayerScore(player);
+							int teamScore = 0;
 
-						TournamentSystemTeam team = null;
+							TournamentSystemTeam team = null;
 
-						if (TeamManager.hasTeamManager()) {
-							team = (TournamentSystemTeam) TournamentSystemTeamManager.getInstance().getPlayerTeam(player);
-						}
+							if (TeamManager.hasTeamManager()) {
+								team = (TournamentSystemTeam) TournamentSystemTeamManager.getInstance().getPlayerTeam(player);
+							}
 
-						if (team != null) {
-							teamScore = team.getScore();
-						}
+							if (team != null) {
+								teamScore = team.getScore();
+							}
 
-						NetherBoardScoreboard.getInstance().setPlayerLine(2, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.score") + ChatColor.AQUA + playerScore);
-						NetherBoardScoreboard.getInstance().setPlayerLine(3, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.kills") + ChatColor.AQUA + PlayerKillCache.getInstance().getPlayerKills(player.getUniqueId()));
-						NetherBoardScoreboard.getInstance().setPlayerLine(4, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.team_score") + ChatColor.AQUA + teamScore);
+							NetherBoardScoreboard.getInstance().setPlayerLine(2, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.score") + ChatColor.AQUA + playerScore);
+							NetherBoardScoreboard.getInstance().setPlayerLine(3, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.kills") + ChatColor.AQUA + PlayerKillCache.getInstance().getPlayerKills(player.getUniqueId()));
+							NetherBoardScoreboard.getInstance().setPlayerLine(4, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.team_score") + ChatColor.AQUA + teamScore);
 
-						int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
+							int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
 
-						NetherBoardScoreboard.getInstance().setPlayerLine(12, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.your_ping") + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : ""));
+							NetherBoardScoreboard.getInstance().setPlayerLine(12, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.your_ping") + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : ""));
 
-						if (recentTps.length > 0) {
-							double tps = recentTps[0];
-							NetherBoardScoreboard.getInstance().setPlayerLine(13, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
-						}
-					});
+							if (recentTps.length > 0) {
+								double tps = recentTps[0];
+								NetherBoardScoreboard.getInstance().setPlayerLine(13, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
+							}
+						});
 
-					if (NovaCore.isNovaGameEngineEnabled()) {
-						if (GameManager.getInstance().hasGame()) {
-							if (GameManager.getInstance().getActiveGame().hasStarted()) {
-								if (GameManager.getInstance().getActiveGame() instanceof MapGame) {
-									MapGame game = (MapGame) GameManager.getInstance().getActiveGame();
-									if (game.hasActiveMap()) {
-										if (game.getActiveMap().getAbstractMapData() instanceof GameMapData) {
-											GameMapData mapData = (GameMapData) game.getActiveMap().getAbstractMapData();
-											if (mapData.hasMapModule(WorldborderMapModule.class)) {
-												WorldborderMapModule borderModule = (WorldborderMapModule) mapData.getMapModule(WorldborderMapModule.class);
-												if (borderModule != null) {
-													if (borderModule.getStartTrigger().isRunning()) {
-														DelayedGameTrigger trigger = borderModule.getStartTrigger();
-														long ticks = trigger.getTicksLeft();
+						if (NovaCore.isNovaGameEngineEnabled()) {
+							if (GameManager.getInstance().hasGame()) {
+								if (GameManager.getInstance().getActiveGame().hasStarted()) {
+									if (GameManager.getInstance().getActiveGame() instanceof MapGame) {
+										MapGame game = (MapGame) GameManager.getInstance().getActiveGame();
+										if (game.hasActiveMap()) {
+											if (game.getActiveMap().getAbstractMapData() instanceof GameMapData) {
+												GameMapData mapData = (GameMapData) game.getActiveMap().getAbstractMapData();
+												if (mapData.hasMapModule(WorldborderMapModule.class)) {
+													WorldborderMapModule borderModule = (WorldborderMapModule) mapData.getMapModule(WorldborderMapModule.class);
+													if (borderModule != null) {
+														if (borderModule.getStartTrigger().isRunning()) {
+															DelayedGameTrigger trigger = borderModule.getStartTrigger();
+															long ticks = trigger.getTicksLeft();
 
-														borderCountdownShown = true;
-														NetherBoardScoreboard.getInstance().setGlobalLine(WORLDBORDER_LINE, ChatColor.GOLD + "Worldborder: " + ChatColor.AQUA + formatTime(ticks / 20));
-													} else {
-														if (borderCountdownShown) {
-															borderCountdownShown = false;
-															NetherBoardScoreboard.getInstance().clearGlobalLine(WORLDBORDER_LINE);
+															borderCountdownShown = true;
+															NetherBoardScoreboard.getInstance().setGlobalLine(WORLDBORDER_LINE, ChatColor.GOLD + "Worldborder: " + ChatColor.AQUA + formatTime(ticks / 20));
+														} else {
+															if (borderCountdownShown) {
+																borderCountdownShown = false;
+																NetherBoardScoreboard.getInstance().clearGlobalLine(WORLDBORDER_LINE);
+															}
 														}
 													}
 												}
@@ -109,18 +111,18 @@ public class TSScoreboard extends NovaModule implements Listener {
 									}
 								}
 							}
-						}
 
-						if (GameManager.getInstance().getCountdown().isCountdownRunning()) {
-							gameCountdownShown = true;
+							if (GameManager.getInstance().getCountdown().isCountdownRunning()) {
+								gameCountdownShown = true;
 
-							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-								NetherBoardScoreboard.getInstance().setPlayerLine(COUNTDOWN_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.starting_in") + ChatColor.AQUA + TextUtils.secondsToHoursMinutes(GameManager.getInstance().getCountdown().getTimeLeft()));
-							});
-						} else {
-							if (gameCountdownShown) {
-								gameCountdownShown = false;
-								Bukkit.getServer().getOnlinePlayers().forEach(player -> NetherBoardScoreboard.getInstance().clearPlayerLine(COUNTDOWN_LINE, player));
+								Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+									NetherBoardScoreboard.getInstance().setPlayerLine(COUNTDOWN_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.starting_in") + ChatColor.AQUA + TextUtils.secondsToHoursMinutes(GameManager.getInstance().getCountdown().getTimeLeft()));
+								});
+							} else {
+								if (gameCountdownShown) {
+									gameCountdownShown = false;
+									Bukkit.getServer().getOnlinePlayers().forEach(player -> NetherBoardScoreboard.getInstance().clearPlayerLine(COUNTDOWN_LINE, player));
+								}
 							}
 						}
 					}

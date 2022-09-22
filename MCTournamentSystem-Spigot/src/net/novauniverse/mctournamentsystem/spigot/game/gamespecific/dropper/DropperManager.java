@@ -55,37 +55,39 @@ public class DropperManager extends NovaModule implements Listener {
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				boolean didShow = false;
-				if (GameManager.getInstance().hasGame()) {
-					if (GameManager.getInstance().getActiveGame().hasStarted() && !GameManager.getInstance().getActiveGame().hasEnded()) {
-						long totalSecs = ((Dropper) GameManager.getInstance().getActiveGame()).getTimeLeft();
+				if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+					boolean didShow = false;
+					if (GameManager.getInstance().hasGame()) {
+						if (GameManager.getInstance().getActiveGame().hasStarted() && !GameManager.getInstance().getActiveGame().hasEnded()) {
+							long totalSecs = ((Dropper) GameManager.getInstance().getActiveGame()).getTimeLeft();
 
-						if (totalSecs > 0) {
-							long hours = totalSecs / 3600;
-							long minutes = (totalSecs % 3600) / 60;
-							long seconds = totalSecs % 60;
+							if (totalSecs > 0) {
+								long hours = totalSecs / 3600;
+								long minutes = (totalSecs % 3600) / 60;
+								long seconds = totalSecs % 60;
 
-							String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+								String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
-							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + timeString);
+								NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + timeString);
 
-							timeLeftLineShown = true;
-							didShow = true;
+								timeLeftLineShown = true;
+								didShow = true;
+							}
 						}
 					}
-				}
 
-				if (!didShow && timeLeftLineShown) {
-					NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LEFT_LINE);
-					timeLeftLineShown = false;
-				}
+					if (!didShow && timeLeftLineShown) {
+						NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LEFT_LINE);
+						timeLeftLineShown = false;
+					}
 
-				if (GameManager.getInstance().hasGame()) {
-					if (GameManager.getInstance().getActiveGame().hasStarted()) {
-						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-							int deaths = ((Dropper) GameManager.getInstance().getActiveGame()).getDeaths(player.getUniqueId());
-							NetherBoardScoreboard.getInstance().setPlayerLine(DEATH_COUNT_LINE, player, ChatColor.GOLD + "Deaths: " + ChatColor.AQUA + deaths);
-						});
+					if (GameManager.getInstance().hasGame()) {
+						if (GameManager.getInstance().getActiveGame().hasStarted()) {
+							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+								int deaths = ((Dropper) GameManager.getInstance().getActiveGame()).getDeaths(player.getUniqueId());
+								NetherBoardScoreboard.getInstance().setPlayerLine(DEATH_COUNT_LINE, player, ChatColor.GOLD + "Deaths: " + ChatColor.AQUA + deaths);
+							});
+						}
 					}
 				}
 			}

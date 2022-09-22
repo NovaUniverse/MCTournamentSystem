@@ -140,6 +140,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private TSPluginMessageListnener pluginMessageListener;
 
+	private boolean disableScoreboard;
+
 	public static TournamentSystem getInstance() {
 		return instance;
 	}
@@ -309,6 +311,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return gameEndMusic;
 	}
 
+	public boolean isDisableScoreboard() {
+		return disableScoreboard;
+	}
+
+	public void setDisableScoreboard(boolean disableScoreboard) {
+		this.disableScoreboard = disableScoreboard;
+	}
+
 	public String readResourceFromJARAsString(String filename) throws IOException {
 		InputStream is = getClass().getResourceAsStream(filename);
 		InputStreamReader isr = new InputStreamReader(is);
@@ -355,6 +365,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.resourcePackUrl = null;
 
 		this.showSensitiveTelementryData = false;
+
+		this.disableScoreboard = false;
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
@@ -537,8 +549,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.cachedTournamentName = tournamentName;
 
 		NetherBoardScoreboard.getInstance().setLineCount(15);
-		NetherBoardScoreboard.getInstance().setDefaultTitle(tournamentName == null ? "NULL" : tournamentName);
-		NetherBoardScoreboard.getInstance().setGlobalLine(14, scoreboardUrl == null ? "" : ChatColor.YELLOW + scoreboardUrl);
+		updateScoreboard();
 
 		/* ----- Team system ----- */
 		// TODO: add team size settings
@@ -666,6 +677,13 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}.runTaskLater(this, 1L);
 
 		Task.tryStartTask(timerSeconds);
+	}
+
+	public void updateScoreboard() {
+		if (!disableScoreboard) {
+			NetherBoardScoreboard.getInstance().setDefaultTitle(cachedTournamentName == null ? "NULL" : cachedTournamentName);
+			NetherBoardScoreboard.getInstance().setGlobalLine(14, cachedTournamentLink == null ? "" : ChatColor.YELLOW + cachedTournamentLink);
+		}
 	}
 
 	@Override

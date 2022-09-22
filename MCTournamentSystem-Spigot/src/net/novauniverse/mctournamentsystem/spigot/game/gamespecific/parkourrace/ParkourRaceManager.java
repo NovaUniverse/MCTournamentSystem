@@ -21,8 +21,8 @@ import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboar
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class ParkourRaceManager extends NovaModule implements Listener {
-	public static final int TIME_LEFT_LINE = 5;
-	public static final int LAP_LINE = 6;
+	public static int TIME_LEFT_LINE = 5;
+	public static int LAP_LINE = 6;
 
 	private Task task;
 
@@ -42,7 +42,9 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 		NovaParkourRace.getInstance().getGame().addTimerDecrementCallback(new Callback() {
 			@Override
 			public void execute() {
-				NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
+				if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+					NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
+				}
 			}
 		});
 
@@ -56,10 +58,12 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 							PlayerData data = game.getPlayerData(player);
 							if (data != null) {
-								if (data.isCompleted()) {
-									NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, ChatColor.GREEN + "" + ChatColor.BOLD + "Completed");
-								} else {
-									NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, ChatColor.AQUA + "" + ChatColor.BOLD + "Lap " + data.getLap());
+								if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+									if (data.isCompleted()) {
+										NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, ChatColor.GREEN + "" + ChatColor.BOLD + "Completed");
+									} else {
+										NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, ChatColor.AQUA + "" + ChatColor.BOLD + "Lap " + data.getLap());
+									}
 								}
 							}
 						});

@@ -89,7 +89,9 @@ public class GameListeners extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameLoaded(GameLoadedEvent e) {
-		NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + GameManager.getInstance().getDisplayName());
+		if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+			NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + GameManager.getInstance().getDisplayName());
+		}
 		TabListMessage.setServerType(GameManager.getInstance().getDisplayName());
 
 		String name = e.getGame().getName().toLowerCase();

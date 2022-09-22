@@ -36,8 +36,8 @@ import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class HiveManager extends NovaModule implements Listener {
-	public static final int TIME_LINE = 5;
-	public static final int HONEY_LINE = 6;
+	public static int TIME_LINE = 5;
+	public static int HONEY_LINE = 6;
 
 	private Task task;
 
@@ -69,19 +69,21 @@ public class HiveManager extends NovaModule implements Listener {
 				if (GameManager.getInstance().hasGame()) {
 					Hive game = (Hive) GameManager.getInstance().getActiveGame();
 
-					if (GameManager.getInstance().getActiveGame().hasStarted()) {
-						NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + TextUtils.secondsToTime(game.getTimeLeft() + 1));
+					if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+						if (GameManager.getInstance().getActiveGame().hasStarted()) {
+							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + TextUtils.secondsToTime(game.getTimeLeft() + 1));
 
-						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-							TournamentSystemTeam team = (TournamentSystemTeam) TeamManager.getTeamManager().getPlayerTeam(player);
-							if (team != null) {
-								HiveData hive = game.getHives().stream().filter(h -> h.getOwner().equals(team)).findFirst().orElse(null);
-								if (hive != null) {
-									boolean filled = hive.getHoney() >= game.getConfig().getHoneyRequiredtoFillJar();
-									NetherBoardScoreboard.getInstance().setPlayerLine(HONEY_LINE, player, ChatColor.GOLD + "Honey: " + (filled ? ChatColor.GREEN : ChatColor.AQUA) + hive.getHoney() + " / " + game.getConfig().getHoneyRequiredtoFillJar());
+							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+								TournamentSystemTeam team = (TournamentSystemTeam) TeamManager.getTeamManager().getPlayerTeam(player);
+								if (team != null) {
+									HiveData hive = game.getHives().stream().filter(h -> h.getOwner().equals(team)).findFirst().orElse(null);
+									if (hive != null) {
+										boolean filled = hive.getHoney() >= game.getConfig().getHoneyRequiredtoFillJar();
+										NetherBoardScoreboard.getInstance().setPlayerLine(HONEY_LINE, player, ChatColor.GOLD + "Honey: " + (filled ? ChatColor.GREEN : ChatColor.AQUA) + hive.getHoney() + " / " + game.getConfig().getHoneyRequiredtoFillJar());
+									}
 								}
-							}
-						});
+							});
+						}
 					}
 				}
 			}

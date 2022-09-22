@@ -19,7 +19,7 @@ public class SpleefManager extends NovaModule implements Listener {
 		super("TournamentSystem.GameSpecific.SpleefManager");
 	}
 
-	public static final int SPLEEF_DECAY_LINE = 5;
+	public static int SPLEEF_DECAY_LINE = 5;
 
 	private int taskId;
 	private boolean decayLineShown;
@@ -41,26 +41,28 @@ public class SpleefManager extends NovaModule implements Listener {
 					if (spleef.hasStarted()) {
 						if (spleef.hasActiveMap()) {
 							if (spleef.getDecayModule() != null) {
-								if (spleef.getDecayModule().getStartTrigger().isRunning()) {
-									decayLineShown = true;
+								if (!TournamentSystem.getInstance().isDisableScoreboard()) {
+									if (spleef.getDecayModule().getStartTrigger().isRunning()) {
+										decayLineShown = true;
 
-									int timeLeft = (int) spleef.getDecayModule().getStartTrigger().getTicksLeft() / 20;
+										int timeLeft = (int) spleef.getDecayModule().getStartTrigger().getTicksLeft() / 20;
 
-									ChatColor color;
+										ChatColor color;
 
-									if (timeLeft < (spleef.getDecayModule().getBeginAfter() / 3)) {
-										color = ChatColor.RED;
-									} else if (timeLeft < (spleef.getDecayModule().getBeginAfter() / 2)) {
-										color = ChatColor.YELLOW;
+										if (timeLeft < (spleef.getDecayModule().getBeginAfter() / 3)) {
+											color = ChatColor.RED;
+										} else if (timeLeft < (spleef.getDecayModule().getBeginAfter() / 2)) {
+											color = ChatColor.YELLOW;
+										} else {
+											color = ChatColor.GREEN;
+										}
+
+										NetherBoardScoreboard.getInstance().setGlobalLine(SPLEEF_DECAY_LINE, ChatColor.GOLD + "Decay in: " + color + TextUtils.secondsToHoursMinutes(timeLeft));
 									} else {
-										color = ChatColor.GREEN;
-									}
-
-									NetherBoardScoreboard.getInstance().setGlobalLine(SPLEEF_DECAY_LINE, ChatColor.GOLD + "Decay in: " + color + TextUtils.secondsToHoursMinutes(timeLeft));
-								} else {
-									if (decayLineShown) {
-										NetherBoardScoreboard.getInstance().clearGlobalLine(SPLEEF_DECAY_LINE);
-										decayLineShown = false;
+										if (decayLineShown) {
+											NetherBoardScoreboard.getInstance().clearGlobalLine(SPLEEF_DECAY_LINE);
+											decayLineShown = false;
+										}
 									}
 								}
 							}
