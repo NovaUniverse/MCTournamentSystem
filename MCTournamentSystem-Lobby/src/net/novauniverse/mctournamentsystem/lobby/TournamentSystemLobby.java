@@ -19,6 +19,7 @@ import org.json.JSONException;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.TraitInfo;
+import net.novauniverse.mctournamentsystem.lobby.command.clearkotlscore.ClearKOTLScore;
 import net.novauniverse.mctournamentsystem.lobby.command.duel.AcceptDuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.duel.DuelCommand;
 import net.novauniverse.mctournamentsystem.lobby.command.givemefireworks.GiveMeFireworksCommand;
@@ -81,10 +82,13 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 			double x = kotlHologram.getDouble("x");
 			double y = kotlHologram.getDouble("y");
 			double z = kotlHologram.getDouble("z");
+			
+			int lines = kotlHologram.getInt("lines");
 
 			Log.info(getName(), "Setting up KOTL hologram at X: " + x + " Y: " + y + " Z: " + z);
-			Lobby.getInstance().setupKOTLHologram(x, y, z);
-			Lobby.getInstance().setKOTLHologramLines(kotlHologram.getInt("lines"));
+			Lobby.getInstance().setKOTLHologramLines(lines);
+			Lobby.getInstance().setupKOTLHologram(x, y, z, lines);
+			
 		}
 
 		ConfigurationSection playerLeaderboard = getConfig().getConfigurationSection("lobby_player_leaderboard");
@@ -97,6 +101,7 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 
 		CommandRegistry.registerCommand(new AcceptDuelCommand());
 		CommandRegistry.registerCommand(new DuelCommand());
+		CommandRegistry.registerCommand(new ClearKOTLScore());
 		CommandRegistry.registerCommand(new MissileWars(this));
 
 		if (TournamentSystem.getInstance().isCelebrationMode()) {

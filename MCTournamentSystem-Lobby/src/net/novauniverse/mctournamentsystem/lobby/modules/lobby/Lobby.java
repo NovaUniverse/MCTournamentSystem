@@ -3,6 +3,7 @@ package net.novauniverse.mctournamentsystem.lobby.modules.lobby;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,6 +34,7 @@ import org.json.JSONObject;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 
 import me.rayzr522.jsonmessage.JSONMessage;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -207,9 +209,9 @@ public class Lobby extends NovaModule implements Listener {
 					}
 				});
 
-				kotlHologram.clearLines();
-				kotlHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top KOTL Players");
-				kotlScore.stream().sorted(kingOfTheLadderScoreComparator).limit(kotlHologramLines).forEach(score -> {
+				int line = 1;
+
+				for (KingOfTheLadderScore score : kotlScore.stream().sorted(kingOfTheLadderScoreComparator).limit(kotlHologramLines).collect(Collectors.toList())) {
 					net.md_5.bungee.api.ChatColor color = net.md_5.bungee.api.ChatColor.AQUA;
 					if (TeamManager.hasTeamManager()) {
 						Team team = TeamManager.getTeamManager().getPlayerTeam(score.getUuid());
@@ -217,11 +219,18 @@ public class Lobby extends NovaModule implements Listener {
 							color = team.getTeamColor();
 						}
 					}
-					kotlHologram.appendTextLine(color + score.getName() + ChatColor.WHITE + " : " + ChatColor.AQUA + score.getScore());
-				});
-				while (kotlHologram.size() - 1 < kotlHologramLines) {
-					kotlHologram.appendTextLine(ChatColor.GRAY + "Empty");
+					((TextLine) kotlHologram.getLine(line)).setText(color + score.getName() + ChatColor.WHITE + " : " + ChatColor.AQUA + score.getScore());
+					line++;
 				}
+
+				for(;line <= kotlHologramLines; line++) {
+					((TextLine) kotlHologram.getLine(line)).setText(ChatColor.GRAY + "Empty");
+				}
+				/*
+				 * while (kotlHologram.size() - 1 < kotlHologramLines) {
+				 * kotlHologram.getLine(kotlHologramLines)
+				 * kotlHologram.appendTextLine(ChatColor.GRAY + "Empty"); }
+				 */
 			}
 		}, 20L);
 		kotlScoreTask.start();
@@ -336,11 +345,14 @@ public class Lobby extends NovaModule implements Listener {
 		this.kotlHologramLines = kotlHologramLines;
 	}
 
-	public void setupKOTLHologram(double x, double y, double z) {
+	public void setupKOTLHologram(double x, double y, double z, int lines) {
 		Location hologramLocation = new Location(multiverseWorld.getWorld(), x, y, z);
 		this.kotlHologram = HologramsAPI.createHologram(getPlugin(), hologramLocation);
 
 		kotlHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top KOTL Players");
+		for (int i = 0; i < lines; i++) {
+			kotlHologram.appendTextLine(ChatColor.DARK_GRAY + "Empty");
+		}
 	}
 
 	private boolean isInKOTLArena(Entity entity) {
@@ -508,5 +520,10 @@ public class Lobby extends NovaModule implements Listener {
 			e.setLine(2, "");
 			e.setLine(3, "");
 		}
+	}
+
+	public void clearKOTLScore() {
+		// TODO Auto-generated method stub
+		
 	}
 }
