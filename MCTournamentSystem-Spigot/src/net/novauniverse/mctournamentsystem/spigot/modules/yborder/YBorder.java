@@ -41,11 +41,11 @@ public class YBorder extends NovaModule implements Listener {
 	public YBorder() {
 		super("TournamentSystem.YBorder");
 	}
-	
+
 	public boolean isPaused() {
 		return paused;
 	}
-	
+
 	public void setPaused(boolean paused) {
 		this.paused = paused;
 	}
@@ -154,5 +154,17 @@ public class YBorder extends NovaModule implements Listener {
 		if (aboveLimit.contains(e.getPlayer())) {
 			aboveLimit.remove(e.getPlayer());
 		}
+	}
+
+	public void reset() {
+		yLimit = 255;
+	}
+
+	public void setyLimit(int yLimit) {
+		this.yLimit = yLimit;
+	}
+
+	public int getyLimit() {
+		return yLimit;
 	}
 }

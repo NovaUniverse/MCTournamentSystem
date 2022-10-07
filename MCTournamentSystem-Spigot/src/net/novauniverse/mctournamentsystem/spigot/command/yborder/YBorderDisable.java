@@ -9,8 +9,8 @@ import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaSubCommand;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 
-public class Disable extends NovaSubCommand {
-	public Disable() {
+public class YBorderDisable extends NovaSubCommand {
+	public YBorderDisable() {
 		super("disable");
 
 		setAllowedSenders(AllowedSenders.ALL);

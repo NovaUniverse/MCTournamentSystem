@@ -20,8 +20,11 @@ public class YBorderCommand extends NovaCommand {
 		setEmptyTabMode(true);
 		setFilterAutocomplete(true);
 
-		addSubCommand(new Enable());
-		addSubCommand(new Disable());
+		addSubCommand(new YBorderEnable());
+		addSubCommand(new YBorderDisable());
+		addSubCommand(new YBorderPause());
+		addSubCommand(new YBorderReset());
+		addSubCommand(new YBorderSet());
 
 		addHelpSubCommand();
 	}
