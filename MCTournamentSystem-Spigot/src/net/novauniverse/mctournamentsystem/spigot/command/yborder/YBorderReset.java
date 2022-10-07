@@ -11,7 +11,7 @@ import net.zeeraa.novacore.spigot.module.ModuleManager;
 
 public class YBorderReset extends NovaSubCommand {
 	public YBorderReset() {
-		super("pause");
+		super("reset");
 
 		setAllowedSenders(AllowedSenders.ALL);
 		setPermission("tournamentcore.command.yborder");

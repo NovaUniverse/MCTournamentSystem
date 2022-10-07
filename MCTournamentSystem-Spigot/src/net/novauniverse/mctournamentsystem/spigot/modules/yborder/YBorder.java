@@ -1,11 +1,13 @@
 package net.novauniverse.mctournamentsystem.spigot.modules.yborder;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,12 +25,15 @@ import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
+import xyz.xenondevs.particle.ParticleEffect;
 
 @NovaAutoLoad(shouldEnable = false)
 public class YBorder extends NovaModule implements Listener {
 	private int yLimit;
 	private Task decreaseTask;
 	private Task damageTask;
+
+	private Task particleTask;
 
 	private List<Player> aboveLimit;
 
@@ -38,16 +43,13 @@ public class YBorder extends NovaModule implements Listener {
 
 	private boolean paused;
 
+	private boolean useParticles;
+
+	public static final double PARTICLE_WIDTH = 7;
+	public static final double PARTICLE_DENSITY = 0.5;
+
 	public YBorder() {
 		super("TournamentSystem.YBorder");
-	}
-
-	public boolean isPaused() {
-		return paused;
-	}
-
-	public void setPaused(boolean paused) {
-		this.paused = paused;
 	}
 
 	@Override
@@ -62,71 +64,81 @@ public class YBorder extends NovaModule implements Listener {
 		paused = false;
 
 		color = false;
+
+		useParticles = true;
 	}
 
 	@Override
 	public void onEnable() throws Exception {
 		Task.tryStopTask(decreaseTask);
 		Task.tryStopTask(damageTask);
+		Task.tryStopTask(particleTask);
 
 		paused = false;
 
-		decreaseTask = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				if (yLimit > 0) {
-					if (!paused) {
-						yLimit--;
+		decreaseTask = new SimpleTask(TournamentSystem.getInstance(), () -> {
+			if (yLimit > 0) {
+				if (!paused) {
+					yLimit--;
+				}
+			}
+
+			color = !color;
+			showLimit();
+		}, 20L, 20L);
+
+		damageTask = new SimpleTask(TournamentSystem.getInstance(), () -> {
+			Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+				boolean showMessage = false;
+
+				if (NovaCore.isNovaGameEngineEnabled()) {
+					if (GameManager.getInstance().isInGame(player)) {
+						showMessage = true;
 					}
 				}
 
-				color = !color;
-				showLimit();
-			}
-		}, 20L, 20L);
+				if (showMessage) {
+					if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
+						if (player.getLocation().getY() > yLimit) {
+							if (player.getHealth() > 0) {
+								player.damage(1);
 
-		damageTask = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-					boolean showMessage = false;
+								if (!aboveLimit.contains(player)) {
+									aboveLimit.add(player);
+									player.sendMessage(LanguageManager.getString(player, "tournamentsystem.yborder.above_limit.warning", "" + yLimit));
+								}
 
-					if (NovaCore.isNovaGameEngineEnabled()) {
-						if (GameManager.getInstance().isInGame(player)) {
-							showMessage = true;
-						}
-					}
+								String message = LanguageManager.getString(player, "tournamentsystem.yborder.above_limit.info", (player.getLocation().getBlockY() - yLimit) + "");
 
-					if (showMessage) {
-						if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
-							if (player.getLocation().getY() > yLimit) {
-								if (player.getHealth() > 0) {
-									player.damage(1);
-
-									if (!aboveLimit.contains(player)) {
-										aboveLimit.add(player);
-										player.sendMessage(LanguageManager.getString(player, "tournamentsystem.yborder.above_limit.warning", "" + yLimit));
-									}
-
-									String message = LanguageManager.getString(player, "tournamentsystem.yborder.above_limit.info", (player.getLocation().getBlockY() - yLimit) + "");
-
-									if (message.length() <= 40) {
-										VersionIndependentUtils.get().sendActionBarMessage(player, message);
-									}
-								} else {
-									if (aboveLimit.contains(player)) {
-										aboveLimit.remove(player);
-									}
+								if (message.length() <= 40) {
+									VersionIndependentUtils.get().sendActionBarMessage(player, message);
+								}
+							} else {
+								if (aboveLimit.contains(player)) {
+									aboveLimit.remove(player);
 								}
 							}
 						}
 					}
-				});
-			}
+				}
+			});
 		}, 20L, 20L);
+
+		particleTask = new SimpleTask(TournamentSystem.getInstance(), () -> {
+			Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+				for (double x = 0; x <= PARTICLE_WIDTH; x += PARTICLE_DENSITY) {
+					for (double z = 0; z <= PARTICLE_WIDTH; z += PARTICLE_DENSITY) {
+						Location location = new Location(player.getWorld(), ((player.getLocation().getX()) - (PARTICLE_WIDTH / 2) + x), yLimit, ((player.getLocation().getZ() + z) - (PARTICLE_WIDTH / 2)));
+
+						ParticleEffect.REDSTONE.display(location, Color.RED, player);
+					}
+				}
+			});
+		}, 5L);
 
 		decreaseTask.start();
 		damageTask.start();
+		particleTask.start();
 
 		LanguageManager.broadcast("tournamentsystem.yborder.start");
 
@@ -136,8 +148,11 @@ public class YBorder extends NovaModule implements Listener {
 	@Override
 	public void onDisable() throws Exception {
 		LanguageManager.broadcast("tournamentsystem.yborder.remove");
+
 		Task.tryStopTask(decreaseTask);
 		Task.tryStopTask(damageTask);
+		Task.tryStopTask(particleTask);
+
 		if (!TournamentSystem.getInstance().isDisableScoreboard()) {
 			NetherBoardScoreboard.getInstance().clearGlobalLine(SCOREBOARD_LINE);
 		}
@@ -166,5 +181,21 @@ public class YBorder extends NovaModule implements Listener {
 
 	public int getyLimit() {
 		return yLimit;
+	}
+
+	public boolean isUseParticles() {
+		return useParticles;
+	}
+
+	public void setUseParticles(boolean useParticles) {
+		this.useParticles = useParticles;
+	}
+
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
 	}
 }
