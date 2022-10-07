@@ -6,6 +6,7 @@ import org.bukkit.permissions.PermissionDefault;
 
 import net.novauniverse.mctournamentsystem.spigot.modules.yborder.YBorder;
 import net.zeeraa.novacore.spigot.command.AllowedSenders;
+import net.zeeraa.novacore.spigot.command.NovaCommand;
 import net.zeeraa.novacore.spigot.command.NovaSubCommand;
 import net.zeeraa.novacore.spigot.module.ModuleEnableFailureReason;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
@@ -14,6 +15,8 @@ public class YBorderEnable extends NovaSubCommand {
 	public YBorderEnable() {
 		super("enable");
 
+		setAliases(NovaCommand.generateAliasList("start"));
+		
 		setAllowedSenders(AllowedSenders.ALL);
 		setPermission("tournamentcore.command.yborder");
 		setPermissionDefaultValue(PermissionDefault.OP);

@@ -33,7 +33,7 @@ public class YBorderPause extends NovaSubCommand {
 				sender.sendMessage(ChatColor.GREEN + "Y Border paused");
 				yBorder.setPaused(true);
 			} else {
-				sender.sendMessage(ChatColor.RED + "Y Border is already paused");
+				sender.sendMessage(ChatColor.RED + "Y Border is already pause. You can resume it with " + ChatColor.AQUA + "/yborder start");
 			}
 		} else {
 			sender.sendMessage(ChatColor.RED + "Y border not enabled");
