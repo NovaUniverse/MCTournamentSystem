@@ -36,8 +36,18 @@ public class YBorder extends NovaModule implements Listener {
 
 	public static final int SCOREBOARD_LINE = 7;
 
+	private boolean paused;
+
 	public YBorder() {
 		super("TournamentSystem.YBorder");
+	}
+	
+	public boolean isPaused() {
+		return paused;
+	}
+	
+	public void setPaused(boolean paused) {
+		this.paused = paused;
 	}
 
 	@Override
@@ -49,6 +59,8 @@ public class YBorder extends NovaModule implements Listener {
 
 		aboveLimit = new ArrayList<Player>();
 
+		paused = false;
+
 		color = false;
 	}
 
@@ -57,11 +69,15 @@ public class YBorder extends NovaModule implements Listener {
 		Task.tryStopTask(decreaseTask);
 		Task.tryStopTask(damageTask);
 
+		paused = false;
+
 		decreaseTask = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
 				if (yLimit > 0) {
-					yLimit--;
+					if (!paused) {
+						yLimit--;
+					}
 				}
 
 				color = !color;
