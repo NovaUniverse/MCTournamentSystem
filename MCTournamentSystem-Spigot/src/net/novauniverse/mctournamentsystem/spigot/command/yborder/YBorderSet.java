@@ -9,14 +9,14 @@ import net.zeeraa.novacore.spigot.command.AllowedSenders;
 import net.zeeraa.novacore.spigot.command.NovaSubCommand;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 
-public class Disable extends NovaSubCommand {
-	public Disable() {
-		super("disable");
+public class YBorderSet extends NovaSubCommand {
+	public YBorderSet() {
+		super("set");
 
 		setAllowedSenders(AllowedSenders.ALL);
 		setPermission("tournamentcore.command.yborder");
 		setPermissionDefaultValue(PermissionDefault.OP);
-		setDescription("Enable y border");
+		setDescription("Set y border limit");
 
 		setEmptyTabMode(true);
 		setFilterAutocomplete(true);
@@ -26,14 +26,26 @@ public class Disable extends NovaSubCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-		if (!ModuleManager.isEnabled(YBorder.class)) {
-			sender.sendMessage(ChatColor.RED + "Y Border is already disabled");
+		if (args.length == 0) {
+			sender.sendMessage(ChatColor.RED + "Please provide a number for the new y limit");
+			return true;
+		}
+
+		int y = 0;
+		try {
+			y = Integer.parseInt(args[0]);
+		} catch (Exception e) {
+			sender.sendMessage(ChatColor.RED + "Please provide a valid number");
+			return true;
+		}
+
+		YBorder yBorder = (YBorder) ModuleManager.getModule(YBorder.class);
+
+		if (yBorder != null) {
+			yBorder.setyLimit(y);
+			sender.sendMessage(ChatColor.GREEN + "Y Border limit changed to " + y);
 		} else {
-			if (ModuleManager.disable(YBorder.class)) {
-				sender.sendMessage(ChatColor.GREEN + "Y Border disabled");
-			} else {
-				sender.sendMessage(ChatColor.DARK_RED + "Failed to disable module");
-			}
+			sender.sendMessage(ChatColor.RED + "Y Border not loaded");
 		}
 		return true;
 	}
