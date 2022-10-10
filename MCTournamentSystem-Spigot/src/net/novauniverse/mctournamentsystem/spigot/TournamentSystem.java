@@ -42,6 +42,9 @@ import net.novauniverse.mctournamentsystem.spigot.command.commentator.csp.CSPCom
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.ctp.CTPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.copylocation.CopyLocationCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.DiscordCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.PatreonCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.YoutubeCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
@@ -572,11 +575,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			ModuleManager.enable(EdibleHeads.class);
 		}
 
-		if (resourcePackUrl != null) {
-			ModuleManager.enable(ResourcePackManager.class);
-			// Allow empty string to be treated as no pack
-			if (resourcePackUrl.length() == 0) {
-				resourcePackUrl = null;
+		File noResourcepackFile = new File(Bukkit.getServer().getWorldContainer() + File.separator + "NO_DOWNLOAD_RESOURCEPACK");
+		if (noResourcepackFile.exists()) {
+			Log.info("TournamentSystem", "Server resource pack disabled on this server");
+		} else {
+			if (resourcePackUrl != null) {
+				ModuleManager.enable(ResourcePackManager.class);
+				// Allow empty string to be treated as no pack
+				if (resourcePackUrl.length() == 0) {
+					resourcePackUrl = null;
+				}
 			}
 		}
 
@@ -604,6 +612,22 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new RespawnPlayerCommand());
 		CommandRegistry.registerCommand(new CopyLocationCommand());
 		CommandRegistry.registerCommand(new ChatfilterCommand());
+
+		if (config.has("socials")) {
+			JSONObject socials = config.getJSONObject("socials");
+
+			if (socials.has("discord")) {
+				CommandRegistry.registerCommand(new DiscordCommand(this, socials.getString("discord")));
+			}
+
+			if (socials.has("patreon")) {
+				CommandRegistry.registerCommand(new PatreonCommand(this, socials.getString("patreon")));
+			}
+
+			if (socials.has("youtube")) {
+				CommandRegistry.registerCommand(new YoutubeCommand(this, socials.getString("youtube")));
+			}
+		}
 
 		/* ----- Permissions ----- */
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commentator access", PermissionDefault.FALSE);
