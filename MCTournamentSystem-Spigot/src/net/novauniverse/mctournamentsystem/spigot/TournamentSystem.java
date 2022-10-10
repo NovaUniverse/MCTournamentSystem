@@ -42,6 +42,9 @@ import net.novauniverse.mctournamentsystem.spigot.command.commentator.csp.CSPCom
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.ctp.CTPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.copylocation.CopyLocationCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.DiscordCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.PatreonCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.YoutubeCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
@@ -141,7 +144,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private TSPluginMessageListnener pluginMessageListener;
 
 	private boolean disableScoreboard;
-
+	
 	public static TournamentSystem getInstance() {
 		return instance;
 	}
@@ -604,6 +607,22 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new RespawnPlayerCommand());
 		CommandRegistry.registerCommand(new CopyLocationCommand());
 		CommandRegistry.registerCommand(new ChatfilterCommand());
+
+		if (config.has("socials")) {
+			JSONObject socials = config.getJSONObject("socials");
+
+			if (socials.has("discord")) {
+				CommandRegistry.registerCommand(new DiscordCommand(this, socials.getString("discord")));
+			}
+
+			if (socials.has("patreon")) {
+				CommandRegistry.registerCommand(new PatreonCommand(this, socials.getString("patreon")));
+			}
+
+			if (socials.has("youtube")) {
+				CommandRegistry.registerCommand(new YoutubeCommand(this, socials.getString("youtube")));
+			}
+		}
 
 		/* ----- Permissions ----- */
 		PermissionRegistrator.registerPermission(TournamentPermissions.COMMENTATOR_PERMISSION, "Commentator access", PermissionDefault.FALSE);
