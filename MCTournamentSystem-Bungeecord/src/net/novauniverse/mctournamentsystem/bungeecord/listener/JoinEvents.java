@@ -45,7 +45,7 @@ public class JoinEvents implements Listener {
 							player.sendMessage(new ComponentBuilder("Connecting to " + activeServerName + " since a game is active. Use /hub to get back to the lobby").color(ChatColor.GOLD).create());
 						}
 					}
-				}, 500, TimeUnit.MILLISECONDS);
+				}, 5, TimeUnit.SECONDS);
 			}
 		}
 

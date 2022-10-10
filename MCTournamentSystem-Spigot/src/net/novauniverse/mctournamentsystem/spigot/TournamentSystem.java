@@ -144,7 +144,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private TSPluginMessageListnener pluginMessageListener;
 
 	private boolean disableScoreboard;
-	
+
 	public static TournamentSystem getInstance() {
 		return instance;
 	}
@@ -575,11 +575,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			ModuleManager.enable(EdibleHeads.class);
 		}
 
-		if (resourcePackUrl != null) {
-			ModuleManager.enable(ResourcePackManager.class);
-			// Allow empty string to be treated as no pack
-			if (resourcePackUrl.length() == 0) {
-				resourcePackUrl = null;
+		File noResourcepackFile = new File(Bukkit.getServer().getWorldContainer() + File.separator + "NO_DOWNLOAD_RESOURCEPACK");
+		if (noResourcepackFile.exists()) {
+			Log.info("TournamentSystem", "Server resource pack disabled on this server");
+		} else {
+			if (resourcePackUrl != null) {
+				ModuleManager.enable(ResourcePackManager.class);
+				// Allow empty string to be treated as no pack
+				if (resourcePackUrl.length() == 0) {
+					resourcePackUrl = null;
+				}
 			}
 		}
 
