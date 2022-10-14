@@ -65,6 +65,7 @@ import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.modules.resourcepack.ResourcePackManager;
 import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissions;
+import net.novauniverse.mctournamentsystem.spigot.placeholderapi.PlaceholderAPIExpansion;
 import net.novauniverse.mctournamentsystem.spigot.pluginmessages.TSPluginMessageListnener;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
@@ -144,6 +145,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private TSPluginMessageListnener pluginMessageListener;
 
 	private boolean disableScoreboard;
+
+	private PlaceholderAPIExpansion placeholderAPIExpansion;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -370,6 +373,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.showSensitiveTelementryData = false;
 
 		this.disableScoreboard = false;
+
+		this.placeholderAPIExpansion = null;
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
@@ -599,6 +604,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, TournamentSystemCommons.DATA_CHANNEL);
 		this.getServer().getMessenger().registerIncomingPluginChannel(this, TournamentSystemCommons.DATA_CHANNEL, this.pluginMessageListener);
 
+		/* ----- PlaceholderAPI ----- */
+		placeholderAPIExpansion = new PlaceholderAPIExpansion();
+		placeholderAPIExpansion.register();
+
 		/* ----- Commands ----- */
 		CommandRegistry.registerCommand(new DatabaseCommand());
 		CommandRegistry.registerCommand(new FlyCommand());
@@ -715,5 +724,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		Task.tryStopTask(timerSeconds);
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
+
+		if (placeholderAPIExpansion != null) {
+			if (placeholderAPIExpansion.isRegistered()) {
+				placeholderAPIExpansion.unregister();
+			}
+		}
 	}
 }

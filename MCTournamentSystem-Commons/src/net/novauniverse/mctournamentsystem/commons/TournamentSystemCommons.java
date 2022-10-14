@@ -14,11 +14,11 @@ public class TournamentSystemCommons {
 	public static final char CHAT_COLOR_CHAR = (char) 0xA7;
 	public static final String DATA_CHANNEL = "mcts:controller";
 	public static final String PLAYER_TELEMENTRY_CHANNEL = "mcts:ptelementry";
-	
+
 	private static UUID sessionId = null;
-	
+
 	public static UUID getSessionId() {
-		if(sessionId == null) {
+		if (sessionId == null) {
 			sessionId = UUID.randomUUID();
 			Log.debug("TournamentSystemCommons", "Init sessionId as " + sessionId.toString());
 		}
@@ -162,6 +162,37 @@ public class TournamentSystemCommons {
 			return true;
 		} catch (Exception e) {
 			Log.error("TournamentSystemCommons", "Failed to set reconnect server. " + e.getClass().getName() + " " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static String getNextMinigame() {
+		String name = null;
+		try {
+			name = TournamentSystemCommons.getConfigValue("next_minigame");
+			if (name != null) {
+				if (name.length() == 0) {
+					name = null;
+				}
+			}
+		} catch (SQLException e) {
+			Log.error("TournamentSystemCommons", "Failed to fetch next minigame server. " + e.getClass().getName() + " " + e.getMessage());
+			e.printStackTrace();
+		}
+		return name;
+	}
+
+	public static boolean clearNextMinigame() {
+		return TournamentSystemCommons.setNextMinigame(null);
+	}
+
+	public static boolean setNextMinigame(String name) {
+		try {
+			TournamentSystemCommons.setConfigValue("next_minigame", name);
+			return true;
+		} catch (Exception e) {
+			Log.error("TournamentSystemCommons", "Failed to set next minigame. " + e.getClass().getName() + " " + e.getMessage());
 			e.printStackTrace();
 		}
 		return false;

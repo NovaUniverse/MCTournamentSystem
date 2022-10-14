@@ -377,6 +377,15 @@ $(function () {
 
 	$("#btn_open_chat_log").on("click", () => TournamentSystem.openChatLog());
 
+	$(".btn_next_minigame").on("click", () => {
+		$("#next_minigame_value").val(TournamentSystem.lastData.next_minigame);
+		$("#next_minigame_model").modal("show");
+	});
+
+	$("#btn_clear_next_minigame").on("click", () => TournamentSystem.clearNextMinigame());
+
+	$("#btn_set_next_mingame").on("click", () => TournamentSystem.setNextMinigame($("#next_minigame_value").val()));
+
 	setInterval(function () {
 		TournamentSystem.update();
 	}, 1000);
@@ -457,6 +466,30 @@ const TournamentSystem = {
 			if (data.success) {
 				toastr.success("Message sent");
 				$("#broadcast_text_message").val("");
+			} else {
+				toastr.error(data.message);
+			}
+		});
+	},
+
+	clearNextMinigame: () => {
+		$.getJSON("/api/next_minigame/reset" + "?access_token=" + TournamentSystem.token, function (data) {
+			//console.log(data);
+			if (data.success) {
+				toastr.success("Next minigame cleared");
+				$("#next_minigame_model").modal("hide");
+			} else {
+				toastr.error(data.message);
+			}
+		});
+	},
+
+	setNextMinigame: (name) => {
+		$.getJSON("/api/next_minigame/set?name=" + encodeURIComponent(name) + "&access_token=" + TournamentSystem.token, function (data) {
+			//console.log(data);
+			if (data.success) {
+				toastr.success("Next minigame updated");
+				$("#next_minigame_model").modal("hide");
 			} else {
 				toastr.error(data.message);
 			}
@@ -724,6 +757,15 @@ const TournamentSystem = {
 			$("#stats_torurnament_name").text(data.system.tournament_name);
 			$("#stats_scoreboard_link").text(data.system.scoreboard_url);
 
+			if(data.next_minigame == undefined) {
+				$("#span_next_minigame").addClass("text-danger");
+				$("#span_next_minigame").removeClass("text-info");
+				$("#span_next_minigame").text("none");
+			} else {
+				$("#span_next_minigame").removeClass("text-danger");
+				$("#span_next_minigame").addClass("text-info");
+				$("#span_next_minigame").text(data.next_minigame);
+			}
 
 			data.players.forEach(player => {
 				toRemove.remove(player.uuid);
@@ -849,11 +891,11 @@ const TournamentSystem = {
 
 				$(this).find(".trigger-activation-count").text(trigger.trigger_count);
 
-				if(trigger.running == null) {
+				if (trigger.running == null) {
 					$(this).find(".trigger-running-status").hide();
 				} else {
 					$(this).find(".trigger-running-status").show();
-					if(trigger.running) {
+					if (trigger.running) {
 						$(this).find(".trigger-running-status").removeClass("bg-danger");
 						$(this).find(".trigger-running-status").addClass("bg-success");
 						$(this).find(".trigger-running-status").text("Running");
@@ -866,7 +908,7 @@ const TournamentSystem = {
 
 				$(this).find(".trigger-flags").text(trigger.flags.join(", "));
 
-				if(trigger.ticks_left == null) {
+				if (trigger.ticks_left == null) {
 					$(this).find(".trigger-ticks-left").hide();
 					$(this).find(".trigger-seconds-left").hide();
 				} else {
