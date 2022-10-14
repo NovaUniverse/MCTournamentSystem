@@ -25,3 +25,7 @@ html, body {
 	text-align: center;
 	justify-content: center;
 }
+
+.btn_next_minigame {
+	cursor: pointer;
+}

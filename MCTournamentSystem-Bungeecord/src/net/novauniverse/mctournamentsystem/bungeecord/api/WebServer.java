@@ -13,6 +13,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.chat.GetC
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.CommentatorTPHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.TriggerHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.nextmingame.ResetNextMinigameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.nextmingame.SetNextMinigameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.publicapi.PublicStatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayersHandler;
@@ -97,6 +99,10 @@ public class WebServer {
 
 		// Chat
 		createContext("/api/chat/log", new GetChatLogHandler());
+
+		// Next minigame
+		createContext("/api/next_minigame/set", new SetNextMinigameHandler());
+		createContext("/api/next_minigame/reset", new ResetNextMinigameHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");

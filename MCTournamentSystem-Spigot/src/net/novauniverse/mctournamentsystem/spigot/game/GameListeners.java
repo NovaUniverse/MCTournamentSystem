@@ -139,6 +139,7 @@ public class GameListeners extends NovaModule implements Listener {
 	public void onDefaultGameCountdownStart(DefaultGameCountdownStartEvent e) {
 		try {
 			TournamentSystemCommons.setActiveServer(TournamentSystem.getInstance().getServerName());
+			TournamentSystemCommons.setNextMinigame(null);
 		} catch (Exception ex) {
 			Log.error("Failed to set active server name");
 			ex.printStackTrace();

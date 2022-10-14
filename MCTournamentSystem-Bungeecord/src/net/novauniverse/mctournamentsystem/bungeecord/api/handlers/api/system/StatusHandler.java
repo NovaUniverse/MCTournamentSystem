@@ -218,6 +218,7 @@ public class StatusHandler extends APIEndpoint {
 
 		json.put("commentator_guest_key", TournamentSystem.getInstance().getCommentatorGuestKey());
 		json.put("active_server", TournamentSystemCommons.getActiveServer());
+		json.put("next_minigame", TournamentSystemCommons.getNextMinigame());
 
 		return json;
 	}
