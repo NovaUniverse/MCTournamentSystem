@@ -70,7 +70,7 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 	@Override
 	public void onLoad() {
 		this.tracersDisabled = false;
-		
+
 		CommandRegistry.registerCommand(new ToggleBehindYourTailTracers());
 
 		ModuleManager.disable(PlayerHeadDrop.class);
@@ -84,7 +84,7 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 		tracker = trackerBuilder.build();
 
 		ItemBuilder tracerBuilder = new ItemBuilder(Material.REDSTONE);
-		tracerBuilder.setName(org.bukkit.ChatColor.RED + "" + org.bukkit.ChatColor.GOLD + "Show tracers");
+		tracerBuilder.setName(org.bukkit.ChatColor.RED + "" + ChatColor.BOLD + "Show tracers");
 		tracerBuilder.addLore(ChatColor.WHITE + "Hold this in your hand to", ChatColor.WHITE + "show particle lines to enemies");
 		tracer = tracerBuilder.build();
 
