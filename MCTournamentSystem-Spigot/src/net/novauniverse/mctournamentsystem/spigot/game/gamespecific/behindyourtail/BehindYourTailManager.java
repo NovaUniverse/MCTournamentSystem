@@ -26,7 +26,6 @@ import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.CustomDefau
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.tracker.BehindYourTailCompassTracker;
-import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
