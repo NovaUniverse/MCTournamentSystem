@@ -146,8 +146,6 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 						isFriend = true;
 					}
 
-					Log.trace(player.getName() + " > " + player2.getName(), "is frend: " + isFriend);
-
 					ParticleEffect.REDSTONE.display(player2.getLocation().clone().add(0D, 2.5D, 0D), isFriend ? Color.GREEN : Color.RED, player);
 
 					if (game.isPlayerInGame(player)) {
@@ -165,9 +163,6 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 											Vector step = new Vector(diff.getX() / LINE_PARTICLE_COUNT, diff.getY() / LINE_PARTICLE_COUNT, diff.getZ() / LINE_PARTICLE_COUNT);
 
 											step = step.multiply(-1D);
-
-											Log.trace(player.getName() + " > " + player2.getName(), "diff: " + diff);
-											Log.trace(player.getName() + " > " + player2.getName(), "step: " + step);
 
 											for (int i = 0; i < LINE_PARTICLE_COUNT; i++) {
 												Location point = player.getLocation().clone().add(step.getX() * ((double) i), step.getY() * ((double) i), step.getZ() * ((double) i));
