@@ -147,6 +147,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean disableScoreboard;
 
 	private PlaceholderAPIExpansion placeholderAPIExpansion;
+	
+	private boolean enableBehindYourTailcompass;
+	private boolean behindYourTailParticles;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -324,6 +327,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public void setDisableScoreboard(boolean disableScoreboard) {
 		this.disableScoreboard = disableScoreboard;
 	}
+	
+	public boolean isEnableBehindYourTailcompass() {
+		return enableBehindYourTailcompass;
+	}
+	
+	public boolean isBehindYourTailParticles() {
+		return behindYourTailParticles;
+	}
 
 	public String readResourceFromJARAsString(String filename) throws IOException {
 		InputStream is = getClass().getResourceAsStream(filename);
@@ -375,6 +386,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.disableScoreboard = false;
 
 		this.placeholderAPIExpansion = null;
+		
+		this.enableBehindYourTailcompass = false;
+		this.behindYourTailParticles = false;
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
@@ -479,6 +493,20 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		chickenOutFeatherScoreMultiplier = getConfig().getDouble("chicken_out_feather_score_multiplier");
 
+		if(config.has("behind_your_tail")) {
+			JSONObject behindYourTail = config.getJSONObject("behind_your_tail");
+			
+			if(behindYourTail.has("compass")) {
+				enableBehindYourTailcompass = behindYourTail.getBoolean("compass");
+			}
+			
+			if(behindYourTail.has("particles")) {
+				behindYourTailParticles = behindYourTail.getBoolean("particles");
+			}
+		}
+		
+		
+		
 		JSONObject webSettings = config.getJSONObject("web_ui");
 		if (webSettings.has("show_sensitive_telementry_data")) {
 			showSensitiveTelementryData = webSettings.getBoolean("show_sensitive_telementry_data");
