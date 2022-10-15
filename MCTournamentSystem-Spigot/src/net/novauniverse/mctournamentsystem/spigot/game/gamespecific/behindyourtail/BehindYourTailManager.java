@@ -28,6 +28,8 @@ import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.tracker.BehindYourTailCompassTracker;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
+import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
@@ -51,11 +53,26 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 	}
 
 	private ItemStack tracker;
+	private ItemStack tracer;
+
+	private boolean tracersDisabled;
 
 	private Task particleTask;
 
+	public boolean isTracersDisabled() {
+		return tracersDisabled;
+	}
+
+	public void setTracersDisabled(boolean tracersDisabled) {
+		this.tracersDisabled = tracersDisabled;
+	}
+
 	@Override
 	public void onLoad() {
+		this.tracersDisabled = false;
+		
+		CommandRegistry.registerCommand(new ToggleBehindYourTailTracers());
+
 		ModuleManager.disable(PlayerHeadDrop.class);
 
 		ModuleManager.enable(CompassTracker.class);
@@ -65,6 +82,11 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 		ItemBuilder trackerBuilder = new ItemBuilder(Material.COMPASS);
 		trackerBuilder.setName(ChatColor.GOLD + "" + ChatColor.BOLD + "Enemy fox tracker");
 		tracker = trackerBuilder.build();
+
+		ItemBuilder tracerBuilder = new ItemBuilder(Material.REDSTONE);
+		tracerBuilder.setName(org.bukkit.ChatColor.RED + "" + org.bukkit.ChatColor.GOLD + "Show tracers");
+		tracerBuilder.addLore(ChatColor.WHITE + "Hold this in your hand to", ChatColor.WHITE + "show particle lines to enemies");
+		tracer = tracerBuilder.build();
 
 		TournamentSystem.getInstance().getDefaultPlayerEliminationMessage().addCustomProvider(PlayerEliminationReason.OTHER, new CustomDefaultPlayerEliminationMessaageProvider() {
 			@Override
@@ -87,16 +109,14 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 			}
 		});
 
-		if (TournamentSystem.getInstance().isEnableBehindYourTailcompass()) {
-			TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						Bukkit.getServer().getOnlinePlayers().forEach(p -> p.getInventory().addItem(tracker.clone()));
-					}
-				}.runTaskLater(getPlugin(), 5L);
-			});
-		}
+		TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					setupInventory(player);
+				}
+			}.runTaskLater(getPlugin(), 5L);
+		});
 
 		particleTask = new SimpleTask(getPlugin(), () -> {
 			BehindYourTail game = NovaBehindYourTail.getInstance().getGame();
@@ -114,8 +134,8 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 					if (player.getWorld() != player2.getWorld()) {
 						return;
 					}
-					
-					if(player2.getGameMode() == GameMode.SPECTATOR) {
+
+					if (player2.getGameMode() == GameMode.SPECTATOR) {
 						return;
 					}
 
@@ -131,22 +151,31 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 					ParticleEffect.REDSTONE.display(player2.getLocation().clone().add(0D, 2.5D, 0D), isFriend ? Color.GREEN : Color.RED, player);
 
 					if (game.isPlayerInGame(player)) {
-						Role myRole = game.getPlayerRole(player.getUniqueId());
-						Role targetRole = game.getPlayerRole(player2.getUniqueId());
-						if (!isFriend) {
-							if (myRole != targetRole) {
-								Vector diff = VectorUtils.getDifferential(player.getLocation().toVector(), player2.getLocation().toVector());
-								Vector step = new Vector(diff.getX() / LINE_PARTICLE_COUNT, diff.getY() / LINE_PARTICLE_COUNT, diff.getZ() / LINE_PARTICLE_COUNT);
-								
-								step = step.multiply(-1D);
+						ItemStack mainHand = VersionIndependentUtils.get().getItemInMainHand(player);
+						if (mainHand != null) {
+							if (VersionIndependentUtils.get().getItemInMainHand(player).getType() == Material.REDSTONE) {
+								if (tracersDisabled) {
+									VersionIndependentUtils.get().sendActionBarMessage(player, org.bukkit.ChatColor.RED + "Tracers are disabled right now");
+								} else {
+									Role myRole = game.getPlayerRole(player.getUniqueId());
+									Role targetRole = game.getPlayerRole(player2.getUniqueId());
+									if (!isFriend) {
+										if (myRole != targetRole) {
+											Vector diff = VectorUtils.getDifferential(player.getLocation().toVector(), player2.getLocation().toVector());
+											Vector step = new Vector(diff.getX() / LINE_PARTICLE_COUNT, diff.getY() / LINE_PARTICLE_COUNT, diff.getZ() / LINE_PARTICLE_COUNT);
 
-								Log.trace(player.getName() + " > " + player2.getName(), "diff: " + diff);
-								Log.trace(player.getName() + " > " + player2.getName(), "step: " + step);
+											step = step.multiply(-1D);
 
-								for (int i = 0; i < LINE_PARTICLE_COUNT; i++) {
-									Location point = player.getLocation().clone().add(step.getX() * ((double) i), step.getY() * ((double) i), step.getZ() * ((double) i));
-									if (point.distance(player.getLocation()) > 3) {
-										ParticleEffect.REDSTONE.display(point, Color.RED, player);
+											Log.trace(player.getName() + " > " + player2.getName(), "diff: " + diff);
+											Log.trace(player.getName() + " > " + player2.getName(), "step: " + step);
+
+											for (int i = 0; i < LINE_PARTICLE_COUNT; i++) {
+												Location point = player.getLocation().clone().add(step.getX() * ((double) i), step.getY() * ((double) i), step.getZ() * ((double) i));
+												if (point.distance(player.getLocation()) > 3) {
+													ParticleEffect.REDSTONE.display(point, Color.RED, player);
+												}
+											}
+										}
 									}
 								}
 							}
@@ -155,6 +184,17 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 				});
 			});
 		}, 2L);
+
+	}
+
+	public void setupInventory(Player player) {
+		if (TournamentSystem.getInstance().isEnableBehindYourTailcompass()) {
+			player.getInventory().addItem(tracker.clone());
+		}
+
+		if (TournamentSystem.getInstance().isBehindYourTailParticles()) {
+			player.getInventory().addItem(tracer.clone());
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -163,14 +203,12 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 			Task.tryStartTask(particleTask);
 		}
 
-		if (TournamentSystem.getInstance().isEnableBehindYourTailcompass()) {
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					Bukkit.getServer().getOnlinePlayers().forEach(p -> p.getInventory().addItem(tracker.clone()));
-				}
-			}.runTaskLater(getPlugin(), 5L);
-		}
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				Bukkit.getServer().getOnlinePlayers().forEach(player -> setupInventory(player));
+			}
+		}.runTaskLater(getPlugin(), 5L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
