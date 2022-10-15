@@ -1,36 +1,70 @@
 package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourtail;
 
+import java.awt.Color;
+
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.behindyourtail.NovaBehindYourTail;
+import net.novauniverse.behindyourtail.game.BehindYourTail;
 import net.novauniverse.behindyourtail.game.event.BehindYourTailPlayerDamageFoxEvent;
 import net.novauniverse.behindyourtail.game.role.Role;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.CustomDefaultPlayerEliminationMessaageProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
+import net.novauniverse.mctournamentsystem.spigot.tracker.BehindYourTailCompassTracker;
+import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
+import net.zeeraa.novacore.spigot.module.modules.compass.CompassTracker;
+import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
+import net.zeeraa.novacore.spigot.utils.ItemBuilder;
+import net.zeeraa.novacore.spigot.utils.VectorUtils;
+import xyz.xenondevs.particle.ParticleEffect;
 
 public class BehindYourTailManager extends NovaModule implements Listener {
-	private static int PLAYER_ATTACK_FOX_SCORE = 10;
+	public static int PLAYER_ATTACK_FOX_SCORE = 10;
+
+	public static double LINE_PARTICLE_COUNT = 50D;
 
 	public BehindYourTailManager() {
 		super("TournamentSystem.GameSpecific.BehindYourTailManager");
 	}
 
+	private ItemStack tracker;
+
+	private Task particleTask;
+
 	@Override
 	public void onLoad() {
 		ModuleManager.disable(PlayerHeadDrop.class);
+
+		ModuleManager.enable(CompassTracker.class);
+		CompassTracker.getInstance().setStrictMode(false);
+		CompassTracker.getInstance().setCompassTrackerTarget(new BehindYourTailCompassTracker());
+
+		ItemBuilder trackerBuilder = new ItemBuilder(Material.COMPASS);
+		trackerBuilder.setName(ChatColor.GOLD + "" + ChatColor.BOLD + "Enemy fox tracker");
+		tracker = trackerBuilder.build();
 
 		TournamentSystem.getInstance().getDefaultPlayerEliminationMessage().addCustomProvider(PlayerEliminationReason.OTHER, new CustomDefaultPlayerEliminationMessaageProvider() {
 			@Override
@@ -52,6 +86,96 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 				return "";
 			}
 		});
+
+		if (TournamentSystem.getInstance().isEnableBehindYourTailcompass()) {
+			TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						Bukkit.getServer().getOnlinePlayers().forEach(p -> p.getInventory().addItem(tracker.clone()));
+					}
+				}.runTaskLater(getPlugin(), 5L);
+			});
+		}
+
+		particleTask = new SimpleTask(getPlugin(), () -> {
+			BehindYourTail game = NovaBehindYourTail.getInstance().getGame();
+			Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+				Team playerTeam = TeamManager.getTeamManager().getPlayerTeam(player);
+				Bukkit.getServer().getOnlinePlayers().forEach(player2 -> {
+					if (player == player2) {
+						return;
+					}
+
+					if (!game.isPlayerInGame(player2)) {
+						return;
+					}
+
+					if (player.getWorld() != player2.getWorld()) {
+						return;
+					}
+					
+					if(player2.getGameMode() == GameMode.SPECTATOR) {
+						return;
+					}
+
+					Team targetTeam = TeamManager.getTeamManager().getPlayerTeam(player2);
+
+					boolean isFriend = false;
+					if (targetTeam == playerTeam) {
+						isFriend = true;
+					}
+
+					Log.trace(player.getName() + " > " + player2.getName(), "is frend: " + isFriend);
+
+					ParticleEffect.REDSTONE.display(player2.getLocation().clone().add(0D, 2.5D, 0D), isFriend ? Color.GREEN : Color.RED, player);
+
+					if (game.isPlayerInGame(player)) {
+						Role myRole = game.getPlayerRole(player.getUniqueId());
+						Role targetRole = game.getPlayerRole(player2.getUniqueId());
+						if (!isFriend) {
+							if (myRole != targetRole) {
+								Vector diff = VectorUtils.getDifferential(player.getLocation().toVector(), player2.getLocation().toVector());
+								Vector step = new Vector(diff.getX() / LINE_PARTICLE_COUNT, diff.getY() / LINE_PARTICLE_COUNT, diff.getZ() / LINE_PARTICLE_COUNT);
+								
+								step = step.multiply(-1D);
+
+								Log.trace(player.getName() + " > " + player2.getName(), "diff: " + diff);
+								Log.trace(player.getName() + " > " + player2.getName(), "step: " + step);
+
+								for (int i = 0; i < LINE_PARTICLE_COUNT; i++) {
+									Location point = player.getLocation().clone().add(step.getX() * ((double) i), step.getY() * ((double) i), step.getZ() * ((double) i));
+									if (point.distance(player.getLocation()) > 3) {
+										ParticleEffect.REDSTONE.display(point, Color.RED, player);
+									}
+								}
+							}
+						}
+					}
+				});
+			});
+		}, 2L);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onGameStart(GameStartEvent e) {
+		if (TournamentSystem.getInstance().isBehindYourTailParticles()) {
+			Task.tryStartTask(particleTask);
+		}
+
+		if (TournamentSystem.getInstance().isEnableBehindYourTailcompass()) {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					Bukkit.getServer().getOnlinePlayers().forEach(p -> p.getInventory().addItem(tracker.clone()));
+				}
+			}.runTaskLater(getPlugin(), 5L);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onGameEnd(GameEndEvent e) {
+		Task.tryStopTask(particleTask);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
