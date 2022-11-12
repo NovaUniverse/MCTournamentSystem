@@ -31,7 +31,7 @@ public class Enable extends NovaSubCommand {
 			sender.sendMessage(ChatColor.RED + "Chat filter is already enabled");
 		} else {
 			if (ModuleManager.enable(ChatFilter.class)) {
-				sender.sendMessage(ChatColor.GREEN + "Chat filter Border enabled");
+				sender.sendMessage(ChatColor.GREEN + "Chat filter enabled");
 			} else {
 				ModuleEnableFailureReason reason = ModuleManager.getEnableFailureReason(ChatFilter.class);
 				sender.sendMessage(ChatColor.DARK_RED + "Failed to enable module. Check logs for more info. Reason: " + reason.name());
