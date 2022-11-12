@@ -27,6 +27,7 @@ import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseWorld;
+import net.zeeraa.novacore.spigot.module.modules.multiverse.WorldLoadingFlags;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.WorldUnloadOption;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 
@@ -136,7 +137,7 @@ public class DuelManager extends NovaModule implements Listener {
 
 			String worldName = "duels_" + uuid.toString().replace("-", "");
 
-			MultiverseWorld world = MultiverseManager.getInstance().createFromFile(new File(TournamentSystem.getInstance().getMapDataFolder().getAbsolutePath() + File.separator + "Worlds" + File.separator + "duels_world"), worldName, WorldUnloadOption.DELETE);
+			MultiverseWorld world = MultiverseManager.getInstance().createFromFile(new File(TournamentSystem.getInstance().getMapDataFolder().getAbsolutePath() + File.separator + "Worlds" + File.separator + "duels_world"), worldName, WorldUnloadOption.DELETE, WorldLoadingFlags.PREVENT_AG_RELOAD);
 
 			world.getWorld().setDifficulty(Difficulty.PEACEFUL);
 			world.getWorld().setTime(1000L);
