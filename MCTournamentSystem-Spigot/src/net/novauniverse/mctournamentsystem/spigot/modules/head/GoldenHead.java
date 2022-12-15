@@ -39,7 +39,7 @@ public class GoldenHead extends NovaModule implements Listener {
 
 	@Override
 	public void onEnable() throws Exception {
-		ShapedRecipe recipe = new ShapedRecipe(getItem());
+		ShapedRecipe recipe = VersionIndependentUtils.get().createShapedRecipeSafe(getItem(), getPlugin(), "goldenhead");
 
 		recipe.shape("AAA", "ABA", "AAA");
 		recipe.setIngredient('A', Material.GOLD_INGOT);
