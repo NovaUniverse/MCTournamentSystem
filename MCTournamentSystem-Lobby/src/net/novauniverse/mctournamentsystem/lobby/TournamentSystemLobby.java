@@ -60,7 +60,7 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 	}
 	
 	public World getLobbyWorld() {
-		return Lobby.getInstance().getWorld();t
+		return Lobby.getInstance().getWorld();
 	}
 
 	@Override
