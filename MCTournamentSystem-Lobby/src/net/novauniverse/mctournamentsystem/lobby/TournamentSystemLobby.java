@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -56,6 +57,10 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 
 	public static TournamentSystemLobby getInstance() {
 		return instance;
+	}
+	
+	public World getLobbyWorld() {
+		return Lobby.getInstance().getWorld();t
 	}
 
 	@Override
