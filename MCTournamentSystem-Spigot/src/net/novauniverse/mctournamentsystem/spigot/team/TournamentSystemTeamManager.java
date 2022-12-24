@@ -234,18 +234,6 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 
 		player.setDisplayName("| " + name);
 		player.setPlayerListName(name);
-
-		if (NetherBoardScoreboard.getInstance().isEnabled()) {
-			String teamName = "";
-
-			if (team == null) {
-				teamName = ChatColor.YELLOW + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? org.bukkit.ChatColor.BOLD + "" : "") + "No team";
-			} else {
-				teamName = color + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? org.bukkit.ChatColor.BOLD + "" : "") + team.getDisplayName();
-			}
-
-			NetherBoardScoreboard.getInstance().setPlayerLine(1, player, teamName);
-		}
 	}
 
 	public boolean requireTeamToJoin(Player player) {
