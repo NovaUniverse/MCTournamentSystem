@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -19,7 +18,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.rayzr522.jsonmessage.JSONMessage;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.log.Log;
@@ -282,7 +283,15 @@ public class DuelManager extends NovaModule implements Listener {
 		invites.put(inviteUuid, from.getUniqueId());
 
 		Log.debug(from.getName() + " invited " + to.getName() + " to a duel");
-		JSONMessage.create(from.getName() + " has sent you a duel request. Click this message to accept").color(ChatColor.GREEN).runCommand("/acceptduel " + inviteUuid.toString()).send(to);
+
+		TextComponent component = new TextComponent(from.getName() + " has sent you a duel request. Click this message to accept");
+		component.setColor(ChatColor.GREEN);
+		component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/acceptduel " + inviteUuid.toString()));
+		to.spigot().sendMessage(component);
+
+		// JSONMessage.create(from.getName() + " has sent you a duel request. Click this
+		// message to accept").color(ChatColor.GREEN).runCommand("/acceptduel " +
+		// inviteUuid.toString()).send(to);
 
 		Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystemLobby.getInstance(), new Runnable() {
 			@Override

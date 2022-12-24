@@ -36,7 +36,8 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 
-import me.rayzr522.jsonmessage.JSONMessage;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.kotl.score.KingOfTheLadderScore;
@@ -223,7 +224,7 @@ public class Lobby extends NovaModule implements Listener {
 					line++;
 				}
 
-				for(;line <= kotlHologramLines; line++) {
+				for (; line <= kotlHologramLines; line++) {
 					((TextLine) kotlHologram.getLine(line)).setText(ChatColor.GRAY + "Empty");
 				}
 				/*
@@ -293,8 +294,7 @@ public class Lobby extends NovaModule implements Listener {
 					if (!gameRunningMessageSent) {
 						gameRunningMessageSent = true;
 						for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-							JSONMessage.create("A game is in progress!").color(ChatColor.GOLD).style(ChatColor.BOLD).send(player);
-							JSONMessage.create("Use /reconnect or click ").color(ChatColor.GOLD).style(ChatColor.BOLD).then("[Here]").color(ChatColor.GREEN).tooltip("Click to reconnect").runCommand("/reconnect").style(ChatColor.BOLD).then(" to reconnect").color(ChatColor.GOLD).style(ChatColor.BOLD).send(player);
+							sendReconnectMessage(player);
 						}
 					}
 				}
@@ -413,13 +413,27 @@ public class Lobby extends NovaModule implements Listener {
 		}.runTaskLater(TournamentSystem.getInstance(), 5L);
 	}
 
+	public void sendReconnectMessage(Player player) {
+		TextComponent text1 = new TextComponent("A game is in progress!");
+		TextComponent text2 = new TextComponent("Use /reconnect or click this message to reconnect");
+
+		text1.setColor(net.md_5.bungee.api.ChatColor.GOLD);
+		text2.setColor(net.md_5.bungee.api.ChatColor.GOLD);
+
+		text1.setBold(true);
+		text2.setBold(true);
+
+		text1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/reconnect"));
+		text2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/reconnect"));
+
+		player.spigot().sendMessage(text1);
+		player.spigot().sendMessage(text2);
+	}
+
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoinMonitor(PlayerJoinEvent e) {
 		if (TournamentSystemCommons.getActiveServer() != null) {
-			Player p = e.getPlayer();
-
-			JSONMessage.create("A game is in progress!").color(ChatColor.GOLD).style(ChatColor.BOLD).send(p);
-			JSONMessage.create("Use /reconnect or click ").color(ChatColor.GOLD).style(ChatColor.BOLD).then("[Here]").color(ChatColor.GREEN).tooltip("Click to reconnect").runCommand("/reconnect").style(ChatColor.BOLD).then(" to reconnect").color(ChatColor.GOLD).style(ChatColor.BOLD).send(p);
+			sendReconnectMessage(e.getPlayer());
 		}
 	}
 
@@ -524,6 +538,6 @@ public class Lobby extends NovaModule implements Listener {
 
 	public void clearKOTLScore() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
