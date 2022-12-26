@@ -103,6 +103,9 @@ public class Lobby extends NovaModule implements Listener {
 	private Task spleefTask;
 	private Task spleefResetTask;
 
+	private boolean pvpBypassEnabled;
+	private boolean mapProtectionBypassEnabled;
+
 	public static Lobby getInstance() {
 		return instance;
 	}
@@ -135,6 +138,9 @@ public class Lobby extends NovaModule implements Listener {
 		this.kotlHologramLines = 10;
 		this.kotlHologram = null;
 		this.kotlScore = new ArrayList<KingOfTheLadderScore>();
+
+		this.pvpBypassEnabled = false;
+		this.mapProtectionBypassEnabled = false;
 	}
 
 	@Override
@@ -320,6 +326,22 @@ public class Lobby extends NovaModule implements Listener {
 		multiverseWorld = null;
 	}
 
+	public boolean isPvpBypassEnabled() {
+		return pvpBypassEnabled;
+	}
+
+	public void setPvpBypassEnabled(boolean pvpBypassEnabled) {
+		this.pvpBypassEnabled = pvpBypassEnabled;
+	}
+
+	public boolean isMapProtectionBypassEnabled() {
+		return mapProtectionBypassEnabled;
+	}
+
+	public void setMapProtectionBypassEnabled(boolean mapProtectionBypassEnabled) {
+		this.mapProtectionBypassEnabled = mapProtectionBypassEnabled;
+	}
+
 	public Location getLobbyLocation() {
 		return lobbyLocation;
 	}
@@ -462,6 +484,10 @@ public class Lobby extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDamage(EntityDamageEvent e) {
+		if (pvpBypassEnabled) {
+			return;
+		}
+
 		if (e.getEntity() instanceof Player) {
 			if (lobbyLocation != null) {
 				if (e.getEntity().getWorld() == lobbyLocation.getWorld()) {
@@ -479,6 +505,10 @@ public class Lobby extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent e) {
+		if (mapProtectionBypassEnabled) {
+			return;
+		}
+
 		Player player = e.getPlayer();
 		if (player.getWorld() == lobbyLocation.getWorld()) {
 			if (spleefEnabled) {
@@ -496,6 +526,10 @@ public class Lobby extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent e) {
+		if (mapProtectionBypassEnabled) {
+			return;
+		}
+
 		Player player = e.getPlayer();
 		if (player.getWorld() == lobbyLocation.getWorld()) {
 			if (player.getGameMode() != GameMode.CREATIVE) {
@@ -537,7 +571,6 @@ public class Lobby extends NovaModule implements Listener {
 	}
 
 	public void clearKOTLScore() {
-		// TODO Auto-generated method stub
-
+		kotlScore.clear();
 	}
 }
