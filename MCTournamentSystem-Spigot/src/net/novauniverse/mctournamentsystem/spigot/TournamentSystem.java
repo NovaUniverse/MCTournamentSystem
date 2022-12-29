@@ -69,6 +69,7 @@ import net.novauniverse.mctournamentsystem.spigot.placeholderapi.PlaceholderAPIE
 import net.novauniverse.mctournamentsystem.spigot.pluginmessages.TSPluginMessageListnener;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
+import net.novauniverse.mctournamentsystem.spigot.utils.TSItemsAdderUtils;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
 import net.zeeraa.novacore.commons.log.Log;
@@ -147,9 +148,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean disableScoreboard;
 
 	private PlaceholderAPIExpansion placeholderAPIExpansion;
-	
+
 	private boolean enableBehindYourTailcompass;
 	private boolean behindYourTailParticles;
+
+	private boolean useItemsAdder;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -327,13 +330,21 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public void setDisableScoreboard(boolean disableScoreboard) {
 		this.disableScoreboard = disableScoreboard;
 	}
-	
+
 	public boolean isEnableBehindYourTailcompass() {
 		return enableBehindYourTailcompass;
 	}
-	
+
 	public boolean isBehindYourTailParticles() {
 		return behindYourTailParticles;
+	}
+
+	public boolean isUseItemsAdder() {
+		return useItemsAdder;
+	}
+
+	public void setUseItemsAdder(boolean useItemsAdder) {
+		this.useItemsAdder = useItemsAdder;
 	}
 
 	public String readResourceFromJARAsString(String filename) throws IOException {
@@ -386,9 +397,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.disableScoreboard = false;
 
 		this.placeholderAPIExpansion = null;
-		
+
 		this.enableBehindYourTailcompass = false;
 		this.behindYourTailParticles = false;
+
+		this.useItemsAdder = getConfig().getBoolean("enable_items_adder");
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
@@ -493,20 +506,18 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		chickenOutFeatherScoreMultiplier = getConfig().getDouble("chicken_out_feather_score_multiplier");
 
-		if(config.has("behind_your_tail")) {
+		if (config.has("behind_your_tail")) {
 			JSONObject behindYourTail = config.getJSONObject("behind_your_tail");
-			
-			if(behindYourTail.has("compass")) {
+
+			if (behindYourTail.has("compass")) {
 				enableBehindYourTailcompass = behindYourTail.getBoolean("compass");
 			}
-			
-			if(behindYourTail.has("particles")) {
+
+			if (behindYourTail.has("particles")) {
 				behindYourTailParticles = behindYourTail.getBoolean("particles");
 			}
 		}
-		
-		
-		
+
 		JSONObject webSettings = config.getJSONObject("web_ui");
 		if (webSettings.has("show_sensitive_telementry_data")) {
 			showSensitiveTelementryData = webSettings.getBoolean("show_sensitive_telementry_data");
@@ -742,8 +753,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public void updateScoreboard() {
 		if (!disableScoreboard) {
-			NetherBoardScoreboard.getInstance().setDefaultTitle(cachedTournamentName == null ? "NULL" : cachedTournamentName);
-			NetherBoardScoreboard.getInstance().setGlobalLine(14, cachedTournamentLink == null ? "" : ChatColor.YELLOW + cachedTournamentLink);
+			String tournamentName = cachedTournamentName == null ? "NULL" : cachedTournamentName;
+			String tournamentLink = cachedTournamentLink == null ? "" : ChatColor.YELLOW + cachedTournamentLink;
+
+			if (useItemsAdder) {
+				tournamentName = TSItemsAdderUtils.addFontImages(tournamentName);
+				tournamentLink = TSItemsAdderUtils.addFontImages(tournamentLink);
+			}
+
+			NetherBoardScoreboard.getInstance().setDefaultTitle(tournamentName);
+			NetherBoardScoreboard.getInstance().setGlobalLine(14, tournamentLink);
 		}
 	}
 
