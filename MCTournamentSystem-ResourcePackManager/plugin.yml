@@ -1,0 +1,7 @@
+main: net.novauniverse.mctournamentsystem.spigot.resourcepackmanager.TournamentSystemResourcePackManager
+name: TournamentSystemResourcePackManager
+description: NOW WITH RESOURCE PACKS UwU
+version: 1.0
+api-version: 1.13
+
+depend: [NovaCore, TournamentSystem]

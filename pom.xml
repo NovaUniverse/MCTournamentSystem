@@ -37,6 +37,7 @@
 		<module>MCTournamentSystem-MissilewarsLobby</module>
 		<module>MCTournamentSystem-WebUiLauncher</module>
 		<module>MCTournamentSystem-Updater</module>
+		<module>MCTournamentSystem-ResourcePackManager</module>
 	</modules>
 
 	<build>

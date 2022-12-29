@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.modules.resourcepack;
+package net.novauniverse.mctournamentsystem.spigot.resourcepackmanager.modules.resourcepack;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

@@ -63,7 +63,6 @@ import net.novauniverse.mctournamentsystem.spigot.modules.chatfilter.ChatFilter;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
-import net.novauniverse.mctournamentsystem.spigot.modules.resourcepack.ResourcePackManager;
 import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissions;
 import net.novauniverse.mctournamentsystem.spigot.placeholderapi.PlaceholderAPIExpansion;
 import net.novauniverse.mctournamentsystem.spigot.pluginmessages.TSPluginMessageListnener;
@@ -617,19 +616,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		if (getConfig().getBoolean("enable_edible_heads")) {
 			ModuleManager.enable(EdibleHeads.class);
-		}
-
-		File noResourcepackFile = new File(Bukkit.getServer().getWorldContainer() + File.separator + "NO_DOWNLOAD_RESOURCEPACK");
-		if (noResourcepackFile.exists()) {
-			Log.info("TournamentSystem", "Server resource pack disabled on this server");
-		} else {
-			if (resourcePackUrl != null) {
-				ModuleManager.enable(ResourcePackManager.class);
-				// Allow empty string to be treated as no pack
-				if (resourcePackUrl.length() == 0) {
-					resourcePackUrl = null;
-				}
-			}
 		}
 
 		/* ----- Events ----- */
