@@ -29,7 +29,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.whitelist.Whiteli
 import net.novauniverse.mctournamentsystem.bungeecord.misc.SlowPlayerSender;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
-import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigFetchException;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
