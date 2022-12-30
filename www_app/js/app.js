@@ -6,6 +6,23 @@ $(function () {
 		TournamentSystem.token = localStorage.getItem("token");
 	}
 
+	$(".meow").on("click", () => {
+		setCatMode(true);
+	});
+
+	$(".reload-dynamic-config-url").on("click", () => {
+		console.log("Reloading dynamic config");
+		toastr.info("Reloading dynamic config");
+		$.getJSON("/api/system/dynamicconfig/reload" + "?access_token=" + TournamentSystem.token, function (data) {
+			if (data.success) {
+				toastr.success("Dynamic config reloaded");
+			} else {
+				toastr.error(data.error);
+				console.error(data.error);
+			}
+		});
+	});
+
 	$(".btn-fetch-chat-log").on("click", () => TournamentSystem.fetchChatLog());
 
 	$("#snapshot_file_upload").on("change", function () {
@@ -747,7 +764,8 @@ const TournamentSystem = {
 			$("#stats_os").text(data.system.os_name);
 
 			$("#stats_public_ip").text(data.system.public_ip);
-
+			$("#dynamic_config_url").text(data.system.dynamic_config_url);
+			
 			if (data.system.linux_distro == null) {
 				$("#distro_info_full").hide();
 			} else {

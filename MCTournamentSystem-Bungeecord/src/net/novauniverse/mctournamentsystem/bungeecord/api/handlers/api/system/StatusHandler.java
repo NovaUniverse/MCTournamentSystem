@@ -213,7 +213,8 @@ public class StatusHandler extends APIEndpoint {
 		system.put("linux_distro", TournamentSystem.getInstance().getDistroName());
 
 		system.put("public_ip", TournamentSystem.getInstance().getPublicIp());
-
+		system.put("dynamic_config_url", TournamentSystem.getInstance().getDynamicConfigUrl());
+		
 		json.put("system", system);
 
 		json.put("commentator_guest_key", TournamentSystem.getInstance().getCommentatorGuestKey());

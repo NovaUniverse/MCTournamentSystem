@@ -17,7 +17,6 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -33,7 +32,10 @@ import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
 
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
+import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
+import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.spigot.command.bc.BCCommand;
@@ -49,6 +51,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.reloaddynamicconfig.ReloadDynamicConfigCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.respawnplayer.RespawnPlayerCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
 import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
@@ -152,6 +155,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean behindYourTailParticles;
 
 	private boolean useItemsAdder;
+
+	private String dynamicConfigURL;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -346,6 +351,37 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.useItemsAdder = useItemsAdder;
 	}
 
+	public String getDynamicConfigURL() {
+		return dynamicConfigURL;
+	}
+
+	public boolean reloadDynamicConfig() {
+		if (dynamicConfigURL == null) {
+			return false;
+		}
+
+		try {
+			DynamicConfig config = DynamicConfigManager.getDynamicConfig(dynamicConfigURL);
+
+			TeamOverrides.colorOverrides.clear();
+			TeamOverrides.nameOverrides.clear();
+
+			config.getTeamColors().forEach((team, colorName) -> {
+				ChatColor color = ChatColor.valueOf(colorName);
+				TeamOverrides.colorOverrides.put(team, color);
+			});
+
+			config.getTeamNames().forEach((team, name) -> {
+				TeamOverrides.nameOverrides.put(team, name);
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.error("TournamentSystem", "Failed to update dynamic config. Cause: " + e.getClass().getName() + " " + e.getMessage());
+		}
+
+		return true;
+	}
+
 	public String readResourceFromJARAsString(String filename) throws IOException {
 		InputStream is = getClass().getResourceAsStream(filename);
 		InputStreamReader isr = new InputStreamReader(is);
@@ -399,6 +435,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.enableBehindYourTailcompass = false;
 		this.behindYourTailParticles = false;
+
+		this.dynamicConfigURL = null;
 
 		this.useItemsAdder = getConfig().getBoolean("enable_items_adder");
 
@@ -504,6 +542,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		replaceEz = config.getBoolean("replace_ez");
 
 		chickenOutFeatherScoreMultiplier = getConfig().getDouble("chicken_out_feather_score_multiplier");
+
+		if (config.has("dynamic_config_url")) {
+			dynamicConfigURL = config.getString("dynamic_config_url");
+		}
 
 		if (config.has("behind_your_tail")) {
 			JSONObject behindYourTail = config.getJSONObject("behind_your_tail");
@@ -646,6 +688,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new RespawnPlayerCommand());
 		CommandRegistry.registerCommand(new CopyLocationCommand());
 		CommandRegistry.registerCommand(new ChatfilterCommand());
+		CommandRegistry.registerCommand(new ReloadDynamicConfigCommand());
 
 		if (config.has("socials")) {
 			JSONObject socials = config.getJSONObject("socials");
@@ -735,6 +778,15 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}.runTaskLater(this, 1L);
 
 		Task.tryStartTask(timerSeconds);
+
+		if (dynamicConfigURL != null) {
+			Log.info("TournamentSystem", "Trying to read dynamic config...");
+			if (reloadDynamicConfig()) {
+				Log.success("TournamentSystem", "Dynamic config loaded");
+			} else {
+				Log.error("TournamentSystem", "Failed to update dynamic config");
+			}
+		}
 	}
 
 	public void updateScoreboard() {

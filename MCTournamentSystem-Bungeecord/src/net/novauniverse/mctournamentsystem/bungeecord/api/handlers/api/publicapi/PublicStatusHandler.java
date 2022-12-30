@@ -168,6 +168,7 @@ public class PublicStatusHandler extends APIEndpoint {
 
 		json.put("active_server", TournamentSystemCommons.getActiveServer());
 		json.put("next_minigame", TournamentSystemCommons.getNextMinigame());
+		json.put("dynamic_config_url", TournamentSystem.getInstance().getDynamicConfigUrl());
 
 		return json;
 	}

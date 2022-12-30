@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system;
+package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -12,8 +12,8 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
 @SuppressWarnings("restriction")
-public class SetScoreboardURLHandler extends APIEndpoint {
-	public SetScoreboardURLHandler() {
+public class SetTournamentNameHandler extends APIEndpoint {
+	public SetTournamentNameHandler() {
 		super(true);
 	}
 
@@ -21,11 +21,11 @@ public class SetScoreboardURLHandler extends APIEndpoint {
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
 
-		if (params.containsKey("url")) {
-			String url = URLDecoder.decode(params.get("url"), StandardCharsets.UTF_8.name());
-			Log.info("SetScoreboardURL", "Setting scoreboard url to " + url);
+		if (params.containsKey("name")) {
+			String name = URLDecoder.decode(params.get("name"), StandardCharsets.UTF_8.name());
+			Log.info("SetTournamentNameHandler", "Reanaming tournament to " + name);
 			try {
-				TournamentSystemCommons.setScoreboardURL(url);
+				TournamentSystemCommons.setTournamentName(name);
 				json.put("success", true);
 			} catch (Exception e) {
 				json.put("success", false);
@@ -35,7 +35,7 @@ public class SetScoreboardURLHandler extends APIEndpoint {
 		} else {
 			json.put("success", false);
 			json.put("error", "bad_request");
-			json.put("message", "missing parameter: url");
+			json.put("message", "missing parameter: name");
 		}
 
 		return json;

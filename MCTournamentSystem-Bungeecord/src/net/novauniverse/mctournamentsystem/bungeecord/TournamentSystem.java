@@ -28,6 +28,9 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCE
 import net.novauniverse.mctournamentsystem.bungeecord.listener.whitelist.WhitelistListener;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.SlowPlayerSender;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
+import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigFetchException;
+import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
@@ -62,8 +65,31 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private PlayerTelementryManager playerTelementryManager;
 
 	private SlowPlayerSender slowPlayerSender;
-	
+
 	private String publicIp;
+
+	private String dynamicConfigURL;
+
+	public String getDynamicConfigUrl() {
+		return dynamicConfigURL;
+	}
+
+	public void reloadDynamicConfig() throws Exception {
+		DynamicConfig config = DynamicConfigManager.getDynamicConfig(dynamicConfigURL);
+
+		TeamOverrides.colorOverrides.clear();
+		TeamOverrides.nameOverrides.clear();
+
+		config.getTeamColors().forEach((team, colorName) -> {
+			@SuppressWarnings("deprecation") // Should still be fine
+			ChatColor color = ChatColor.valueOf(colorName);
+			TeamOverrides.colorOverrides.put(team, color);
+		});
+
+		config.getTeamNames().forEach((team, name) -> {
+			TeamOverrides.nameOverrides.put(team, name);
+		});
+	}
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -112,7 +138,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	public SlowPlayerSender getSlowPlayerSender() {
 		return slowPlayerSender;
 	}
-	
+
 	public String getPublicIp() {
 		return publicIp;
 	}
@@ -123,7 +149,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		staffRoles = new ArrayList<>();
 		openMode = false;
 		distroName = null;
-		
+
 		publicIp = "Unknown";
 
 		// Init session id
@@ -161,6 +187,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		this.phpmyadminURL = config.getString("phpmyadmin_url");
 		this.teamSize = config.getInt("team_size");
+
+		if (config.has("dynamic_config_url")) {
+			dynamicConfigURL = config.getString("dynamic_config_url");
+		}
 
 		JSONArray staffRolesJSON = config.getJSONArray("staff_roles");
 		for (int i = 0; i < staffRolesJSON.length(); i++) {
@@ -274,13 +304,13 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			ProxyServer.getInstance().stop("Failed to enable tournament system: Webserver failed to start");
 			return;
 		}
-		
+
 		IPFetcher.getIPAsync((ip, err) -> {
-			if(err != null) {
+			if (err != null) {
 				Log.error("TournamentSystem", "Failed to fetch public ip. " + err.getClass().getName() + " " + err.getMessage());
 				return;
 			}
-			
+
 			Log.info("TournamentSystem", "Public ip is: " + ip);
 			publicIp = ip;
 		});
@@ -293,6 +323,17 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		distroName = LinuxUtils.getLinuxDistroPrettyName();
 		if (distroName != null) {
 			Log.info("TournamentSystem", "Seems like we are running on " + distroName);
+		}
+
+		if (dynamicConfigURL != null) {
+			Log.info("TournamentSystem", "Trying to read dynamic config...");
+			try {
+				reloadDynamicConfig();
+				Log.success("TournamentSystem", "Dynamic config loaded");
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.error("TournamentSystem", "Failed to update dynamic config. " + e.getClass().getName() + " " + e.getMessage());
+			}
 		}
 	}
 

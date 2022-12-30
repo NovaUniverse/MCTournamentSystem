@@ -27,9 +27,10 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.Cl
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.PHPMyAdminUrlHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.QuickMessageHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ResetHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.SetScoreboardURLHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.SetTournamentNameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.StatusHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetScoreboardURLHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetTournamentNameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.dynamicconfig.ReloadDynamicConfig;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.ExportTeamDataHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.UploadTeamHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.user.LoginHandler;
@@ -61,6 +62,9 @@ public class WebServer {
 		createContext("/api/system/reset", new ResetHandler());
 		createContext("/api/system/clear_players", new ClearPlayersHandler());
 		createContext("/api/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
+		
+		// Dynamic config
+		createContext("/api/system/dynamicconfig/reload", new ReloadDynamicConfig());
 
 		// Team
 		createContext("/api/team/export_team_data", new ExportTeamDataHandler());
