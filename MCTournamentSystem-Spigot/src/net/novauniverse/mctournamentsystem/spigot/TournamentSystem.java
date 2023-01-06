@@ -71,6 +71,7 @@ import net.novauniverse.mctournamentsystem.spigot.placeholderapi.PlaceholderAPIE
 import net.novauniverse.mctournamentsystem.spigot.pluginmessages.TSPluginMessageListnener;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
+import net.novauniverse.mctournamentsystem.spigot.team.TournamentTeamManagerSettings;
 import net.novauniverse.mctournamentsystem.spigot.utils.TSItemsAdderUtils;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
@@ -353,6 +354,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public String getDynamicConfigURL() {
 		return dynamicConfigURL;
+	}
+
+	public TournamentTeamManagerSettings getTeamManagerSettings() {
+		return teamManager.getSettings();
 	}
 
 	public boolean reloadDynamicConfig() {

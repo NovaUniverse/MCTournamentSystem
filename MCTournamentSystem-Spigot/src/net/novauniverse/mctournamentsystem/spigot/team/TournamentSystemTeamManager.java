@@ -28,6 +28,8 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 	private int teamCount = 12;
 	private static TournamentSystemTeamManager instance;
 
+	private TournamentTeamManagerSettings settings;
+
 	public int getTeamCount() {
 		return teamCount;
 	}
@@ -38,8 +40,14 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		return instance;
 	}
 
+	public TournamentTeamManagerSettings getSettings() {
+		return settings;
+	}
+
 	public TournamentSystemTeamManager(int teamCount) {
 		TournamentSystemTeamManager.instance = this;
+
+		this.settings = TournamentTeamManagerSettings.defaultSettings();
 
 		this.teamCount = teamCount;
 		playerColorCache = new HashMap<UUID, ChatColor>();
@@ -57,29 +65,35 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			public void run() {
 				updateTeams();
 
-				Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-					Team team = getPlayerTeam(player);
-
-					if (team == null) {
-						if (playerColorCache.containsKey(player.getUniqueId())) {
-							Log.trace("Removing team color for player " + player.getName());
-							playerColorCache.remove(player.getUniqueId());
-							NetherBoardScoreboard.getInstance().resetPlayerNameColor(player);
+				if (settings.shouldUpdateNameColor()) {
+					Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+						if (settings.getNameColorUpdateExemptList().contains(player.getUniqueId())) {
+							return;
 						}
-					} else {
-						if (playerColorCache.containsKey(player.getUniqueId())) {
-							if (team.getTeamColor() != playerColorCache.get(player.getUniqueId())) {
-								Log.trace("Changing team color for player " + player.getName());
+
+						Team team = getPlayerTeam(player);
+
+						if (team == null) {
+							if (playerColorCache.containsKey(player.getUniqueId())) {
+								Log.trace("Removing team color for player " + player.getName());
+								playerColorCache.remove(player.getUniqueId());
+								NetherBoardScoreboard.getInstance().resetPlayerNameColor(player);
+							}
+						} else {
+							if (playerColorCache.containsKey(player.getUniqueId())) {
+								if (team.getTeamColor() != playerColorCache.get(player.getUniqueId())) {
+									Log.trace("Changing team color for player " + player.getName());
+									playerColorCache.put(player.getUniqueId(), team.getTeamColor());
+									NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, team.getTeamColor());
+								}
+							} else {
+								Log.trace("Setting team color for player " + player.getName());
 								playerColorCache.put(player.getUniqueId(), team.getTeamColor());
 								NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, team.getTeamColor());
 							}
-						} else {
-							Log.trace("Setting team color for player " + player.getName());
-							playerColorCache.put(player.getUniqueId(), team.getTeamColor());
-							NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, team.getTeamColor());
 						}
-					}
-				});
+					});
+				}
 			}
 		}, 100L, 100L);
 
@@ -232,8 +246,13 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			}
 		}
 
-		player.setDisplayName("| " + name);
-		player.setPlayerListName(name);
+		if (settings.shouldUpdateDisplayName() && !settings.getDisplayNameUpdateExemptList().contains(player.getUniqueId())) {
+			player.setDisplayName("| " + name);
+		}
+
+		if (settings.shouldUpdateListName() && !settings.getListNameUpdateExemptList().contains(player.getUniqueId())) {
+			player.setPlayerListName(name);
+		}
 	}
 
 	public boolean requireTeamToJoin(Player player) {
