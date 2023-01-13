@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import org.json.JSONObject;
+
 import net.md_5.bungee.api.ChatColor;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.log.Log;
@@ -14,6 +16,8 @@ public class TournamentSystemCommons {
 	public static final char CHAT_COLOR_CHAR = (char) 0xA7;
 	public static final String DATA_CHANNEL = "mcts:controller";
 	public static final String PLAYER_TELEMENTRY_CHANNEL = "mcts:ptelementry";
+
+	private static JSONObject tournamentSystemConfigData;
 
 	private static UUID sessionId = null;
 
@@ -196,5 +200,14 @@ public class TournamentSystemCommons {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public static JSONObject getTournamentSystemConfigData() {
+		return tournamentSystemConfigData;
+	}
+
+	public static void setTournamentSystemConfigData(JSONObject tournamentSystemConfigData) {
+		JSONObject copy = new JSONObject(tournamentSystemConfigData.toString());
+		TournamentSystemCommons.tournamentSystemConfigData = copy;
 	}
 }

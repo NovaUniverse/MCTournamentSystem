@@ -478,6 +478,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			return;
 		}
 
+		TournamentSystemCommons.setTournamentSystemConfigData(config);
+		
 		// Staff permission groups
 		JSONArray staffRolesJSON = config.getJSONArray("staff_roles");
 		for (int i = 0; i < staffRolesJSON.length(); i++) {
