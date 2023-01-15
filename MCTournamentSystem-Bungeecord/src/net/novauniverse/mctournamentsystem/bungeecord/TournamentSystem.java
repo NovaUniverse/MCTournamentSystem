@@ -88,6 +88,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		config.getTeamNames().forEach((team, name) -> {
 			TeamOverrides.nameOverrides.put(team, name);
 		});
+
+		config.getTeamBadges().forEach((team, badgeName) -> {
+			TeamOverrides.badges.put(team, badgeName);
+		});
 	}
 
 	public static TournamentSystem getInstance() {
@@ -183,7 +187,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			ProxyServer.getInstance().stop("Failed to enable tournament system: Failed to read config file");
 			return;
 		}
-		
+
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
 
 		this.phpmyadminURL = config.getString("phpmyadmin_url");

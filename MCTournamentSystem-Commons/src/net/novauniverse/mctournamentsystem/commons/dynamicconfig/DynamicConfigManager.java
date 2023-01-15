@@ -59,6 +59,7 @@ public class DynamicConfigManager {
 		try {
 			Map<Integer, String> teamColors = new HashMap<>();
 			Map<Integer, String> teamNames = new HashMap<>();
+			Map<Integer, String> teamBadges = new HashMap<>();
 
 			if (responseJson.has("team_colors")) {
 				JSONObject teamColorData = responseJson.getJSONObject("team_colors");
@@ -79,8 +80,18 @@ public class DynamicConfigManager {
 					teamNames.put(team, name);
 				});
 			}
+			
+			if (responseJson.has("team_badges")) {
+				JSONObject teamBadgeData = responseJson.getJSONObject("team_badges");
+				teamBadgeData.keySet().forEach(key -> {
+					Integer team = Integer.parseInt(key);
+					String badgeIconName = teamBadgeData.getString(key);
+					
+					teamBadges.put(team, badgeIconName);
+				});
+			}
 
-			return new DynamicConfig(teamColors, teamNames);
+			return new DynamicConfig(teamColors, teamNames, teamBadges);
 		} catch (Exception e) {
 			throw new DynamicConfigFetchException("Failed to parse dynamic config", e);
 		}

@@ -70,6 +70,7 @@ import net.novauniverse.mctournamentsystem.spigot.permissions.TournamentPermissi
 import net.novauniverse.mctournamentsystem.spigot.placeholderapi.PlaceholderAPIExpansion;
 import net.novauniverse.mctournamentsystem.spigot.pluginmessages.TSPluginMessageListnener;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
+import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentTeamManagerSettings;
 import net.novauniverse.mctournamentsystem.spigot.utils.TSItemsAdderUtils;
@@ -87,6 +88,7 @@ import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.permission.PermissionRegistrator;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class TournamentSystem extends JavaPlugin implements Listener {
 	private static TournamentSystem instance;
@@ -370,6 +372,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 			TeamOverrides.colorOverrides.clear();
 			TeamOverrides.nameOverrides.clear();
+			TeamOverrides.badges.clear();
 
 			config.getTeamColors().forEach((team, colorName) -> {
 				ChatColor color = ChatColor.valueOf(colorName);
@@ -379,6 +382,18 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			config.getTeamNames().forEach((team, name) -> {
 				TeamOverrides.nameOverrides.put(team, name);
 			});
+
+			config.getTeamBadges().forEach((team, badgeName) -> {
+				TeamOverrides.badges.put(team, badgeName);
+			});
+
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					Log.info("TournamentSystem", "Updating team badges");
+					TeamManager.getTeamManager().getTeams().forEach(t -> ((TournamentSystemTeam) t).updateBadge());
+				}
+			}.runTaskLater(this, 5L);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.error("TournamentSystem", "Failed to update dynamic config. Cause: " + e.getClass().getName() + " " + e.getMessage());
@@ -484,7 +499,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
-		
+
 		// Staff permission groups
 		JSONArray staffRolesJSON = config.getJSONArray("staff_roles");
 		for (int i = 0; i < staffRolesJSON.length(); i++) {

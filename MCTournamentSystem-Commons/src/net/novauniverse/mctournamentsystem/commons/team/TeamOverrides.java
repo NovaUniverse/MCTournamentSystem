@@ -15,6 +15,7 @@ import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 public class TeamOverrides {
 	public static final Map<Integer, String> nameOverrides = new HashMap<>();
 	public static final Map<Integer, ChatColor> colorOverrides = new HashMap<>();
+	public static final Map<Integer, String> badges = new HashMap<>();
 
 	public static final void readOverrides(File globalConfigPath) {
 		File teamNameOverrideFile = new File(globalConfigPath + File.separator + "team_names.json");

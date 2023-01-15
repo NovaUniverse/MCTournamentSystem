@@ -1,19 +1,25 @@
 package net.novauniverse.mctournamentsystem.spigot.team;
 
+import dev.lone.itemsadder.api.FontImages.FontImageWrapper;
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
+import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerNameCache;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.teams.Team;
 
 public class TournamentSystemTeam extends Team {
 	private int teamNumber;
 	private int score;
 
+	private String badge;
+
 	public TournamentSystemTeam(int teamNumber, int score) {
 		this.teamNumber = teamNumber;
 		this.score = score;
+		this.badge = null;
 	}
 
 	public int getTeamNumber() {
@@ -57,6 +63,28 @@ public class TournamentSystemTeam extends Team {
 	@Override
 	public String getDisplayName() {
 		return TeamNameProvider.getDisplayName(teamNumber);
+	}
+
+	public boolean hadBadge() {
+		return badge != null;
+	}
+
+	public String getBadge() {
+		return badge;
+	}
+
+	public void updateBadge() {
+		if (TeamOverrides.badges.containsKey(teamNumber)) {
+			String namespace = TeamOverrides.badges.get(teamNumber);
+			try {
+				String badgeString = new FontImageWrapper(namespace).getString();
+				badge = badgeString;
+				return;
+			} catch (Exception e) {
+				Log.error("TournamentSystemTeam", "Failed to parse font image " + namespace + ". " + e.getClass().getName() + " " + e.getMessage());
+			}
+		}
+		badge = null;
 	}
 
 	@Override

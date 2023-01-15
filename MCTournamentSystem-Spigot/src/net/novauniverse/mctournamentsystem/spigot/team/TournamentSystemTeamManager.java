@@ -232,7 +232,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 	}
 
 	public void updatePlayerName(Player player) {
-		Team team = getPlayerTeam(player);
+		TournamentSystemTeam team = (TournamentSystemTeam) getPlayerTeam(player);
 
 		String name = "MissingNo";
 
@@ -242,7 +242,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		} else {
 			if (((TournamentSystemTeam) team).getTeamNumber() >= 1) {
 				color = team.getTeamColor();
-				name = color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + team.getDisplayName() + ChatColor.WHITE + " : " + ChatColor.RESET + player.getName();
+				name = (team.hadBadge() ? team.getBadge() + " " : "") + color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + team.getDisplayName() + ChatColor.WHITE + " : " + ChatColor.RESET + player.getName();
 			}
 		}
 
