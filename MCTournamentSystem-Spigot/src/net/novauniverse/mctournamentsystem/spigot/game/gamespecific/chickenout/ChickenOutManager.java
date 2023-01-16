@@ -54,6 +54,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 			if (!game.getAllParticipatingPlayers().contains(player.getUniqueId())) {
 				game.getAllParticipatingPlayers().add(player.getUniqueId());
 			}
+			game.setupInventory(player);
 		});
 
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
