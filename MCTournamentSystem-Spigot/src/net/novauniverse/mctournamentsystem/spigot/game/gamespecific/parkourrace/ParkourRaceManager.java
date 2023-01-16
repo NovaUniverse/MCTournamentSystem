@@ -84,13 +84,19 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onParkourRacePlayerComplete(ParkourRacePlayerCompleteLapEvent e) {
+	public void onParkourRacePlayerCompleteLap(ParkourRacePlayerCompleteLapEvent e) {
+		if(ParkourRaceManagerConfig.DisableTournamentSystemScoreSystem) {
+			return;
+		}
 		e.getPlayer().sendMessage(ChatColor.GRAY + "+10 points");
 		ScoreManager.getInstance().addPlayerScore(e.getPlayer(), 10, true);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onParkourRacePlayerComplete(ParkourRacePlayerCompleteEvent e) {
+		if(ParkourRaceManagerConfig.DisableTournamentSystemScoreSystem) {
+			return;
+		}
 		int[] winScore = TournamentSystem.getInstance().getWinScore();
 		if (e.getPlecement() <= winScore.length) {
 			int score = winScore[e.getPlecement() - 1];
