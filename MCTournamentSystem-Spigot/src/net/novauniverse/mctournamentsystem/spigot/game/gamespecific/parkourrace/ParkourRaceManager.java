@@ -98,8 +98,8 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 			return;
 		}
 		int[] winScore = TournamentSystem.getInstance().getWinScore();
-		if (e.getPlecement() <= winScore.length) {
-			int score = winScore[e.getPlecement() - 1];
+		if (e.getPlacement() <= winScore.length) {
+			int score = winScore[e.getPlacement() - 1];
 			e.getPlayer().sendMessage(ChatColor.GRAY + "+" + score + " points");
 			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), score, true);
 		}
