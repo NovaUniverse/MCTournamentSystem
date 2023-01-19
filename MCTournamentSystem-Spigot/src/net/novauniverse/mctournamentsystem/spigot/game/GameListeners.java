@@ -55,6 +55,14 @@ public class GameListeners extends NovaModule implements Listener {
 	public static final Map<String, Class<? extends NovaModule>> GAME_SPECIFIC_MODULES = new HashMap<>();
 	public static final List<GameSpecificTelementryModule> TELEMENTRY_METADATA_PROVIDERS = new ArrayList<>();
 
+	private static GameListeners instance;
+
+	private boolean disableAudoShutdown;
+
+	public static GameListeners getInstance() {
+		return instance;
+	}
+
 	static {
 		// Original MCF games
 		GAME_SPECIFIC_MODULES.put("survivalgames", SurvivalGamesManager.class);
@@ -85,6 +93,20 @@ public class GameListeners extends NovaModule implements Listener {
 
 	public GameListeners() {
 		super("TournamentSystem.GameListeners");
+	}
+
+	@Override
+	public void onLoad() {
+		GameListeners.instance = this;
+		disableAudoShutdown = false;
+	}
+
+	public boolean isDisableAudoShutdown() {
+		return disableAudoShutdown;
+	}
+
+	public void setDisableAudoShutdown(boolean disableAudoShutdown) {
+		this.disableAudoShutdown = disableAudoShutdown;
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -198,35 +220,36 @@ public class GameListeners extends NovaModule implements Listener {
 			ex.printStackTrace();
 		}
 
-		Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				Bukkit.getServer().getOnlinePlayers().forEach(player -> player.sendMessage(LanguageManager.getString(player, "tournamentsystem.game.sending_you_to_lobby_20_seconds")));
+		if (!disableAudoShutdown) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					Bukkit.getServer().getOnlinePlayers().forEach(player -> player.sendMessage(LanguageManager.getString(player, "tournamentsystem.game.sending_you_to_lobby_20_seconds")));
 
-				Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
-					@Override
-					public void run() {
-						for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-							Bukkit.getScheduler().runTaskLater(TournamentSystem.getInstance(), new Runnable() {
+					Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
+						@Override
+						public void run() {
+							for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+								Bukkit.getScheduler().runTaskLater(TournamentSystem.getInstance(), new Runnable() {
+									@Override
+									public void run() {
+										BungeecordUtils.sendToServer(player, TournamentSystem.getInstance().getLobbyServer());
+									}
+								}, 4L);
+							}
+
+							Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
 								@Override
 								public void run() {
-									BungeecordUtils.sendToServer(player, TournamentSystem.getInstance().getLobbyServer());
+									Bukkit.getServer().getOnlinePlayers().forEach(player -> player.kickPlayer(LanguageManager.getString(player, "tournamentsystem.game.server.restarting", e.getGame())));
+									Bukkit.getServer().shutdown();
 								}
-							}, 4L);
+							}, 200L);
 						}
-
-						Bukkit.getScheduler().scheduleSyncDelayedTask(TournamentSystem.getInstance(), new Runnable() {
-							@Override
-							public void run() {
-								Bukkit.getServer().getOnlinePlayers().forEach(player -> player.kickPlayer(LanguageManager.getString(player, "tournamentsystem.game.server.restarting", e.getGame())));
-								Bukkit.getServer().shutdown();
-							}
-						}, 200L);
-					}
-				}, 400L);
-			}
-
-		}, 100L);
+					}, 400L);
+				}
+			}, 100L);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
