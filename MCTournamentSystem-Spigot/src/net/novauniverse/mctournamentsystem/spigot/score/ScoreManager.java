@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -93,25 +94,29 @@ public class ScoreManager extends NovaModule implements Listener {
 			@Override
 			public void run() {
 				try {
-					String sql = "SELECT score FROM players WHERE uuid = ?";
-					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
-
-					ps.setString(1, uuid.toString());
-
-					ResultSet rs = ps.executeQuery();
-					if (rs.next()) {
-						int score = rs.getInt("score");
-						playerScoreCache.put(uuid, score);
-					}
-
-					rs.close();
-					ps.close();
+					doSynchronousScoreUpdate(uuid);
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.warn("ScoreManager", "Failed to fetch the score of player with uuid: " + uuid.toString());
 				}
 			}
 		}.runTaskAsynchronously(TournamentSystem.getInstance());
+	}
+
+	public void doSynchronousScoreUpdate(UUID uuid) throws SQLException {
+		String sql = "SELECT score FROM players WHERE uuid = ?";
+		PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+
+		ps.setString(1, uuid.toString());
+
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			int score = rs.getInt("score");
+			playerScoreCache.put(uuid, score);
+		}
+
+		rs.close();
+		ps.close();
 	}
 
 	public void asyncUpdateAll() {
