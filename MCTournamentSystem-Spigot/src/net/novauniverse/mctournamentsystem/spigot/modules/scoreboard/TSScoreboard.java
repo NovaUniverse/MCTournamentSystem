@@ -7,6 +7,8 @@ import org.bukkit.event.Listener;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerKillCache;
 import net.novauniverse.mctournamentsystem.spigot.modules.nextminigame.NextMinigameManager;
+import net.novauniverse.mctournamentsystem.spigot.modules.scoreboard.provider.ScoreboardStatsTextProvider;
+import net.novauniverse.mctournamentsystem.spigot.modules.scoreboard.provider.implementation.DefaultTournamentSystemScoreboardStatsTextProvider;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
@@ -49,8 +51,18 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 	private boolean minimalMode;
 
+	private ScoreboardStatsTextProvider statsTextProvider;
+
 	public TSScoreboard() {
 		super("TournamentSystem.Scoreboard");
+	}
+
+	public ScoreboardStatsTextProvider getStatsTextProvider() {
+		return statsTextProvider;
+	}
+
+	public void setStatsTextProvider(ScoreboardStatsTextProvider statsTextProvider) {
+		this.statsTextProvider = statsTextProvider;
 	}
 
 	public boolean isDisablePing() {
@@ -71,6 +83,8 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 	@Override
 	public void onLoad() {
+		this.statsTextProvider = new DefaultTournamentSystemScoreboardStatsTextProvider();
+
 		this.taskId = -1;
 		this.gameCountdownShown = false;
 		this.borderCountdownShown = false;
@@ -116,15 +130,15 @@ public class TSScoreboard extends NovaModule implements Listener {
 							}
 
 							if (PLAYER_SCORE_LINE >= 0) {
-								NetherBoardScoreboard.getInstance().setPlayerLine(PLAYER_SCORE_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.score") + ChatColor.AQUA + playerScore);
+								NetherBoardScoreboard.getInstance().setPlayerLine(PLAYER_SCORE_LINE, player, statsTextProvider.getPlayerScoreLineContent(player, playerScore));
 							}
 
 							if (PLAYER_KILLS_LINE >= 0) {
-								NetherBoardScoreboard.getInstance().setPlayerLine(PLAYER_KILLS_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.kills") + ChatColor.AQUA + PlayerKillCache.getInstance().getPlayerKills(player.getUniqueId()));
+								NetherBoardScoreboard.getInstance().setPlayerLine(PLAYER_KILLS_LINE, player, statsTextProvider.getKillLineContent(player, PlayerKillCache.getInstance().getPlayerKills(player.getUniqueId())));
 							}
 
 							if (PLAYER_TEAM_SCORE_LINE >= 0) {
-								NetherBoardScoreboard.getInstance().setPlayerLine(PLAYER_TEAM_SCORE_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.team_score") + ChatColor.AQUA + teamScore);
+								NetherBoardScoreboard.getInstance().setPlayerLine(PLAYER_TEAM_SCORE_LINE, player, statsTextProvider.getTeamScoreLineContent(player, team, teamScore));
 							}
 
 							String teamName = "";
