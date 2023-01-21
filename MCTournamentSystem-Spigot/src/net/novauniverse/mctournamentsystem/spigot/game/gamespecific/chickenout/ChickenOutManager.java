@@ -1,11 +1,12 @@
 package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.chickenout;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.games.chickenout.game.ChickenOut;
 import net.novauniverse.games.chickenout.game.event.ChickenOutPlayerChickenOutEvent;
 import net.novauniverse.games.chickenout.game.event.ChickenOutPlayerPlacementEvent;
@@ -32,6 +33,8 @@ public class ChickenOutManager extends NovaModule implements Listener {
 	public static int TIME_LINE = 5;
 	public static int FEATHER_COUNT_LINE = 6;
 	public static int FINAL_FEATHER_COUNT_LINE = 7;
+
+	public static String LINE_PREFIX = ChatColor.GOLD.toString();
 
 	private Task task;
 
@@ -67,9 +70,9 @@ public class ChickenOutManager extends NovaModule implements Listener {
 						if (GameManager.getInstance().getActiveGame().hasStarted()) {
 							String timeLeftLine = null;
 							if (game.isRoundTimerRunning()) {
-								timeLeftLine = ChatColor.GOLD + "Level up in: " + ChatColor.AQUA + TextUtils.secondsToTime(game.getRoundTimeLeft());
+								timeLeftLine = LINE_PREFIX + "Level up in: " + ChatColor.WHITE + TextUtils.secondsToTime(game.getRoundTimeLeft());
 							} else if (game.isFinalTimerRunning()) {
-								timeLeftLine = ChatColor.GOLD + "Game ends in: " + ChatColor.AQUA + TextUtils.secondsToTime(game.getFinalTimeLeft());
+								timeLeftLine = LINE_PREFIX + "Game ends in: " + ChatColor.RED + TextUtils.secondsToTime(game.getFinalTimeLeft());
 							}
 
 							if (timeLeftLine == null) {
@@ -82,8 +85,8 @@ public class ChickenOutManager extends NovaModule implements Listener {
 								if (game.getAllParticipatingPlayers().contains(player.getUniqueId())) {
 									int feathers = game.getPlayerFeathers(player);
 									int finalFeathers = game.getFinalScoreForDisplay(player.getUniqueId());
-									String featherCountMessage = ChatColor.GOLD + "Feathers: " + ChatColor.AQUA + feathers;
-									String finalFeatherCount = ChatColor.GOLD + "Stashed feathers: " + ChatColor.AQUA + finalFeathers;
+									String featherCountMessage = LINE_PREFIX + "Feathers: " + ChatColor.AQUA + feathers;
+									String finalFeatherCount = LINE_PREFIX + "Stashed feathers: " + ChatColor.GREEN + finalFeathers;
 									NetherBoardScoreboard.getInstance().setPlayerLine(FEATHER_COUNT_LINE, player, featherCountMessage);
 									NetherBoardScoreboard.getInstance().setPlayerLine(FINAL_FEATHER_COUNT_LINE, player, finalFeatherCount);
 								} else {
