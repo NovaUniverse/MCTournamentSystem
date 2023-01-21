@@ -44,10 +44,29 @@ public class TSScoreboard extends NovaModule implements Listener {
 	private boolean borderCountdownShown;
 	private boolean nextGameShown;
 
+	private boolean disablePing;
+	private boolean disableTPS;
+
 	private boolean minimalMode;
 
 	public TSScoreboard() {
 		super("TournamentSystem.Scoreboard");
+	}
+
+	public boolean isDisablePing() {
+		return disablePing;
+	}
+
+	public boolean isDisableTPS() {
+		return disableTPS;
+	}
+
+	public void setDisablePing(boolean disablePing) {
+		this.disablePing = disablePing;
+	}
+
+	public void setDisableTPS(boolean disableTPS) {
+		this.disableTPS = disableTPS;
 	}
 
 	@Override
@@ -57,6 +76,9 @@ public class TSScoreboard extends NovaModule implements Listener {
 		this.borderCountdownShown = false;
 		this.nextGameShown = false;
 		this.minimalMode = false;
+
+		this.disablePing = false;
+		this.disableTPS = false;
 	}
 
 	public void setMinimalMode(boolean minimalMode) {
@@ -119,13 +141,17 @@ public class TSScoreboard extends NovaModule implements Listener {
 							}
 						}
 
-						int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
+						if (!disablePing) {
+							int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
 
-						NetherBoardScoreboard.getInstance().setPlayerLine(PING_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.your_ping") + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : ""));
+							NetherBoardScoreboard.getInstance().setPlayerLine(PING_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.your_ping") + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : ""));
+						}
 
-						if (recentTps.length > 0) {
-							double tps = recentTps[0];
-							NetherBoardScoreboard.getInstance().setPlayerLine(TPS_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
+						if (!disableTPS) {
+							if (recentTps.length > 0) {
+								double tps = recentTps[0];
+								NetherBoardScoreboard.getInstance().setPlayerLine(TPS_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
+							}
 						}
 					});
 
