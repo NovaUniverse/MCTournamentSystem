@@ -1,10 +1,11 @@
 package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.parkourrace;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.games.parkourrace.NovaParkourRace;
 import net.novauniverse.games.parkourrace.game.ParkourRace;
 import net.novauniverse.games.parkourrace.game.data.PlayerData;
@@ -23,6 +24,10 @@ import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 public class ParkourRaceManager extends NovaModule implements Listener {
 	public static int TIME_LEFT_LINE = 5;
 	public static int LAP_LINE = 6;
+
+	public static String LINE_PREFIX = ChatColor.GOLD.toString();
+	public static String LAP_PREFIX = ChatColor.AQUA.toString();
+	public static String COMPLETED_PREFIX = ChatColor.GREEN.toString();
 
 	private Task task;
 
@@ -43,7 +48,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 			@Override
 			public void execute() {
 				if (!TournamentSystem.getInstance().isDisableScoreboard()) {
-					NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
+					NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
 				}
 			}
 		});
@@ -60,9 +65,9 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 							if (data != null) {
 								if (!TournamentSystem.getInstance().isDisableScoreboard()) {
 									if (data.isCompleted()) {
-										NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, ChatColor.GREEN + "" + ChatColor.BOLD + "Completed");
+										NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, COMPLETED_PREFIX + "Completed");
 									} else {
-										NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, ChatColor.AQUA + "" + ChatColor.BOLD + "Lap " + data.getLap());
+										NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, LAP_PREFIX + "Lap " + data.getLap());
 									}
 								}
 							}
