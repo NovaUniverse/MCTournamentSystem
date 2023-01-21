@@ -12,12 +12,19 @@ import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class DefaultPlayerEliminatedTitleProvider implements PlayerEliminatedTitleProvider {
+	public static boolean DisableSubtitle = false;
+	public static boolean DisablePlacementSubtitle = false;
+
 	@Override
 	public void show(PlayerEliminatedEvent e) {
 		if (e.getPlayer().isOnline()) {
 			Player player = e.getPlayer().getPlayer();
 
 			String subtitle = ChatColor.RED + TextUtils.ordinal(e.getPlacement() + 1) + " place";
+
+			if (DisableSubtitle || DisablePlacementSubtitle) {
+				subtitle = "";
+			}
 
 			Entity killerEntity = null;
 			if (e.getKiller() != null) {
@@ -48,7 +55,11 @@ public class DefaultPlayerEliminatedTitleProvider implements PlayerEliminatedTit
 
 			switch (e.getReason()) {
 			case KILLED:
-				subtitle = ChatColor.RED + "Killed by " + killerColor + killerEntity.getName() + ChatColor.RED + ". " + TextUtils.ordinal(e.getPlacement() + 1) + " place";
+				String placement = ChatColor.RED + ". " + TextUtils.ordinal(e.getPlacement() + 1) + " place";
+				if (DisablePlacementSubtitle) {
+					placement = "";
+				}
+				subtitle = ChatColor.RED + "Killed by " + killerColor + killerEntity.getName() + placement;
 				break;
 
 			case COMMAND:
