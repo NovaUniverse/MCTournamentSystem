@@ -39,6 +39,8 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 	public static int PING_LINE = 12;
 	public static int TPS_LINE = 13;
+	
+	public static String WORLDBORDER_LINE_COLOR = ChatColor.GOLD.toString();
 
 	private int taskId;
 
@@ -200,7 +202,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 														long ticks = trigger.getTicksLeft();
 
 														borderCountdownShown = true;
-														NetherBoardScoreboard.getInstance().setGlobalLine(WORLDBORDER_LINE, ChatColor.GOLD + "Worldborder: " + ChatColor.AQUA + formatTime(ticks / 20));
+														NetherBoardScoreboard.getInstance().setGlobalLine(WORLDBORDER_LINE, WORLDBORDER_LINE_COLOR + "Worldborder: " + ChatColor.WHITE + formatTime(ticks / 20));
 													} else {
 														if (borderCountdownShown) {
 															borderCountdownShown = false;
