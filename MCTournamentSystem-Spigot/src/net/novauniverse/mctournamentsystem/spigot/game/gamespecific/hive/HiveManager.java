@@ -3,7 +3,6 @@ package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.hive;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.games.hive.NovaHive;
 import net.novauniverse.games.hive.game.Hive;
 import net.novauniverse.games.hive.game.event.HivePlayerDepositHoneyEvent;
@@ -38,6 +38,8 @@ import net.zeeraa.novacore.spigot.teams.TeamManager;
 public class HiveManager extends NovaModule implements Listener {
 	public static int TIME_LINE = 5;
 	public static int HONEY_LINE = 6;
+	
+	public static String LINE_PREFIX = ChatColor.GOLD.toString();
 
 	private Task task;
 
@@ -71,7 +73,7 @@ public class HiveManager extends NovaModule implements Listener {
 
 					if (!TournamentSystem.getInstance().isDisableScoreboard()) {
 						if (GameManager.getInstance().getActiveGame().hasStarted()) {
-							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + TextUtils.secondsToTime(game.getTimeLeft() + 1));
+							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(game.getTimeLeft() + 1));
 
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 								TournamentSystemTeam team = (TournamentSystemTeam) TeamManager.getTeamManager().getPlayerTeam(player);
@@ -79,7 +81,7 @@ public class HiveManager extends NovaModule implements Listener {
 									HiveData hive = game.getHives().stream().filter(h -> h.getOwner().equals(team)).findFirst().orElse(null);
 									if (hive != null) {
 										boolean filled = hive.getHoney() >= game.getConfig().getHoneyRequiredtoFillJar();
-										NetherBoardScoreboard.getInstance().setPlayerLine(HONEY_LINE, player, ChatColor.GOLD + "Honey: " + (filled ? ChatColor.GREEN : ChatColor.AQUA) + hive.getHoney() + " / " + game.getConfig().getHoneyRequiredtoFillJar());
+										NetherBoardScoreboard.getInstance().setPlayerLine(HONEY_LINE, player, LINE_PREFIX+ "Honey: " + (filled ? ChatColor.GREEN : ChatColor.WHITE) + hive.getHoney() + " / " + game.getConfig().getHoneyRequiredtoFillJar());
 									}
 								}
 							});
