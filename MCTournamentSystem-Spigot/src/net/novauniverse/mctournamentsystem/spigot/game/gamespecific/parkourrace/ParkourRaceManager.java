@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.games.parkourrace.NovaParkourRace;
@@ -17,6 +18,7 @@ import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.Callback;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
@@ -48,7 +50,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 			@Override
 			public void execute() {
 				if (!TournamentSystem.getInstance().isDisableScoreboard()) {
-					NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
+					updateTimeLeftLine();
 				}
 			}
 		});
@@ -77,6 +79,10 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 			}
 		}, 5L);
 	}
+	
+	private void updateTimeLeftLine() {
+		NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
+	}
 
 	@Override
 	public void onEnable() {
@@ -86,6 +92,16 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 	@Override
 	public void onDisable() throws Exception {
 		Task.tryStopTask(task);
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onGameStart(GameStartEvent e) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
+			}
+		}.runTaskLater(getPlugin(), 1L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
