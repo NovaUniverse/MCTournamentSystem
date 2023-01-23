@@ -1,7 +1,5 @@
 package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourtail;
 
-import java.awt.Color;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -27,7 +25,9 @@ import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.tracker.BehindYourTailCompassTracker;
 import net.zeeraa.novacore.commons.tasks.Task;
+import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
+import net.zeeraa.novacore.spigot.abstraction.particle.NovaDustOptions;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
@@ -40,7 +40,6 @@ import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 import net.zeeraa.novacore.spigot.utils.VectorUtils;
-import xyz.xenondevs.particle.ParticleEffect;
 
 public class BehindYourTailManager extends NovaModule implements Listener {
 	public static int PLAYER_ATTACK_FOX_SCORE = 10;
@@ -145,7 +144,10 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 						isFriend = true;
 					}
 
-					ParticleEffect.REDSTONE.display(player2.getLocation().clone().add(0D, 2.5D, 0D), isFriend ? Color.GREEN : Color.RED, player);
+					// ParticleEffect.REDSTONE.display(player2.getLocation().clone().add(0D, 2.5D,
+					// 0D), isFriend ? Color.GREEN : Color.RED, player);
+
+					NovaCore.getInstance().getNovaParticleProvider().showColoredRedstoneParticle(player2.getLocation().clone().add(0D, 2.5D, 0D), isFriend ? NovaDustOptions.GREEN : NovaDustOptions.RED, player);
 
 					if (game.isPlayerInGame(player)) {
 						ItemStack mainHand = VersionIndependentUtils.get().getItemInMainHand(player);
@@ -166,7 +168,8 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 											for (int i = 0; i < LINE_PARTICLE_COUNT; i++) {
 												Location point = player.getLocation().clone().add(step.getX() * ((double) i), step.getY() * ((double) i), step.getZ() * ((double) i));
 												if (point.distance(player.getLocation()) > 3) {
-													ParticleEffect.REDSTONE.display(point, Color.RED, player);
+													NovaCore.getInstance().getNovaParticleProvider().showColoredRedstoneParticle(player2.getLocation().clone().add(0D, 2.5D, 0D), NovaDustOptions.RED, player);
+													// ParticleEffect.REDSTONE.display(point, Color.RED, player);
 												}
 											}
 										}
