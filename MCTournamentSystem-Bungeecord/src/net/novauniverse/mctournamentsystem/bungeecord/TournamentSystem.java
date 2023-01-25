@@ -320,7 +320,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			JSONObject internetCafeSettingsJSON = config.getJSONObject("internet_cafe_settings");
 
 			String ggRock = null;
-			boolean ggLeap = false;
 
 			if (internetCafeSettingsJSON.has("ggrock_url")) {
 				ggRock = internetCafeSettingsJSON.getString("ggrock_url").trim();
@@ -329,11 +328,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 				}
 			}
 
-			if (internetCafeSettingsJSON.has("enable_ggleap")) {
-				ggLeap = internetCafeSettingsJSON.getBoolean("enable_ggleap");
-			}
-
-			internetCafeOptions = new InternetCafeOptions(ggRock, ggLeap);
+			internetCafeOptions = new InternetCafeOptions(ggRock);
 		} else {
 			internetCafeOptions = new InternetCafeOptions();
 		}
