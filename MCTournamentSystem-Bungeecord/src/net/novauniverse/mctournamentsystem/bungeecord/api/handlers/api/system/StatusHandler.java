@@ -20,6 +20,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.PlayerData;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.TeamData;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.config.InternetCafeOptions;
 import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
 import net.zeeraa.novacore.bungeecord.utils.ChatColorRGBMapper;
@@ -194,6 +195,19 @@ public class StatusHandler extends APIEndpoint {
 
 		json.put("whitelist", whitelist);
 
+		/* ===== Internet cafe settings ===== */
+		InternetCafeOptions internetCafeOptions = TournamentSystem.getInstance().getInternetCafeOptions();
+
+		JSONObject internetCafeSettings = new JSONObject();
+		JSONObject ggrock = new JSONObject();
+
+		ggrock.put("enabled", internetCafeOptions.hasGGRockURL());
+		ggrock.put("url", internetCafeOptions.getGGRockURL());
+
+		internetCafeSettings.put("ggrock", ggrock);
+
+		json.put("internet_cafe_settings", internetCafeSettings);
+
 		/* ===== System ===== */
 		JSONObject system = new JSONObject();
 
@@ -214,7 +228,7 @@ public class StatusHandler extends APIEndpoint {
 
 		system.put("public_ip", TournamentSystem.getInstance().getPublicIp());
 		system.put("dynamic_config_url", TournamentSystem.getInstance().getDynamicConfigUrl());
-		
+
 		json.put("system", system);
 
 		json.put("commentator_guest_key", TournamentSystem.getInstance().getCommentatorGuestKey());

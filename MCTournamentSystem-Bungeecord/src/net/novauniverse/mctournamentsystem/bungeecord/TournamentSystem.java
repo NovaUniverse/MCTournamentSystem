@@ -28,6 +28,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCE
 import net.novauniverse.mctournamentsystem.bungeecord.listener.whitelist.WhitelistListener;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.SlowPlayerSender;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.config.InternetCafeOptions;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
@@ -68,6 +69,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private String publicIp;
 
 	private String dynamicConfigURL;
+
+	private InternetCafeOptions internetCafeOptions;
 
 	public String getDynamicConfigUrl() {
 		return dynamicConfigURL;
@@ -146,6 +149,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return publicIp;
 	}
 
+	public InternetCafeOptions getInternetCafeOptions() {
+		return internetCafeOptions;
+	}
+
 	@Override
 	public void onEnable() {
 		TournamentSystem.instance = this;
@@ -221,7 +228,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		}
 
 		/* ----- Listeners ----- */
-
 		playerTelementryManager = new PlayerTelementryManager();
 		slowPlayerSender = new SlowPlayerSender(this);
 
@@ -308,6 +314,28 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			e.printStackTrace();
 			ProxyServer.getInstance().stop("Failed to enable tournament system: Webserver failed to start");
 			return;
+		}
+
+		if (config.has("internet_cafe_settings")) {
+			JSONObject internetCafeSettingsJSON = config.getJSONObject("internet_cafe_settings");
+
+			String ggRock = null;
+			boolean ggLeap = false;
+
+			if (internetCafeSettingsJSON.has("ggrock_url")) {
+				ggRock = internetCafeSettingsJSON.getString("ggrock_url").trim();
+				if (ggRock.length() == 0) {
+					ggRock = null;
+				}
+			}
+
+			if (internetCafeSettingsJSON.has("enable_ggleap")) {
+				ggLeap = internetCafeSettingsJSON.getBoolean("enable_ggleap");
+			}
+
+			internetCafeOptions = new InternetCafeOptions(ggRock, ggLeap);
+		} else {
+			internetCafeOptions = new InternetCafeOptions();
 		}
 
 		IPFetcher.getIPAsync((ip, err) -> {

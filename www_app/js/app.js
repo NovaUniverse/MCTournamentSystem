@@ -6,6 +6,8 @@ $(function () {
 		TournamentSystem.token = localStorage.getItem("token");
 	}
 
+	$(".hidden-integration").hide();
+
 	$(".meow").on("click", () => {
 		setCatMode(true);
 	});
@@ -360,6 +362,13 @@ $(function () {
 			let server = data.servers[i];
 			$("#select_server").append(new Option(server.name, server.name));
 		}
+
+		if (data.internet_cafe_settings.ggrock.enabled) {
+			$("#integration_link_ggrock").show();
+			$("#ggrock_integration_iframe").attr("src", data.internet_cafe_settings.ggrock.url);
+		}
+
+		console.log(data);
 	});
 
 	$.getJSON("/api/staff/get_staff" + "?access_token=" + TournamentSystem.token, function (data) {
@@ -765,7 +774,7 @@ const TournamentSystem = {
 
 			$("#stats_public_ip").text(data.system.public_ip);
 			$("#dynamic_config_url").text(data.system.dynamic_config_url);
-			
+
 			if (data.system.linux_distro == null) {
 				$("#distro_info_full").hide();
 			} else {
@@ -775,7 +784,7 @@ const TournamentSystem = {
 			$("#stats_torurnament_name").text(data.system.tournament_name);
 			$("#stats_scoreboard_link").text(data.system.scoreboard_url);
 
-			if(data.next_minigame == undefined) {
+			if (data.next_minigame == undefined) {
 				$("#span_next_minigame").addClass("text-danger");
 				$("#span_next_minigame").removeClass("text-info");
 				$("#span_next_minigame").text("none");

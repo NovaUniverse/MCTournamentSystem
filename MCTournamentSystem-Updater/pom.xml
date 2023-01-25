@@ -93,7 +93,6 @@
 			<scope>compile</scope>
 		</dependency>
 
-
 		<dependency>
 			<groupId>net.novauniverse.novacore</groupId>
 			<artifactId>novacore-commons</artifactId>
