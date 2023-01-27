@@ -1,5 +1,7 @@
 const DEFAULT_THEME = "quartz";
 
+var themeManagerDatastoreKey = "mcts_theme";
+
 var activeTheme = {};
 
 $(function () {
@@ -20,12 +22,13 @@ $(function () {
 		applyThemeByName(theme);
 	})
 
-	let theme = localStorage.getItem('mcts_theme');
+	let theme = localStorage.getItem(themeManagerDatastoreKey);
 	if (theme != null) {
 		$("#theme-selector").val(theme);
 		applyThemeByName(theme);
 	} else {
 		applyThemeByName(DEFAULT_THEME);
+		$("#theme-selector").val(DEFAULT_THEME);
 	}
 
 	console.debug("Theme manager loaded");
@@ -59,12 +62,12 @@ function applyTheme(theme) {
 	if (theme.css_fix != undefined) {
 		let cssTag = $("<link>");
 		cssTag.attr("rel", "stylesheet");
-		cssTag.attr("href", THEME_DIR + theme.css_fix);
+		cssTag.attr("href", THEME_DIR + "fix/" + theme.css_fix);
 		cssTag.attr("id", "css_theme_fix");
 		$("head").prepend(cssTag);
 	}
 
 	activeTheme = theme;
 
-	localStorage.setItem("mcts_theme", theme.name);
+	localStorage.setItem(themeManagerDatastoreKey, theme.name);
 }

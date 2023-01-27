@@ -33,10 +33,8 @@
 	<script src="../js/nosleep.js"></script>
 
 	<style>
-		#funny_cat {
-			position: fixed;
-			bottom: 0;
-			right: 0;
+		#bongo_cat {
+			z-index: 99;
 		}
 	</style>
 </head>
@@ -64,6 +62,9 @@
 						<a href="/app/commentator/" class="nav-link">Commentator page</a>
 					</li>
 					<li class="nav-item">
+						<a href="/app/live_stats/" class="nav-link">Live stats</a>
+					</li>
+					<li class="nav-item">
 						<a class="nav-link" id="disable_custom_theme" href="#">Disable custom theme</a>
 					</li>
 					<li class="nav-item">
@@ -74,37 +75,46 @@
 		</div>
 	</nav>
 
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h3 id="myModalLabel">Login</h3>
-			</div>
-			<div class="modal-body">
-				<form id="login_form" onsubmit="return false;">
-					<div class="mb-3">
-						<label for="tbx_userName">Username</label>
-						<input type="text" id="tbx_userName" class="form-control">
+	<div class="container mt-4">
+		<div class="row">
+			<div class="col">
+				<div id="bongo_cat" class="bongo_cat">
+					<div id="le_bongo_cat"></div>
+				</div>
+				<div class="card">
+					<div class="card-header">
+						<h2>Login</h2>
 					</div>
-					<div class="mb-3">
-						<label for="tbx_userPassword">Password</label>
-						<input type="password" id="tbx_userPassword" class="form-control">
+					<div class="card-body">
+						<form id="login_form" onsubmit="return false;">
+							<div class="mb-3">
+								<label for="tbx_userName">Username</label>
+								<input type="text" id="tbx_userName" class="form-control">
+							</div>
+							<div class="mb-3">
+								<label for="tbx_userPassword">Password</label>
+								<input type="password" id="tbx_userPassword" class="form-control">
+							</div>
+							<div class="mb-3">
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" value="" id="cbx_remember_me">
+									<label class="form-check-label" for="cbx_remember_me">
+										Remember me
+									</label>
+								</div>
+							</div>
+							<div class="mb-3">
+								<button class="btn btn-primary" id="btn_login">Login</button>
+							</div>
+							<div class="invalid-input mb-3" id="login_failure">
+								Invalid username or password
+							</div>
+						</form>
 					</div>
-					<div class="mb-3">
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" value="" id="cbx_remember_me">
-							<label class="form-check-label" for="cbx_remember_me">
-								Remember me
-							</label>
-						</div>
+					<div class="card-footer text-muted">
+						TournamentSystem by NovaUniverse
 					</div>
-					<div class="mb-3">
-						<button class="btn btn-primary" id="btn_login">Login</button>
-					</div>
-					<div class="invalid-input mb-3" id="login_failure">
-						Invalid username or password
-					</div>
-				</form>
-
+				</div>
 			</div>
 		</div>
 	</div>
@@ -128,9 +138,11 @@
 		</div>
 	</div>
 
-	<div class="bongo_cat" id="funny_cat">
-		<img src="../img/cat-bongo.gif" id="bongo_cat_img">
-	</div>
+	<div id="custom_theme_util_1"></div>
+	<div id="custom_theme_util_2"></div>
+	<div id="custom_theme_util_3"></div>
+	<div id="custom_theme_util_4"></div>
+	<div id="custom_theme_util_5"></div>
 
 	<script src="../js/preloader_settings.js" id="__tnPreloader_setOptions__"></script>
 	<script src="../js/lib/thenolle.preloader.min.js"></script>

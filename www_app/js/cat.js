@@ -3,6 +3,7 @@ var _catModeEnabled = false;
 $(() => {
 	$(".bongo_cat").hide();
 	if (localStorage.getItem("bongo_cat") === "true") {
+		$(".meow").hide();
 		$(".bongo_cat").show();
 		_catModeEnabled = true;
 	}
@@ -32,9 +33,11 @@ function setCatMode(enabled) {
 	if (enabled) {
 		localStorage.setItem("bongo_cat", true);
 		$(".bongo_cat").show();
+		$(".meow").hide();
 		toastr.success("Cat mode enabled");
 	} else {
 		$(".bongo_cat").hide();
+		$(".meow").show();
 		localStorage.removeItem("bongo_cat");
 		toastr.info("Cat mode disabled :(");
 	}

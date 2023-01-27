@@ -772,8 +772,20 @@ const TournamentSystem = {
 			$("#stats_cores").text(data.system.cores);
 			$("#stats_os").text(data.system.os_name);
 
+			if (data.system.cores == 1) {
+				$("#stats_cores").addClass("text-danger");
+				$("#stats_cores").attr("title", "Running the tournament system on a single core VM or device is not recommended");
+			}
+
 			$("#stats_public_ip").text(data.system.public_ip);
-			$("#dynamic_config_url").text(data.system.dynamic_config_url);
+
+			if (data.system.dynamic_config_url == null) {
+				$("#dynamic_config_url").text("[Disabled]");
+				$("#dynamic_config_url").addClass("text-danger");
+			} else {
+				$("#dynamic_config_url").text(data.system.dynamic_config_url);
+				$("#dynamic_config_url").removeClass("text-danger");
+			}
 
 			if (data.system.linux_distro == null) {
 				$("#distro_info_full").hide();

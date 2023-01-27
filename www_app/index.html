@@ -60,6 +60,10 @@
 						</li>
 
 						<li class="nav-item">
+							<a href="/app/live_stats/" target="_blank" class="nav-link">Live stats</a>
+						</li>
+
+						<li class="nav-item">
 							<a href="/app/commentator/" target="_blank" class="nav-link">Commentator</a>
 						</li>
 
@@ -116,40 +120,41 @@
 
 		<ul class="nav nav-tabs mt-2 mx-2" id="admin_nav_tabs">
 			<li class="nav-item">
-				<a class="nav-link page-link active" data-page="overview_page" href="#">Overview</a>
+				<a class="nav-link page-link active px-1 py-1" data-page="overview_page" href="#">Overview</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link" data-page="trigger_page" href="#">Game triggers</a>
+				<a class="nav-link page-link px-1 py-1" data-page="trigger_page" href="#">Game triggers</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link" data-page="staff_page" href="#">Staff settings</a>
+				<a class="nav-link page-link px-1 py-1" data-page="staff_page" href="#">Staff settings</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link" data-page="whitelist_page" href="#">Whitelist</a>
+				<a class="nav-link page-link px-1 py-1" data-page="whitelist_page" href="#">Whitelist</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link" data-page="snapshot_page" href="#">Score snapshot</a>
+				<a class="nav-link page-link px-1 py-1" data-page="snapshot_page" href="#">Score snapshot</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link btn-fetch-chat-log" data-page="chat_log_page" href="#">Chat log</a>
+				<a class="nav-link page-link btn-fetch-chat-log px-1 py-1" data-page="chat_log_page" href="#">Chat log</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link" data-page="support_page" href="#">Support</a>
+				<a class="nav-link page-link px-1 py-1" data-page="support_page" href="#">Support</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link hidden-integration" id="integration_link_ggrock" data-page="integration_ggrock"
-					title="Manage network booting of clients" href="#">GGRock
+				<a class="nav-link page-link hidden-integration px-1 py-1" id="integration_link_ggrock"
+					data-page="integration_ggrock" title="Manage network booting of clients" href="#">GGRock
 					server</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link" data-page="commentator_guest_key_page" href="#">Commentator guest key</a>
+				<a class="nav-link page-link px-1 py-1" data-page="commentator_guest_key_page" href="#">Commentator guest key</a>
 			</li>
 		</ul>
 
 		<div id="integration_ggrock" class="nav-page d-none">
 			<div class="mt-2 mx-2">
 				<div class="ratio ratio-16x9 border border-info border-2">
-					<iframe id="ggrock_integration_iframe" frameborder="1" src="/app/misc/disabled_integration.html"></iframe>
+					<iframe id="ggrock_integration_iframe" frameborder="1"
+						src="/app/misc/disabled_integration.html"></iframe>
 				</div>
 			</div>
 		</div>
@@ -322,7 +327,8 @@
 				<div class="row mt-1">
 					<div>
 						<div id="bongo_cat" class="bongo_cat">
-							<img src="./img/cat-bongo.gif" id="bongo_cat_img">
+							<div id="le_bongo_cat"></div>
+							<!--<img src="./img/cat-bongo.gif" id="bongo_cat_img">-->
 						</div>
 						<table class="table table-striped table-border border">
 							<thead>
@@ -403,10 +409,7 @@
 								</p>
 							</div>
 							<div class="col-12 com-sm-12 col-md-6">
-								<h5>License</h5>
-								<p title="F**K THE DRM. FOSS FOR THE WIN">
-									FREE FOR ALL <img width="32" height="32" src="./img/vibe-cat.gif">
-								</p>
+								<h5>Going to place something here some day</h5>
 							</div>
 						</div>
 					</div>
@@ -731,6 +734,12 @@
 			</div>
 		</div>
 	</div>
+
+	<div id="custom_theme_util_1"></div>
+	<div id="custom_theme_util_2"></div>
+	<div id="custom_theme_util_3"></div>
+	<div id="custom_theme_util_4"></div>
+	<div id="custom_theme_util_5"></div>
 
 	<script src="./js/preloader_settings.js" id="__tnPreloader_setOptions__"></script>
 	<script src="./js/lib/thenolle.preloader.min.js"></script>
