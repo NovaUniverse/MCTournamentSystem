@@ -11,13 +11,19 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.ITicki
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.ScheduledGameTrigger;
 
 public class TriggerProvider implements ITelementryMetadataProvider {
+	private GameManager gameManager;
+
+	public TriggerProvider() {
+		gameManager = GameManager.getInstance();
+	}
+
 	@Override
 	public void process(Player player, JSONObject metadata) {
 		JSONArray triggers = new JSONArray();
 
 		if (NovaCore.isNovaGameEngineEnabled()) {
-			if (GameManager.getInstance().hasGame()) {
-				GameManager.getInstance().getActiveGame().getTriggers().forEach(trigger -> {
+			if (gameManager.hasGame()) {
+				gameManager.getActiveGame().getTriggers().forEach(trigger -> {
 					JSONObject triggerData = new JSONObject();
 					JSONArray flags = new JSONArray();
 
@@ -35,7 +41,7 @@ public class TriggerProvider implements ITelementryMetadataProvider {
 					if (trigger instanceof ITickingGameTrigger) {
 						triggerData.put("ticks_left", ((ITickingGameTrigger) trigger).getTicksLeft());
 					}
-					
+
 					triggers.put(triggerData);
 				});
 			}

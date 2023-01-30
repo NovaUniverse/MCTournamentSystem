@@ -39,7 +39,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 	public static int PING_LINE = 12;
 	public static int TPS_LINE = 13;
-	
+
 	public static String WORLDBORDER_LINE_COLOR = ChatColor.GOLD.toString();
 
 	private int taskId;
@@ -54,6 +54,8 @@ public class TSScoreboard extends NovaModule implements Listener {
 	private boolean minimalMode;
 
 	private ScoreboardStatsTextProvider statsTextProvider;
+
+	private GameManager gameManager;
 
 	public TSScoreboard() {
 		super("TournamentSystem.Scoreboard");
@@ -95,6 +97,11 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 		this.disablePing = false;
 		this.disableTPS = false;
+
+		this.gameManager = null;
+		if (NovaCore.isNovaGameEngineEnabled()) {
+			this.gameManager = GameManager.getInstance();
+		}
 	}
 
 	public void setMinimalMode(boolean minimalMode) {
@@ -186,10 +193,10 @@ public class TSScoreboard extends NovaModule implements Listener {
 						NetherBoardScoreboard.getInstance().setGlobalLine(NEXT_GAME_LINE, nextGame);
 					}
 
-					if (NovaCore.isNovaGameEngineEnabled()) {
-						if (GameManager.getInstance().hasGame()) {
-							if (GameManager.getInstance().getActiveGame().hasStarted()) {
-								if (GameManager.getInstance().getActiveGame() instanceof MapGame) {
+					if (gameManager != null) {
+						if (gameManager.hasGame()) {
+							if (gameManager.getActiveGame().hasStarted()) {
+								if (gameManager.getActiveGame() instanceof MapGame) {
 									MapGame game = (MapGame) GameManager.getInstance().getActiveGame();
 									if (game.hasActiveMap()) {
 										if (game.getActiveMap().getAbstractMapData() instanceof GameMapData) {
@@ -217,7 +224,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 							}
 						}
 
-						if (GameManager.getInstance().getCountdown().isCountdownRunning()) {
+						if (gameManager.getCountdown().isCountdownRunning()) {
 							gameCountdownShown = true;
 
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {

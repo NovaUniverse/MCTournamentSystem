@@ -43,14 +43,18 @@ public class HiveManager extends NovaModule implements Listener {
 
 	private Task task;
 
+	private GameManager gameManager;
+	
 	public HiveManager() {
 		super("TournamentSystem.GameSpecific.HiveManager");
 	}
 
 	@Override
 	public void onLoad() {
+		gameManager = GameManager.getInstance();
+		
 		GameSetup.disableEliminationMessages();
-		GameManager.getInstance().setPlayerEliminationMessage(new HiveEliminationMessages());
+		gameManager.setPlayerEliminationMessage(new HiveEliminationMessages());
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
 		TournamentSystem.getInstance().disableEliminationTitleMessage();
 
@@ -68,11 +72,11 @@ public class HiveManager extends NovaModule implements Listener {
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				if (GameManager.getInstance().hasGame()) {
-					Hive game = (Hive) GameManager.getInstance().getActiveGame();
+				if (gameManager.hasGame()) {
+					Hive game = (Hive) gameManager.getActiveGame();
 
 					if (!TournamentSystem.getInstance().isDisableScoreboard()) {
-						if (GameManager.getInstance().getActiveGame().hasStarted()) {
+						if (game.hasStarted()) {
 							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(game.getTimeLeft() + 1));
 
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {

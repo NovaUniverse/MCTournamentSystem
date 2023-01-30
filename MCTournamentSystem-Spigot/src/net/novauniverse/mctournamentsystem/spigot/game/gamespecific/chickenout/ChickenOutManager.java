@@ -38,15 +38,19 @@ public class ChickenOutManager extends NovaModule implements Listener {
 
 	private Task task;
 
+	private GameManager gameManager;
+
 	public ChickenOutManager() {
 		super("TournamentSystem.GameSpecific.ChickenOutManager");
 	}
 
 	@Override
 	public void onLoad() {
+		gameManager = GameManager.getInstance();
+
 		// We use custom messages here instead
 		GameSetup.disableEliminationMessages();
-		GameManager.getInstance().setPlayerEliminationMessage(new ChickenOutEliminationMessages());
+		gameManager.setPlayerEliminationMessage(new ChickenOutEliminationMessages());
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
 		TournamentSystem.getInstance().disableEliminationTitleMessage();
 
@@ -63,11 +67,11 @@ public class ChickenOutManager extends NovaModule implements Listener {
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				if (GameManager.getInstance().hasGame()) {
+				if (gameManager.hasGame()) {
 					if (!TournamentSystem.getInstance().isDisableScoreboard()) {
 						ChickenOut game = (ChickenOut) GameManager.getInstance().getActiveGame();
 
-						if (GameManager.getInstance().getActiveGame().hasStarted()) {
+						if (gameManager.getActiveGame().hasStarted()) {
 							String timeLeftLine = null;
 							if (game.isRoundTimerRunning()) {
 								timeLeftLine = LINE_PREFIX + "Level up in: " + ChatColor.WHITE + TextUtils.secondsToTime(game.getRoundTimeLeft());

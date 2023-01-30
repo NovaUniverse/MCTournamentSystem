@@ -33,12 +33,16 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 
 	private Task task;
 
+	private GameManager gameManager;
+
 	public ParkourRaceManager() {
 		super("TournamentSystem.GameSpecific.ParkourRaceManager");
 	}
 
 	@Override
 	public void onLoad() {
+		gameManager = GameManager.getInstance();
+
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
 		TournamentSystem.getInstance().disableEliminationTitleMessage();
 
@@ -58,10 +62,10 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				if (GameManager.getInstance().hasGame()) {
+				if (gameManager.hasGame()) {
 					ParkourRace game = (ParkourRace) GameManager.getInstance().getActiveGame();
 
-					if (GameManager.getInstance().getActiveGame().hasStarted()) {
+					if (gameManager.getActiveGame().hasStarted()) {
 						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 							PlayerData data = game.getPlayerData(player);
 							if (data != null) {
@@ -79,7 +83,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 			}
 		}, 5L);
 	}
-	
+
 	private void updateTimeLeftLine() {
 		NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
 	}
@@ -93,7 +97,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 	public void onDisable() throws Exception {
 		Task.tryStopTask(task);
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameStart(GameStartEvent e) {
 		new BukkitRunnable() {
@@ -106,7 +110,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onParkourRacePlayerCompleteLap(ParkourRacePlayerCompleteLapEvent e) {
-		if(ParkourRaceManagerConfig.DisableTournamentSystemScoreSystem) {
+		if (ParkourRaceManagerConfig.DisableTournamentSystemScoreSystem) {
 			return;
 		}
 		e.getPlayer().sendMessage(ChatColor.GRAY + "+10 points");
@@ -115,7 +119,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onParkourRacePlayerComplete(ParkourRacePlayerCompleteEvent e) {
-		if(ParkourRaceManagerConfig.DisableTournamentSystemScoreSystem) {
+		if (ParkourRaceManagerConfig.DisableTournamentSystemScoreSystem) {
 			return;
 		}
 		int[] winScore = TournamentSystem.getInstance().getWinScore();

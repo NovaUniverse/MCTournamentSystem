@@ -32,12 +32,15 @@ public class DropperManager extends NovaModule implements Listener {
 	private Task task;
 	private boolean timeLeftLineShown;
 
+	private GameManager gameManager;
+
 	public DropperManager() {
 		super("TournamentSystem.GameSpecific.DropperManager");
 	}
 
 	@Override
 	public void onLoad() {
+		gameManager = GameManager.getInstance();
 		timeLeftLineShown = false;
 
 		TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
@@ -57,9 +60,9 @@ public class DropperManager extends NovaModule implements Listener {
 			public void run() {
 				if (!TournamentSystem.getInstance().isDisableScoreboard()) {
 					boolean didShow = false;
-					if (GameManager.getInstance().hasGame()) {
-						if (GameManager.getInstance().getActiveGame().hasStarted() && !GameManager.getInstance().getActiveGame().hasEnded()) {
-							long totalSecs = ((Dropper) GameManager.getInstance().getActiveGame()).getTimeLeft();
+					if (gameManager.hasGame()) {
+						if (gameManager.getActiveGame().hasStarted() && !gameManager.getActiveGame().hasEnded()) {
+							long totalSecs = ((Dropper) gameManager.getActiveGame()).getTimeLeft();
 
 							if (totalSecs > 0) {
 								long hours = totalSecs / 3600;
@@ -81,10 +84,10 @@ public class DropperManager extends NovaModule implements Listener {
 						timeLeftLineShown = false;
 					}
 
-					if (GameManager.getInstance().hasGame()) {
-						if (GameManager.getInstance().getActiveGame().hasStarted()) {
+					if (gameManager.hasGame()) {
+						if (gameManager.getActiveGame().hasStarted()) {
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-								int deaths = ((Dropper) GameManager.getInstance().getActiveGame()).getDeaths(player.getUniqueId());
+								int deaths = ((Dropper) gameManager.getActiveGame()).getDeaths(player.getUniqueId());
 								NetherBoardScoreboard.getInstance().setPlayerLine(DEATH_COUNT_LINE, player, ChatColor.GOLD + "Deaths: " + ChatColor.AQUA + deaths);
 							});
 						}

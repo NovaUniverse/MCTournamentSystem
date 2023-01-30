@@ -58,6 +58,8 @@ public class GameListeners extends NovaModule implements Listener {
 	private static GameListeners instance;
 
 	private boolean disableAudoShutdown;
+	
+	private GameManager gameManager;
 
 	public static GameListeners getInstance() {
 		return instance;
@@ -99,6 +101,7 @@ public class GameListeners extends NovaModule implements Listener {
 	public void onLoad() {
 		GameListeners.instance = this;
 		disableAudoShutdown = false;
+		gameManager = GameManager.getInstance();
 	}
 
 	public boolean isDisableAudoShutdown() {
@@ -112,9 +115,9 @@ public class GameListeners extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameLoaded(GameLoadedEvent e) {
 		if (!TournamentSystem.getInstance().isDisableScoreboard()) {
-			NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + GameManager.getInstance().getDisplayName());
+			NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + gameManager.getDisplayName());
 		}
-		TabListMessage.setServerType(GameManager.getInstance().getDisplayName());
+		TabListMessage.setServerType(gameManager.getDisplayName());
 
 		String name = e.getGame().getName().toLowerCase();
 		if (GAME_SPECIFIC_MODULES.containsKey(name)) {

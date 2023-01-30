@@ -9,11 +9,17 @@ import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.IT
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 
 public class BehindYourTailMetadataProvider implements ITelementryMetadataProvider {
+	private GameManager gameManager;
+	
+	public BehindYourTailMetadataProvider() {
+		gameManager = GameManager.getInstance();
+	}
+	
 	private static final String ROLE_KEY = "behind_your_tail_role";
 	
 	@Override
 	public void process(Player player, JSONObject metadata) {
-		if (GameManager.getInstance().getActiveGame().hasStarted()) {
+		if (gameManager.getActiveGame().hasStarted()) {
 			Role role = NovaBehindYourTail.getInstance().getGame().getPlayerRole(player.getUniqueId());
 			if (role == null) {
 				metadata.put(ROLE_KEY, "NONE");

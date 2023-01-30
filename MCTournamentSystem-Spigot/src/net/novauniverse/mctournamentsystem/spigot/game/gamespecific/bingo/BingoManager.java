@@ -31,12 +31,16 @@ public class BingoManager extends NovaModule implements Listener {
 	private Task task;
 	private boolean timeLeftLineShown;
 
+	private GameManager gameManager;
+
 	public BingoManager() {
 		super("TournamentSystem.GameSpecific.BingoManager");
 	}
 
 	@Override
 	public void onLoad() {
+		gameManager = GameManager.getInstance();
+
 		timeLeftLineShown = false;
 
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
@@ -44,9 +48,9 @@ public class BingoManager extends NovaModule implements Listener {
 			public void run() {
 				if (!TournamentSystem.getInstance().isDisableScoreboard()) {
 					boolean didShow = false;
-					if (GameManager.getInstance().hasGame()) {
-						if (GameManager.getInstance().getActiveGame().hasStarted() && !GameManager.getInstance().getActiveGame().hasEnded()) {
-							long totalSecs = ((Bingo) GameManager.getInstance().getActiveGame()).getTimeLeft();
+					if (gameManager.hasGame()) {
+						if (gameManager.getActiveGame().hasStarted() && !gameManager.getActiveGame().hasEnded()) {
+							long totalSecs = ((Bingo) gameManager.getActiveGame()).getTimeLeft();
 
 							long hours = totalSecs / 3600;
 							long minutes = (totalSecs % 3600) / 60;

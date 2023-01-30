@@ -23,21 +23,24 @@ public class TNTTagManager extends NovaModule implements Listener {
 	private Task task;
 	private boolean timeLeftLineShown;
 
+	private GameManager gameManager;
+
 	public TNTTagManager() {
 		super("TournamentSystem.BingoManager");
 	}
 
 	@Override
 	public void onLoad() {
+		gameManager = GameManager.getInstance();
 		timeLeftLineShown = false;
 
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
 				boolean didShow = false;
-				if (GameManager.getInstance().hasGame()) {
-					TNTTag tntTag = (TNTTag) GameManager.getInstance().getActiveGame();
-					if (GameManager.getInstance().getActiveGame().hasStarted()) {
+				if (gameManager.hasGame()) {
+					TNTTag tntTag = (TNTTag) gameManager.getActiveGame();
+					if (tntTag.hasStarted()) {
 						if (!TournamentSystem.getInstance().isDisableScoreboard()) {
 							if (!GameManager.getInstance().getActiveGame().hasEnded()) {
 								long totalSecs = tntTag.getRoundTimer();

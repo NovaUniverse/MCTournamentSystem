@@ -24,10 +24,13 @@ public class SpleefManager extends NovaModule implements Listener {
 	private int taskId;
 	private boolean decayLineShown;
 
+	private GameManager gameManager;
+
 	@Override
 	public void onLoad() {
 		this.taskId = -1;
 		this.decayLineShown = false;
+		gameManager = GameManager.getInstance();
 	}
 
 	@Override
@@ -36,7 +39,7 @@ public class SpleefManager extends NovaModule implements Listener {
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(TournamentSystem.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					Spleef spleef = (Spleef) GameManager.getInstance().getActiveGame();
+					Spleef spleef = (Spleef) gameManager.getActiveGame();
 
 					if (spleef.hasStarted()) {
 						if (spleef.hasActiveMap()) {

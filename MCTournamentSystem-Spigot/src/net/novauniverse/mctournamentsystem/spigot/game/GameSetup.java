@@ -22,6 +22,8 @@ import net.zeeraa.novacore.spigot.module.modules.compass.CompassTracker;
 
 public class GameSetup {
 	public static void init(TournamentSystem tournamentSystem) {
+		GameManager gameManager = GameManager.getInstance();
+
 		ScoreListener scoreListener = new ScoreListener(tournamentSystem.getConfig().getBoolean("kill_score_enabled"), tournamentSystem.getConfig().getInt("kill_score"), tournamentSystem.getConfig().getBoolean("win_score_enabled"), tournamentSystem.getWinScore(), tournamentSystem.getConfig().getBoolean("participation_score_enabled"), tournamentSystem.getConfig().getInt("participation_score"));
 		tournamentSystem.setScoreListener(scoreListener);
 		Bukkit.getServer().getPluginManager().registerEvents(scoreListener, tournamentSystem);
@@ -35,10 +37,10 @@ public class GameSetup {
 
 		Log.info("GameSetup", "Loaded and enabled modules required by games");
 
-		GameManager.getInstance().setUseTeams(true);
-		GameManager.getInstance().addCombatTagMessage(new TSActionBarCombatTagMessage());
-		GameManager.getInstance().setTeamEliminationMessage(new TSTeamEliminationMessage());
-		GameManager.getInstance().setPlayerEliminationMessage(new TSPlayerEliminationMessage());
+		gameManager.setUseTeams(true);
+		gameManager.addCombatTagMessage(new TSActionBarCombatTagMessage());
+		gameManager.setTeamEliminationMessage(new TSTeamEliminationMessage());
+		gameManager.setPlayerEliminationMessage(new TSPlayerEliminationMessage());
 
 		CompassTracker.getInstance().setStrictMode(true);
 		CompassTracker.getInstance().setCompassTrackerTarget(new EnemyPlayerCompassTracker());
@@ -61,7 +63,8 @@ public class GameSetup {
 	}
 
 	public static void disableEliminationMessages() {
-		GameManager.getInstance().setTeamEliminationMessage(new NOPEliminationMessage());
-		GameManager.getInstance().setPlayerEliminationMessage(new NOPEliminationMessage());
+		GameManager gameManager = GameManager.getInstance();
+		gameManager.setTeamEliminationMessage(new NOPEliminationMessage());
+		gameManager.setPlayerEliminationMessage(new NOPEliminationMessage());
 	}
 }
