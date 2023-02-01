@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 
 @SuppressWarnings("restriction")
 public class QuickMessageHandler extends APIEndpoint {
@@ -17,6 +18,11 @@ public class QuickMessageHandler extends APIEndpoint {
 		super(true);
 	}
 
+	@Override
+	public UserPermission getRequiredPermission() {
+		return UserPermission.BROADCAST_MESSAGE;
+	}
+	
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();

@@ -6,11 +6,11 @@ import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
 
+import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APITokenStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUserStore;
 
 @SuppressWarnings("restriction")
 public class LoginHandler extends APIEndpoint {
@@ -27,7 +27,7 @@ public class LoginHandler extends APIEndpoint {
 				String username = params.get("username");
 				String password = params.get("password");
 
-				APIUser user = APIUserStore.getUsers().stream().filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password)).findFirst().orElse(null);
+				APIUser user = TournamentSystem.getInstance().getApiUsers().stream().filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password)).findFirst().orElse(null);
 
 				if (user != null) {
 					APIAccessToken token = APITokenStore.createToken(user);

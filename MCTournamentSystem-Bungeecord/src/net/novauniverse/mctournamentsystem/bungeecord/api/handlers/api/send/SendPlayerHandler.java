@@ -11,11 +11,17 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 
 @SuppressWarnings("restriction")
 public class SendPlayerHandler extends APIEndpoint {
 	public SendPlayerHandler() {
 		super(true);
+	}
+	
+	@Override
+	public UserPermission getRequiredPermission() {
+		return UserPermission.SEND_PLAYERS;
 	}
 
 	@Override

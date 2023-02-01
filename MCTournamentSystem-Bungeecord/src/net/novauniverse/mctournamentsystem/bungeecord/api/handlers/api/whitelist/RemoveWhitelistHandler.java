@@ -9,12 +9,18 @@ import org.json.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
 public class RemoveWhitelistHandler extends APIEndpoint {
 	public RemoveWhitelistHandler() {
 		super(true);
+	}
+	
+	@Override
+	public UserPermission getRequiredPermission() {
+		return UserPermission.MANAGE_WHITELIST;
 	}
 
 	@Override

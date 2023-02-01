@@ -11,6 +11,7 @@ import com.sun.net.httpserver.HttpHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.chat.GetChatLogHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.CommentatorTPHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.GetCommentatorGuestKeyHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.TriggerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.nextmingame.ResetNextMinigameHandler;
@@ -27,6 +28,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.Cl
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.PHPMyAdminUrlHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.QuickMessageHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ResetHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ShutdownHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.StatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetScoreboardURLHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetTournamentNameHandler;
@@ -62,6 +64,7 @@ public class WebServer {
 		createContext("/api/system/reset", new ResetHandler());
 		createContext("/api/system/clear_players", new ClearPlayersHandler());
 		createContext("/api/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
+		createContext("/api/system/shutdown", new ShutdownHandler());
 		
 		// Dynamic config
 		createContext("/api/system/dynamicconfig/reload", new ReloadDynamicConfig());
@@ -93,6 +96,7 @@ public class WebServer {
 
 		// Commentator
 		createContext("/api/commentator/tp", new CommentatorTPHandler());
+		createContext("/api/commentator/get_guest_key", new GetCommentatorGuestKeyHandler());
 
 		// Public
 		createContext("/api/public/status", new PublicStatusHandler());

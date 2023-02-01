@@ -40,9 +40,10 @@ public class StatusHandler extends APIEndpoint {
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
 
-		if (accessToken != null) {
-			json.put("user", accessToken.getUser().getUsername());
-		}
+		JSONObject loggedInUser = new JSONObject();
+		loggedInUser.put("username", accessToken.getUser().getUsername());
+		loggedInUser.put("permissions", accessToken.getUser().getPermissionsAsJSON());
+		json.put("user", loggedInUser);
 
 		/* ===== Servers ===== */
 		JSONArray servers = new JSONArray();
@@ -231,7 +232,6 @@ public class StatusHandler extends APIEndpoint {
 
 		json.put("system", system);
 
-		json.put("commentator_guest_key", TournamentSystem.getInstance().getCommentatorGuestKey());
 		json.put("active_server", TournamentSystemCommons.getActiveServer());
 		json.put("next_minigame", TournamentSystemCommons.getNextMinigame());
 

@@ -1,38 +1,34 @@
-package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.nextmingame;
+package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system;
 
 import java.util.Map;
 
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
+
+import net.md_5.bungee.api.ProxyServer;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
-import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.zeeraa.novacore.commons.log.Log;
 
 @SuppressWarnings("restriction")
-public class ResetNextMinigameHandler extends APIEndpoint {
-	public ResetNextMinigameHandler() {
+public class ShutdownHandler extends APIEndpoint {
+	public ShutdownHandler() {
 		super(true);
 	}
 
 	@Override
 	public UserPermission getRequiredPermission() {
-		return UserPermission.SET_NEXT_MINIGAME;
+		return UserPermission.SHUTDOWN;
 	}
-	
+
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
 		JSONObject json = new JSONObject();
-
-		if (TournamentSystemCommons.setNextMinigame(null)) {
-			json.put("success", true);
-		} else {
-			json.put("success", false);
-			json.put("error", "server_error");
-			json.put("message", "Failed to update database");
-		}
-
+		Log.info("TournamentSystem", "Shutdown initialised by user " + accessToken.getUser().getUsername());
+		ProxyServer.getInstance().stop("Server shutting down");
+		json.put("success", true);
 		return json;
 	}
 }

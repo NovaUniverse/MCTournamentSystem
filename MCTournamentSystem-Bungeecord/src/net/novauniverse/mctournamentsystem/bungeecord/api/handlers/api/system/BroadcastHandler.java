@@ -12,12 +12,18 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
 public class BroadcastHandler extends APIEndpoint {
 	public BroadcastHandler() {
 		super(true);
+	}
+	
+	@Override
+	public UserPermission getRequiredPermission() {
+		return UserPermission.BROADCAST_MESSAGE;
 	}
 
 	@Override

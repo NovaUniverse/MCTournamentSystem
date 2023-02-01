@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
@@ -19,6 +20,11 @@ import net.zeeraa.novacore.commons.log.Log;
 public class ImportSnapshotHandler extends APIEndpoint {
 	public ImportSnapshotHandler() {
 		super(true);
+	}
+	
+	@Override
+	public UserPermission getRequiredPermission() {
+		return UserPermission.IMPORT_SCORE_SNAPSHOT;
 	}
 
 	@Override

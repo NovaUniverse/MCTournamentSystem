@@ -67,11 +67,11 @@
 							<a href="/app/commentator/" target="_blank" class="nav-link">Commentator</a>
 						</li>
 
-						<li class="nav-item">
+						<li class="nav-item" data-hide-if-missing-permission="BROADCAST_MESSAGE">
 							<a href="#" class="nav-link btn_broadcast">Broadcast message</a>
 						</li>
 
-						<li class="nav-item">
+						<li class="nav-item" data-hide-if-missing-permission="SET_NEXT_MINIGAME">
 							<a href="#" class="nav-link btn_next_minigame">Next minigame</a>
 						</li>
 
@@ -81,10 +81,10 @@
 								Settings
 							</a>
 							<ul class="dropdown-menu" aria-labelledby="navbarSettingsDropdown">
-								<li>
+								<li data-hide-if-missing-permission="MANAGE_SETTINGS">
 									<a class="dropdown-item set-tournament-name" href="#">Set tournament name</a>
 								</li>
-								<li>
+								<li data-hide-if-missing-permission="MANAGE_SETTINGS">
 									<a class="dropdown-item set-scoreboard-url" href="#">Set scoreboard link</a>
 								</li>
 								<li>
@@ -100,8 +100,12 @@
 								<li>
 									<hr class="dropdown-divider">
 								</li>
-								<li>
+								<li data-hide-if-missing-permission="CLEAR_DATA">
 									<a class="dropdown-item text-danger btn-reset-data" href="#">Reset data</a>
+								</li>
+								<li data-hide-if-missing-permission="SHUTDOWN">
+									<a class="dropdown-item text-danger shutdown-proxy-button" href="#">Shutdown
+										tournament system proxy</a>
 								</li>
 							</ul>
 						</li>
@@ -135,7 +139,8 @@
 				<a class="nav-link page-link px-1 py-1" data-page="snapshot_page" href="#">Score snapshot</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link btn-fetch-chat-log px-1 py-1" data-page="chat_log_page" href="#">Chat log</a>
+				<a class="nav-link page-link btn-fetch-chat-log px-1 py-1" data-page="chat_log_page" href="#">Chat
+					log</a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link page-link px-1 py-1" data-page="support_page" href="#">Support</a>
@@ -146,7 +151,8 @@
 					server</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link page-link px-1 py-1" data-page="commentator_guest_key_page" href="#">Commentator guest key</a>
+				<a class="nav-link page-link px-1 py-1" data-page="commentator_guest_key_page" href="#">Commentator
+					guest key</a>
 			</li>
 		</ul>
 
@@ -254,9 +260,10 @@
 				</div>
 
 				<div class="row">
-					<div class="col mt-1">
-						<button class="btn btn-primary" id="btn_open_add_staff_modal">Add user</button>
-						<p>
+					<div class="col">
+						<button class="btn btn-primary" id="btn_open_add_staff_modal"
+							data-disable-if-missing-permission="MANAGE_STAFF">Add user</button>
+						<p class="mt-2">
 							This page does not update live. Please reload the page before making changes to the
 							staff
 							team
@@ -299,7 +306,8 @@
 					<div class="col">
 						<button type="button" id="btn_export_snapshot" class="btn btn-success">Export
 							snapshot</button>
-						<button type="button" id="btn_import_snapshot" class="btn btn-success ml-2">Import
+						<button type="button" id="btn_import_snapshot" class="btn btn-success ml-2"
+							data-disable-if-missing-permission="IMPORT_SCORE_SNAPSHOT">Import
 							snapshot</button>
 						<button type="button" id="btn_import_snapshot_clear" class="btn btn-danger ml-2">Clear</button>
 					</div>
@@ -308,10 +316,12 @@
 				<div class="row mt-2">
 					<div class="col">
 						<label for="snapshot_json_data">Paste JSON data here</label>
-						<textarea class="form-control rounded-1" id="snapshot_json_data" rows="10"></textarea>
+						<textarea class="form-control rounded-1" id="snapshot_json_data" rows="10"
+							data-disable-if-missing-permission="IMPORT_SCORE_SNAPSHOT"></textarea>
 
 						<label for="snapshot_file_upload" class="form-label">Or upload JSON file</label>
-						<input class="form-control" type="file" id="snapshot_file_upload">
+						<input class="form-control" type="file" id="snapshot_file_upload"
+							data-disable-if-missing-permission="IMPORT_SCORE_SNAPSHOT">
 					</div>
 				</div>
 			</div>
@@ -379,10 +389,13 @@
 						<div id="game_controlls">
 							<button type="button" class="btn btn-danger bongo_cat" id="no_more_cats">Disable
 								cat</button>
-							<a href="#" class="btn_broadcast btn btn-info">Broadcast message</a>
-							<button type="button" id="btn_send_all_players_to" class="btn btn-primary">Send all
+							<a href="#" class="btn_broadcast btn btn-info"
+								data-disable-if-missing-permission="BROADCAST_MESSAGE">Broadcast message</a>
+							<button type="button" id="btn_send_all_players_to" class="btn btn-primary"
+								data-disable-if-missing-permission="SEND_PLAYERS">Send all
 								to</button>
-							<button type="button" class="btn-start-game btn btn-success ml-2">Start game</button>
+							<button type="button" class="btn-start-game btn btn-success ml-2"
+								data-disable-if-missing-permission="START_GAME">Start game</button>
 							<button type="button" id="btn_export_summary" class="btn btn-info ml-2">Export
 								summary</button>
 						</div>
@@ -452,8 +465,10 @@
 
 				<div class="row">
 					<div class="col-12">
-						<button class="btn btn-success" id="add_whitelist">Add player</button>
-						<button class="btn btn-danger float-end" id="clear_whitelist">Clear</button>
+						<button class="btn btn-success" id="add_whitelist"
+							data-disable-if-missing-permission="MANAGE_WHITELIST">Add player</button>
+						<button class="btn btn-danger float-end" id="clear_whitelist"
+							data-disable-if-missing-permission="MANAGE_WHITELIST">Clear</button>
 					</div>
 				</div>
 			</div>

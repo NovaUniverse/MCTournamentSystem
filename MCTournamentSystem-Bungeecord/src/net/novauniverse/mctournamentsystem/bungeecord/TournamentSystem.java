@@ -16,7 +16,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.novauniverse.mctournamentsystem.bungeecord.api.WebServer;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIKeyStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUserStore;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere.SendHereCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.timeout.TimeoutCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
@@ -71,6 +71,12 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private String dynamicConfigURL;
 
 	private InternetCafeOptions internetCafeOptions;
+
+	private List<APIUser> apiUsers;
+
+	public List<APIUser> getApiUsers() {
+		return apiUsers;
+	}
 
 	public String getDynamicConfigUrl() {
 		return dynamicConfigURL;
@@ -159,6 +165,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		staffRoles = new ArrayList<>();
 		openMode = false;
 		distroName = null;
+		apiUsers = new ArrayList<>();
 
 		publicIp = "Unknown";
 
@@ -289,14 +296,27 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		for (int i = 0; i < webUsers.length(); i++) {
 			JSONObject user = webUsers.getJSONObject(i);
-			String username = user.getString("username");
 
-			APIUserStore.addUser(new APIUser(username, user.getString("password")));
+			String username = user.getString("username");
+			String password = user.getString("password");
+			List<UserPermission> permissions = new ArrayList<UserPermission>();
+
+			JSONArray permissionStrings = user.getJSONArray("permissions");
+			for (int j = 0; j < permissionStrings.length(); j++) {
+				String permissionName = permissionStrings.getString(j);
+				try {
+					permissions.add(UserPermission.valueOf(permissionName));
+				} catch (Exception e) {
+					Log.error("TournamentSystem", "Invalid permission " + permissionName + " for user " + username);
+				}
+			}
+
+			apiUsers.add(new APIUser(username, password, permissions));
 
 			Log.info("TournamentSystem", "Added user " + username + " to the web ui users");
 		}
 
-		Log.info("TournamentSystem", APIUserStore.getUsers().size() + " user" + (APIUserStore.getUsers().size() == 1 ? "" : "s") + " configured for web ui");
+		Log.info("TournamentSystem", apiUsers.size() + " user" + (apiUsers.size() == 1 ? "" : "s") + " configured for web ui");
 
 		try {
 			int port = webConfig.getInt("port");

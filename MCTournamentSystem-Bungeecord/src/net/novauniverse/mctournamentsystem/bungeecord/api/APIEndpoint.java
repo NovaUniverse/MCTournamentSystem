@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONObject;
 
@@ -14,6 +16,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIKeyStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APITokenStore;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 
 @SuppressWarnings("restriction")
 public abstract class APIEndpoint implements HttpHandler {
@@ -27,6 +30,11 @@ public abstract class APIEndpoint implements HttpHandler {
 		return false;
 	}
 
+	@Nullable
+	public UserPermission getRequiredPermission() {
+		return null;
+	}
+
 	@Override
 	public final void handle(HttpExchange exchange) throws IOException {
 		Map<String, String> params = WebServer.queryToMap(exchange.getRequestURI().getQuery());
@@ -37,7 +45,7 @@ public abstract class APIEndpoint implements HttpHandler {
 			token = APITokenStore.getToken(params.get("access_token"));
 		}
 
-		JSONObject result;
+		JSONObject result = new JSONObject();
 
 		boolean apiKeyOk = false;
 
@@ -58,7 +66,6 @@ public abstract class APIEndpoint implements HttpHandler {
 		}
 
 		if (requireAuthentication && token == null && !TournamentSystem.getInstance().isWebserverDevelopmentMode() && !apiKeyOk) {
-			result = new JSONObject();
 			result.put("success", false);
 			result.put("error", "unauthorized");
 			result.put("message", "Access token is missing or invalid. Please login to use this system");
@@ -67,20 +74,39 @@ public abstract class APIEndpoint implements HttpHandler {
 				token = APITokenStore.DUMMY_TOKEN;
 			}
 
-			try {
-				result = this.handleRequest(exchange, params, token);
-			} catch (Exception e) {
-				result = new JSONObject();
-				result.put("success", false);
-				result.put("error", "exception");
-				result.put("message", "An internal exception occured while trying to proccess your request. " + e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
+			boolean permissionCheckFail = false;
+			if (token != null) {
+				UserPermission requiredPermission = getRequiredPermission();
+				if (requiredPermission != null) {
+					if (!token.getUser().hasPermission(requiredPermission)) {
+						permissionCheckFail = true;
+						result.put("success", false);
+						result.put("error", "unauthorized");
+						result.put("message", "You are messing the required permission " + requiredPermission.name() + " to perform this request");
+					}
+				}
+			}
+
+			if (!permissionCheckFail) {
+				try {
+					result = this.handleRequest(exchange, params, token);
+				} catch (Exception e) {
+					result.put("success", false);
+					result.put("error", "exception");
+					result.put("message", "An internal exception occured while trying to proccess your request. " + e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
+				}
 			}
 		}
 
 		String responseString = result.toString(4);
 
-		exchange.sendResponseHeaders(200, responseString.getBytes().length);
+		int code = 200;
 
+		if (result.has("http_response_code")) {
+			code = result.getInt("http_response_code");
+		}
+
+		exchange.sendResponseHeaders(code, responseString.getBytes().length);
 		OutputStream os = exchange.getResponseBody();
 		os.write(responseString.getBytes());
 		os.close();

@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.MissingTeamFixer;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
@@ -15,6 +16,11 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 public class ClearPlayersHandler extends APIEndpoint {
 	public ClearPlayersHandler() {
 		super(true);
+	}
+
+	@Override
+	public UserPermission getRequiredPermission() {
+		return UserPermission.CLEAR_DATA;
 	}
 
 	@Override

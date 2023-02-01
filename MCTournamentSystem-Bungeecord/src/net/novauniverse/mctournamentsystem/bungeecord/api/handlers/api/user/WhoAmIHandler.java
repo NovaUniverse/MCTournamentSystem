@@ -26,6 +26,7 @@ public class WhoAmIHandler extends APIEndpoint {
 		} else {
 			result.put("logged_in", true);
 			result.put("username", accessToken.getUser().getUsername());
+			result.put("permissions", accessToken.getUser().getPermissionsAsJSON());
 		}
 
 		return result;
