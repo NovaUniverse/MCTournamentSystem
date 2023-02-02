@@ -7,7 +7,7 @@ import net.novauniverse.mctournamentsystem.updater.utils.WebRequestUtil;
 
 public class LicenseUtils {
 	public static LicenseData CheckLicense(String key) throws IOException {
-		String url = "https://novauniverse.net/api/license/tournament_system/" + key;
+		String url = "https://api.novauniverse.net/v1/license/tournament_system/" + key;
 		JSONObject json = WebRequestUtil.getResource(url);
 
 		boolean valid = false;

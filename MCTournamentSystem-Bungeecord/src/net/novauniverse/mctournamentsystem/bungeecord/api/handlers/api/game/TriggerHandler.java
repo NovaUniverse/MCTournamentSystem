@@ -10,7 +10,8 @@ import com.google.common.io.ByteStreams;
 import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
@@ -25,7 +26,12 @@ public class TriggerHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
+	public UserPermission getRequiredPermission() {
+		return UserPermission.MANAGE_TRIGGERS;
+	}
+
+	@Override
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
 		if (params.containsKey("triggerId")) {
@@ -46,7 +52,7 @@ public class TriggerHandler extends APIEndpoint {
 
 					player.getServer().getInfo().sendData(TournamentSystemCommons.DATA_CHANNEL, out.toByteArray());
 				});
-				
+
 				json.put("success", true);
 			}
 		} else {

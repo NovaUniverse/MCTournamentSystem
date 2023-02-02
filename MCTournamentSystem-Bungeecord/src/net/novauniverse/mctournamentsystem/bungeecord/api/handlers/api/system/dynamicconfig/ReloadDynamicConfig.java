@@ -9,7 +9,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 
 @SuppressWarnings("restriction")
 public class ReloadDynamicConfig extends APIEndpoint {
@@ -18,7 +18,7 @@ public class ReloadDynamicConfig extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
 		boolean success = true;

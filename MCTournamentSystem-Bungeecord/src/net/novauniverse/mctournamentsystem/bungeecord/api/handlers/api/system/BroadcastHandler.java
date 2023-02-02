@@ -11,7 +11,8 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
@@ -19,9 +20,14 @@ public class BroadcastHandler extends APIEndpoint {
 	public BroadcastHandler() {
 		super(true);
 	}
+	
+	@Override
+	public UserPermission getRequiredPermission() {
+		return UserPermission.BROADCAST_MESSAGE;
+	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
 		if (params.containsKey("message")) {

@@ -11,6 +11,7 @@ import com.sun.net.httpserver.HttpHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.chat.GetChatLogHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.CommentatorTPHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.GetCommentatorGuestKeyHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.TriggerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.nextmingame.ResetNextMinigameHandler;
@@ -18,6 +19,10 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.nextminga
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.publicapi.PublicStatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.GetServersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.GetServersLogsHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.StartServersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.StopServersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.snapshot.ExportSnapshotHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.snapshot.ImportSnapshotHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.GetStaffHandler;
@@ -27,6 +32,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.Cl
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.PHPMyAdminUrlHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.QuickMessageHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ResetHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ShutdownHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.StatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetScoreboardURLHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetTournamentNameHandler;
@@ -62,7 +68,8 @@ public class WebServer {
 		createContext("/api/system/reset", new ResetHandler());
 		createContext("/api/system/clear_players", new ClearPlayersHandler());
 		createContext("/api/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
-		
+		createContext("/api/system/shutdown", new ShutdownHandler());
+
 		// Dynamic config
 		createContext("/api/system/dynamicconfig/reload", new ReloadDynamicConfig());
 
@@ -93,6 +100,7 @@ public class WebServer {
 
 		// Commentator
 		createContext("/api/commentator/tp", new CommentatorTPHandler());
+		createContext("/api/commentator/get_guest_key", new GetCommentatorGuestKeyHandler());
 
 		// Public
 		createContext("/api/public/status", new PublicStatusHandler());
@@ -107,6 +115,12 @@ public class WebServer {
 		// Next minigame
 		createContext("/api/next_minigame/set", new SetNextMinigameHandler());
 		createContext("/api/next_minigame/reset", new ResetNextMinigameHandler());
+
+		// Servers
+		createContext("/api/servers/get_servers", new GetServersHandler());
+		createContext("/api/servers/start", new StartServersHandler());
+		createContext("/api/servers/stop", new StopServersHandler());
+		createContext("/api/servers/logs", new GetServersLogsHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");

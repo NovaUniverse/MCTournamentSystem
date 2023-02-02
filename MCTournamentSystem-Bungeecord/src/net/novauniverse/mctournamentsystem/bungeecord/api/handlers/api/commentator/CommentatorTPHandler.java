@@ -10,10 +10,9 @@ import com.google.common.io.ByteStreams;
 import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIKeyStore;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 @SuppressWarnings("restriction")
@@ -28,61 +27,54 @@ public class CommentatorTPHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
-		UUID target = null;
+		if (authentication instanceof CommentatorAuth) {
+			UUID target = null;
 
-		if (params.containsKey("target")) {
-			try {
-				target = UUID.fromString(params.get("target"));
-			} catch (Exception e) {
+			if (params.containsKey("target")) {
+				try {
+					target = UUID.fromString(params.get("target"));
+				} catch (Exception e) {
+				}
 			}
-		}
 
-		if (target != null) {
-			if (params.containsKey("commentator_key")) {
-				String key = params.get("commentator_key");
-				if (TournamentSystem.getInstance().getCommentatorGuestKey().equalsIgnoreCase(key)) {
+			if (target != null) {
+				if (((CommentatorAuth) authentication).getMinecraftUserUUID() == null) {
 					json.put("success", false);
 					json.put("error", "unauthorized");
 					json.put("message", "Guest commentators cant use the tp function. Please ask the staff if you want a full access commentator key");
 				} else {
 
-					if (APIKeyStore.getCommentatorKeys().containsKey(key)) {
-						UUID uuid = APIKeyStore.getCommentatorKeys().get(key);
+					UUID uuid = ((CommentatorAuth) authentication).getMinecraftUserUUID();
 
-						ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
-						if (player != null) {
-							ByteArrayDataOutput out = ByteStreams.newDataOutput();
+					ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
+					if (player != null) {
+						ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
-							out.writeUTF("commentator_tp");
-							out.writeUTF(uuid.toString());
-							out.writeUTF(target.toString());
+						out.writeUTF("commentator_tp");
+						out.writeUTF(uuid.toString());
+						out.writeUTF(target.toString());
 
-							player.getServer().getInfo().sendData(TournamentSystemCommons.DATA_CHANNEL, out.toByteArray());
+						player.getServer().getInfo().sendData(TournamentSystemCommons.DATA_CHANNEL, out.toByteArray());
 
-							json.put("success", true);
-						} else {
-							json.put("success", false);
-							json.put("error", "failed");
-							json.put("message", "Commentators minecraft account is not online");
-						}
+						json.put("success", true);
 					} else {
 						json.put("success", false);
-						json.put("error", "unauthorized");
-						json.put("message", "Invalid key");
+						json.put("error", "failed");
+						json.put("message", "Commentators minecraft account is not online");
 					}
 				}
 			} else {
 				json.put("success", false);
-				json.put("error", "unauthorized");
-				json.put("message", "This action requires a commentator key");
+				json.put("error", "bad request");
+				json.put("message", "Missing or invalid parameter: target");
 			}
 		} else {
 			json.put("success", false);
-			json.put("error", "bad request");
-			json.put("message", "Missing or invalid parameter: target");
+			json.put("error", "unauthorized");
+			json.put("message", "Invalid auth type: " + authentication.getClass().getName());
 		}
 
 		return json;

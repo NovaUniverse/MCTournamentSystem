@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 
-public class APIAccessToken {
+public class APIAccessToken extends Authentication {
 	private UUID uuid;
 	private APIUser user;
 
@@ -13,11 +13,17 @@ public class APIAccessToken {
 		this.user = user;
 	}
 
+	@Override
 	public APIUser getUser() {
 		return user;
 	}
 
 	public UUID getUuid() {
 		return uuid;
+	}
+	
+	@Override
+	public String getDescriptiveUserName() {
+		return "User access token for " + user.getUsername();
 	}
 }

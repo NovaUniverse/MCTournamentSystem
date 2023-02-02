@@ -15,7 +15,8 @@ import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
@@ -24,9 +25,14 @@ public class UploadTeamHandler extends APIEndpoint {
 	public UploadTeamHandler() {
 		super(true);
 	}
+	
+	@Override
+	public UserPermission getRequiredPermission() {
+		return UserPermission.EDIT_TEAMS;
+	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject result = new JSONObject();
 
 		JSONArray teamData = null;

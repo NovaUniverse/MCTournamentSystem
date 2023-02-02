@@ -10,16 +10,22 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIAccessToken;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 
 @SuppressWarnings("restriction")
 public class SendPlayerHandler extends APIEndpoint {
 	public SendPlayerHandler() {
 		super(true);
 	}
+	
+	@Override
+	public UserPermission getRequiredPermission() {
+		return UserPermission.SEND_PLAYERS;
+	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, APIAccessToken accessToken) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
 		if (params.containsKey("player")) {
