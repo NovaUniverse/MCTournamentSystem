@@ -416,28 +416,30 @@ $(function () {
 			});
 		}
 
+		TournamentSystem.update();
 		TournamentSystem.updateServers();
 		setInterval(() => TournamentSystem.updateServers(), 1000);
-	});
+		setInterval(() => TournamentSystem.update(), 1000);
 
-	$.getJSON("/api/staff/get_staff" + "?access_token=" + TournamentSystem.token, (data) => {
-		if (!data.success) {
-			toastr.error("Failed to fetch staff list" + (data.message == null ? "" : ". " + data.message));
-			return;
-		}
+		$.getJSON("/api/staff/get_staff" + "?access_token=" + TournamentSystem.token, (staffData) => {
+			if (!staffData.success) {
+				toastr.error("Failed to fetch staff list" + (staffData.message == null ? "" : ". " + staffData.message));
+				return;
+			}
 
-		for (let i = 0; i < data.staff_roles.length; i++) {
-			let role = data.staff_roles[i];
-			TournamentSystem.staffRoles.push(role);
-			let newElement = $("<option></option>");
-			newElement.text(role);
-			newElement.attr("value", role);
-			$("#staff_role_selector").append(newElement);
-		}
+			for (let i = 0; i < staffData.staff_roles.length; i++) {
+				let role = staffData.staff_roles[i];
+				TournamentSystem.staffRoles.push(role);
+				let newElement = $("<option></option>");
+				newElement.text(role);
+				newElement.attr("value", role);
+				$("#staff_role_selector").append(newElement);
+			}
 
-		TournamentSystem.staffTeam = data.staff;
+			TournamentSystem.staffTeam = staffData.staff;
 
-		TournamentSystem.updateStaffTeam();
+			TournamentSystem.updateStaffTeam();
+		});
 	});
 
 	$("#toggle_commentator_guest_key").on("click", () => TournamentSystem.toggleCommentatorKeyVisible());
@@ -460,9 +462,6 @@ $(function () {
 	$("#btn_clear_next_minigame").on("click", () => TournamentSystem.clearNextMinigame());
 
 	$("#btn_set_next_mingame").on("click", () => TournamentSystem.setNextMinigame($("#next_minigame_value").val()));
-
-	setInterval(() => TournamentSystem.update(), 1000);
-	TournamentSystem.update();
 });
 
 function hasPermission(permission) {
@@ -691,17 +690,9 @@ const TournamentSystem = {
 
 			newElement.find(".staff-role-selector").val(TournamentSystem.staffTeam[uuid]);
 
-			if (!hasPermission("MANAGE_STAFF")) {
-				newElement.find(".staff-role-selector").attr("disabled", true);
-			} else {
-				newElement.find(".staff-role-selector").on("change", function () {
-					TournamentSystem.updateStaffTeam(true);
-				});
-			}
-
-			if (!hasPermission("MANAGE_STAFF")) {
-				newElement.find(".btn-remove-staff").attr("disabled", true);
-			}
+			newElement.find(".staff-role-selector").on("change", function () {
+				TournamentSystem.updateStaffTeam(true);
+			});
 
 			newElement.find(".btn-remove-staff").on("click", function () {
 				let uuid = $(this).parent().parent().data("uuid");
