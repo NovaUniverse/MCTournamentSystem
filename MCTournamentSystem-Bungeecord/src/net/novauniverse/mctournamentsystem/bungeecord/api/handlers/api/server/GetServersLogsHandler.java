@@ -1,56 +1,47 @@
-package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send;
+package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server;
 
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 
 @SuppressWarnings("restriction")
-public class SendPlayersHandler extends APIEndpoint {
-	public SendPlayersHandler() {
+public class GetServersLogsHandler extends APIEndpoint {
+	public GetServersLogsHandler() {
 		super(true);
 	}
-	
+
 	@Override
 	public UserPermission getRequiredPermission() {
-		return UserPermission.SEND_PLAYERS;
+		return UserPermission.MANAGE_SERVERS;
 	}
-
+	
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
 		if (params.containsKey("server")) {
-
-			ServerInfo server = ProxyServer.getInstance().getServerInfo(params.get("server"));
+			String name = params.get("server");
+			ManagedServer server = TournamentSystem.getInstance().getManagedServers().stream().filter(s -> s.getName().equals(name)).findFirst().orElse(null);
 
 			if (server != null) {
-				boolean fast = false;
-				
-				if(params.containsKey("fast")) {
-					if(params.get("fast").equalsIgnoreCase("true") || params.get("fast").equalsIgnoreCase("1")) {
-						fast = true;
-					}
-				}
-				
-				if(fast) {
-					ProxyServer.getInstance().getPlayers().forEach(p -> p.connect(server));
-				} else {
-					TournamentSystem.getInstance().getSlowPlayerSender().sendAll(server);
-				}
-
+				JSONArray logs = new JSONArray();
+				server.getLogFileLines().forEach(line -> {
+					logs.put(line);
+				});
 				json.put("success", true);
+				json.put("log_data", logs);
 			} else {
 				json.put("success", false);
 				json.put("error", "server_not_found");
-				json.put("message", "could not find server with that name");
+				json.put("message", "could not find server named " + name);
 			}
 		} else {
 			json.put("success", false);

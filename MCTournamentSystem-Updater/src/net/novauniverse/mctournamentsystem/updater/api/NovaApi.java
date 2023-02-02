@@ -7,7 +7,7 @@ import net.novauniverse.mctournamentsystem.updater.utils.WebRequestUtil;
 public class NovaApi {
 	public static boolean connectivityCheck() {
 		try {
-			JSONObject json = WebRequestUtil.getResource("https://novauniverse.net/api/connectivity_check/");
+			JSONObject json = WebRequestUtil.getResource("https://api.novauniverse.net/v1/connectivity_check/");
 			if (json != null) {
 				return json.getBoolean("success");
 			}

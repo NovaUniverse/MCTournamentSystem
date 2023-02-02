@@ -161,7 +161,9 @@
 				<a class="nav-link page-link px-1 py-1" data-page="commentator_guest_key_page" href="#">Commentator
 					guest key</a>
 			</li>
-
+			<li class="nav-item">
+				<a class="nav-link page-link px-1 py-1" data-page="servers_page" href="#">Servers</a>
+			</li>
 
 			<li class="nav-item">
 				<a class="nav-link page-link px-1 py-1" data-page="support_page" href="#">Support</a>
@@ -207,6 +209,41 @@
 				</div>
 
 				<div class="row mt-2" id="game_trigger_list">
+
+				</div>
+			</div>
+		</div>
+
+		<div id="servers_page" class="nav-page d-none">
+			<div class="d-none">
+				<!-- Template -->
+				<div class="col-12 col-sm-12 col-md-6 col-lg-3 mt-2" id="server_sample"
+					data-server-name="example">
+					<div class="card">
+						<div class="card-body">
+							<h3 class="card-title server-name">example</h3>
+							<p class="card-text">
+								Status: <span class="server-running-status badge">Not running</span><br>
+							</p>
+						</div>
+						<div class="card-body">
+							<button type="button" class="btn btn-primary start-server-button">Start</button>
+							<button type="button" class="btn btn-danger kill-server-button">Kill</button>
+							<button type="button" class="btn btn-info get-server-logs-button">Logs</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="container-fluid">
+				<div class="row mt-2">
+					<div class="col-12">
+						<h1>Servers</h1>
+						<p>This page allows you to manage servers</p>
+					</div>
+				</div>
+
+				<div class="row mt-2" id="server_list">
 
 				</div>
 			</div>

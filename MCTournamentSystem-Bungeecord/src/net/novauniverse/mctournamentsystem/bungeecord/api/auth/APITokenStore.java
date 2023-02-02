@@ -13,7 +13,7 @@ public class APITokenStore {
 	public static final APIAccessToken DUMMY_TOKEN = new APIAccessToken(UUID.fromString("00000000-0000-0000-0000-000000000000"), new APIUser("DevelopmentUser", "", UserPermission.generatePermissionList(UserPermission.ADMIN)));
 
 	public static final APIAccessToken createToken(APIUser user) {
-		if (APITokenStore.tokens.size() >= 100000) {
+		if (APITokenStore.tokens.size() >= 500000) {
 			APITokenStore.tokens.remove(0);
 		}
 

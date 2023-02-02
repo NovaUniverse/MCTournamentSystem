@@ -460,8 +460,10 @@ $(function () {
 
 	setInterval(function () {
 		TournamentSystem.update();
+		TournamentSystem.updateServers();
 	}, 1000);
 	TournamentSystem.update();
+	TournamentSystem.updateServers();
 });
 
 function hasPermission(permission) {
@@ -800,8 +802,156 @@ const TournamentSystem = {
 		});
 	},
 
+	updateServers: () => {
+		$.getJSON("/api/servers/get_servers" + "?access_token=" + TournamentSystem.token, (data) => {
+			if (!data.success) {
+				return;
+			}
+
+			let servers = [];
+			data.servers.forEach(server => {
+				servers.push(server);
+			});
+
+			let displayedServers = [];
+
+			$(".server-col").each(function () {
+				let name = $(this).data("server-name");
+				if (servers.filter(t => t.name == name).length == 0) {
+					$(this).remove();
+				}
+				displayedServers.push(name);
+			});
+
+			servers.forEach(server => {
+				if (!displayedServers.includes(server.name)) {
+					let newElement = $("#server_sample").clone();
+					newElement.removeAttr("id");
+					newElement.addClass("server-col");
+					newElement.attr("data-server-name", server.name);
+
+					newElement.find(".server-name").text(server.name);
+
+					newElement.find(".start-server-button").attr("data-server-name", server.name);
+					newElement.find(".kill-server-button").attr("data-server-name", server.name);
+					newElement.find(".get-server-logs-button").attr("data-server-name", server.name);
+
+					if (!hasPermission("MANAGE_SERVERS")) {
+						newElement.find(".start-server-button").attr("disabled", true);
+						newElement.find(".kill-server-button").attr("disabled", true);
+						newElement.find(".get-server-logs-button").attr("disabled", true);
+					}
+
+					newElement.find(".start-server-button").on("click", function () {
+						let serverName = $(this).data("server-name");
+						$.confirm({
+							title: 'Confirm start',
+							theme: 'dark',
+							content: 'Do you want to start the server ' + serverName,
+							buttons: {
+								confirm: function () {
+									$.getJSON("/api/servers/start?server=" + serverName + "&access_token=" + TournamentSystem.token, (response) => {
+										if (response.success) {
+											toastr.success("Success");
+										} else {
+											toastr.error(response.message);
+										}
+									});
+								},
+								cancel: function () { }
+							}
+						});
+					});
+
+					newElement.find(".kill-server-button").on("click", function () {
+						let serverName = $(this).data("server-name");
+						$.confirm({
+							title: 'Confirm stop',
+							theme: 'dark',
+							content: 'Do you want to stop the server ' + serverName,
+							buttons: {
+								confirm: function () {
+									$.getJSON("/api/servers/stop?server=" + serverName + "&access_token=" + TournamentSystem.token, (response) => {
+										if (response.success) {
+											toastr.success("Success");
+										} else {
+											toastr.error(response.message);
+										}
+									});
+								},
+								cancel: function () { }
+							}
+						});
+					});
+
+					newElement.find(".get-server-logs-button").on("click", function () {
+						let serverName = $(this).data("server-name");
+						$.getJSON("/api/servers/logs?server=" + serverName + "&access_token=" + TournamentSystem.token, (response) => {
+							if (response.success) {
+								toastr.success("Opening logs in popup");
+								let content = "";
+
+								response.log_data.forEach(line => {
+									content += line + "\n";
+								});
+
+								let win = window.open("", "Chat log", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
+								win.document.body.innerText = content;
+							} else {
+								toastr.error(response.message);
+							}
+						});
+					});
+
+					$("#server_list").append(newElement);
+				}
+			});
+
+			$(".server-col").each(function () {
+				let name = $(this).data("server-name");
+				let server = servers.filter(s => s.name == name)[0];
+
+				if (server == null) {
+					return;
+				}
+
+				if (server.is_running) {
+					$(this).find(".server-running-status").removeClass("bg-danger");
+					$(this).find(".server-running-status").addClass("bg-success");
+					$(this).find(".server-running-status").text("Running");
+				} else {
+					$(this).find(".server-running-status").addClass("bg-danger");
+					$(this).find(".server-running-status").removeClass("bg-success");
+					$(this).find(".server-running-status").text("Not running");
+				}
+
+				if (hasPermission("MANAGE_SERVERS")) {
+					if (server.is_running) {
+						$(this).find(".kill-server-button").attr("disabled", false);
+						$(this).find(".start-server-button").attr("disabled", true);
+					} else {
+						$(this).find(".kill-server-button").attr("disabled", true);
+						$(this).find(".start-server-button").attr("disabled", false);
+					}
+				}
+
+				/*$(this).find(".trigger-flags").text(trigger.flags.join(", "));
+
+				if (trigger.ticks_left == null) {
+					$(this).find(".trigger-ticks-left").hide();
+					$(this).find(".trigger-seconds-left").hide();
+				} else {
+					$(this).find(".trigger-ticks-left").show();
+					$(this).find(".trigger-seconds-left").show();
+					$(this).find(".trigger-ticks-left").text(trigger.ticks_left);
+					$(this).find(".trigger-seconds-left").text(Math.trunc(trigger.ticks_left / 20));
+				}*/
+			});
+		});
+	},
+
 	update: () => {
-		$.getJSON("/api/system/status" + "?access_token=" + TournamentSystem.token, function (data) {
+		$.getJSON("/api/system/status" + "?access_token=" + TournamentSystem.token, (data) => {
 			//console.log(data);
 
 			if (data.error == "unauthorized") {

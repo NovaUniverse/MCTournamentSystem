@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -15,6 +16,8 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.novauniverse.mctournamentsystem.bungeecord.api.WebServer;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIKeyStore;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKey;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere.SendHereCommand;
@@ -27,6 +30,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.pluginmessages.TS
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.whitelist.WhitelistListener;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.SlowPlayerSender;
+import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.config.InternetCafeOptions;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
@@ -34,6 +38,7 @@ import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigMa
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
+import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
 import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
@@ -52,7 +57,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	private ChatListener chatListener;
 
-	private String commentatorGuestKey;
+	private CommentatorAuth commentatorGuestKey;
 
 	private String phpmyadminURL;
 
@@ -73,6 +78,20 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private InternetCafeOptions internetCafeOptions;
 
 	private List<APIUser> apiUsers;
+
+	private List<ManagedServer> managedServers;
+
+	private File serverLogFolder;
+
+	private boolean disableParentPidMonitoring;
+	
+	public File getServerLogFolder() {
+		return serverLogFolder;
+	}
+
+	public List<ManagedServer> getManagedServers() {
+		return managedServers;
+	}
 
 	public List<APIUser> getApiUsers() {
 		return apiUsers;
@@ -135,7 +154,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return openMode;
 	}
 
-	public String getCommentatorGuestKey() {
+	public CommentatorAuth getCommentatorGuestKey() {
 		return commentatorGuestKey;
 	}
 
@@ -158,6 +177,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	public InternetCafeOptions getInternetCafeOptions() {
 		return internetCafeOptions;
 	}
+	
+	public boolean isDisableParentPidMonitoring() {
+		return disableParentPidMonitoring;
+	}
 
 	@Override
 	public void onEnable() {
@@ -166,8 +189,16 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		openMode = false;
 		distroName = null;
 		apiUsers = new ArrayList<>();
+		managedServers = new ArrayList<>();
 
 		publicIp = "Unknown";
+
+		try {
+			int pid = ProcessUtils.getOwnPID();
+			Log.info("TournamentSystem", "Own pid: " + pid);
+		} catch (Exception e) {
+			Log.error("TournamentSystem", "Failed to fetch own PID. " + e.getClass().getName() + " " + e.getMessage());
+		}
 
 		// Init session id
 		TournamentSystemCommons.getSessionId();
@@ -176,9 +207,12 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		chatListener = new ChatListener();
 
-		commentatorGuestKey = UUID.randomUUID().toString();
+		commentatorGuestKey = new CommentatorAuth(UUID.randomUUID().toString(), null, "guest");
 
 		quickMessages = new ArrayList<>();
+
+		serverLogFolder = new File(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())).getAbsolutePath() + File.separator + "server_logs");
+		serverLogFolder.mkdir();
 
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 		globalConfigFolder = new File(globalConfigPath);
@@ -204,6 +238,11 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
 
+		disableParentPidMonitoring = false;
+		if(config.has("disable_parent_pid_monitoring")) {
+			disableParentPidMonitoring = config.getBoolean("disable_parent_pid_monitoring");
+		}
+		
 		this.phpmyadminURL = config.getString("phpmyadmin_url");
 		this.teamSize = config.getInt("team_size");
 
@@ -277,22 +316,32 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		Log.info("Setting up web server");
 
 		JSONObject webConfig = config.getJSONObject("web_ui");
-		JSONObject commentatorKeys = config.getJSONObject("commentator_keys");
+		JSONArray commentatorKeys = config.getJSONArray("commentator_keys");
 		JSONArray apiKeys = webConfig.getJSONArray("api_keys");
 		JSONArray webUsers = webConfig.getJSONArray("users");
+		JSONArray managedServersJSON = config.getJSONArray("servers");
 
 		if (webUsers.length() == 0) {
 			Log.warn("TournamentSystem", "No users defined for web server in " + configFile.getAbsolutePath() + ". The web ui wont be accessible unless you are in dev mode (and thats not a good idea for prod env)");
 		}
 
-		commentatorKeys.keySet().forEach(key -> {
-			APIKeyStore.addCommentatorKey(key, UUID.fromString(commentatorKeys.getString(key)));
-		});
+		for (int i = 0; i < commentatorKeys.length(); i++) {
+			JSONObject commentatorKey = commentatorKeys.getJSONObject(i);
 
-		for (int i = 0; i < apiKeys.length(); i++) {
-			APIKeyStore.addApiKey(apiKeys.getString(i));
+			String key = commentatorKey.getString("key");
+			String uuidString = commentatorKey.getString("uuid");
+			String identifier = commentatorKey.getString("identifier");
+			UUID uuid = null;
+
+			try {
+				uuid = UUID.fromString(uuidString);
+			} catch (IllegalArgumentException e) {
+				Log.error("TournamentSystem", "Invalid UUID " + uuidString + " for commentator key with identifier " + identifier);
+				continue;
+			}
+
+			APIKeyStore.addCommentatorKey(new CommentatorAuth(key, uuid, identifier));
 		}
-		Log.info("TournamentSystem", APIKeyStore.getApiKeys().size() + " api keys loaded");
 
 		for (int i = 0; i < webUsers.length(); i++) {
 			JSONObject user = webUsers.getJSONObject(i);
@@ -317,6 +366,55 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		}
 
 		Log.info("TournamentSystem", apiUsers.size() + " user" + (apiUsers.size() == 1 ? "" : "s") + " configured for web ui");
+
+		for (int i = 0; i < apiKeys.length(); i++) {
+			JSONObject apiKey = apiKeys.getJSONObject(i);
+			String key = apiKey.getString("key");
+			String userName = apiKey.getString("user");
+
+			APIUser user = apiUsers.stream().filter(u -> u.getUsername().equals(userName)).findFirst().orElse(null);
+			if (user == null) {
+				Log.error("TournamentSystem", "Invalid user " + userName + " configured for api key");
+			} else {
+				APIKeyStore.addApiKey(new APIKey(key, user));
+			}
+		}
+		Log.info("TournamentSystem", APIKeyStore.getApiKeys().size() + " api keys loaded");
+
+		for (int i = 0; i < managedServersJSON.length(); i++) {
+			JSONObject serverData = managedServersJSON.getJSONObject(i);
+
+			String name = serverData.getString("name").trim();
+
+			if (name.length() == 0) {
+				Log.error("TournamentSystem", "Invalid empty server name in tournamentconfig.json");
+				continue;
+			}
+
+			if (managedServers.stream().anyMatch(s -> s.getName().equals(name))) {
+				Log.error("TournamentSystem", "Duplicate server name " + name + " for server in tournamentconfig.json");
+				continue;
+			}
+
+			File workingDirectory = new File(serverData.getString("working_directory"));
+
+			String javaExecutable = serverData.getString("java_executable");
+			String jvmArguments = serverData.getString("jvm_arguments");
+			String jar = serverData.getString("jar");
+
+			if (!workingDirectory.exists()) {
+				Log.error("TournamentSystem", "Cant find working directory " + workingDirectory.getAbsolutePath() + " for server " + name + " in tournamentconfig.json");
+				continue;
+			}
+
+			boolean autoStart = false;
+			if (serverData.has("auto_start")) {
+				autoStart = serverData.getBoolean("auto_start");
+			}
+
+			managedServers.add(new ManagedServer(name, javaExecutable, jvmArguments, jar, workingDirectory, autoStart));
+		}
+		Log.info("TournamentSystem", managedServers.size() + " servers configured to auto start");
 
 		try {
 			int port = webConfig.getInt("port");
@@ -383,10 +481,24 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 				Log.error("TournamentSystem", "Failed to update dynamic config. " + e.getClass().getName() + " " + e.getMessage());
 			}
 		}
+
+		List<ManagedServer> toAutoStart = managedServers.stream().filter(ManagedServer::isAutoStart).collect(Collectors.toList());
+		Log.info("TournamentSystem", toAutoStart.size() + " servers configured to auto start");
+		toAutoStart.forEach(server -> {
+			Log.info("TournamentSystem", "Attempting to auto start server " + server.getName());
+			server.start();
+		});
 	}
 
 	@Override
 	public void onDisable() {
+		managedServers.stream().filter(ManagedServer::isRunning).forEach(ManagedServer::stop);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		slowPlayerSender.destroy();
 
 		if (webServer != null) {

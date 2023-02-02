@@ -27,4 +27,8 @@ public enum UserPermission {
 		}
 		return result;
 	}
+
+	public static final List<UserPermission> blank() {
+		return new ArrayList<>();
+	}
 }

@@ -47,7 +47,7 @@ public class PlayerData {
 	public String getUsername() {
 		return username;
 	}
-	
+
 	public JSONObject getMetadata() {
 		return metadata;
 	}

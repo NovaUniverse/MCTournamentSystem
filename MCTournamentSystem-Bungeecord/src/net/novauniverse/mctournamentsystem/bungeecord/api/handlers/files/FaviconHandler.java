@@ -24,12 +24,8 @@ public class FaviconHandler implements HttpHandler {
 	public void handle(HttpExchange he) throws IOException {
 		File iconFile = new File(dataFolder + File.separator + "favicon.ico");
 
-		// System.out.println("icon: " + iconFile.getPath() + " exists: " +
-		// iconFile.exists());
-
 		if (!iconFile.exists()) {
 			URL inputUrl = getClass().getResource("/favicon.ico");
-			// System.out.println(inputUrl);
 			FileUtils.copyURLToFile(inputUrl, iconFile);
 		}
 

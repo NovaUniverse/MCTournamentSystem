@@ -1,26 +1,25 @@
-package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send;
+package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server;
 
 import java.util.Map;
 
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 
 @SuppressWarnings("restriction")
-public class SendPlayersHandler extends APIEndpoint {
-	public SendPlayersHandler() {
+public class StopServersHandler extends APIEndpoint {
+	public StopServersHandler() {
 		super(true);
 	}
-	
+
 	@Override
 	public UserPermission getRequiredPermission() {
-		return UserPermission.SEND_PLAYERS;
+		return UserPermission.MANAGE_SERVERS;
 	}
 
 	@Override
@@ -28,29 +27,26 @@ public class SendPlayersHandler extends APIEndpoint {
 		JSONObject json = new JSONObject();
 
 		if (params.containsKey("server")) {
-
-			ServerInfo server = ProxyServer.getInstance().getServerInfo(params.get("server"));
+			String name = params.get("server");
+			ManagedServer server = TournamentSystem.getInstance().getManagedServers().stream().filter(s -> s.getName().equals(name)).findFirst().orElse(null);
 
 			if (server != null) {
-				boolean fast = false;
-				
-				if(params.containsKey("fast")) {
-					if(params.get("fast").equalsIgnoreCase("true") || params.get("fast").equalsIgnoreCase("1")) {
-						fast = true;
+				if (server.stop()) {
+					json.put("success", true);
+				} else {
+					json.put("success", false);
+					if (!server.isRunning()) {
+						json.put("error", "server_not_running");
+						json.put("message", "Could not stop server " + server.getName() + " since its not running");
+					} else {
+						json.put("error", "failed");
+						json.put("message", "Failed to stop server " + server.getName());
 					}
 				}
-				
-				if(fast) {
-					ProxyServer.getInstance().getPlayers().forEach(p -> p.connect(server));
-				} else {
-					TournamentSystem.getInstance().getSlowPlayerSender().sendAll(server);
-				}
-
-				json.put("success", true);
 			} else {
 				json.put("success", false);
 				json.put("error", "server_not_found");
-				json.put("message", "could not find server with that name");
+				json.put("message", "could not find server named " + name);
 			}
 		} else {
 			json.put("success", false);

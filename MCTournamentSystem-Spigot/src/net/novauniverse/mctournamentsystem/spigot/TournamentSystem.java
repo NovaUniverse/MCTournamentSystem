@@ -38,6 +38,7 @@ import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
+import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
 import net.novauniverse.mctournamentsystem.spigot.command.bc.BCCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.chatfilter.ChatfilterCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.csp.CSPCommand;
@@ -74,9 +75,12 @@ import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentTeamManagerSettings;
 import net.novauniverse.mctournamentsystem.spigot.utils.TSItemsAdderUtils;
+import net.zeeraa.novacore.commons.async.AsyncManager;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.platform.OSPlatform;
+import net.zeeraa.novacore.commons.platform.OSPlatformUtils;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
@@ -161,8 +165,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private String dynamicConfigURL;
 
+	private int parentProcessID;
+
+	private boolean disableParentPidMonitoring;
+
 	public static TournamentSystem getInstance() {
 		return instance;
+	}
+
+	public boolean isDisableParentPidMonitoring() {
+		return disableParentPidMonitoring;
 	}
 
 	@Nullable
@@ -460,6 +472,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.useItemsAdder = getConfig().getBoolean("enable_items_adder");
 
+		parentProcessID = -1;
+
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
@@ -499,6 +513,45 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
+
+		disableParentPidMonitoring = false;
+		if (config.has("disable_parent_pid_monitoring")) {
+			disableParentPidMonitoring = config.getBoolean("disable_parent_pid_monitoring");
+		}
+
+		if (!disableParentPidMonitoring) {
+			if (OSPlatformUtils.getPlatform() == OSPlatform.UNKNOWN) {
+				Log.fatal("TournamentSystem", "Unsupported os");
+				Bukkit.getServer().shutdown();
+				return;
+			}
+
+			String parentProcessIdStr = System.getProperty("tournamentServerParentProcessID");
+			if (parentProcessIdStr == null) {
+				Log.info("TournamentSystem", "Did not detect -DtournamentServerParentProcessID flag. We wont monitor for parent process");
+			} else {
+				Log.info("TournamentSystem", "Detected -DtournamentServerParentProcessID flag");
+				try {
+					parentProcessID = Integer.parseInt(parentProcessIdStr);
+					Log.info("TournamentSystem", "Monitoring process " + parentProcessID + " for automatic shutdown");
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							if (!ProcessUtils.isProcessRunning(parentProcessID)) {
+								cancel();
+								Log.warn("TournamentSystem", "Parent process " + parentProcessID + " no longer found. Shutting down");
+								AsyncManager.runSync(() -> {
+									Bukkit.getServer().shutdown();
+								});
+							}
+						}
+					}.runTaskTimerAsynchronously(this, 20 * 5, 20 * 5);
+				} catch (Exception e) {
+					Log.fatal("tournamentSystem", "-DtournamentServerParentProcessID flag was set to non numeric value");
+					Bukkit.getServer().shutdown();
+				}
+			}
+		}
 
 		// Staff permission groups
 		JSONArray staffRolesJSON = config.getJSONArray("staff_roles");
