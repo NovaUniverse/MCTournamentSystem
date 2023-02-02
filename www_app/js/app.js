@@ -415,6 +415,9 @@ $(function () {
 				$("#commentator_guest_key").val(guestKeyData.commentator_guest_key);
 			});
 		}
+
+		TournamentSystem.updateServers();
+		setInterval(() => TournamentSystem.updateServers(), 1000);
 	});
 
 	$.getJSON("/api/staff/get_staff" + "?access_token=" + TournamentSystem.token, (data) => {
@@ -458,12 +461,8 @@ $(function () {
 
 	$("#btn_set_next_mingame").on("click", () => TournamentSystem.setNextMinigame($("#next_minigame_value").val()));
 
-	setInterval(function () {
-		TournamentSystem.update();
-		TournamentSystem.updateServers();
-	}, 1000);
+	setInterval(() => TournamentSystem.update(), 1000);
 	TournamentSystem.update();
-	TournamentSystem.updateServers();
 });
 
 function hasPermission(permission) {
