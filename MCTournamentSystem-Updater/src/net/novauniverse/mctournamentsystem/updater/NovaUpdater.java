@@ -106,7 +106,7 @@ public class NovaUpdater implements Runnable {
 		System.out.println(ConsoleColor.BLUE + "Downloading update..." + ConsoleColor.RESET);
 		File contentZipFile = new File(tempDir.getAbsolutePath() + File.separator + "content.zip");
 		try {
-			String url = "https://api.novauniverse.net/update_delivery/v1/tournamentsystem/index.php?key=" + licenseKey;
+			String url = "https://api.novauniverse.net/software_update_delivery/v1/tournamentsystem/index.php?key=" + licenseKey;
 			this.downloadFile(url, contentZipFile);
 		} catch (Exception e) {
 			e.printStackTrace();
