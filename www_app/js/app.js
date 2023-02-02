@@ -373,7 +373,6 @@ $(function () {
 		TournamentSystem.lastData = data;
 
 		TournamentSystem.activeServer = data.active_server;
-		$("#commentator_guest_key").val(data.commentator_guest_key);
 
 		for (let i = 0; i < data.servers.length; i++) {
 			let server = data.servers[i];
@@ -409,6 +408,13 @@ $(function () {
 				$(this).hide();
 			}
 		});
+
+		if (hasPermission("VIEW_COMMENTATOR_GUEST_KEY")) {
+			console.log("Fetching commentator guest key");
+			$.getJSON("/api/commentator/get_guest_key" + "?access_token=" + TournamentSystem.token, (guestKeyData) => {
+				$("#commentator_guest_key").val(guestKeyData.commentator_guest_key);
+			});
+		}
 	});
 
 	$.getJSON("/api/staff/get_staff" + "?access_token=" + TournamentSystem.token, (data) => {

@@ -13,22 +13,34 @@
 
 	<link rel="stylesheet" href="../css/live_stats.css">
 	<link rel="stylesheet" href="../css/lib/toastr.min.css">
+	<link rel="stylesheet" href="../css/hexagon_bg.css">
 
 	<script src="../js/lib/jquery-3.6.0.min.js"></script>
 	<script src="../js/lib/popper.min.js"></script>
 	<script src="../js/lib/toastr.min.js"></script>
 	<script src="../js/lib/bootstrap.min.js"></script>
+	<script src="../js/QueryStringUtils.js"></script>
 	<script src="../js/custom_theme.js"></script>
 	<script src="../js/theme/themes.js"></script>
 	<script src="../js/theme/theme-manager.js"></script>
 	<script src="../js/live_stats.js"></script>
 
+	<script src="../js/hexagon_bg.js"></script>
+
 	<script>
-		themeManagerDatastoreKey = "livestats_theme";
+		themeManagerDatastoreKey = "mcts_livestats_theme";
+		themeManagerInteractiveDatastoreKey = "mcts_livestats_theme_interactive";
 	</script>
 </head>
 
 <body>
+	<div id="hexagon_bg_container">
+		<header id="hexagon_bg">
+			<div id="hexagon_bg_light"></div>
+			<div id="hexagon_bg_grid"></div>
+		</header>
+	</div>
+
 	<nav class="navbar navbar-dark bg-dark">
 		<div class="container-fluid">
 			<a class="navbar-brand" href="#" id="navbar_brand">Live tournament stats</a>
@@ -47,6 +59,12 @@
 				<h5>Theme</h5>
 				<select class="form-select" id="theme-selector">
 				</select>
+				<div class="form-check mt-2">
+					<input class="form-check-input" type="checkbox" value="" id="theme_manager_enable_interactive_bg">
+					<label class="form-check-label" for="theme_manager_enable_interactive_bg">
+						Enable interactive background (Only works on dark theme)
+					</label>
+				</div>
 			</div>
 
 			<div class="col-md-6 col-sm-12">
@@ -63,7 +81,7 @@
 		</div>
 	</div>
 
-	<div class="container-fluid">
+	<div class="container-fluid mt-2">
 		<div class="row">
 			<div class="col-12 col-sm-12 col-md-4">
 				<h1>Teams</h1>

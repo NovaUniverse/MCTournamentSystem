@@ -1,0 +1,41 @@
+body {
+	overflow-x: hidden;
+}
+
+#hexagon_bg_container {
+	background: #2B2B2B;
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: -20;
+}
+
+#hexagon_bg {
+	height: 100vh;
+	background: #2B2B2B;
+}
+
+#hexagon_bg_grid {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url("/app/img/hexagon_grid.svg") repeat;
+	background-size: 500px;
+}
+
+#hexagon_bg_light {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 15em;
+	height: 15em;
+	transform: translate(-50%, -50%);
+	filter: blur(15px);
+	background: linear-gradient(
+		90deg, #335BF4 0%, #2AE9C9 100%
+	);
+}
