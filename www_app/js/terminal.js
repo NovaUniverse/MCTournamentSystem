@@ -60,7 +60,11 @@ const ServerConsole = {
 			if (data.success) {
 				this.lastSessionId = data.session_id;
 				this.lastMessageId = -1;
-				this.terminal.writeln("Session id is: " + this.lastSessionId);
+				if (data.session_id == undefined) {
+					this.terminal.writeln("Server not yet started. Logs will start to display as soon as the server goes online");
+				} else {
+					this.terminal.writeln("Session id is: " + this.lastSessionId);
+				}
 				this.ready = true;
 			} else {
 				this.terminal.writeln("Failed to fetch session id. " + data.error);
@@ -96,7 +100,7 @@ const ServerConsole = {
 			if (e.key == "Enter") {
 				let command = $("#console_input_field").val();
 
-				if(command.trim().length == 0) {
+				if (command.trim().length == 0) {
 					return;
 				}
 
