@@ -20,7 +20,9 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.publicapi
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.GetServersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.GetServersLogSessionIDHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.GetServersLogsHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.SendServerCommandHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.StartServersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.StopServersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.snapshot.ExportSnapshotHandler;
@@ -121,6 +123,8 @@ public class WebServer {
 		createContext("/api/servers/start", new StartServersHandler());
 		createContext("/api/servers/stop", new StopServersHandler());
 		createContext("/api/servers/logs", new GetServersLogsHandler());
+		createContext("/api/servers/log_session_id", new GetServersLogSessionIDHandler());
+		createContext("/api/servers/run_command", new SendServerCommandHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");

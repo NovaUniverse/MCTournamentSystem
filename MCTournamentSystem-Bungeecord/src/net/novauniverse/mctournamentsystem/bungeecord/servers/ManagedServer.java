@@ -2,6 +2,7 @@ package net.novauniverse.mctournamentsystem.bungeecord.servers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -78,6 +79,18 @@ public class ManagedServer {
 
 	public Exception getLastException() {
 		return lastException;
+	}
+	
+	public boolean sendCommand(String command) {
+		if(!isRunning()) {
+			return false;
+		}
+		
+		PrintWriter writer = new PrintWriter(process.getOutputStream());
+		writer.println(command);
+		writer.flush();
+		
+		return true;
 	}
 
 	public boolean start() {

@@ -36,6 +36,10 @@ public abstract class APIEndpoint implements HttpHandler {
 		return null;
 	}
 
+	public boolean shouldPrettyPrintOutput() {
+		return true;
+	}
+
 	@Override
 	public final void handle(HttpExchange exchange) throws IOException {
 		Map<String, String> params = WebServer.queryToMap(exchange.getRequestURI().getQuery());
@@ -103,14 +107,19 @@ public abstract class APIEndpoint implements HttpHandler {
 			}
 		}
 
-		String responseString = result.toString(4);
+		String responseString;
+		if (shouldPrettyPrintOutput()) {
+			responseString = result.toString(4);
+		} else {
+			responseString = result.toString();
+		}
 
 		int code = 200;
 
 		if (result.has("http_response_code")) {
 			code = result.getInt("http_response_code");
 		}
-		
+
 		exchange.getResponseHeaders().add("x-tournamentsystem-handler", this.getClass().getName());
 		if (authentication != null) {
 			exchange.getResponseHeaders().add("x-tournamentsystem-authtype", authentication.getClass().getName());

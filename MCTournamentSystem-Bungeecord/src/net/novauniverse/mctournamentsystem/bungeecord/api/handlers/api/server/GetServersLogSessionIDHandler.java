@@ -2,7 +2,6 @@ package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server;
 
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -13,8 +12,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermissi
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 
 @SuppressWarnings("restriction")
-public class GetServersLogsHandler extends APIEndpoint {
-	public GetServersLogsHandler() {
+public class GetServersLogSessionIDHandler extends APIEndpoint {
+	public GetServersLogSessionIDHandler() {
 		super(true);
 	}
 
@@ -24,11 +23,6 @@ public class GetServersLogsHandler extends APIEndpoint {
 	}
 
 	@Override
-	public boolean shouldPrettyPrintOutput() {
-		return false;
-	}
-	
-	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
@@ -37,13 +31,8 @@ public class GetServersLogsHandler extends APIEndpoint {
 			ManagedServer server = TournamentSystem.getInstance().getManagedServers().stream().filter(s -> s.getName().equals(name)).findFirst().orElse(null);
 
 			if (server != null) {
-				JSONArray logs = new JSONArray();
-				server.getLogFileLines().forEach(line -> {
-					logs.put(line);
-				});
 				json.put("success", true);
 				json.put("session_id", server.getLastSessionId());
-				json.put("log_data", logs);
 			} else {
 				json.put("success", false);
 				json.put("error", "server_not_found");

@@ -830,12 +830,19 @@ const TournamentSystem = {
 					newElement.find(".start-server-button").attr("data-server-name", server.name);
 					newElement.find(".kill-server-button").attr("data-server-name", server.name);
 					newElement.find(".get-server-logs-button").attr("data-server-name", server.name);
+					newElement.find(".start-server-console-button").attr("data-server-name", server.name);
 
 					if (!hasPermission("MANAGE_SERVERS")) {
 						newElement.find(".start-server-button").attr("disabled", true);
 						newElement.find(".kill-server-button").attr("disabled", true);
 						newElement.find(".get-server-logs-button").attr("disabled", true);
+						newElement.find(".start-server-console-button").attr("disabled", true);
 					}
+
+					newElement.find(".start-server-console-button").on("click", function () {
+						let serverName = $(this).data("server-name");
+						ServerConsole.openConsole(serverName);
+					});
 
 					newElement.find(".start-server-button").on("click", function () {
 						let serverName = $(this).data("server-name");

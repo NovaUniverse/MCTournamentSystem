@@ -20,7 +20,7 @@ public class StaticFileHandler implements HttpHandler {
 		MIME_MAP.put("css", "text/css");
 		MIME_MAP.put("gif", "image/gif");
 		MIME_MAP.put("html", "text/html");
-		MIME_MAP.put("js", "application/javascript");
+		MIME_MAP.put("js", "text/javascript");
 		MIME_MAP.put("json", "application/json");
 		MIME_MAP.put("jpg", "image/jpeg");
 		MIME_MAP.put("jpeg", "image/jpeg");
