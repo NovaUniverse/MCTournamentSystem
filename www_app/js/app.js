@@ -380,8 +380,12 @@ $(function () {
 		}
 
 		if (data.internet_cafe_settings.ggrock.enabled) {
-			$("#integration_link_ggrock").show();
-			$("#ggrock_integration_iframe").attr("src", data.internet_cafe_settings.ggrock.url);
+			// Timeout prevents preloader from getting stuck if service is unreachable
+			setTimeout(() => {
+				console.log("Setting up iframe from ggrock integration");
+				$("#integration_link_ggrock").show();
+				$("#ggrock_integration_iframe").attr("src", data.internet_cafe_settings.ggrock.url);	
+			}, 3000);
 		}
 
 		console.log(data);
@@ -418,6 +422,7 @@ $(function () {
 
 		TournamentSystem.update();
 		TournamentSystem.updateServers();
+		
 		setInterval(() => TournamentSystem.updateServers(), 1000);
 		setInterval(() => TournamentSystem.update(), 1000);
 
