@@ -22,7 +22,7 @@ public class GetServersLogsHandler extends APIEndpoint {
 	public UserPermission getRequiredPermission() {
 		return UserPermission.MANAGE_SERVERS;
 	}
-	
+
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
@@ -37,6 +37,7 @@ public class GetServersLogsHandler extends APIEndpoint {
 					logs.put(line);
 				});
 				json.put("success", true);
+				json.put("session_id", server.getLastSessionId());
 				json.put("log_data", logs);
 			} else {
 				json.put("success", false);
