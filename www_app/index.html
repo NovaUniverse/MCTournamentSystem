@@ -233,7 +233,7 @@
 						<div class="card-body">
 							<button type="button" class="btn mt-1 btn-primary start-server-button">Start</button>
 							<button type="button" class="btn mt-1 btn-danger kill-server-button">Kill</button>
-							<button type="button" class="btn mt-1 btn-info get-server-logs-button">Logs</button>
+							<button type="button" class="btn mt-1 btn-dark get-server-logs-button">Logs</button>
 							<button type="button" class="btn mt-1 btn-info start-server-console-button">Open
 								console</button>
 						</div>
@@ -827,7 +827,7 @@
 					<div class="modal-footer">
 						<div class="input-group mb-3">
 							<input type="text" class="form-control" placeholder="Enter command. Press the enter key to run" aria-label="Input command"
-								aria-describedby="console_send_button" id="console_input_field">
+								aria-describedby="console_send_button" id="console_input_field" data-disable-if-missing-permission="REMOTE_EXECUTE_SERVER_COMMAND">
 							<button class="btn btn-decondary btn-outline-secondary close-console-button"
 								data-bs-dismiss="modal" type="button">Close</button>
 						</div>
