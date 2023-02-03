@@ -5,6 +5,7 @@ const ServerConsole = {
 	pollingIntervalId: null,
 	terminal: null,
 	fitAddon: null,
+	webGLAddon: null,
 	ready: false,
 	isPrinting: false,
 
@@ -93,6 +94,14 @@ const ServerConsole = {
 		$(".close-console-button").on("click", () => this.closeConsole());
 		this.terminal = new Terminal();
 		this.fitAddon = new FitAddon.FitAddon();
+		this.webGLAddon = new WebglAddon.WebglAddon();
+
+		this.webGLAddon.onContextLoss(e => {
+			console.log("WebglAddon onContextLoss");
+			this.webGLAddon.dispose();
+		});
+
+		this.terminal.loadAddon(this.webGLAddon);
 		this.terminal.loadAddon(this.fitAddon);
 		this.terminal.open(document.getElementById("server_terminal"));
 

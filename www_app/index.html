@@ -30,6 +30,7 @@
 	<script src="./js/lib/clipboard.min.js"></script>
 	<script src="./js/lib/xterm.js"></script>
 	<script src="./js/lib/xterm-addon-fit.js"></script>
+	<script src="./js/lib/xterm-addon-webgl.js"></script>
 	<script src="./js/ClipboardHelper.js"></script>
 	<script src="./js/phpmyadmin_url.js"></script>
 	<script src="./js/utils.js"></script>
@@ -86,10 +87,6 @@
 							<a href="#" class="nav-link btn_broadcast">Broadcast message</a>
 						</li>
 
-						<li class="nav-item" data-hide-if-missing-permission="SET_NEXT_MINIGAME">
-							<a href="#" class="nav-link btn_next_minigame">Next minigame</a>
-						</li>
-
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" href="#" id="navbarSettingsDropdown" role="button"
 								data-bs-toggle="dropdown" aria-expanded="false">
@@ -101,6 +98,9 @@
 								</li>
 								<li data-hide-if-missing-permission="MANAGE_SETTINGS">
 									<a class="dropdown-item set-scoreboard-url" href="#">Set scoreboard link</a>
+								</li>
+								<li data-hide-if-missing-permission="SET_NEXT_MINIGAME">
+									<a href="#" class="dropdown-item btn_next_minigame">Next minigame</a>
 								</li>
 								<li>
 									<a class="dropdown-item reload-dynamic-config-url" href="#">Reload dynamic
