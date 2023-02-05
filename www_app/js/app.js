@@ -329,14 +329,16 @@ $(function () {
 	});
 
 	$(".set-tournament-name").on("click", function () {
-		$("#new_tournament_name").val(TournamentSystem.lastData.system.tournament_name);
+		if (TournamentSystem.lastData != null) {
+			$("#new_tournament_name").val(TournamentSystem.lastData.system.tournament_name);
+		}
 		$("#set_tournament_name_modal").modal("show");
 	});
 
 	$("#btn_set_tournament_name").on("click", function () {
 		let name = $("#new_tournament_name").val();
 
-		$.getJSON("/api/system/set_tournament_name?access_token=" + TournamentSystem.token + "&name=" + encodeURIComponent(name), function (data) {
+		$.getJSON("/api/system/settings/set_tournament_name?access_token=" + TournamentSystem.token + "&name=" + encodeURIComponent(name), function (data) {
 			if (data.success) {
 				$("#set_tournament_name_modal").modal("hide");
 				toastr.info("Tournament name changed to " + name + ". Please restart the server for it to update in game");
@@ -347,19 +349,41 @@ $(function () {
 	});
 
 	$(".set-scoreboard-url").on("click", function () {
-		$("#new_scoreboard_url").val(TournamentSystem.lastData.system.scoreboard_url);
+		if (TournamentSystem.lastData != null) {
+			$("#new_scoreboard_url").val(TournamentSystem.lastData.system.scoreboard_url);
+		}
 		$("#set_scoreboard_url_modal").modal("show");
 	});
 
 	$("#btn_set_scoreboard_url").on("click", function () {
 		let url = $("#new_scoreboard_url").val();
 
-		$.getJSON("/api/system/set_scoreboard_url?access_token=" + TournamentSystem.token + "&url=" + encodeURIComponent(url), function (data) {
+		$.getJSON("/api/system/settings/set_scoreboard_url?access_token=" + TournamentSystem.token + "&url=" + encodeURIComponent(url), function (data) {
 			if (data.success) {
 				$("#set_scoreboard_url_modal").modal("hide");
 				toastr.info("Scoreboard url changed to " + url + ". Please restart the server for it to update in game");
 			} else {
 				toastr.error("Failed to update scoreboard url. " + data.message);
+			}
+		});
+	});
+
+	$(".set-motd").on("click", function () {
+		if (TournamentSystem.lastData != null) {
+			$("#new_motd_value").val(TournamentSystem.lastData.system.motd);
+		}
+		$("#set_motd_modal").modal("show");
+	});
+
+	$("#btn_set_motd").on("click", function () {
+		let motd = $("#new_motd_value").val();
+
+		$.getJSON("/api/system/settings/set_motd?access_token=" + TournamentSystem.token + "&motd=" + encodeURIComponent(motd), function (data) {
+			if (data.success) {
+				$("#set_motd_modal").modal("hide");
+				toastr.info("MOTD Updated");
+			} else {
+				toastr.error("Failed to update MOTD. " + data.message);
 			}
 		});
 	});
@@ -384,7 +408,7 @@ $(function () {
 			setTimeout(() => {
 				console.log("Setting up iframe from ggrock integration");
 				$("#integration_link_ggrock").show();
-				$("#ggrock_integration_iframe").attr("src", data.internet_cafe_settings.ggrock.url);	
+				$("#ggrock_integration_iframe").attr("src", data.internet_cafe_settings.ggrock.url);
 			}, 3000);
 		}
 
@@ -422,7 +446,7 @@ $(function () {
 
 		TournamentSystem.update();
 		TournamentSystem.updateServers();
-		
+
 		setInterval(() => TournamentSystem.updateServers(), 1000);
 		setInterval(() => TournamentSystem.update(), 1000);
 

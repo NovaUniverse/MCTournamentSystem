@@ -37,6 +37,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.Qu
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ResetHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ShutdownHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.StatusHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetMOTDHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetScoreboardURLHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetTournamentNameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.dynamicconfig.ReloadDynamicConfig;
@@ -64,8 +65,6 @@ public class WebServer {
 
 		// System
 		createContext("/api/system/status", new StatusHandler());
-		createContext("/api/system/set_tournament_name", new SetTournamentNameHandler());
-		createContext("/api/system/set_scoreboard_url", new SetScoreboardURLHandler());
 		createContext("/api/system/broadcast", new BroadcastHandler());
 		createContext("/api/system/quick_message", new QuickMessageHandler());
 		createContext("/api/system/reset", new ResetHandler());
@@ -73,6 +72,10 @@ public class WebServer {
 		createContext("/api/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
 		createContext("/api/system/custom_themes", new GetCustomThemesHandler());
 		createContext("/api/system/shutdown", new ShutdownHandler());
+		
+		createContext("/api/system/settings/set_tournament_name", new SetTournamentNameHandler());
+		createContext("/api/system/settings/set_scoreboard_url", new SetScoreboardURLHandler());
+		createContext("/api/system/settings/set_motd", new SetMOTDHandler());
 
 		// Dynamic config
 		createContext("/api/system/dynamicconfig/reload", new ReloadDynamicConfig());

@@ -229,6 +229,8 @@ public class StatusHandler extends APIEndpoint {
 
 		system.put("public_ip", TournamentSystem.getInstance().getPublicIp());
 		system.put("dynamic_config_url", TournamentSystem.getInstance().getDynamicConfigUrl());
+		
+		system.put("motd", TournamentSystem.getInstance().getMotd());
 
 		json.put("system", system);
 
