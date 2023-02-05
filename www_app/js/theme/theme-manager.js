@@ -20,6 +20,10 @@ function updateInteractiveBackgroundDisplayState() {
 }
 
 $(function () {
+	$("#custom_theme_settings").hide();
+	$("#custom_theme_disable_options").hide();
+	$("#custom_theme_list").hide();
+
 	$(".select-theme-button").on("click", function () {
 		console.log("Showing theme selector");
 		$("#selectThemeModal").modal("show");
