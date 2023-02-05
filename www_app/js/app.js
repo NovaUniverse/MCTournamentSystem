@@ -82,6 +82,8 @@ $(function () {
 		});
 	});
 
+	$(".btn-reload-page").on("click", () => window.location.reload());
+
 	$(".shutdown-proxy-button").on("click", () => {
 		$.confirm({
 			title: 'Confirm shutdown',
@@ -981,7 +983,7 @@ const TournamentSystem = {
 			//console.log(data);
 
 			if (data.error == "unauthorized") {
-				console.error("It seems like we are no longer authorised. Maybe we should add a real error message here");
+				$("#disconnected_modal").modal("show");
 				return;
 			}
 

@@ -773,6 +773,26 @@
 			</div>
 		</div>
 
+		<div class="modal fade" id="disconnected_modal" tabindex="-1" aria-labelledby="disconnectedModalTitle"
+			aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="disconnectedModalTitle">Disconnected</h5>
+						<button type="button" class="btn-close btn-reload-page" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>
+							It seems like your login token is no longer valid. This might be caused by a server restart or your token expiring. Reload the page to log in again
+						</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-reload-page btn-secondary">Reload page</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div class="modal fade" id="broadcast_reset_data" tabindex="-1" aria-labelledby="resetDataTitle"
 			aria-hidden="true">
 			<div class="modal-dialog">
