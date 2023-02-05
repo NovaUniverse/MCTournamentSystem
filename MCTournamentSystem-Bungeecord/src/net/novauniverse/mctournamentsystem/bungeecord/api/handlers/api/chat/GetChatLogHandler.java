@@ -24,7 +24,7 @@ public class GetChatLogHandler extends APIEndpoint {
 		JSONObject result = new JSONObject();
 		JSONArray messages = new JSONArray();
 
-		String sql = "SELECT uuid, username, content, sent_at FROM chat_log WHERE session_id = ?";
+		String sql = "SELECT id, uuid, username, content, sent_at FROM chat_log WHERE session_id = ?";
 		PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 		ps.setString(1, TournamentSystemCommons.getSessionId().toString());
@@ -33,6 +33,7 @@ public class GetChatLogHandler extends APIEndpoint {
 
 		while (rs.next()) {
 			JSONObject entry = new JSONObject();
+			entry.put("message_id", rs.getInt("id"));
 			entry.put("uuid", rs.getString("uuid"));
 			entry.put("username", rs.getString("username"));
 			entry.put("content", rs.getString("content"));
