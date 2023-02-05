@@ -383,8 +383,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 				String name = theme.getString("name");
 				String url = theme.getString("url");
 				String baseTheme = theme.optString("base_theme");
+				
+				JSONObject serverConsoleTheme = theme.optJSONObject("server_console_theme");
 
-				customAdminUIThemes.put(name, new CustomTheme(name, url, baseTheme));
+				customAdminUIThemes.put(name, new CustomTheme(name, url, baseTheme, serverConsoleTheme));
 			}
 		}
 

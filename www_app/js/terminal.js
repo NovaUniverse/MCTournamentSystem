@@ -8,6 +8,7 @@ const ServerConsole = {
 	webGLAddon: null,
 	ready: false,
 	isPrinting: false,
+	theme: null,
 
 	openConsole(server) {
 		if (this.pollingIntervalId != null) {
@@ -92,7 +93,14 @@ const ServerConsole = {
 			return;
 		}
 		$(".close-console-button").on("click", () => this.closeConsole());
-		this.terminal = new Terminal();
+
+		let config = {};
+
+		if (this.theme != null) {
+			config["theme"] = this.theme;
+		}
+
+		this.terminal = new Terminal(config);
 		this.fitAddon = new FitAddon.FitAddon();
 		this.webGLAddon = new WebglAddon.WebglAddon();
 
@@ -132,7 +140,45 @@ const ServerConsole = {
 				});
 			}
 		});
+	},
+
+	clearCustomTheme() {
+		this.theme = null;
+		this.terminal.options.theme = {};
+		localStorage.removeItem("server_xtermjs_custom_theme");
+	},
+
+	setCustomTheme(data) {
+		if (data == null) {
+			this.clearCustomTheme();
+			return;
+		}
+		console.log(this);
+		this.theme = data;
+		this.terminal.options.theme = data;
+		localStorage.setItem("server_xtermjs_custom_theme", JSON.stringify(data));
 	}
 }
 
-$(() => ServerConsole.init());
+$(() => {
+	let theme = localStorage.getItem("server_xtermjs_custom_theme");
+	if (theme != null) {
+		if (theme.trim().length > 0) {
+			console.log("Tring to read custom XTerm.JS theme");
+			try {
+				let themeData = JSON.parse(theme);
+				console.log("Custom XTerm.JS theme data:");
+				console.log(themeData);
+				ServerConsole.theme = themeData;
+			} catch (err) {
+				console.error(err);
+				console.error("Failed to parse custom XTerm.JS theme");
+				setTimeout(() => {
+					toastr.error("Failed to parse custom XTerm.JS theme");
+				}, 1000);
+			}
+		}
+	}
+
+	ServerConsole.init();
+});

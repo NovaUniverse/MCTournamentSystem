@@ -27,6 +27,7 @@ public class GetCustomThemesHandler extends APIEndpoint {
 			theme.put("name", data.getName());
 			theme.put("url", data.getUrl());
 			theme.put("base_theme", data.getBaseTheme());
+			theme.put("server_console_theme", data.getServerConsoleTheme());
 			themes.put(theme);
 		});
 

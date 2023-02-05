@@ -91,6 +91,7 @@ $(function () {
 	$(".disable_custom_theme").on("click", () => disableCustomTheme());
 
 	$(".disable_custom_theme").hide();
+
 	if (localStorage.getItem("custom_css") != null) {
 		let url = localStorage.getItem("custom_css");
 		let hash = themeManagerGenHash(url);
@@ -140,8 +141,12 @@ $(function () {
 
 			element.on("click", function () {
 				let id = parseInt($(this).data("custom-theme-id"));
+				let clickedTheme = customThemes[id];
 
-				let baseTheme = customThemes[id].base_theme;
+				console.log("Applying theme " + clickedTheme.name);
+				console.log(clickedTheme);
+
+				let baseTheme = clickedTheme.base_theme;
 				if (baseTheme != null) {
 					let apply = true;
 					if (activeTheme != null) {
@@ -160,7 +165,20 @@ $(function () {
 					}
 				}
 
-				applyCustomTheme(customThemes[id].url);
+				if (clickedTheme.server_console_theme != null) {
+					let consoleTheme = clickedTheme.server_console_theme;
+					console.log("Applying custom console theme");
+					console.log(consoleTheme);
+
+					if (typeof ServerConsole !== 'undefined') {
+						console.log("Clearing custom console theme");
+						ServerConsole.setCustomTheme(consoleTheme);
+					} else {
+						localStorage.setItem("server_xtermjs_custom_theme", JSON.stringify(consoleTheme));
+					}
+				}
+
+				applyCustomTheme(clickedTheme.url);
 			});
 
 			$("#custom_theme_list").append(element);
@@ -233,6 +251,13 @@ function applyCustomTheme(url = null) {
 }
 
 function disableCustomTheme() {
+	if (typeof ServerConsole !== 'undefined') {
+		console.log("Clearing custom console theme");
+		ServerConsole.clearCustomTheme();
+	} else {
+		localStorage.removeItem("server_xtermjs_custom_theme");
+	}
+
 	applyCustomTheme(null);
 }
 
