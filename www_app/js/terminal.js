@@ -6,6 +6,7 @@ const ServerConsole = {
 	terminal: null,
 	fitAddon: null,
 	webGLAddon: null,
+	webLinkAddon: null,
 	ready: false,
 	isPrinting: false,
 	theme: null,
@@ -103,6 +104,7 @@ const ServerConsole = {
 		this.terminal = new Terminal(config);
 		this.fitAddon = new FitAddon.FitAddon();
 		this.webGLAddon = new WebglAddon.WebglAddon();
+		this.webLinkAddon = new WebLinksAddon.WebLinksAddon();
 
 		this.webGLAddon.onContextLoss(e => {
 			console.log("WebglAddon onContextLoss");
@@ -111,6 +113,7 @@ const ServerConsole = {
 
 		this.terminal.loadAddon(this.webGLAddon);
 		this.terminal.loadAddon(this.fitAddon);
+		this.terminal.loadAddon(this.webLinkAddon);
 		this.terminal.open(document.getElementById("server_terminal"));
 
 		$("#console_input_field")[0].addEventListener("keypress", (e) => {
