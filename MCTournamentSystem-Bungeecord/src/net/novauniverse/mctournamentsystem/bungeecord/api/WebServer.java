@@ -31,6 +31,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.Get
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.SetStaffHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.BroadcastHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ClearPlayersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.GetCustomThemesHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.PHPMyAdminUrlHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.QuickMessageHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ResetHandler;
@@ -70,6 +71,7 @@ public class WebServer {
 		createContext("/api/system/reset", new ResetHandler());
 		createContext("/api/system/clear_players", new ClearPlayersHandler());
 		createContext("/api/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
+		createContext("/api/system/custom_themes", new GetCustomThemesHandler());
 		createContext("/api/system/shutdown", new ShutdownHandler());
 
 		// Dynamic config

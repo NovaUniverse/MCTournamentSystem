@@ -18,9 +18,9 @@
 	<script src="../js/lib/bootstrap.min.js"></script>
 	<script src="../js/lib/toastr.min.js"></script>
 	<script src="../js/lib/stupidtable.js"></script>
+	<script src="../js/lib/sha1.min.js"></script>
 	<script src="../js/team_editor.js"></script>
 	<script src="../js/vibe.js"></script>
-	<script src="../js/custom_theme.js"></script>
 	<script src="../js/editor_auto_login.js"></script>
 
 	<script>
@@ -210,6 +210,17 @@
 						<label class="form-check-label" for="theme_manager_enable_interactive_bg">
 							Enable interactive background (Only works on dark theme)
 						</label>
+					</div>
+
+					<div id="custom_theme_settings">
+						<hr>
+						<div id="custom_theme_disable_options">
+							<a class="disable_custom_theme text-warning" href="#">Disable custom theme</a>
+						</div>
+
+						<div id="custom_theme_list" class="mt-2">
+							<h4>Custom themes</h4>
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer">

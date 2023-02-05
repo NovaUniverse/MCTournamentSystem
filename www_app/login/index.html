@@ -21,6 +21,7 @@
 	<script src="../js/lib/jquery-ui.min.js"></script>
 	<script src="../js/lib/popper.min.js"></script>
 	<script src="../js/lib/toastr.min.js"></script>
+	<script src="../js/lib/sha1.min.js"></script>
 	<script src="../js/utils.js"></script>
 	<script src="../js/lib/bootstrap.min.js"></script>
 	<script src="../js/phpmyadmin_url.js"></script>
@@ -28,7 +29,6 @@
 	<script src="../js/theme/themes.js"></script>
 	<script src="../js/theme/theme-manager.js"></script>
 	<script src="../js/cat.js"></script>
-	<script src="../js/custom_theme.js"></script>
 
 	<script src="../js/lib/NoSleep.min.js"></script>
 	<script src="../js/nosleep.js"></script>
@@ -75,7 +75,7 @@
 						<a href="/app/live_stats/" class="nav-link">Live stats</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" id="disable_custom_theme" href="#">Disable custom theme</a>
+						<a class="nav-link disable_custom_theme" href="#">Disable custom theme</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link phpmyadmin-link" href="/phpmyadmin" target="blank">PHPMyAdmin</a>
@@ -147,6 +147,17 @@
 						<label class="form-check-label" for="theme_manager_enable_interactive_bg">
 							Enable interactive background (Only works on dark theme)
 						</label>
+					</div>
+
+					<div id="custom_theme_settings">
+						<hr>
+						<div id="custom_theme_disable_options">
+							<a class="disable_custom_theme text-warning" href="#">Disable custom theme</a>
+						</div>
+
+						<div id="custom_theme_list" class="mt-2">
+							<h4>Custom themes</h4>
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer">

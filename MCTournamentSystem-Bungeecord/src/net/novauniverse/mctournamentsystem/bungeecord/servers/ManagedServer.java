@@ -3,12 +3,17 @@ package net.novauniverse.mctournamentsystem.bungeecord.servers;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
 import net.zeeraa.novacore.commons.log.Log;
@@ -29,7 +34,10 @@ public class ManagedServer {
 
 	private String lastSessionId;
 
-	public ManagedServer(String name, String javaExecutable, String jvmArguments, String jar, File workingDirectory, boolean autoStart) {
+	@Nullable
+	private ServerAutoRegisterData serverAutoRegisterData;
+
+	public ManagedServer(String name, String javaExecutable, String jvmArguments, String jar, File workingDirectory, boolean autoStart, @Nullable ServerAutoRegisterData serverAutoRegisterData) {
 		this.name = name;
 
 		this.javaExecutable = javaExecutable;
@@ -43,6 +51,8 @@ public class ManagedServer {
 
 		this.process = null;
 		this.lastException = null;
+
+		this.serverAutoRegisterData = serverAutoRegisterData;
 	}
 
 	public String getName() {
@@ -80,16 +90,46 @@ public class ManagedServer {
 	public Exception getLastException() {
 		return lastException;
 	}
-	
+
+	@Nullable
+	public ServerAutoRegisterData getServerAutoRegisterData() {
+		return serverAutoRegisterData;
+	}
+
 	public boolean sendCommand(String command) {
-		if(!isRunning()) {
+		if (!isRunning()) {
 			return false;
 		}
-		
+
 		PrintWriter writer = new PrintWriter(process.getOutputStream());
 		writer.println(command);
 		writer.flush();
-		
+
+		return true;
+	}
+
+	public boolean isServerAutoRegisterEnabled() {
+		if (serverAutoRegisterData != null) {
+			return serverAutoRegisterData.isEnabled();
+		}
+		return false;
+	}
+
+	public boolean register() {
+		if (!isServerAutoRegisterEnabled()) {
+			return false;
+		}
+
+		Log.info("ManagedServer", "Registering server " + name + " pointing to " + serverAutoRegisterData.getHost() + ":" + serverAutoRegisterData.getPort());
+		if (ProxyServer.getInstance().getServers().remove(name) != null) {
+			Log.info("ManagedServer", "Removed old server named " + name);
+		}
+		String motd = TournamentSystem.formatMOTD(TournamentSystem.getInstance().getMotd());
+		InetSocketAddress inetAddress = new InetSocketAddress(serverAutoRegisterData.getHost(), serverAutoRegisterData.getPort());
+		ServerInfo serverInfo = ProxyServer.getInstance().constructServerInfo(name, inetAddress, motd, false);
+		ProxyServer.getInstance().getServers().put(name, serverInfo);
+		Log.info("ManagedServer", name + " registered successfully");
+
 		return true;
 	}
 
@@ -130,6 +170,13 @@ public class ManagedServer {
 
 		command.add("-jar");
 		command.add(jar);
+
+		if (isServerAutoRegisterEnabled()) {
+			int port = serverAutoRegisterData.getPort();
+			command.add("--port");
+			command.add("" + port);
+			Log.trace("ManagedServer", "Using port " + port + " for server " + name);
+		}
 
 		builder.command(command);
 		builder.directory(workingDirectory);

@@ -31,6 +31,7 @@
 	<script src="./js/lib/xterm.js"></script>
 	<script src="./js/lib/xterm-addon-fit.js"></script>
 	<script src="./js/lib/xterm-addon-webgl.js"></script>
+	<script src="./js/lib/sha1.min.js"></script>
 	<script src="./js/ClipboardHelper.js"></script>
 	<script src="./js/phpmyadmin_url.js"></script>
 	<script src="./js/utils.js"></script>
@@ -39,7 +40,6 @@
 	<script src="./js/theme/themes.js"></script>
 	<script src="./js/theme/theme-manager.js"></script>
 	<script src="./js/cat.js"></script>
-	<script src="./js/custom_theme.js"></script>
 
 	<script src="./js/lib/NoSleep.min.js"></script>
 	<script src="./js/nosleep.js"></script>
@@ -110,7 +110,7 @@
 									<a class="dropdown-item meow" href="#" title="Click to get a friend">Meow</a>
 								</li>
 								<li>
-									<a class="dropdown-item" id="disable_custom_theme" href="#">Disable custom theme</a>
+									<a class="dropdown-item disable_custom_theme" href="#">Disable custom theme</a>
 								</li>
 								<li>
 									<hr class="dropdown-divider">
@@ -808,6 +808,17 @@
 								Enable interactive background (Only works on dark theme)
 							</label>
 						</div>
+
+						<div id="custom_theme_settings">
+							<hr>
+							<div id="custom_theme_disable_options">
+								<a class="disable_custom_theme text-warning" href="#">Disable custom theme</a>
+							</div>
+
+							<div id="custom_theme_list" class="mt-2">
+								<h4>Custom themes</h4>
+							</div>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
@@ -815,7 +826,6 @@
 				</div>
 			</div>
 		</div>
-
 		<div class="modal fade" id="serverConsoleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="serverConsoleModalTitle" aria-hidden="true">
 			<div class="modal-dialog modal-fullscreen">
