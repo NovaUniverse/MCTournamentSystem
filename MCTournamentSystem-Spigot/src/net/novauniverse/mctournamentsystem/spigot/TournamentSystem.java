@@ -1,10 +1,7 @@
 package net.novauniverse.mctournamentsystem.spigot;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -414,21 +411,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public String readResourceFromJARAsString(String filename) throws IOException {
-		InputStream is = getClass().getResourceAsStream(filename);
-		InputStreamReader isr = new InputStreamReader(is);
-		BufferedReader br = new BufferedReader(isr);
-		StringBuffer sb = new StringBuffer();
-		String line;
-		while ((line = br.readLine()) != null) {
-			sb.append(line);
-		}
-		br.close();
-		isr.close();
-		is.close();
-		return sb.toString();
-	}
-
 	@Override
 	public void onEnable() {
 		// Init session id
@@ -491,13 +473,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
 		JSONObject config;
 		try {
-			if (!configFile.exists()) {
-				Log.warn("TournamentSystem", "Config file " + configFile.getAbsolutePath() + " does not exits. Attempting to create it...");
-
-				String defaultConfig = readResourceFromJARAsString("/default_config.json");
-				JSONFileUtils.saveJson(configFile, new JSONObject(defaultConfig), 4);
-			}
-
 			if (!configFile.exists()) {
 				Log.fatal("TournamentSystem", "Config file not found at " + configFile.getAbsolutePath());
 				Bukkit.getPluginManager().disablePlugin(this);
