@@ -121,7 +121,6 @@ public abstract class APIEndpoint implements HttpHandler {
 			code = result.getInt("http_response_code");
 		}
 
-		// application/json; charset=utf-8
 		exchange.getResponseHeaders().add("Content-type", "application/json; charset=utf-8");
 
 		exchange.getResponseHeaders().add("x-tournamentsystem-handler", this.getClass().getName());
