@@ -25,7 +25,6 @@ import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
 import net.zeeraa.novacore.bungeecord.utils.ChatColorRGBMapper;
 
-@SuppressWarnings("restriction")
 public class StatusHandler extends APIEndpoint {
 	public StatusHandler() {
 		super(true);

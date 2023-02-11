@@ -485,6 +485,8 @@ $(function () {
 
 	$("#btn_open_chat_log").on("click", () => TournamentSystem.openChatLog());
 
+	$("#btn_open_live_chat").on("click", () => TournamentSystem.openLiveChat());
+
 	$(".btn_next_minigame").on("click", () => {
 		$("#next_minigame_value").val(TournamentSystem.lastData.next_minigame);
 		$("#next_minigame_model").modal("show");
@@ -516,6 +518,10 @@ const TournamentSystem = {
 
 		let win = window.open("", "Chat log", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
 		win.document.body.innerText = content;
+	},
+
+	openLiveChat: () => {
+		window.open("/app/live_chat/", "Live chat", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
 	},
 
 	exportSummary: () => {

@@ -13,7 +13,6 @@ import com.sun.net.httpserver.HttpHandler;
 
 import net.zeeraa.novacore.commons.utils.StreamUtils;
 
-@SuppressWarnings({ "restriction" })
 public class FaviconHandler implements HttpHandler {
 	private String dataFolder;
 

@@ -12,7 +12,6 @@ import java.util.Map;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-@SuppressWarnings({ "restriction" })
 public class StaticFileHandler implements HttpHandler {
 	private static final Map<String, String> MIME_MAP = new HashMap<>();
 	static {

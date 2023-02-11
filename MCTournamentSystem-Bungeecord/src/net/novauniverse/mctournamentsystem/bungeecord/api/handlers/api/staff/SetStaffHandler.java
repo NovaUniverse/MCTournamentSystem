@@ -15,7 +15,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-@SuppressWarnings("restriction")
 public class SetStaffHandler extends APIEndpoint {
 	public SetStaffHandler() {
 		super(true);

@@ -10,7 +10,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-@SuppressWarnings("restriction")
 public class ClearWhitelistHandler extends APIEndpoint {
 	public ClearWhitelistHandler() {
 		super(true);

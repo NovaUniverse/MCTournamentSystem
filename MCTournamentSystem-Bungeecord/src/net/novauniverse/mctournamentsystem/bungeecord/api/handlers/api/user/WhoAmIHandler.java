@@ -9,7 +9,6 @@ import com.sun.net.httpserver.HttpExchange;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 
-@SuppressWarnings("restriction")
 public class WhoAmIHandler extends APIEndpoint {
 	public WhoAmIHandler() {
 		super(false);

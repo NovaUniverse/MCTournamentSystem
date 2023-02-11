@@ -8,7 +8,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 
-@SuppressWarnings("restriction")
 public class GetCommentatorGuestKeyHandler extends APIEndpoint {
 	public GetCommentatorGuestKeyHandler() {
 		super(true);

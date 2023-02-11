@@ -16,7 +16,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermissi
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
-@SuppressWarnings("restriction")
 public class ImportSnapshotHandler extends APIEndpoint {
 	public ImportSnapshotHandler() {
 		super(true);

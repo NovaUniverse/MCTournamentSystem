@@ -13,7 +13,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.zeeraa.novacore.commons.log.Log;
 
-@SuppressWarnings("restriction")
 public class SetMOTDHandler extends APIEndpoint {
 	public SetMOTDHandler() {
 		super(true);

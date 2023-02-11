@@ -15,7 +15,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-@SuppressWarnings("restriction")
 public class CommentatorTPHandler extends APIEndpoint {
 	public CommentatorTPHandler() {
 		super(true);

@@ -13,7 +13,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-@SuppressWarnings("restriction")
 public class GetChatLogHandler extends APIEndpoint {
 	public GetChatLogHandler() {
 		super(true);

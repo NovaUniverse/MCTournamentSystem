@@ -13,7 +13,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APITokenStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 
-@SuppressWarnings("restriction")
 public class LoginHandler extends APIEndpoint {
 	public LoginHandler() {
 		super(false);

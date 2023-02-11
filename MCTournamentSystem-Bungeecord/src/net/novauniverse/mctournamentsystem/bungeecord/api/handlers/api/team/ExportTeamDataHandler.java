@@ -13,7 +13,6 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
 import com.sun.net.httpserver.HttpExchange;
 
-@SuppressWarnings("restriction")
 public class ExportTeamDataHandler extends APIEndpoint {
 	public ExportTeamDataHandler() {
 		super(true);

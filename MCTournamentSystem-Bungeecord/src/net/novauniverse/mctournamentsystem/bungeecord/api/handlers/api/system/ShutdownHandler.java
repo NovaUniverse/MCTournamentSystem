@@ -14,7 +14,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermissi
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 import net.zeeraa.novacore.commons.log.Log;
 
-@SuppressWarnings("restriction")
 public class ShutdownHandler extends APIEndpoint {
 	public ShutdownHandler() {
 		super(true);

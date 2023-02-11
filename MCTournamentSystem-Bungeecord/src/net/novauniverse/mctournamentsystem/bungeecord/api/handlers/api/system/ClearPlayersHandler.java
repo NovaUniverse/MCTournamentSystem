@@ -12,7 +12,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermissi
 import net.novauniverse.mctournamentsystem.bungeecord.misc.MissingTeamFixer;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-@SuppressWarnings("restriction")
 public class ClearPlayersHandler extends APIEndpoint {
 	public ClearPlayersHandler() {
 		super(true);

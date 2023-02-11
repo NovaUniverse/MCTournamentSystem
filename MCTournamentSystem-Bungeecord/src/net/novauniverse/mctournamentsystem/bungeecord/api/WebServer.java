@@ -53,7 +53,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.StaticF
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.RedirectToApp;
 import net.zeeraa.novacore.commons.log.Log;
 
-@SuppressWarnings("restriction")
+// If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
 public class WebServer {
 	private HttpServer httpServer;
 
@@ -72,7 +72,7 @@ public class WebServer {
 		createContext("/api/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
 		createContext("/api/system/custom_themes", new GetCustomThemesHandler());
 		createContext("/api/system/shutdown", new ShutdownHandler());
-		
+
 		createContext("/api/system/settings/set_tournament_name", new SetTournamentNameHandler());
 		createContext("/api/system/settings/set_scoreboard_url", new SetScoreboardURLHandler());
 		createContext("/api/system/settings/set_motd", new SetMOTDHandler());

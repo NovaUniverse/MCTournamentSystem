@@ -7,7 +7,6 @@ import java.util.Base64;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-@SuppressWarnings("restriction")
 public class RedirectToApp implements HttpHandler {
 	public static final String CONTENT = "PGh0bWw+PGhlYWQ+PHNjcmlwdD53aW5kb3cubG9jYXRpb249Ii9hcHAvIjwvc2NyaXB0PjwvaGVhZD48L2h0bWw+";
 

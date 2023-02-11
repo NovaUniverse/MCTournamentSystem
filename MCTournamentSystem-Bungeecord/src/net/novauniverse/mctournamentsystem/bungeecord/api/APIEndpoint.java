@@ -2,6 +2,7 @@ package net.novauniverse.mctournamentsystem.bungeecord.api;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -19,7 +20,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 
-@SuppressWarnings("restriction")
+// If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
 public abstract class APIEndpoint implements HttpHandler {
 	private boolean requireAuthentication = false;
 
@@ -120,6 +121,9 @@ public abstract class APIEndpoint implements HttpHandler {
 			code = result.getInt("http_response_code");
 		}
 
+		// application/json; charset=utf-8
+		exchange.getResponseHeaders().add("Content-type", "application/json; charset=utf-8");
+
 		exchange.getResponseHeaders().add("x-tournamentsystem-handler", this.getClass().getName());
 		if (authentication != null) {
 			exchange.getResponseHeaders().add("x-tournamentsystem-authtype", authentication.getClass().getName());
@@ -131,10 +135,12 @@ public abstract class APIEndpoint implements HttpHandler {
 			exchange.getResponseHeaders().add("x-tournamentsystem-auth-user-name", "null");
 		}
 
-		exchange.sendResponseHeaders(code, responseString.getBytes().length);
+		byte[] responseByteArray = responseString.getBytes(StandardCharsets.UTF_8);
+
+		exchange.sendResponseHeaders(code, responseByteArray.length);
 
 		OutputStream os = exchange.getResponseBody();
-		os.write(responseString.getBytes());
+		os.write(responseByteArray);
 		os.close();
 	}
 
