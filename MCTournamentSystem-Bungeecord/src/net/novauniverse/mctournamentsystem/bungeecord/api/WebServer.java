@@ -147,6 +147,10 @@ public class WebServer {
 		Log.info("WebServer", "Creating context: " + string);
 		httpServer.createContext(string, httpHandler);
 	}
+	
+	public void kill() {
+		httpServer.stop(0);
+	}
 
 	public void stop() {
 		httpServer.stop(10);

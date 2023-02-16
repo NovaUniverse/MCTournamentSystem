@@ -41,21 +41,25 @@ public class SendPlayerHandler extends APIEndpoint {
 						json.put("success", false);
 						json.put("error", "server_not_found");
 						json.put("message", "could not find server with that name");
+						json.put("http_response_code", 404);
 					}
 				} else {
 					json.put("success", false);
 					json.put("error", "player_not_found");
 					json.put("message", "could not find player with that uuid");
+					json.put("http_response_code", 404);
 				}
 			} else {
 				json.put("success", false);
 				json.put("error", "bad_request");
 				json.put("message", "missing parameter: server");
+				json.put("http_response_code", 400);
 			}
 		} else {
 			json.put("success", false);
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: player");
+			json.put("http_response_code", 400);
 		}
 
 		return json;

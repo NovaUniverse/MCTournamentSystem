@@ -41,6 +41,7 @@ public class ImportSnapshotHandler extends APIEndpoint {
 			result.put("error", "bad_request");
 			result.put("message", "Missing or invalid json data");
 			result.put("exception", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
+			result.put("http_response_code", 400);
 			return result;
 		}
 
@@ -88,6 +89,7 @@ public class ImportSnapshotHandler extends APIEndpoint {
 		} catch (Exception e) {
 			result.put("success", false);
 			result.put("message", "Failed to import snapshot. " + e.getClass().getName() + " " + e.getMessage());
+			result.put("http_response_code", 400);
 		}
 		return result;
 	}

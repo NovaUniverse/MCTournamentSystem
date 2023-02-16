@@ -30,6 +30,7 @@ public class ResetNextMinigameHandler extends APIEndpoint {
 			json.put("success", false);
 			json.put("error", "server_error");
 			json.put("message", "Failed to update database");
+			json.put("http_response_code", 500);
 		}
 
 		return json;

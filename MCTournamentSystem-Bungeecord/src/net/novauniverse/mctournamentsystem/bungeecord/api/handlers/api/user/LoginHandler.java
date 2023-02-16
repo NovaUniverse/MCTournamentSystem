@@ -38,17 +38,20 @@ public class LoginHandler extends APIEndpoint {
 					result.put("success", false);
 					result.put("error", "login_fail");
 					result.put("message", "Invalid username or password");
+					result.put("http_response_code", 401);
 				}
 
 			} else {
 				result.put("success", false);
 				result.put("error", "bad_request");
 				result.put("message", "Missing parameter: password");
+				result.put("http_response_code", 400);
 			}
 		} else {
 			result.put("success", false);
 			result.put("error", "bad_request");
 			result.put("message", "Missing parameter: username");
+			result.put("http_response_code", 400);
 		}
 
 		return result;

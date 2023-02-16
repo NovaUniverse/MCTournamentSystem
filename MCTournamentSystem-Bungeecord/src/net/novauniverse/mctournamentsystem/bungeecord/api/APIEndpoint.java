@@ -44,7 +44,7 @@ public abstract class APIEndpoint implements HttpHandler {
 	@Override
 	public final void handle(HttpExchange exchange) throws IOException {
 		Map<String, String> params = WebServer.queryToMap(exchange.getRequestURI().getQuery());
-
+		
 		Authentication authentication = null;
 
 		if (params.containsKey("access_token")) {
@@ -79,6 +79,7 @@ public abstract class APIEndpoint implements HttpHandler {
 			result.put("success", false);
 			result.put("error", "unauthorized");
 			result.put("message", "Access token is missing or invalid. Please login to use this system");
+			result.put("http_response_code", 403);
 		} else {
 			if (requireAuthentication && authentication == null && TournamentSystem.getInstance().isWebserverDevelopmentMode()) {
 				authentication = APITokenStore.DUMMY_TOKEN;
@@ -93,6 +94,7 @@ public abstract class APIEndpoint implements HttpHandler {
 						result.put("success", false);
 						result.put("error", "unauthorized");
 						result.put("message", "You are messing the required permission " + requiredPermission.name() + " to perform this request");
+						result.put("http_response_code", 403);
 					}
 				}
 			}
@@ -104,6 +106,7 @@ public abstract class APIEndpoint implements HttpHandler {
 					result.put("success", false);
 					result.put("error", "exception");
 					result.put("message", "An internal exception occured while trying to proccess your request. " + e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
+					result.put("http_response_code", 500);
 				}
 			}
 		}

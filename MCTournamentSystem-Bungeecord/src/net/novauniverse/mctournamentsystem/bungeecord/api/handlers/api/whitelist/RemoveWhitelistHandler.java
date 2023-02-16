@@ -16,7 +16,7 @@ public class RemoveWhitelistHandler extends APIEndpoint {
 	public RemoveWhitelistHandler() {
 		super(true);
 	}
-	
+
 	@Override
 	public UserPermission getRequiredPermission() {
 		return UserPermission.MANAGE_WHITELIST;
@@ -27,27 +27,22 @@ public class RemoveWhitelistHandler extends APIEndpoint {
 		JSONObject json = new JSONObject();
 
 		if (params.containsKey("uuid")) {
-			try {
-				UUID uuid = UUID.fromString(params.get("uuid"));
+			UUID uuid = UUID.fromString(params.get("uuid"));
 
-				String sql = "DELETE FROM whitelist WHERE uuid = ?";
-				PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+			String sql = "DELETE FROM whitelist WHERE uuid = ?";
+			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-				ps.setString(1, uuid.toString());
+			ps.setString(1, uuid.toString());
 
-				ps.executeUpdate();
-				ps.close();
+			ps.executeUpdate();
+			ps.close();
 
-				json.put("success", true);
-			} catch (IllegalArgumentException e) {
-				json.put("success", false);
-				json.put("error", "bad_request");
-				json.put("message", "invalid uuid provided");
-			}
+			json.put("success", true);
 		} else {
 			json.put("success", false);
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: uuid");
+			json.put("http_response_code", 400);
 		}
 
 		return json;

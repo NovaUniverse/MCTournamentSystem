@@ -46,6 +46,7 @@ public class GetStaffHandler extends APIEndpoint {
 		} catch (Exception e) {
 			result.put("success", false);
 			result.put("message", e.getClass().getName() + " " + e.getMessage());
+			result.put("http_response_code", 500);
 			return result;
 		}
 

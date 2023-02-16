@@ -44,6 +44,7 @@ public class CommentatorTPHandler extends APIEndpoint {
 					json.put("success", false);
 					json.put("error", "unauthorized");
 					json.put("message", "Guest commentators cant use the tp function. Please ask the staff if you want a full access commentator key");
+					json.put("http_response_code", 401);
 				} else {
 
 					UUID uuid = ((CommentatorAuth) authentication).getMinecraftUserUUID();
@@ -61,7 +62,7 @@ public class CommentatorTPHandler extends APIEndpoint {
 						json.put("success", true);
 					} else {
 						json.put("success", false);
-						json.put("error", "failed");
+						json.put("error", "commentator_not_online");
 						json.put("message", "Commentators minecraft account is not online");
 					}
 				}
@@ -69,11 +70,13 @@ public class CommentatorTPHandler extends APIEndpoint {
 				json.put("success", false);
 				json.put("error", "bad request");
 				json.put("message", "Missing or invalid parameter: target");
+				json.put("http_response_code", 400);
 			}
 		} else {
 			json.put("success", false);
 			json.put("error", "unauthorized");
 			json.put("message", "Invalid auth type: " + authentication.getClass().getName());
+			json.put("http_response_code", 400);
 		}
 
 		return json;

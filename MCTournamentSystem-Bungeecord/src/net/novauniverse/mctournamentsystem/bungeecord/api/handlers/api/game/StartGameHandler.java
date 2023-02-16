@@ -31,6 +31,7 @@ public class StartGameHandler extends APIEndpoint {
 			json.put("success", false);
 			json.put("error", "no_players");
 			json.put("message", "No players online to use for plugin message channel. Try again when there are players online");
+			json.put("http_response_code", 409);
 		} else {
 			ProxyServer.getInstance().getPlayers().forEach(player -> {
 				ByteArrayDataOutput out = ByteStreams.newDataOutput();

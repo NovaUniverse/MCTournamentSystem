@@ -24,34 +24,30 @@ public class ExportTeamDataHandler extends APIEndpoint {
 
 		JSONArray teamEntries = new JSONArray();
 
-		try {
-			String sql = "SELECT p.metadata AS metadata, p.uuid AS uuid, p.username AS username, p.team_number AS team_number FROM players AS p LEFT JOIN teams AS t ON t.team_number = p.team_number";
-			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+		String sql = "SELECT p.metadata AS metadata, p.uuid AS uuid, p.username AS username, p.team_number AS team_number FROM players AS p LEFT JOIN teams AS t ON t.team_number = p.team_number";
+		PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
 
-			while (rs.next()) {
-				JSONObject teamEntry = new JSONObject();
+		while (rs.next()) {
+			JSONObject teamEntry = new JSONObject();
 
-				teamEntry.put("uuid", rs.getString("uuid"));
-				teamEntry.put("username", rs.getString("username"));
-				teamEntry.put("team_number", rs.getInt("team_number"));
+			teamEntry.put("uuid", rs.getString("uuid"));
+			teamEntry.put("username", rs.getString("username"));
+			teamEntry.put("team_number", rs.getInt("team_number"));
 
-				JSONObject metadata = new JSONObject();
-				String metadataString = rs.getString("metadata");
-				if (metadataString != null) {
-					metadata = new JSONObject(metadataString);
-				}
-
-				teamEntry.put("metadata", metadata);
-
-				teamEntries.put(teamEntry);
+			JSONObject metadata = new JSONObject();
+			String metadataString = rs.getString("metadata");
+			if (metadataString != null) {
+				metadata = new JSONObject(metadataString);
 			}
 
-			rs.close();
-			ps.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+			teamEntry.put("metadata", metadata);
+
+			teamEntries.put(teamEntry);
 		}
+
+		rs.close();
+		ps.close();
 
 		json.put("teams_data", teamEntries);
 

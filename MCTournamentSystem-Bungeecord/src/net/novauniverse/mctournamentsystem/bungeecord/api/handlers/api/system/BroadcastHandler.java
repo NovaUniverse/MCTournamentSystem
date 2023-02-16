@@ -39,6 +39,7 @@ public class BroadcastHandler extends APIEndpoint {
 			json.put("success", false);
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: message");
+			json.put("http_response_code", 400);
 		}
 
 		return json;

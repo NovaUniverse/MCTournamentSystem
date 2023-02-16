@@ -35,11 +35,13 @@ public class SetNextMinigameHandler extends APIEndpoint {
 				json.put("success", false);
 				json.put("error", "server_error");
 				json.put("message", "Failed to update database");
+				json.put("http_response_code", 500);
 			}
 		} else {
 			json.put("success", false);
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: name");
+			json.put("http_response_code", 400);
 		}
 
 		return json;

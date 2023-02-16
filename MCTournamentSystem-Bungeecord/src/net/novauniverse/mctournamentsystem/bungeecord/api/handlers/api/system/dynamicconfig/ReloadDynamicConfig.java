@@ -24,13 +24,14 @@ public class ReloadDynamicConfig extends APIEndpoint {
 
 		if (TournamentSystem.getInstance().getDynamicConfigUrl() == null) {
 			success = false;
-			json.put("error", "Dynamic config in not enabled on this server");
+			json.put("message", "Dynamic config in not enabled on this server");
 		} else {
 			try {
 				TournamentSystem.getInstance().reloadDynamicConfig();
 			} catch (Exception e) {
 				success = false;
-				json.put("error", "An error occured while reloading dynamic config. " + e.getClass().getName() + " " + e.getMessage() + ". " + ExceptionUtils.getMessage(e));
+				json.put("message", "An error occured while reloading dynamic config. " + e.getClass().getName() + " " + e.getMessage() + ". " + ExceptionUtils.getMessage(e));
+				json.put("http_response_code", 500);
 			}
 		}
 

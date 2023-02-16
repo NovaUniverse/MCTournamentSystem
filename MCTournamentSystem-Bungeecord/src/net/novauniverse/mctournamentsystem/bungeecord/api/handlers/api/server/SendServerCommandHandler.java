@@ -46,6 +46,7 @@ public class SendServerCommandHandler extends APIEndpoint {
 			json.put("success", false);
 			json.put("error", "bad_request");
 			json.put("message", "failed to parse message body. " + e.getClass().getName() + " " + e.getMessage());
+			json.put("http_response_code", 400);
 		}
 
 		if (input != null) {
@@ -66,11 +67,13 @@ public class SendServerCommandHandler extends APIEndpoint {
 					json.put("success", false);
 					json.put("error", "server_not_found");
 					json.put("message", "could not find server named " + name);
+					json.put("http_response_code", 404);
 				}
 			} else {
 				json.put("success", false);
 				json.put("error", "bad_request");
 				json.put("message", "missing parameter: server");
+				json.put("http_response_code", 400);
 			}
 		}
 

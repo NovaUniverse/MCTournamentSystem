@@ -38,6 +38,7 @@ public class TriggerHandler extends APIEndpoint {
 				json.put("success", false);
 				json.put("error", "no_players");
 				json.put("message", "No players online to use for plugin message channel. Try again when there are players online");
+				json.put("http_response_code", 409);
 			} else {
 				String name = params.get("triggerId");
 				UUID requestUUID = UUID.randomUUID();
@@ -58,6 +59,7 @@ public class TriggerHandler extends APIEndpoint {
 			json.put("success", false);
 			json.put("error", "bad request");
 			json.put("message", "Missing or invalid parameter: name");
+			json.put("http_response_code", 400);
 		}
 
 		return json;

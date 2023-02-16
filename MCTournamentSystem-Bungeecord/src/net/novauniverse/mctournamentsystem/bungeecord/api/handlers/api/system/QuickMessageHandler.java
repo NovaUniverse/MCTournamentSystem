@@ -21,7 +21,7 @@ public class QuickMessageHandler extends APIEndpoint {
 	public UserPermission getRequiredPermission() {
 		return UserPermission.BROADCAST_MESSAGE;
 	}
-	
+
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
@@ -32,8 +32,9 @@ public class QuickMessageHandler extends APIEndpoint {
 
 				if (messageId >= TournamentSystem.getInstance().getQuickMessages().size() || messageId < 0) {
 					json.put("success", false);
-					json.put("error", "bad_request");
-					json.put("message", "invalid message id");
+					json.put("error", "not_found");
+					json.put("message", "message with id " + messageId + " was not found");
+					json.put("http_response_code", 404);
 				} else {
 					String message = TournamentSystem.getInstance().getQuickMessages().get(messageId);
 					ProxyServer.getInstance().broadcast(new TextComponent(message));
@@ -43,12 +44,14 @@ public class QuickMessageHandler extends APIEndpoint {
 				json.put("success", false);
 				json.put("error", "bad_request");
 				json.put("message", "invalid message id");
+				json.put("http_response_code", 400);
 			}
 			json.put("success", true);
 		} else {
 			json.put("success", false);
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: message_id");
+			json.put("http_response_code", 400);
 		}
 
 		return json;

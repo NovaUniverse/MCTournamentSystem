@@ -47,6 +47,7 @@ public class UploadTeamHandler extends APIEndpoint {
 			result.put("error", "bad_request");
 			result.put("message", "Missing or invalid json data");
 			result.put("exception", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
+			result.put("http_response_code", 400);
 			failed = true;
 		}
 
@@ -94,6 +95,7 @@ public class UploadTeamHandler extends APIEndpoint {
 				result.put("success", false);
 				result.put("error", "failed");
 				result.put("message", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
+				result.put("http_response_code", 500);
 			}
 		}
 
@@ -127,6 +129,7 @@ public class UploadTeamHandler extends APIEndpoint {
 				result.put("success", false);
 				result.put("error", "failed");
 				result.put("message", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
+				result.put("http_response_code", 500);
 			}
 		}
 
@@ -145,6 +148,7 @@ public class UploadTeamHandler extends APIEndpoint {
 				result.put("success", false);
 				result.put("error", "failed");
 				result.put("message", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
+				result.put("http_response_code", 500);
 				break;
 			}
 		}
