@@ -7,6 +7,7 @@ $(function () {
 		return;
 	} else {
 		TournamentSystem.token = localStorage.getItem("token");
+		setCookie("ts_access_token", TournamentSystem.token, 999999);
 	}
 
 	$(".hidden-integration").hide();
@@ -18,13 +19,36 @@ $(function () {
 	$(".reload-dynamic-config-url").on("click", () => {
 		console.log("Reloading dynamic config");
 		toastr.info("Reloading dynamic config");
-		$.getJSON("/api/system/dynamicconfig/reload" + "?access_token=" + TournamentSystem.token, function (data) {
-			if (data.success) {
-				toastr.success("Dynamic config reloaded");
-			} else {
-				toastr.error(data.error);
-				console.error(data.error);
-			}
+
+		$.ajax({
+			type: "POST",
+			url: "/api/system/dynamicconfig/reload",
+			success: (data) => {
+				if (data.success) {
+					toastr.success("Dynamic config reloaded");
+				} else {
+					toastr.error(data.message);
+					console.error(data.message);
+				}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+				if (xhr.status == 401) {
+					toastr.error("Not authenticated. Try reloading the page");
+				} else if (xhr.status == 403) {
+					toastr.error("You dont have permission to reload the dynamic config");
+				} else if (xhr.status == 500) {
+					toastr.error("An error occured while reloading the dynamic config");
+				} else {
+					toastr.error("Could not update dynamic config due to an unknown error");
+				}
+				console.error(xhr);
+			},
+			dataType: "json"
 		});
 	});
 
@@ -59,15 +83,13 @@ $(function () {
 
 	$("#btn_export_snapshot").on("click", function () {
 		toastr.info("Exporting snapshot...");
-		$.getJSON("/api/snapshot/export" + "?access_token=" + TournamentSystem.token, function (data) {
-			if (data.error != undefined) {
-				toastr.error("Snapshot export failed. Error: " + data.error);
-				console.error("Snapshot export failed. Error: " + data.error);
+		$.getJSON("/api/snapshot/export", function (data) {
+			if (!data.success) {
+				toastr.error("Could not export score snapshot");
 				return;
 			}
 
 			console.log(data);
-
 			console.log("Data collected. Downloading...");
 
 			let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data.data, null, 4));
@@ -79,6 +101,20 @@ $(function () {
 			downloadAnchorNode.remove();
 
 			toastr.success("Success. JSON Snapshot Download started");
+		}).fail((e) => {
+			if (xhr.status == 0 || xhr.status == 503) {
+				toastr.error("Failed to communicate with backend server");
+				return;
+			}
+
+			if (xhr.status == 500) {
+				toastr.error("An error occured while exporting score snapshot. " + xhr.responseJSON.message);
+			} else if (xhr.status == 401) {
+				toastr.error("Not authenticated. Try reloading the page");
+			} else {
+				toastr.error("Could not export score snapshot. " + xhr.statusText);
+			}
+			console.error(xhr);
 		});
 	});
 
@@ -123,7 +159,7 @@ $(function () {
 				confirm: function () {
 					$.ajax({
 						type: "POST",
-						url: "/api/snapshot/import?access_token=" + TournamentSystem.token,
+						url: "/api/snapshot/import",
 						data: JSON.stringify(importedData),
 						success: function (data) {
 							console.log(data);
@@ -135,6 +171,25 @@ $(function () {
 						},
 						dataType: "json"
 					});
+				},
+				error: (xhr, ajaxOptions, thrownError) => {
+					console.error(xhr);
+					if (xhr.status == 0 || xhr.status == 503) {
+						toastr.error("Failed to communicate with backend server");
+						return;
+					}
+
+					if (xhr.status == 401) {
+						toastr.error("Not authenticated. Try reloading the page");
+					} else if (xhr.status == 400) {
+						toastr.error("Bad request. Please verify that the JSON file is a valid score snapshot file");
+					} else if (xhr.status == 500) {
+						toastr.error("An error occured. " + xhr.responseJSON.message);
+					} else if (xhr.status == 403) {
+						toastr.error("You dont have permission to import score snapshots");
+					} else {
+						toastr.error("Clould not import score snapshot. " + xhr.statusText);
+					}
 				},
 				cancel: function () { }
 			}
@@ -310,14 +365,29 @@ $(function () {
 
 		$.getJSON("https://mojangapi.novauniverse.net/username_to_uuid/" + username, function (data) {
 			let uuid = data.uuid;
-
-			$.getJSON("/api/whitelist/add?access_token=" + TournamentSystem.token + "&uuid=" + uuid, function (data) {
-				if (data.success) {
+			$.ajax({
+				type: "POST",
+				url: "/api/whitelist/add?uuid=" + uuid,
+				success: (data) => {
 					toastr.info("User added");
 					$("#add_whitelist_modal").modal("hide");
-				} else {
-					toastr.error("Failed to add user. " + data.message);
-				}
+				},
+				error: (xhr, ajaxOptions, thrownError) => {
+					if (xhr.status == 0 || xhr.status == 503) {
+						toastr.error("Failed to communicate with backend server");
+						return;
+					}
+
+					if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+						toastr.error(xhr.responseJSON.message);
+					} else {
+						toastr.error("Failed to add user to whitelist due to an unknown error");
+						console.error(xhr);
+						console.error(ajaxOptions);
+						console.error(thrownError);
+					}
+				},
+				dataType: "json"
 			});
 		}).fail(function (e) {
 			if (e.status == 404) {
@@ -390,12 +460,7 @@ $(function () {
 		});
 	});
 
-	$.getJSON("/api/system/status" + "?access_token=" + TournamentSystem.token, function (data) {
-		if (data.error == "unauthorized") {
-			window.location = "/app/login/";
-			return;
-		}
-
+	$.getJSON("/api/system/status", function (data) {
 		TournamentSystem.lastData = data;
 
 		TournamentSystem.activeServer = data.active_server;
@@ -441,8 +506,10 @@ $(function () {
 
 		if (hasPermission("VIEW_COMMENTATOR_GUEST_KEY")) {
 			console.log("Fetching commentator guest key");
-			$.getJSON("/api/commentator/get_guest_key" + "?access_token=" + TournamentSystem.token, (guestKeyData) => {
+			$.getJSON("/api/commentator/get_guest_key", (guestKeyData) => {
 				$("#commentator_guest_key").val(guestKeyData.commentator_guest_key);
+			}).fail(function (e) {
+				toastr.error("Failed to fetch commentator guest key");
 			});
 		}
 
@@ -452,12 +519,7 @@ $(function () {
 		setInterval(() => TournamentSystem.updateServers(), 1000);
 		setInterval(() => TournamentSystem.update(), 1000);
 
-		$.getJSON("/api/staff/get_staff" + "?access_token=" + TournamentSystem.token, (staffData) => {
-			if (!staffData.success) {
-				toastr.error("Failed to fetch staff list" + (staffData.message == null ? "" : ". " + staffData.message));
-				return;
-			}
-
+		$.getJSON("/api/staff/get_staff", (staffData) => {
 			for (let i = 0; i < staffData.staff_roles.length; i++) {
 				let role = staffData.staff_roles[i];
 				TournamentSystem.staffRoles.push(role);
@@ -470,7 +532,16 @@ $(function () {
 			TournamentSystem.staffTeam = staffData.staff;
 
 			TournamentSystem.updateStaffTeam();
+		}).fail(function (e) {
+			toastr.error("Failed to fetch staff list");
 		});
+	}).fail(function (e) {
+		if (e.status == 403 || e.status == 401) {
+			window.location = "/app/login/";
+		} else {
+			toastr.error("Something went wrong while trying to get initial data");
+			console.error(e);
+		}
 	});
 
 	$("#toggle_commentator_guest_key").on("click", () => TournamentSystem.toggleCommentatorKeyVisible());
@@ -527,13 +598,7 @@ const TournamentSystem = {
 	exportSummary: () => {
 		toastr.info("Exporting...");
 		console.log("Data export starting");
-		$.getJSON("/api/system/status" + "?access_token=" + TournamentSystem.token, function (data) {
-			if (data.error != undefined) {
-				toastr.error("Data export failed. Error: " + data.error);
-				console.error("Data export failed. Error: " + data.error);
-				return;
-			}
-
+		$.getJSON("/api/system/status", function (data) {
 			let dataExport = {};
 			let servers = [];
 			let players = [];
@@ -571,27 +636,82 @@ const TournamentSystem = {
 			downloadAnchorNode.remove();
 
 			toastr.success("Success. JSON Download started");
+		}).fail((e) => {
+			console.error(e);
+			if (xhr.status == 0 || xhr.status == 503) {
+				toastr.error("Failed to communicate with backend server");
+				return;
+			}
+
+			if (xhr.status == 401) {
+				toastr.error("Not authenticated. Try reloading the page");
+				return;
+			}
+
+			toastr.error("Export failed for unknown reason");
 		});
 	},
 
 	broadcastMessage: (text) => {
-		$.getJSON("/api/system/broadcast?message=" + encodeURIComponent(text) + "&access_token=" + TournamentSystem.token, function (data) {
-			if (data.success) {
+		$.ajax({
+			type: "POST",
+			url: "/api/system/broadcast",
+			data: text,
+			success: (data) => {
 				toastr.success("Message sent");
-				$("#broadcast_text_message").val("");
-			} else {
-				toastr.error(data.message);
-			}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+
+				if (xhr.status == 400) {
+					toastr.error("Server failed to decode message");
+					return;
+				}
+
+				if (xhr.status == 403) {
+					toastr.error("You dont have permission to broadcast messages");
+					return;
+				}
+
+				if (xhr.status == 401) {
+					toastr.error("Not authenticated. Try reloading the page");
+					return;
+				}
+
+				toastr.error("Could not broadcast message due to an error. " + xhr.statusText);
+			},
+			dataType: "text"
 		});
 	},
 
 	shutdown: () => {
-		$.getJSON("/api/system/shutdown" + "?access_token=" + TournamentSystem.token, function (data) {
-			//console.log(data);
-			if (data.success) {
+		$.ajax({
+			type: "POST",
+			url: "/api/system/shutdown",
+			success: (data) => {
 				toastr.info("Shutting down proxy server");
-			} else {
-				toastr.error(data.message);
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+				if (xhr.status == 403) {
+					toastr.error("You dont have permission to shut down the server");
+					return;
+				}
+
+				if (xhr.status == 401) {
+					toastr.error("Not authenticated. Try reloading the page");
+					return;
+				}
+
+				toastr.error("Could not shutdown server due to an error. " + xhr.statusText);
 			}
 		});
 	},
@@ -621,23 +741,64 @@ const TournamentSystem = {
 	},
 
 	startGame: () => {
-		$.getJSON("/api/game/start_game" + "?access_token=" + TournamentSystem.token, function (data) {
-			//console.log(data);
-			if (data.success) {
+		$.ajax({
+			type: "POST",
+			url: "/api/game/start_game",
+			success: (data) => {
 				toastr.success("Success");
-			} else {
-				toastr.error(data.message);
-			}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+				if (xhr.status == 409) {
+					toastr.error("An online player is needed to be able to send the start packet to the server");
+					return;
+				}
+
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+					toastr.error(xhr.responseJSON.message);
+				} else {
+					toastr.error("Failed to start game due to an unknown error");
+					console.error(xhr);
+					console.error(ajaxOptions);
+					console.error(thrownError);
+				}
+			},
+			dataType: "json"
 		});
 	},
 
 	activateTrigger: (triggerId) => {
-		$.getJSON("/api/game/trigger" + "?access_token=" + TournamentSystem.token + "&triggerId=" + triggerId, function (data) {
-			if (data.success) {
+		$.ajax({
+			type: "POST",
+			url: "/api/game/trigger?triggerId=" + triggerId,
+			success: (data) => {
 				toastr.success("Success");
-			} else {
-				toastr.error(data.message);
-			}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+				if (xhr.status == 409) {
+					toastr.error("An online player is needed to be able to send the trigger packet to the server");
+					return;
+				}
+
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+					toastr.error(xhr.responseJSON.message);
+				} else {
+					toastr.error("Failed to activate trigger due to an unknown error");
+					console.error(xhr);
+					console.error(ajaxOptions);
+					console.error(thrownError);
+				}
+			},
+			dataType: "json"
 		});
 	},
 
@@ -648,13 +809,28 @@ const TournamentSystem = {
 			content: 'Please confirm that you want to clear the whitelist',
 			buttons: {
 				confirm: () => {
-					$.getJSON("/api/whitelist/clear" + "?access_token=" + TournamentSystem.token, function (data) {
-						//console.log(data);
-						if (data.success) {
+					$.ajax({
+						type: "POST",
+						url: "/api/whitelist/clear",
+						success: (data) => {
 							toastr.success("Whitelist cleared");
-						} else {
-							toastr.error(data.message);
-						}
+						},
+						error: (xhr, ajaxOptions, thrownError) => {
+							if (xhr.status == 0 || xhr.status == 503) {
+								toastr.error("Failed to communicate with backend server");
+								return;
+							}
+
+							if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+								toastr.error(xhr.responseJSON.message);
+							} else {
+								toastr.error("Failed to clear whitelist due to an unknown error");
+								console.error(xhr);
+								console.error(ajaxOptions);
+								console.error(thrownError);
+							}
+						},
+						dataType: "json"
 					});
 				},
 				cancel: () => { }
@@ -673,10 +849,11 @@ const TournamentSystem = {
 		$("#chat_log").text("Loading...");
 		$("#chat_log").attr("disabled", 1);
 
-		$.getJSON("/api/chat/log" + "?access_token=" + TournamentSystem.token, function (data) {
-			if (!data.success) {
-				$("#chat_log").text(data.message);
-			} else {
+		$.ajax({
+			type: "GET",
+			url: "/api/chat/log",
+			success: (data) => {
+				console.log(data);
 				let messages = "";
 
 				data.messages.forEach(message => {
@@ -684,7 +861,23 @@ const TournamentSystem = {
 				});
 
 				$("#chat_log").text(messages);
-			}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					$("#chat_log").text("Failed to communicate with backend server");
+					return;
+				}
+
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+					$("#chat_log").text(xhr.responseJSON.message);
+				} else {
+					$("#chat_log").text("Failed to open chat log due to an unknown error");
+					console.error(xhr);
+					console.error(ajaxOptions);
+					console.error(thrownError);
+				}
+			},
+			dataType: "json"
 		});
 	},
 
@@ -814,13 +1007,28 @@ const TournamentSystem = {
 
 					console.log("Remove clicked for " + uuidToRemove);
 
-					$.getJSON("/api/whitelist/remove" + "?access_token=" + TournamentSystem.token + "&uuid=" + uuidToRemove, function (data) {
-						//console.log(data);
-						if (data.success) {
+					$.ajax({
+						type: "POST",
+						url: "/api/whitelist/remove?uuid=" + uuidToRemove,
+						success: (data) => {
 							toastr.success("Success");
-						} else {
-							toastr.error(data.message);
-						}
+						},
+						error: (xhr, ajaxOptions, thrownError) => {
+							if (xhr.status == 0 || xhr.status == 503) {
+								toastr.error("Failed to communicate with backend server");
+								return;
+							}
+
+							if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+								toastr.error(xhr.responseJSON.message);
+							} else {
+								toastr.error("Failed to remove user whitelist due to an unknown error");
+								console.error(xhr);
+								console.error(ajaxOptions);
+								console.error(thrownError);
+							}
+						},
+						dataType: "json"
 					});
 				});
 
@@ -830,11 +1038,7 @@ const TournamentSystem = {
 	},
 
 	updateServers: () => {
-		$.getJSON("/api/servers/get_servers" + "?access_token=" + TournamentSystem.token, (data) => {
-			if (!data.success) {
-				return;
-			}
-
+		$.getJSON("/api/servers/get_servers", (data) => {
 			let servers = [];
 			data.servers.forEach(server => {
 				servers.push(server);
@@ -884,12 +1088,32 @@ const TournamentSystem = {
 							content: 'Do you want to start the server ' + serverName,
 							buttons: {
 								confirm: function () {
-									$.getJSON("/api/servers/start?server=" + serverName + "&access_token=" + TournamentSystem.token, (response) => {
-										if (response.success) {
+									$.ajax({
+										type: "POST",
+										url: "/api/servers/start?server=" + serverName,
+										data: $("#json_output").text(),
+										success: function (data) {
 											toastr.success("Success");
-										} else {
-											toastr.error(response.message);
-										}
+										},
+										error: (xhr, ajaxOptions, thrownError) => {
+											if (xhr.status == 0 || xhr.status == 503) {
+												toastr.error("Backend communication failure");
+											} else if (xhr.status == 409) {
+												toastr.error("Server already running");
+											} else if (xhr.status == 500) {
+												toastr.error("Failed to start server. " + xhr.responseJSON.message);
+											} else if (xhr.status == 404) {
+												toastr.error("Server not found");
+											} else if (xhr.status == 401) {
+												toastr.error("You are not logged in. Please refresh the page");
+											} else if (xhr.status == 403) {
+												toastr.error("You dont have permission to start this server");
+											} else {
+												toastr.error("Failed to start server from unknown reasons");
+											}
+											console.error(xhr);
+										},
+										dataType: "json"
 									});
 								},
 								cancel: function () { }
@@ -905,12 +1129,31 @@ const TournamentSystem = {
 							content: 'Do you want to stop the server ' + serverName,
 							buttons: {
 								confirm: function () {
-									$.getJSON("/api/servers/stop?server=" + serverName + "&access_token=" + TournamentSystem.token, (response) => {
-										if (response.success) {
+									$.ajax({
+										type: "POST",
+										url: "/api/servers/stop?server=" + serverName,
+										success: function (data) {
 											toastr.success("Success");
-										} else {
-											toastr.error(response.message);
-										}
+										},
+										error: (xhr, ajaxOptions, thrownError) => {
+											if (xhr.status == 0 || xhr.status == 503) {
+												toastr.error("Backend communication failure");
+											} else if (xhr.status == 409) {
+												toastr.error("Server not running");
+											} else if (xhr.status == 404) {
+												toastr.error("Server not found");
+											} else if (xhr.status == 500) {
+												toastr.error("Failed to kill server. " + xhr.responseJSON.message);
+											} else if (xhr.status == 401) {
+												toastr.error("You are not logged in. Please refresh the page");
+											} else if (xhr.status == 403) {
+												toastr.error("You dont have permission to kill this server");
+											} else {
+												toastr.error("Failed to kill server from unknown reasons");
+											}
+											console.error(xhr);
+										},
+										dataType: "json"
 									});
 								},
 								cancel: function () { }
@@ -920,7 +1163,7 @@ const TournamentSystem = {
 
 					newElement.find(".get-server-logs-button").on("click", function () {
 						let serverName = $(this).data("server-name");
-						$.getJSON("/api/servers/logs?server=" + serverName + "&access_token=" + TournamentSystem.token, (response) => {
+						$.getJSON("/api/servers/logs?server=" + serverName, (response) => {
 							if (response.success) {
 								toastr.success("Opening logs in popup");
 								let content = "";
@@ -929,12 +1172,24 @@ const TournamentSystem = {
 									content += line + "\n";
 								});
 
-								let win = window.open("", "Chat log", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
+								let win = window.open("", "Server log", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
 								win.document.body.innerText = content;
 							} else {
 								toastr.error(response.message);
 							}
-						});
+						}).fail((e) => {
+							if (e.status == 0 | e.status == 503) {
+								toastr.error("Failed to communicate with backend server");
+							} else if (e.status == 404) {
+								toastr.error("Server not found");
+							} else if (xhr.status == 401) {
+								toastr.error("You are not logged in. Please refresh the page");
+							} else if (xhr.status == 403) {
+								toastr.error("You dont have permission to to do this");
+							} else {
+								toastr.error("Could not fetch server logs for unknown reason");
+							}
+						});;
 					});
 
 					$("#server_list").append(newElement);
@@ -985,14 +1240,7 @@ const TournamentSystem = {
 	},
 
 	update: () => {
-		$.getJSON("/api/system/status" + "?access_token=" + TournamentSystem.token, (data) => {
-			//console.log(data);
-
-			if (data.error == "unauthorized") {
-				$("#disconnected_modal").modal("show");
-				return;
-			}
-
+		$.getJSON("/api/system/status", (data) => {
 			TournamentSystem.lastData = data;
 
 			if (TournamentSystem.activeServer != data.active_server) {
@@ -1225,6 +1473,10 @@ const TournamentSystem = {
 
 				//console.log(trigger);
 			});
+		}).fail((e) => {
+			if (e.status == 401 || e.status == 403) {
+				$("#disconnected_modal").modal("show");
+			}
 		});
 	}
 }

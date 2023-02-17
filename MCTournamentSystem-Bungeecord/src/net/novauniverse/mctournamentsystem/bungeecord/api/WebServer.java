@@ -9,45 +9,45 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.chat.GetChatLogHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.CommentatorTPHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.commentator.GetCommentatorGuestKeyHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.StartGameHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.game.TriggerHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.nextmingame.ResetNextMinigameHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.nextmingame.SetNextMinigameHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.publicapi.PublicStatusHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayerHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.send.SendPlayersHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.GetServersHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.GetServersLogSessionIDHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.GetServersLogsHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.SendServerCommandHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.StartServersHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.server.StopServersHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.snapshot.ExportSnapshotHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.snapshot.ImportSnapshotHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.GetStaffHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.staff.SetStaffHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.BroadcastHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ClearPlayersHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.GetCustomThemesHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.PHPMyAdminUrlHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.QuickMessageHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ResetHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.ShutdownHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.StatusHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetMOTDHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetScoreboardURLHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.config.SetTournamentNameHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.system.dynamicconfig.ReloadDynamicConfig;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.ExportTeamDataHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.team.UploadTeamHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.user.LoginHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.user.WhoAmIHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.whitelist.AddWhitelistHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.whitelist.ClearWhitelistHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.whitelist.RemoveWhitelistHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.chat.GetChatLogHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CommentatorTPHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.GetCommentatorGuestKeyHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.StartGameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.TriggerHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.nextmingame.ResetNextMinigameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.nextmingame.SetNextMinigameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.publicapi.PublicStatusHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.send.SendPlayerHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.send.SendPlayersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.GetServersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.GetServersLogSessionIDHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.GetServersLogsHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.SendServerCommandHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.StartServersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.StopServersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapshot.ExportSnapshotHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapshot.ImportSnapshotHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.GetStaffHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.SetStaffHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.BroadcastHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ClearPlayersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.GetCustomThemesHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.PHPMyAdminUrlHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.QuickMessageHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ResetHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ShutdownHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.StatusHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetMOTDHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetScoreboardURLHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetTournamentNameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.dynamicconfig.ReloadDynamicConfig;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.ExportTeamDataHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.UploadTeamHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.LoginHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.WhoAmIHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.AddWhitelistHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ClearWhitelistHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.RemoveWhitelistHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.StaticFileHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.RedirectToApp;
@@ -56,80 +56,82 @@ import net.zeeraa.novacore.commons.log.Log;
 // If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
 public class WebServer {
 	private HttpServer httpServer;
+	private boolean hasShutDown;
 
 	public WebServer(int port, String appRoot) throws IOException {
 		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
+		hasShutDown = false;
 
 		// Redirect
 		createContext("/", new RedirectToApp());
 
 		// System
-		createContext("/api/system/status", new StatusHandler());
-		createContext("/api/system/broadcast", new BroadcastHandler());
-		createContext("/api/system/quick_message", new QuickMessageHandler());
-		createContext("/api/system/reset", new ResetHandler());
-		createContext("/api/system/clear_players", new ClearPlayersHandler());
-		createContext("/api/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
-		createContext("/api/system/custom_themes", new GetCustomThemesHandler());
-		createContext("/api/system/shutdown", new ShutdownHandler());
+		createContext("/api/v1/system/status", new StatusHandler());
+		createContext("/api/v1/system/broadcast", new BroadcastHandler());
+		createContext("/api/v1/system/quick_message", new QuickMessageHandler());
+		createContext("/api/v1/system/reset", new ResetHandler());
+		createContext("/api/v1/system/clear_players", new ClearPlayersHandler());
+		createContext("/api/v1/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
+		createContext("/api/v1/system/custom_themes", new GetCustomThemesHandler());
+		createContext("/api/v1/system/shutdown", new ShutdownHandler());
 
-		createContext("/api/system/settings/set_tournament_name", new SetTournamentNameHandler());
-		createContext("/api/system/settings/set_scoreboard_url", new SetScoreboardURLHandler());
-		createContext("/api/system/settings/set_motd", new SetMOTDHandler());
+		createContext("/api/v1/system/settings/set_tournament_name", new SetTournamentNameHandler());
+		createContext("/api/v1/system/settings/set_scoreboard_url", new SetScoreboardURLHandler());
+		createContext("/api/v1/system/settings/set_motd", new SetMOTDHandler());
 
 		// Dynamic config
-		createContext("/api/system/dynamicconfig/reload", new ReloadDynamicConfig());
+		createContext("/api/v1/system/dynamicconfig/reload", new ReloadDynamicConfig());
 
 		// Team
-		createContext("/api/team/export_team_data", new ExportTeamDataHandler());
-		createContext("/api/team/upload_team", new UploadTeamHandler());
+		createContext("/api/v1/team/export_team_data", new ExportTeamDataHandler());
+		createContext("/api/v1/team/upload_team", new UploadTeamHandler());
 
 		// Send
-		createContext("/api/send/send_player", new SendPlayerHandler());
-		createContext("/api/send/send_players", new SendPlayersHandler());
+		createContext("/api/v1/send/send_player", new SendPlayerHandler());
+		createContext("/api/v1/send/send_players", new SendPlayersHandler());
 
 		// Game
-		createContext("/api/game/start_game", new StartGameHandler());
-		createContext("/api/game/trigger", new TriggerHandler());
+		createContext("/api/v1/game/start_game", new StartGameHandler());
+		createContext("/api/v1/game/trigger", new TriggerHandler());
 
 		// User
-		createContext("/api/user/whoami", new WhoAmIHandler());
-		createContext("/api/user/login", new LoginHandler());
+		createContext("/api/v1/user/whoami", new WhoAmIHandler());
+		createContext("/api/v1/user/login", new LoginHandler());
 
 		// Staff
-		createContext("/api/staff/get_staff", new GetStaffHandler());
-		createContext("/api/staff/set_staff", new SetStaffHandler());
+		createContext("/api/v1/staff/get_staff", new GetStaffHandler());
+		createContext("/api/v1/staff/set_staff", new SetStaffHandler());
 
 		// Whitelist
-		createContext("/api/whitelist/add", new AddWhitelistHandler());
-		createContext("/api/whitelist/remove", new RemoveWhitelistHandler());
-		createContext("/api/whitelist/clear", new ClearWhitelistHandler());
+		createContext("/api/v1/whitelist/add", new AddWhitelistHandler());
+		createContext("/api/v1/whitelist/remove", new RemoveWhitelistHandler());
+		createContext("/api/v1/whitelist/clear", new ClearWhitelistHandler());
 
 		// Commentator
-		createContext("/api/commentator/tp", new CommentatorTPHandler());
-		createContext("/api/commentator/get_guest_key", new GetCommentatorGuestKeyHandler());
+		createContext("/api/v1/commentator/tp", new CommentatorTPHandler());
+		createContext("/api/v1/commentator/get_guest_key", new GetCommentatorGuestKeyHandler());
 
 		// Public
-		createContext("/api/public/status", new PublicStatusHandler());
+		createContext("/api/v1/public/status", new PublicStatusHandler());
 
 		// Snapshots
-		createContext("/api/snapshot/export", new ExportSnapshotHandler());
-		createContext("/api/snapshot/import", new ImportSnapshotHandler());
+		createContext("/api/v1/snapshot/export", new ExportSnapshotHandler());
+		createContext("/api/v1/snapshot/import", new ImportSnapshotHandler());
 
 		// Chat
-		createContext("/api/chat/log", new GetChatLogHandler());
+		createContext("/api/v1/chat/log", new GetChatLogHandler());
 
 		// Next minigame
-		createContext("/api/next_minigame/set", new SetNextMinigameHandler());
-		createContext("/api/next_minigame/reset", new ResetNextMinigameHandler());
+		createContext("/api/v1/next_minigame/set", new SetNextMinigameHandler());
+		createContext("/api/v1/next_minigame/reset", new ResetNextMinigameHandler());
 
 		// Servers
-		createContext("/api/servers/get_servers", new GetServersHandler());
-		createContext("/api/servers/start", new StartServersHandler());
-		createContext("/api/servers/stop", new StopServersHandler());
-		createContext("/api/servers/logs", new GetServersLogsHandler());
-		createContext("/api/servers/log_session_id", new GetServersLogSessionIDHandler());
-		createContext("/api/servers/run_command", new SendServerCommandHandler());
+		createContext("/api/v1/servers/get_servers", new GetServersHandler());
+		createContext("/api/v1/servers/start", new StartServersHandler());
+		createContext("/api/v1/servers/stop", new StopServersHandler());
+		createContext("/api/v1/servers/logs", new GetServersLogsHandler());
+		createContext("/api/v1/servers/log_session_id", new GetServersLogSessionIDHandler());
+		createContext("/api/v1/servers/run_command", new SendServerCommandHandler());
 
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");
@@ -147,13 +149,31 @@ public class WebServer {
 		Log.info("WebServer", "Creating context: " + string);
 		httpServer.createContext(string, httpHandler);
 	}
-	
-	public void kill() {
-		httpServer.stop(0);
+
+	public boolean hasShutDown() {
+		return hasShutDown;
 	}
 
-	public void stop() {
+	public boolean kill() {
+		if (hasShutDown) {
+			return false;
+		}
+		httpServer.stop(0);
+		hasShutDown = true;
+		return true;
+	}
+
+	public boolean stop() {
+		if (hasShutDown) {
+			return false;
+		}
 		httpServer.stop(10);
+		hasShutDown = true;
+		return true;
+	}
+
+	public HttpServer getHttpServer() {
+		return httpServer;
 	}
 
 	/**

@@ -14,7 +14,7 @@ public class RedirectToApp implements HttpHandler {
 	public void handle(HttpExchange exchange) throws IOException {
 		String response = new String(Base64.getDecoder().decode(CONTENT));
 
-		exchange.sendResponseHeaders(200, response.getBytes().length);
+		exchange.sendResponseHeaders(404, response.getBytes().length);
 
 		OutputStream os = exchange.getResponseBody();
 		os.write(response.getBytes());

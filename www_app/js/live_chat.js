@@ -6,6 +6,8 @@ var token = null;
 
 var lastMessageId = -1;
 
+var interval = null;
+
 $(() => {
 	let config = {};
 
@@ -37,20 +39,22 @@ $(() => {
 	}
 
 	terminal.writeln(ConsoleColor.CYAN + "Checking login status..." + ConsoleColor.RESET);
-	$.getJSON("/api/user/whoami?access_token=" + token, (whoamiData) => {
+	$.getJSON("/api/v1/user/whoami", (whoamiData) => {
 		console.log(whoamiData);
 		if (whoamiData.logged_in) {
 			terminal.writeln(ConsoleColor.GREEN + "Logged in as " + whoamiData.username + ConsoleColor.RESET);
 
-			setInterval(() => update(), 500);
+			interval = setInterval(() => update(), 500);
 		} else {
 			terminal.writeln(ConsoleColor.RED + "ERROR: Token invalod or expired. Please log in again and refresh this page" + ConsoleColor.RESET)
 		}
+	}).fail((e) => {
+		terminal.writeln(ConsoleColor.RED + "Connection failure" + ConsoleColor.RESET);
 	});
 });
 
 function update() {
-	$.getJSON("/api/chat/log?access_token=" + token, (data) => {
+	$.getJSON("/api/v1/chat/log", (data) => {
 		for (let i = 0; i < data.messages.length; i++) {
 			if (i > lastMessageId) {
 				lastMessageId = i;
@@ -58,6 +62,14 @@ function update() {
 				let message = data.messages[i];
 				let text = ConsoleColor.CYAN + message.sent_at + " " + ConsoleColor.PURPLE + message.username + ConsoleColor.YELLOW + " > " + ConsoleColor.RESET + message.content + ConsoleColor.RESET;
 				terminal.writeln(text);
+			}
+		}
+	}).fail((e) => {
+		if (e.status == 403 || e.status == 401) {
+			if (interval != null) {
+				terminal.writeln(ConsoleColor.RED + "No longer authorized to get chat logs. Please log in again and refresh this page" + ConsoleColor.RESET);
+				clearInterval(interval);
+				interval = null;
 			}
 		}
 	});

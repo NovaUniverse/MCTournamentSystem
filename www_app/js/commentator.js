@@ -15,16 +15,18 @@ $(() => {
 			console.log("Found key in localstorage");
 			console.log("Validating key");
 			$.getJSON("/api/system/status?commentator_key=" + accessKey, function (data) {
-				if (data.success !== false) {
-					console.log("Key is valid");
-					setInterval(() => {
-						update();
-					}, 500);
+				console.log("Key is valid");
+				setInterval(() => {
 					update();
-				} else {
+				}, 500);
+				update();
+			}).fail((e) => {
+				if (e.status == 401 || e.status == 403) {
 					console.log("Key is invalid");
 					window.localStorage.removeItem("commentator_key");
 					window.location.reload();
+				} else {
+					toastr.error("Server communication failure. Please refresh the page");
 				}
 			});
 		}
@@ -33,11 +35,13 @@ $(() => {
 	$("#btn_login").on("click", function () {
 		let key = $("#commentator_key").val();
 		$.getJSON("/api/system/status?commentator_key=" + key, function (data) {
-			if (data.success !== false) {
-				localStorage.setItem("commentator_key", key);
-				window.location.reload();
-			} else {
+			localStorage.setItem("commentator_key", key);
+			window.location.reload();
+		}).fail((e) => {
+			if (e.status == 401 || e.status == 403) {
 				toastr.error("Invalid key");
+			} else {
+				toastr.error("Server communication failure");
 			}
 		});
 	});
@@ -71,18 +75,18 @@ function update() {
 		let topPlayerScore = 0;
 
 		data.players.forEach(player => {
-			if(player.team_score > topTeamScore) {
+			if (player.team_score > topTeamScore) {
 				topTeamScore = player.team_score;
 				topTeamId = player.team_number;
 			}
 
-			if(player.score > topPlayerScore) {
+			if (player.score > topPlayerScore) {
 				topPlayerScore = player.score;
 				topPlayerName = player.username;
 			}
 		});
 
-		if(topTeamId == -1) {
+		if (topTeamId == -1) {
 			$("#top_team").text("N/A");
 		} else {
 			let topTeamInfo = $("<span></span>");
@@ -97,7 +101,7 @@ function update() {
 			$("#top_team").html(topTeamInfo);
 		}
 
-		if(topPlayerName == null) {
+		if (topPlayerName == null) {
 			$("#top_player").text("N/A");
 		} else {
 			$("#top_player").text(topPlayerName + " with " + topPlayerScore + " points");
@@ -142,11 +146,11 @@ function update() {
 
 				playerElement.find(".player-head").attr("src", "https://mc-heads.net/avatar/" + player.uuid);
 
-				playerElement.on("click", function() {
+				playerElement.on("click", function () {
 					let uuid = $(this).data("uuid");
-					
+
 					$.getJSON("/api/commentator/tp?commentator_key=" + accessKey + "&target=" + uuid, function (data) {
-						if(data.success) {
+						if (data.success) {
 							toastr.success("Teleport successful");
 						} else {
 							toastr.error("Failed to teleport to player. " + data.message);
@@ -163,8 +167,8 @@ function update() {
 				}
 			}
 
-			if(player.metadata.tnttag_tagged != undefined) {
-				if(player.metadata.tnttag_tagged) {
+			if (player.metadata.tnttag_tagged != undefined) {
+				if (player.metadata.tnttag_tagged) {
 					highRisk = true;
 				}
 			}
@@ -173,7 +177,7 @@ function update() {
 
 			//console.log(playerExtraData);
 
-			if(playerExtraData != null) {
+			if (playerExtraData != null) {
 				playerElement.find(".player-score").text(playerExtraData.score);
 				playerElement.find(".player-team-score").text(playerExtraData.team_score);
 
@@ -188,11 +192,11 @@ function update() {
 					}
 				}
 
-				playerElement.find(".player-team").html(playerTeamInfo);				
+				playerElement.find(".player-team").html(playerTeamInfo);
 			} else {
 				playerElement.find(".player-score").text("N/A");
 				playerElement.find(".player-team-score").text("N/A");
-				playerElement.find(".player-team").text("N/A");	
+				playerElement.find(".player-team").text("N/A");
 			}
 
 			playerElement.find(".player-name").text(player.username);

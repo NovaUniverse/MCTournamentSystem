@@ -30,8 +30,11 @@ const ServerConsole = {
 				if (this.isPrinting) {
 					return;
 				}
-				$.getJSON("/api/servers/logs?server=" + this.activeServer + "&access_token=" + TournamentSystem.token, (data) => {
-					if (data.success) {
+
+				$.ajax({
+					type: "GET",
+					url: "/api/v1/servers/logs?server=" + this.activeServer,
+					success: (data) => {
 						if (data.session_id != this.lastSessionId) {
 							console.log("New session id detected. Clearing console");
 							this.terminal.clear();
@@ -50,17 +53,22 @@ const ServerConsole = {
 							}
 							this.isPrinting = false;
 						}
-					} else {
-						console.error("Failed to fetch logs. " + data.error);
-					}
+					},
+					error: (xhr, ajaxOptions, thrownError) => {
+						console.error("Failed to fetch logs");
+						console.error(xhr);
+					},
+					dataType: "json"
 				});
 			}
 		}, 500);
 
 		this.terminal.writeln("Connecting to " + server + "...");
 
-		$.getJSON("/api/servers/log_session_id?server=" + this.activeServer + "&access_token=" + TournamentSystem.token, (data) => {
-			if (data.success) {
+		$.ajax({
+			type: "GET",
+			url: "/api/v1/servers/log_session_id?server=" + this.activeServer,
+			success: (data) => {
 				this.lastSessionId = data.session_id;
 				this.lastMessageId = -1;
 				if (data.session_id == undefined) {
@@ -69,9 +77,22 @@ const ServerConsole = {
 					this.terminal.writeln("Session id is: " + this.lastSessionId);
 				}
 				this.ready = true;
-			} else {
-				this.terminal.writeln("Failed to fetch session id. " + data.error);
-			}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				console.error(xhr);
+
+				if (xhr.status == 0 || xhr.status == 503) {
+					this.terminal.writeln("Backend communication failure");
+					return;
+				}
+
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 404 || xhr.status == 500) {
+					this.terminal.writeln("Failed to fetch session id. " + xhr.responseJSON.message);
+				} else {
+					this.terminal.writeln("Failed to fetch session id due to an unknown error");
+				}
+			},
+			dataType: "json"
 		});
 	},
 
@@ -82,6 +103,7 @@ const ServerConsole = {
 		console.log("Closing console");
 		$("#serverConsoleModal").modal("hide");
 		clearInterval(this.pollingIntervalId);
+		this.terminal.clear();
 		this.lastSessionId = "00000000-0000-0000-0000-000000000000";
 		this.lastMessageId = -1;
 		this.isPrinting = false;
@@ -128,17 +150,32 @@ const ServerConsole = {
 				$("#console_input_field").val("");
 				$.ajax({
 					type: "POST",
-					url: "/api/servers/run_command?server=" + this.activeServer + "&access_token=" + TournamentSystem.token,
+					url: "/api/v1/servers/run_command?server=" + this.activeServer,
 					data: command,
 					contentType: 'text/plain',
 					success: (data) => {
-						let response = JSON.parse(data);
-						if (response.success) {
-							toastr.info("Ran command: " + command + " on server " + this.activeServer);
-						} else {
-							toastr.error("Failed to execute command. " + response.message);
-							$("#console_input_field").val(command);
+						toastr.info("Ran command: " + command + " on server " + this.activeServer);
+					},
+					error: (xhr, ajaxOptions, thrownError) => {
+						console.error(xhr);
+
+						if (xhr.status == 0 || xhr.status == 503) {
+							toastr.error("Failed to communicate with backend server");
+							return;
 						}
+
+						if (xhr.status == 418) {
+							toastr.error("This server is offline. Please start the server before sending commands to it");
+							return;
+						}
+
+						if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+							toastr.error("Failed to execute command. " + xhr.responseJSON.message);
+						} else {
+							toastr.error("Failed to execute command due to unknown error");
+							toastr.error("Could not run server command due to an error. " + xhr.statusText);
+						}
+						$("#console_input_field").val(command);
 					}
 				});
 			}

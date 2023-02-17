@@ -1,10 +1,10 @@
 {
-    "typeAcquisition": {
-        "include": [
-            "jquery",
-            "jquery-confirm",
-            "bootstrap",
-            "toastr"
-        ]
-    }
+	"typeAcquisition": {
+		"include": [
+			"jquery",
+			"jquery-confirm",
+			"bootstrap",
+			"toastr"
+		]
+	}
 }

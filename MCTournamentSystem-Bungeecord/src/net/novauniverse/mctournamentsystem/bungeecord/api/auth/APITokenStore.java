@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 
@@ -24,10 +26,12 @@ public class APITokenStore {
 		return token;
 	}
 
+	@Nullable
 	public static final APIAccessToken getToken(String uuid) {
 		return APITokenStore.tokens.stream().filter(token -> token.getUuid().toString().equalsIgnoreCase(uuid)).findFirst().orElse(null);
 	}
 
+	@Nullable
 	public static final APIAccessToken getToken(UUID uuid) {
 		return APITokenStore.getToken(uuid.toString());
 	}

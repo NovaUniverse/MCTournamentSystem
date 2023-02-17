@@ -94,6 +94,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	private PingListeners pingListeners;
 
+	public WebServer getWebServer() {
+		return webServer;
+	}
+	
 	public Map<String, CustomTheme> getCustomAdminUIThemes() {
 		return customAdminUIThemes;
 	}
