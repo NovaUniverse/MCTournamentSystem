@@ -21,7 +21,7 @@ public class GetCommentatorGuestKeyHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
 		JSONObject json = new JSONObject();
 		json.put("commentator_guest_key", TournamentSystem.getInstance().getCommentatorGuestKey().getKey());
 		return json;

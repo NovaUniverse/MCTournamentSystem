@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -23,7 +24,7 @@ public class SetNextMinigameHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
 		JSONObject json = new JSONObject();
 
 		if (params.containsKey("name")) {

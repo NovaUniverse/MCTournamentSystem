@@ -176,7 +176,7 @@ public abstract class APIEndpoint implements HttpHandler {
 					if (!permissionCheckFail) {
 						try {
 							didProcess = true;
-							result = this.handleRequest(exchange, params, authentication);
+							result = this.handleRequest(exchange, params, authentication, method);
 						} catch (Exception e) {
 							result.put("success", false);
 							result.put("error", "exception");
@@ -222,11 +222,11 @@ public abstract class APIEndpoint implements HttpHandler {
 		os.write(responseByteArray);
 		os.close();
 
-		this.afterRequestProcessed(didProcess, result, exchange, params, authentication);
+		this.afterRequestProcessed(didProcess, result, exchange, params, authentication, method);
 	}
 
-	public void afterRequestProcessed(final boolean didProcess, final JSONObject response, final HttpExchange exchange, final Map<String, String> params, final Authentication authentication) {
+	public void afterRequestProcessed(final boolean didProcess, final JSONObject response, final HttpExchange exchange, final Map<String, String> params, final Authentication authentication, final HTTPMethod method) {
 	}
 
-	public abstract JSONObject handleRequest(final HttpExchange exchange, final Map<String, String> params, final Authentication authentication) throws Exception;
+	public abstract JSONObject handleRequest(final HttpExchange exchange, final Map<String, String> params, final Authentication authentication, final HTTPMethod method) throws Exception;
 }

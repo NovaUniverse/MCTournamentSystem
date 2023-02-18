@@ -170,7 +170,7 @@ $(function () {
 								toastr.error("Failed to communicate with backend server");
 								return;
 							}
-		
+
 							if (xhr.status == 401) {
 								toastr.error("Not authenticated. Try reloading the page");
 							} else if (xhr.status == 400) {
@@ -202,24 +202,64 @@ $(function () {
 		console.log("Target server: " + serverName);
 
 		if (sendTarget == "all") {
-			$.getJSON("/api/send/send_players?server=" + encodeURIComponent(serverName) + "&access_token=" + TournamentSystem.token, function (data) {
-				//console.log(data);
-				if (data.success) {
+			$.ajax({
+				type: "POST",
+				url: "/api/v1/send/send_players?server=" + encodeURIComponent(serverName),
+				data: JSON.stringify(importedData),
+				success: function (data) {
 					$('#select_server_modal').modal('hide');
 					toastr.success("Success");
-				} else {
-					toastr.error(data.message);
-				}
+				},
+				error: (xhr, ajaxOptions, thrownError) => {
+					console.error(xhr);
+					if (xhr.status == 0 || xhr.status == 503) {
+						toastr.error("Failed to communicate with backend server");
+						return;
+					}
+
+					if (xhr.status == 401) {
+						toastr.error("Not authenticated. Try reloading the page");
+					} else if (xhr.status == 400) {
+						toastr.error(xhr.responseJSON.message);
+					} else if (xhr.status == 500) {
+						toastr.error("An error occured. " + xhr.responseJSON.message);
+					} else if (xhr.status == 403) {
+						toastr.error("You dont have permission to send players");
+					} else {
+						toastr.error("Failed to send players. " + xhr.statusText);
+					}
+				},
+				dataType: "json"
 			});
 		} else {
-			$.getJSON("/api/send/send_player?server=" + encodeURIComponent(serverName) + "&player=" + encodeURIComponent(sendTarget) + "&access_token=" + TournamentSystem.token, function (data) {
-				//console.log(data);
-				if (data.success) {
+			$.ajax({
+				type: "POST",
+				url: "/api/send/send_player?server=" + encodeURIComponent(serverName) + "&player=" + encodeURIComponent(sendTarget),
+				data: JSON.stringify(importedData),
+				success: function (data) {
 					$('#select_server_modal').modal('hide');
 					toastr.success("Success");
-				} else {
-					toastr.error(data.message);
-				}
+				},
+				error: (xhr, ajaxOptions, thrownError) => {
+					console.error(xhr);
+					if (xhr.status == 0 || xhr.status == 503) {
+						toastr.error("Failed to communicate with backend server");
+						return;
+					}
+
+					if (xhr.status == 401) {
+						toastr.error("Not authenticated. Try reloading the page");
+					} else if (xhr.status == 400) {
+						toastr.error(xhr.responseJSON.message);
+					} else if (xhr.status == 500) {
+						toastr.error("An error occured. " + xhr.responseJSON.message);
+					} else if (xhr.status == 403) {
+						toastr.error("You dont have permission to send players");
+					} else {
+						toastr.error("Failed to send player. " + xhr.statusText);
+					}
+				},
+				dataType: "json"
 			});
 		}
 	});

@@ -27,7 +27,7 @@ public class ShutdownHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
 		JSONObject json = new JSONObject();
 		Log.info("TournamentSystem", "Shutdown initialised by user " + authentication.getUser().getUsername());
 
@@ -44,7 +44,7 @@ public class ShutdownHandler extends APIEndpoint {
 	}
 
 	@Override
-	public void afterRequestProcessed(boolean didProcess, JSONObject response, HttpExchange exchange, Map<String, String> params, Authentication authentication) {
+	public void afterRequestProcessed(boolean didProcess, JSONObject response, HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) {
 		if (didProcess) {
 			TournamentSystem.getInstance().getWebServer().kill();
 		}

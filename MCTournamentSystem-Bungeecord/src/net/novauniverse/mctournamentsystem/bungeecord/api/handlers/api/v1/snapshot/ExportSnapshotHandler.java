@@ -21,7 +21,7 @@ public class ExportSnapshotHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication) throws Exception {
+	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
 		JSONObject result = new JSONObject();
 		JSONArray players = new JSONArray();
 		JSONArray teams = new JSONArray();
