@@ -754,7 +754,7 @@ const TournamentSystem = {
 	clearNextMinigame: () => {
 		$.ajax({
 			type: "POST",
-			url: "/api/v1/game/start_game",
+			url: "/api/v1/next_minigame",
 			success: (data) => {
 				toastr.success("Next minigame cleared");
 				$("#next_minigame_model").modal("hide");
@@ -779,7 +779,8 @@ const TournamentSystem = {
 	setNextMinigame: (name) => {
 		$.ajax({
 			type: "POST",
-			url: "/api/v1/game/start_game",
+			url: "/api/v1/next_minigame",
+			data: name,
 			success: (data) => {
 				toastr.success("Next minigame cleared");
 				$("#next_minigame_model").modal("hide");
@@ -797,18 +798,7 @@ const TournamentSystem = {
 				}
 				console.error(xhr);
 			},
-			dataType: "json"
-		});
-
-		/api/v1/next_minigame
-		$.getJSON("/api/next_minigame/set?name=" + encodeURIComponent(name) + "&access_token=" + TournamentSystem.token, function (data) {
-			//console.log(data);
-			if (data.success) {
-				toastr.success("Next minigame updated");
-				$("#next_minigame_model").modal("hide");
-			} else {
-				toastr.error(data.message);
-			}
+			dataType: "text"
 		});
 	},
 
@@ -1137,12 +1127,14 @@ const TournamentSystem = {
 
 					newElement.find(".start-server-button").attr("data-server-name", server.name);
 					newElement.find(".kill-server-button").attr("data-server-name", server.name);
+					newElement.find(".stop-server-button").attr("data-server-name", server.name);
 					newElement.find(".get-server-logs-button").attr("data-server-name", server.name);
 					newElement.find(".start-server-console-button").attr("data-server-name", server.name);
 
 					if (!hasPermission("MANAGE_SERVERS")) {
 						newElement.find(".start-server-button").attr("disabled", true);
 						newElement.find(".kill-server-button").attr("disabled", true);
+						newElement.find(".stop-server-button").attr("disabled", true);
 						newElement.find(".get-server-logs-button").attr("disabled", true);
 						newElement.find(".start-server-console-button").attr("disabled", true);
 					}
@@ -1162,7 +1154,7 @@ const TournamentSystem = {
 								confirm: function () {
 									$.ajax({
 										type: "POST",
-										url: "/api/servers/start?server=" + serverName,
+										url: "/api/v1/servers/start?server=" + serverName,
 										data: $("#json_output").text(),
 										success: function (data) {
 											toastr.success("Success");
@@ -1203,7 +1195,7 @@ const TournamentSystem = {
 								confirm: function () {
 									$.ajax({
 										type: "POST",
-										url: "/api/servers/stop?server=" + serverName,
+										url: "/api/v1/servers/stop?server=" + serverName,
 										success: function (data) {
 											toastr.success("Success");
 										},
@@ -1233,9 +1225,53 @@ const TournamentSystem = {
 						});
 					});
 
+					newElement.find(".stop-server-button").on("click", function () {
+						let serverName = $(this).data("server-name");
+						$.confirm({
+							title: 'Confirm stop',
+							theme: 'dark',
+							content: 'Do you want to send the stop command to the server ' + serverName,
+							buttons: {
+								confirm: function () {
+									$.ajax({
+										type: "POST",
+										url: "/api/v1/servers/run_command?server=" + serverName,
+										data: "stop",
+										contentType: 'text/plain',
+										success: (data) => {
+											toastr.info("Ran command: stop on server " + serverName);
+										},
+										error: (xhr, ajaxOptions, thrownError) => {
+											console.error(xhr);
+					
+											if (xhr.status == 0 || xhr.status == 503) {
+												toastr.error("Failed to communicate with backend server");
+												return;
+											}
+					
+											if (xhr.status == 418) {
+												toastr.error("This server is offline. Please start the server before sending commands to it");
+												return;
+											}
+					
+											if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+												toastr.error("Failed to execute command. " + xhr.responseJSON.message);
+											} else {
+												toastr.error("Failed to execute command due to unknown error");
+												toastr.error("Could not run server command due to an error. " + xhr.statusText);
+											}
+											$("#console_input_field").val(command);
+										}
+									});
+								},
+								cancel: function () { }
+							}
+						});
+					});
+
 					newElement.find(".get-server-logs-button").on("click", function () {
 						let serverName = $(this).data("server-name");
-						$.getJSON("/api/servers/logs?server=" + serverName, (response) => {
+						$.getJSON("/api/v1/servers/logs?server=" + serverName, (response) => {
 							if (response.success) {
 								toastr.success("Opening logs in popup");
 								let content = "";
@@ -1289,9 +1325,11 @@ const TournamentSystem = {
 				if (hasPermission("MANAGE_SERVERS")) {
 					if (server.is_running) {
 						$(this).find(".kill-server-button").attr("disabled", false);
+						$(this).find(".stop-server-button").attr("disabled", false);
 						$(this).find(".start-server-button").attr("disabled", true);
 					} else {
 						$(this).find(".kill-server-button").attr("disabled", true);
+						$(this).find(".stop-server-button").attr("disabled", true);
 						$(this).find(".start-server-button").attr("disabled", false);
 					}
 				}
