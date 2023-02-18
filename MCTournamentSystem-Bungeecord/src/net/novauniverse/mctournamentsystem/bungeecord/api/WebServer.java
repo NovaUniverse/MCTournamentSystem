@@ -45,9 +45,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.E
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.UploadTeamHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.LoginHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.WhoAmIHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.AddWhitelistHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ManageWhitelistUserHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ClearWhitelistHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.RemoveWhitelistHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.StaticFileHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.FileNotFoundHandler;
@@ -103,8 +102,7 @@ public class WebServer {
 		createContext("/api/v1/staff/set_staff", new SetStaffHandler());
 
 		// Whitelist
-		createContext("/api/v1/whitelist/add", new AddWhitelistHandler());
-		createContext("/api/v1/whitelist/remove", new RemoveWhitelistHandler());
+		createContext("/api/v1/whitelist/users", new ManageWhitelistUserHandler());
 		createContext("/api/v1/whitelist/clear", new ClearWhitelistHandler());
 
 		// Commentator

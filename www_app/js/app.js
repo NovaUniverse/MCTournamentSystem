@@ -401,8 +401,8 @@ $(function () {
 		$.getJSON("https://mojangapi.novauniverse.net/username_to_uuid/" + username, function (data) {
 			let uuid = data.uuid;
 			$.ajax({
-				type: "POST",
-				url: "/api/whitelist/add?uuid=" + uuid,
+				type: "PUT",
+				url: "/api/v1/whitelist/users?uuid=" + uuid,
 				success: (data) => {
 					toastr.info("User added");
 					$("#add_whitelist_modal").modal("hide");
@@ -873,7 +873,7 @@ const TournamentSystem = {
 				confirm: () => {
 					$.ajax({
 						type: "POST",
-						url: "/api/whitelist/clear",
+						url: "/api/v1/whitelist/clear",
 						success: (data) => {
 							toastr.success("Whitelist cleared");
 						},
@@ -1070,8 +1070,8 @@ const TournamentSystem = {
 					console.log("Remove clicked for " + uuidToRemove);
 
 					$.ajax({
-						type: "POST",
-						url: "/api/whitelist/remove?uuid=" + uuidToRemove,
+						type: "DELETE",
+						url: "/api/v1/whitelist/users?uuid=" + uuidToRemove,
 						success: (data) => {
 							toastr.success("Success");
 						},
