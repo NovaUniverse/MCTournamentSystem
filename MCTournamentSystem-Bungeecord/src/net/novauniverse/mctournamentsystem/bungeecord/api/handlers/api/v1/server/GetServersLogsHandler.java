@@ -22,11 +22,6 @@ public class GetServersLogsHandler extends APIEndpoint {
 	public UserPermission getRequiredPermission() {
 		return UserPermission.MANAGE_SERVERS;
 	}
-
-	@Override
-	public boolean shouldPrettyPrintOutput() {
-		return false;
-	}
 	
 	@Override
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {

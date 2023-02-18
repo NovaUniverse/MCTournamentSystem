@@ -77,10 +77,6 @@ public abstract class APIEndpoint implements HttpHandler {
 		return null;
 	}
 
-	public boolean shouldPrettyPrintOutput() {
-		return true;
-	}
-
 	public boolean isRequireAuthentication() {
 		return requireAuthentication;
 	}
@@ -219,7 +215,7 @@ public abstract class APIEndpoint implements HttpHandler {
 		}
 
 		String responseString;
-		if (shouldPrettyPrintOutput()) {
+		if (params.containsKey("pretty")) {
 			responseString = result.toString(4);
 		} else {
 			responseString = result.toString();
