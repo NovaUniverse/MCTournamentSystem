@@ -23,7 +23,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APITokenStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
-import net.zeeraa.novacore.commons.log.Log;
 
 // If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
 public abstract class APIEndpoint implements HttpHandler {
