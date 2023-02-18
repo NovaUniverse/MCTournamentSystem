@@ -15,8 +15,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commen
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.GetCommentatorGuestKeyHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.TriggerHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.nextmingame.ResetNextMinigameHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.nextmingame.SetNextMinigameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.nextmingame.NextMinigameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.publicapi.PublicStatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.send.SendPlayersHandler;
@@ -123,8 +122,7 @@ public class WebServer {
 		createContext("/api/v1/chat/log", new GetChatLogHandler());
 
 		// Next minigame
-		createContext("/api/v1/next_minigame/set", new SetNextMinigameHandler());
-		createContext("/api/v1/next_minigame/reset", new ResetNextMinigameHandler());
+		createContext("/api/v1/next_minigame", new NextMinigameHandler());
 
 		// Servers
 		createContext("/api/v1/servers/get_servers", new GetServersHandler());

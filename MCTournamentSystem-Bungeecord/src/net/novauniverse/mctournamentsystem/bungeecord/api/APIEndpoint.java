@@ -5,10 +5,12 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -28,10 +30,20 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermissi
 public abstract class APIEndpoint implements HttpHandler {
 	private List<HTTPMethod> allowedMethods;
 	private boolean requireAuthentication = false;
+	private Map<HTTPMethod, UserPermission> methodBasedPermissions;
 
 	public APIEndpoint(boolean requireAuthentication) {
 		this.allowedMethods = new ArrayList<>();
 		this.requireAuthentication = requireAuthentication;
+		this.methodBasedPermissions = new HashMap<>();
+	}
+
+	public Map<HTTPMethod, UserPermission> getMethodBasedPermissions() {
+		return methodBasedPermissions;
+	}
+
+	protected void setMethodBasedPermission(@Nonnull HTTPMethod method, @Nonnull UserPermission permission) {
+		this.methodBasedPermissions.put(method, permission);
 	}
 
 	protected void setAllowedMethods(HTTPMethod... httpMethods) {
@@ -152,7 +164,7 @@ public abstract class APIEndpoint implements HttpHandler {
 					result.put("success", false);
 					result.put("error", "unauthorized");
 					result.put("message", "Access token is missing or invalid. Please login to use this system");
-					result.put("http_response_code", 403);
+					result.put("http_response_code", 401);
 				} else {
 					if (requireAuthentication && authentication == null && TournamentSystem.getInstance().isWebserverDevelopmentMode()) {
 						authentication = APITokenStore.DUMMY_TOKEN;
@@ -165,9 +177,28 @@ public abstract class APIEndpoint implements HttpHandler {
 							if (!authentication.getUser().hasPermission(requiredPermission)) {
 								permissionCheckFail = true;
 								result.put("success", false);
-								result.put("error", "unauthorized");
+								result.put("error", "access_denied");
 								result.put("message", "You are messing the required permission " + requiredPermission.name() + " to perform this request");
 								result.put("http_response_code", 403);
+							}
+						}
+					}
+
+					UserPermission requiredMethodPermission = this.getMethodBasedPermissions().get(method);
+					if (requiredMethodPermission != null) {
+						if (authentication == null && !TournamentSystem.getInstance().isWebserverDevelopmentMode()) {
+							result.put("success", false);
+							result.put("error", "unauthorized");
+							result.put("message", "This endopint requires you to be logged in when using that method");
+							result.put("http_response_code", 401);
+							permissionCheckFail = true;
+						} else {
+							if (!authentication.getUser().hasPermission(requiredMethodPermission) && !TournamentSystem.getInstance().isWebserverDevelopmentMode()) {
+								result.put("success", false);
+								result.put("error", "access_denied");
+								result.put("message", "This endopint requires you to have the " + requiredMethodPermission.name() + " permission to send " + method.name() + " requests");
+								result.put("http_response_code", 403);
+								permissionCheckFail = true;
 							}
 						}
 					}

@@ -752,18 +752,55 @@ const TournamentSystem = {
 	},
 
 	clearNextMinigame: () => {
-		$.getJSON("/api/next_minigame/reset" + "?access_token=" + TournamentSystem.token, function (data) {
-			//console.log(data);
-			if (data.success) {
+		$.ajax({
+			type: "POST",
+			url: "/api/v1/game/start_game",
+			success: (data) => {
 				toastr.success("Next minigame cleared");
 				$("#next_minigame_model").modal("hide");
-			} else {
-				toastr.error(data.message);
-			}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+					toastr.error(xhr.responseJSON.message);
+				} else {
+					toastr.error("Failed to set next game due to an unknown error");
+				}
+				console.error(xhr);
+			},
+			dataType: "json"
 		});
 	},
 
 	setNextMinigame: (name) => {
+		$.ajax({
+			type: "POST",
+			url: "/api/v1/game/start_game",
+			success: (data) => {
+				toastr.success("Next minigame cleared");
+				$("#next_minigame_model").modal("hide");
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+					toastr.error(xhr.responseJSON.message);
+				} else {
+					toastr.error("Failed to set next game due to an unknown error");
+				}
+				console.error(xhr);
+			},
+			dataType: "json"
+		});
+
+		/api/v1/next_minigame
 		$.getJSON("/api/next_minigame/set?name=" + encodeURIComponent(name) + "&access_token=" + TournamentSystem.token, function (data) {
 			//console.log(data);
 			if (data.success) {
