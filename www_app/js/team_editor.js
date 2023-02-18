@@ -151,7 +151,7 @@ $(function () {
 
 	setCookie("exported_team_data", "", 0);
 
-	$.getJSON("/api/system/status", function (data) {
+	$.getJSON("/api/v1/system/status", function (data) {
 		console.log("It seems like the team editor is running on the same web server as TournamentSystem");
 		$("#back_to_admin_li").show();
 		$("#btn_upload_team_data").show();
@@ -160,7 +160,7 @@ $(function () {
 			expandTeamSize(data.system.team_size);
 		}
 
-		$.getJSON("/api/team/export_team_data", function (data) {
+		$.getJSON("/api/v1/team/export_team_data", function (data) {
 			data.teams_data.forEach(element => {
 				addPlayer(element.uuid, element.username, element.team_number, element.metadata);
 			});

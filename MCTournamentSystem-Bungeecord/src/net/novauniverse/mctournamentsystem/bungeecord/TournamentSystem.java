@@ -519,7 +519,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			}
 
 			Log.info("Starting web server on port " + port);
-			webServer = new WebServer(port, wwwAppFile.getPath());
+			webServer = new WebServer(port, wwwAppFile);
 			Log.success("Web server started");
 		} catch (Exception e) {
 			Log.fatal("Failed to start web server");

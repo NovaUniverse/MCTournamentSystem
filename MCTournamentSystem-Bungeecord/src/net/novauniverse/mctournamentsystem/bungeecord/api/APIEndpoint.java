@@ -23,6 +23,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APITokenStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.zeeraa.novacore.commons.log.Log;
 
 // If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
 public abstract class APIEndpoint implements HttpHandler {
@@ -86,11 +87,15 @@ public abstract class APIEndpoint implements HttpHandler {
 			authentication = APITokenStore.getToken(params.get("access_token"));
 		} else {
 			if (exchange.getRequestHeaders().containsKey("Cookie")) {
-				for (String cookie : exchange.getRequestHeaders().get("Cookie")) {
-					if (cookie.startsWith("ts_access_token=")) {
-						String token = cookie.split("ts_access_token=")[1];
-						usedCookie = true;
-						authentication = APITokenStore.getToken(token);
+				for (String header : exchange.getRequestHeaders().get("Cookie")) {
+					String[] cookies = header.split(";");
+					for (String cookie : cookies) {
+						cookie = cookie.trim();
+						if (cookie.startsWith("ts_access_token=")) {
+							String token = cookie.split("ts_access_token=")[1];
+							usedCookie = true;
+							authentication = APITokenStore.getToken(token);
+						}
 					}
 				}
 			}
@@ -101,7 +106,7 @@ public abstract class APIEndpoint implements HttpHandler {
 		HTTPMethod method = null;
 
 		boolean didProcess = false;
-		
+
 		try {
 			method = HTTPMethod.valueOf(exchange.getRequestMethod().toUpperCase());
 		} catch (Exception e) {
@@ -220,8 +225,8 @@ public abstract class APIEndpoint implements HttpHandler {
 		this.afterRequestProcessed(didProcess, result, exchange, params, authentication);
 	}
 
-	public void afterRequestProcessed(final boolean didProcess, final JSONObject response, final HttpExchange exchange,final  Map<String, String> params, final Authentication authentication) {
+	public void afterRequestProcessed(final boolean didProcess, final JSONObject response, final HttpExchange exchange, final Map<String, String> params, final Authentication authentication) {
 	}
 
-	public abstract JSONObject handleRequest(final HttpExchange exchange,final Map<String, String> params, final Authentication authentication) throws Exception;
+	public abstract JSONObject handleRequest(final HttpExchange exchange, final Map<String, String> params, final Authentication authentication) throws Exception;
 }

@@ -1,5 +1,6 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitel
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.RemoveWhitelistHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.StaticFileHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.RedirectToApp;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.FileNotFoundHandler;
 import net.zeeraa.novacore.commons.log.Log;
 
 // If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
@@ -58,12 +59,12 @@ public class WebServer {
 	private HttpServer httpServer;
 	private boolean hasShutDown;
 
-	public WebServer(int port, String appRoot) throws IOException {
+	public WebServer(int port, File appRoot) throws IOException {
 		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
 		hasShutDown = false;
 
 		// Redirect
-		createContext("/", new RedirectToApp());
+		createContext("/", new FileNotFoundHandler(appRoot));
 
 		// System
 		createContext("/api/v1/system/status", new StatusHandler());
@@ -134,7 +135,7 @@ public class WebServer {
 		createContext("/api/v1/servers/run_command", new SendServerCommandHandler());
 
 		// File index
-		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot, "index.html");
+		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot.getAbsolutePath(), "index.html");
 		createContext("/app", sfh);
 
 		// Icon

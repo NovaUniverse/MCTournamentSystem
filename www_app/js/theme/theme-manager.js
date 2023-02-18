@@ -110,7 +110,7 @@ $(function () {
 
 	setTimeout(() => updateInteractiveBackgroundDisplayState(), 1);
 
-	$.getJSON("/api/system/custom_themes", (data) => {
+	$.getJSON("/api/v1/system/custom_themes", (data) => {
 		console.log(data);
 
 		whitelistedCustomThemeHashes = [];

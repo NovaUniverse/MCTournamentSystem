@@ -22,7 +22,7 @@ $(function () {
 
 		$.ajax({
 			type: "POST",
-			url: "/api/system/dynamicconfig/reload",
+			url: "/api/v1/system/dynamicconfig/reload",
 			success: (data) => {
 				if (data.success) {
 					toastr.success("Dynamic config reloaded");
@@ -83,7 +83,7 @@ $(function () {
 
 	$("#btn_export_snapshot").on("click", function () {
 		toastr.info("Exporting snapshot...");
-		$.getJSON("/api/snapshot/export", function (data) {
+		$.getJSON("/api/v1/snapshot/export", function (data) {
 			if (!data.success) {
 				toastr.error("Could not export score snapshot");
 				return;
@@ -159,37 +159,32 @@ $(function () {
 				confirm: function () {
 					$.ajax({
 						type: "POST",
-						url: "/api/snapshot/import",
+						url: "/api/v1/snapshot/import",
 						data: JSON.stringify(importedData),
 						success: function (data) {
-							console.log(data);
-							if (data.success) {
-								toastr.info("Snapshot imported");
+							toastr.info("Snapshot imported");
+						},
+						error: (xhr, ajaxOptions, thrownError) => {
+							console.error(xhr);
+							if (xhr.status == 0 || xhr.status == 503) {
+								toastr.error("Failed to communicate with backend server");
+								return;
+							}
+		
+							if (xhr.status == 401) {
+								toastr.error("Not authenticated. Try reloading the page");
+							} else if (xhr.status == 400) {
+								toastr.error(xhr.responseJSON.message);
+							} else if (xhr.status == 500) {
+								toastr.error("An error occured. " + xhr.responseJSON.message);
+							} else if (xhr.status == 403) {
+								toastr.error("You dont have permission to import score snapshots");
 							} else {
-								toastr.error("Failed to upload snapshot\n" + data.message);
+								toastr.error("Clould not import score snapshot. " + xhr.statusText);
 							}
 						},
 						dataType: "json"
 					});
-				},
-				error: (xhr, ajaxOptions, thrownError) => {
-					console.error(xhr);
-					if (xhr.status == 0 || xhr.status == 503) {
-						toastr.error("Failed to communicate with backend server");
-						return;
-					}
-
-					if (xhr.status == 401) {
-						toastr.error("Not authenticated. Try reloading the page");
-					} else if (xhr.status == 400) {
-						toastr.error("Bad request. Please verify that the JSON file is a valid score snapshot file");
-					} else if (xhr.status == 500) {
-						toastr.error("An error occured. " + xhr.responseJSON.message);
-					} else if (xhr.status == 403) {
-						toastr.error("You dont have permission to import score snapshots");
-					} else {
-						toastr.error("Clould not import score snapshot. " + xhr.statusText);
-					}
 				},
 				cancel: function () { }
 			}
@@ -460,7 +455,7 @@ $(function () {
 		});
 	});
 
-	$.getJSON("/api/system/status", function (data) {
+	$.getJSON("/api/v1/system/status", function (data) {
 		TournamentSystem.lastData = data;
 
 		TournamentSystem.activeServer = data.active_server;
@@ -506,7 +501,7 @@ $(function () {
 
 		if (hasPermission("VIEW_COMMENTATOR_GUEST_KEY")) {
 			console.log("Fetching commentator guest key");
-			$.getJSON("/api/commentator/get_guest_key", (guestKeyData) => {
+			$.getJSON("/api/v1/commentator/get_guest_key", (guestKeyData) => {
 				$("#commentator_guest_key").val(guestKeyData.commentator_guest_key);
 			}).fail(function (e) {
 				toastr.error("Failed to fetch commentator guest key");
@@ -519,7 +514,7 @@ $(function () {
 		setInterval(() => TournamentSystem.updateServers(), 1000);
 		setInterval(() => TournamentSystem.update(), 1000);
 
-		$.getJSON("/api/staff/get_staff", (staffData) => {
+		$.getJSON("/api/v1/staff/get_staff", (staffData) => {
 			for (let i = 0; i < staffData.staff_roles.length; i++) {
 				let role = staffData.staff_roles[i];
 				TournamentSystem.staffRoles.push(role);
@@ -598,7 +593,7 @@ const TournamentSystem = {
 	exportSummary: () => {
 		toastr.info("Exporting...");
 		console.log("Data export starting");
-		$.getJSON("/api/system/status", function (data) {
+		$.getJSON("/api/v1/system/status", function (data) {
 			let dataExport = {};
 			let servers = [];
 			let players = [];
@@ -655,7 +650,7 @@ const TournamentSystem = {
 	broadcastMessage: (text) => {
 		$.ajax({
 			type: "POST",
-			url: "/api/system/broadcast",
+			url: "/api/v1/system/broadcast",
 			data: text,
 			success: (data) => {
 				toastr.success("Message sent");
@@ -691,7 +686,7 @@ const TournamentSystem = {
 	shutdown: () => {
 		$.ajax({
 			type: "POST",
-			url: "/api/system/shutdown",
+			url: "/api/v1/system/shutdown",
 			success: (data) => {
 				toastr.info("Shutting down proxy server");
 			},
@@ -743,7 +738,7 @@ const TournamentSystem = {
 	startGame: () => {
 		$.ajax({
 			type: "POST",
-			url: "/api/game/start_game",
+			url: "/api/v1/game/start_game",
 			success: (data) => {
 				toastr.success("Success");
 			},
@@ -1038,7 +1033,7 @@ const TournamentSystem = {
 	},
 
 	updateServers: () => {
-		$.getJSON("/api/servers/get_servers", (data) => {
+		$.getJSON("/api/v1/servers/get_servers", (data) => {
 			let servers = [];
 			data.servers.forEach(server => {
 				servers.push(server);
@@ -1240,7 +1235,7 @@ const TournamentSystem = {
 	},
 
 	update: () => {
-		$.getJSON("/api/system/status", (data) => {
+		$.getJSON("/api/v1/system/status", (data) => {
 			TournamentSystem.lastData = data;
 
 			if (TournamentSystem.activeServer != data.active_server) {
