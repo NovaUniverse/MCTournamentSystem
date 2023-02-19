@@ -109,7 +109,7 @@ $(function () {
 
 			if (xhr.status == 500) {
 				toastr.error("An error occured while exporting score snapshot. " + xhr.responseJSON.message);
-			} else if (xhr.status == 401) {
+			} else if (xhr.status == 401 || xhr.status == 403) {
 				toastr.error("Not authenticated. Try reloading the page");
 			} else {
 				toastr.error("Could not export score snapshot. " + xhr.statusText);
@@ -413,14 +413,12 @@ $(function () {
 						return;
 					}
 
-					if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+					if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 						toastr.error(xhr.responseJSON.message);
 					} else {
 						toastr.error("Failed to add user to whitelist due to an unknown error");
-						console.error(xhr);
-						console.error(ajaxOptions);
-						console.error(thrownError);
 					}
+					console.error(xhr);
 				},
 				dataType: "json"
 			});
@@ -678,7 +676,7 @@ const TournamentSystem = {
 				return;
 			}
 
-			if (xhr.status == 401) {
+			if (xhr.status == 401 || xhr.status == 403) {
 				toastr.error("Not authenticated. Try reloading the page");
 				return;
 			}
@@ -765,7 +763,7 @@ const TournamentSystem = {
 					return;
 				}
 
-				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 					toastr.error(xhr.responseJSON.message);
 				} else {
 					toastr.error("Failed to set next game due to an unknown error");
@@ -791,7 +789,7 @@ const TournamentSystem = {
 					return;
 				}
 
-				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 					toastr.error(xhr.responseJSON.message);
 				} else {
 					toastr.error("Failed to set next game due to an unknown error");
@@ -820,7 +818,7 @@ const TournamentSystem = {
 					return;
 				}
 
-				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 					toastr.error(xhr.responseJSON.message);
 				} else {
 					toastr.error("Failed to start game due to an unknown error");
@@ -851,7 +849,7 @@ const TournamentSystem = {
 					return;
 				}
 
-				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 					toastr.error(xhr.responseJSON.message);
 				} else {
 					toastr.error("Failed to activate trigger due to an unknown error");
@@ -883,7 +881,7 @@ const TournamentSystem = {
 								return;
 							}
 
-							if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+							if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 								toastr.error(xhr.responseJSON.message);
 							} else {
 								toastr.error("Failed to clear whitelist due to an unknown error");
@@ -930,7 +928,7 @@ const TournamentSystem = {
 					return;
 				}
 
-				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 					$("#chat_log").text(xhr.responseJSON.message);
 				} else {
 					$("#chat_log").text("Failed to open chat log due to an unknown error");
@@ -1013,16 +1011,25 @@ const TournamentSystem = {
 			});
 
 			$.ajax({
-				type: "POST",
-				url: "/api/staff/set_staff?access_token=" + TournamentSystem.token,
+				type: "PUT",
+				url: "/api/v1/staff",
 				data: JSON.stringify(TournamentSystem.staffTeam),
 				success: function (data) {
-					//console.log(data);
-					if (data.success) {
-						toastr.info("Staff updated");
-					} else {
-						toastr.error("Failed to upload staff settings. " + data.message);
+					toastr.info("Staff updated");
+
+				},
+				error: (xhr) => {
+					if (xhr.status == 0 || xhr.status == 503) {
+						toastr.error("Failed to communicate with backend server");
+						return;
 					}
+
+					if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+						toastr.error(xhr.responseJSON.message);
+					} else {
+						toastr.error("Failed to update staff list for unknown reason");
+					}
+					console.error(xhr);
 				},
 				dataType: "json"
 			});
@@ -1081,7 +1088,7 @@ const TournamentSystem = {
 								return;
 							}
 
-							if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+							if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 								toastr.error(xhr.responseJSON.message);
 							} else {
 								toastr.error("Failed to remove user whitelist due to an unknown error");
@@ -1243,18 +1250,18 @@ const TournamentSystem = {
 										},
 										error: (xhr, ajaxOptions, thrownError) => {
 											console.error(xhr);
-					
+
 											if (xhr.status == 0 || xhr.status == 503) {
 												toastr.error("Failed to communicate with backend server");
 												return;
 											}
-					
+
 											if (xhr.status == 418) {
 												toastr.error("This server is offline. Please start the server before sending commands to it");
 												return;
 											}
-					
-											if (xhr.status == 405 || xhr.status == 403 || xhr.status == 500) {
+
+											if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 												toastr.error("Failed to execute command. " + xhr.responseJSON.message);
 											} else {
 												toastr.error("Failed to execute command due to unknown error");

@@ -27,8 +27,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.StopServersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapshot.ExportSnapshotHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapshot.ImportSnapshotHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.GetStaffHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.SetStaffHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.StaffHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.BroadcastHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ClearPlayersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.GetCustomThemesHandler;
@@ -98,8 +97,7 @@ public class WebServer {
 		createContext("/api/v1/user/login", new LoginHandler());
 
 		// Staff
-		createContext("/api/v1/staff/get_staff", new GetStaffHandler());
-		createContext("/api/v1/staff/set_staff", new SetStaffHandler());
+		createContext("/api/v1/staff", new StaffHandler());
 
 		// Whitelist
 		createContext("/api/v1/whitelist/users", new ManageWhitelistUserHandler());
