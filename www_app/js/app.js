@@ -200,12 +200,10 @@ $(function () {
 		let serverName = $('#select_server option:selected').val();
 
 		console.log("Target server: " + serverName);
-
 		if (sendTarget == "all") {
 			$.ajax({
 				type: "POST",
 				url: "/api/v1/send/send_players?server=" + encodeURIComponent(serverName),
-				data: JSON.stringify(importedData),
 				success: function (data) {
 					$('#select_server_modal').modal('hide');
 					toastr.success("Success");
@@ -234,8 +232,7 @@ $(function () {
 		} else {
 			$.ajax({
 				type: "POST",
-				url: "/api/send/send_player?server=" + encodeURIComponent(serverName) + "&player=" + encodeURIComponent(sendTarget),
-				data: JSON.stringify(importedData),
+				url: "/api/v1/send/send_player?server=" + encodeURIComponent(serverName) + "&player=" + encodeURIComponent(sendTarget),
 				success: function (data) {
 					$('#select_server_modal').modal('hide');
 					toastr.success("Success");
