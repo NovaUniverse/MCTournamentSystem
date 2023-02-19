@@ -5,15 +5,12 @@
 	<packaging>pom</packaging>
 	<version>PARENT</version>
 	<name>MCTournamentSystem Parent</name>
-
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
 	<url>https://novauniverse.net</url>
-
 	<distributionManagement>
 		<snapshotRepository>
 			<id>novauniverse2</id>
@@ -24,7 +21,6 @@
 			<url>https://nexus2.novauniverse.net/repository/novauniverse/</url>
 		</repository>
 	</distributionManagement>
-
 	<modules>
 		<module>MCTournamentSystem-Commons</module>
 		<module>MCTournamentSystem-Bungeecord</module>
@@ -35,11 +31,7 @@
 		<module>MCTournamentSystem-Updater</module>
 		<module>MCTournamentSystem-ResourcePackManager</module>
 	</modules>
-
-	<build>
-	</build>
-
+	<build></build>
 	<repositories></repositories>
-
 	<dependencies></dependencies>
 </project>

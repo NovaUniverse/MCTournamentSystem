@@ -17,8 +17,8 @@ function expandTeamSize(size) {
 }
 
 function updateMetadataDisplayState() {
-	$(".player-metadata-objects").each(function() {
-		if(showMetadata) {
+	$(".player-metadata-objects").each(function () {
+		if (showMetadata) {
 			$(this).show();
 		} else {
 			$(this).hide();
@@ -27,6 +27,10 @@ function updateMetadataDisplayState() {
 }
 
 $(function () {
+	if (localStorage.getItem("token") != null) {
+		setCookie("ts_access_token", localStorage.getItem("token"), 999999);
+	}
+
 	$("#back_to_admin_li").hide();
 	$("#btn_upload_team_data").hide();
 
@@ -130,44 +134,60 @@ $(function () {
 	$("#btn_upload_team_data").on("click", function () {
 		$.ajax({
 			type: "POST",
-			url: "/api/team/upload_team?access_token=" + localStorage.getItem("token"),
+			url: "/api/v1/team/upload_team",
 			data: $("#json_output").text(),
 			success: function (data) {
 				console.log(data);
-				if (data.success) {
-					toastr.info("Team uploaded to TournamentSystem");
-				} else {
-					toastr.error("Failed to upload team\n" + data.message);
+				toastr.info("Team uploaded to TournamentSystem");
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
 				}
+
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+					toastr.error(xhr.responseJSON.message);
+					return;
+				}
+
+				toastr.error("Upload failed. Download the data, reload the page and try again");
 			},
 			dataType: "json"
 		});
-	})
+	});
 
 	sortTable();
 
 	setCookie("exported_team_data", "", 0);
 
-	$.getJSON("/api/system/status?access_token=" + localStorage.getItem("token"), function (data) {
-		if (data.success !== false) {
-			console.log("It seems like the team editor is running on the same web server as TournamentSystem");
-			$("#back_to_admin_li").show();
-			$("#btn_upload_team_data").show();
+	$.getJSON("/api/v1/system/status", function (data) {
+		console.log("It seems like the team editor is running on the same web server as TournamentSystem");
+		$("#back_to_admin_li").show();
+		$("#btn_upload_team_data").show();
 
-			if (data.system.team_size > 12) {
-				expandTeamSize(data.system.team_size);
-			}
+		if (data.system.team_size > 12) {
+			expandTeamSize(data.system.team_size);
+		}
 
-			$.getJSON("/api/team/export_team_data?access_token=" + localStorage.getItem("token"), function (data) {
-				data.teams_data.forEach(element => {
-					//console.log(element);
-					addPlayer(element.uuid, element.username, element.team_number, element.metadata);
-				});
-
-				toastr.info("Team data loaded from TournamentSystem");
+		$.getJSON("/api/v1/team/export_team_data", function (data) {
+			data.teams_data.forEach(element => {
+				addPlayer(element.uuid, element.username, element.team_number, element.metadata);
 			});
+
+			toastr.info("Team data loaded from TournamentSystem");
+		}).fail((e) => {
+			if (e.status == 0 | e.status == 503) {
+				toastr.error("Failed to communicate with backend server");
+			} else {
+				toastr.error("Could not fetch team data from tournament system. Please check that you are logged in");
+			}
+		});
+	}).fail((e) => {
+		if (e.status == 0 | e.status == 503) {
+			toastr.error("Failed to communicate with backend server");
 		} else {
-			toastr.error("Could not fetch data from tournament system. Please check that you are logged in");
+			toastr.error("Running in offline mo");
 		}
 	});
 
@@ -224,16 +244,16 @@ $(function () {
 		$("#json_file_upload").val("");
 	});
 
-	if(localStorage.getItem("editor_show_metadata") == "true") {
+	if (localStorage.getItem("editor_show_metadata") == "true") {
 		showMetadata = true;
 	}
 
-	if(showMetadata) {
+	if (showMetadata) {
 		$("#showMetadataCheckbox").attr("checked", true);
 	}
 	updateMetadataDisplayState();
 
-	$("#showMetadataCheckbox").on("change", function() {
+	$("#showMetadataCheckbox").on("change", function () {
 		showMetadata = $("#showMetadataCheckbox").is(":checked");
 		localStorage.setItem("editor_show_metadata", showMetadata ? "true" : "false");
 		updateMetadataDisplayState();
@@ -331,9 +351,9 @@ function searchPlayer() {
 				$("#btn_add_player").trigger('focus');
 			});
 		}).fail(function (e) {
-			if(e.status == 404) {
+			if (e.status == 404) {
 				toastr.error("Could not find player")
-			} else if(e.status == 400) {
+			} else if (e.status == 400) {
 				toastr.error("Invalid username")
 			} else {
 				toastr.error("Failed to fetch data from https://mojangapi.novauniverse.net")
@@ -391,9 +411,9 @@ function getData() {
 		let uuid = $(this).attr("data-uuid");
 		let username = $(this).attr("data-username");
 		let teamNumber = $(this).attr("data-team-number");
-		let metadata =  "" + $(this).find(".metadata-input").val();
+		let metadata = "" + $(this).find(".metadata-input").val();
 
-		if(metadata.length == 0) {
+		if (metadata.length == 0) {
 			metadata = "{}";
 		}
 

@@ -1,5 +1,5 @@
 $(() => {
-	$.getJSON("/api/system/phpmyadmin_url", (data) => {
+	$.getJSON("/api/v1/system/web/phpmyadmin_url", (data) => {
 		$(".phpmyadmin-link").attr("href", data.url);
 	});
 })

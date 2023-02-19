@@ -15,16 +15,14 @@ $(() => {
 });
 
 function login(username, password, isStored = false) {
-	$.getJSON("/api/user/login?username=" + username + "&password=" + password, (data) => {
-		if (!data.success) {
-			if (isStored) {
-				toastr.error("Stored credentials seems so be invalid");
-				localStorage.removeItem("stored_credentials");
-			} else {
-				$("#login_failure").show();
-				toastr.error("Invalid username or password");
-			}
-		} else {
+	$.ajax({
+		type: "POST",
+		url: "/api/v1/user/login",
+		data: JSON.stringify({
+			username: username,
+			password: password
+		}),
+		success: (data) => {
 			localStorage.setItem("token", data.token);
 
 			if ($("#cbx_remember_me").is(':checked')) {
@@ -39,6 +37,28 @@ function login(username, password, isStored = false) {
 			}
 
 			window.location = "/app/";
-		}
+		},
+		error: (xhr, ajaxOptions, thrownError) => {
+			if (xhr.status == 0 || xhr.status == 503) {
+				toastr.error("Failed to communicate with backend server");
+				return;
+			}
+
+			if (xhr.status == 401) {
+				if (isStored) {
+					toastr.error("Stored credentials seems so be invalid");
+					localStorage.removeItem("stored_credentials");
+				} else {
+					$("#login_failure").show();
+					toastr.error("Invalid username or password");
+				}
+			} else {
+				toastr.error("Could not log in due to an error. " + xhr.statusText);
+				console.error(xhr);
+				console.error(ajaxOptions);
+				console.error(thrownError);
+			}
+		},
+		dataType: "json"
 	});
 }
