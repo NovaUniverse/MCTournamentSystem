@@ -29,17 +29,16 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapsh
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapshot.ImportSnapshotHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.StaffHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.BroadcastHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ClearPlayersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.GetCustomThemesHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.PHPMyAdminUrlHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.QuickMessageHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ResetHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ShutdownHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.StatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetMOTDHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetScoreboardURLHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetTournamentNameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.dynamicconfig.ReloadDynamicConfig;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.reset.ResetHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.ExportTeamDataHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.UploadTeamHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.LoginHandler;
@@ -67,11 +66,11 @@ public class WebServer {
 		createContext("/api/v1/system/status", new StatusHandler());
 		createContext("/api/v1/system/broadcast", new BroadcastHandler());
 		createContext("/api/v1/system/quick_message", new QuickMessageHandler());
-		createContext("/api/v1/system/reset", new ResetHandler());
-		createContext("/api/v1/system/clear_players", new ClearPlayersHandler());
 		createContext("/api/v1/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
 		createContext("/api/v1/system/custom_themes", new GetCustomThemesHandler());
 		createContext("/api/v1/system/shutdown", new ShutdownHandler());
+		
+		createContext("/api/v1/system/reset", new ResetHandler());
 
 		createContext("/api/v1/system/settings/set_tournament_name", new SetTournamentNameHandler());
 		createContext("/api/v1/system/settings/set_scoreboard_url", new SetScoreboardURLHandler());

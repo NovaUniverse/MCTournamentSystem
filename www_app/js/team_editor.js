@@ -134,14 +134,24 @@ $(function () {
 	$("#btn_upload_team_data").on("click", function () {
 		$.ajax({
 			type: "POST",
-			url: "/api/team/upload_team?access_token=" + localStorage.getItem("token"),
+			url: "/api/v1/team/upload_team?access_token=" + localStorage.getItem("token"),
 			data: $("#json_output").text(),
 			success: function (data) {
 				console.log(data);
 				toastr.info("Team uploaded to TournamentSystem");
 			},
 			error: (xhr, ajaxOptions, thrownError) => {
-				toastr.info("Upload failed. Download the data, reload the page and try again");
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+					toastr.error(xhr.responseJSON.message);
+					return;
+				}
+
+				toastr.error("Upload failed. Download the data, reload the page and try again");
 			},
 			dataType: "json"
 		});

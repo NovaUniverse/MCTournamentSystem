@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system;
+package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.reset;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -17,6 +17,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 public class ResetHandler extends APIEndpoint {
 	public ResetHandler() {
 		super(true);
+		setAllowedMethods(HTTPMethod.DELETE);
 	}
 	
 	@Override

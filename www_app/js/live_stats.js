@@ -43,7 +43,7 @@ function setHeadSize(size) {
 }
 
 const update = () => {
-	$.getJSON("/api/public/status", (data) => {
+	$.getJSON("/api/v1/public/status", (data) => {
 		// Sorting
 		data.teams.sort((a, b) => b.score - a.score);
 		data.players.sort((a, b) => b.score - a.score);

@@ -24,6 +24,7 @@ import net.zeeraa.novacore.commons.log.Log;
 public class UploadTeamHandler extends APIEndpoint {
 	public UploadTeamHandler() {
 		super(true);
+		setAllowedMethods(HTTPMethod.POST);
 	}
 	
 	@Override

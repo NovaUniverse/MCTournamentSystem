@@ -278,31 +278,37 @@ $(function () {
 	});
 
 	$(".btn-reset-data").on("click", function () {
+		$("#reset_confirmation").prop("checked", false);
 		$("#broadcast_reset_data").modal("show");
-	})
-
-	$("#btn_remove_playerdata").on("click", function () {
-		$.getJSON("/api/system/clear_players?access_token=" + TournamentSystem.token, function (data) {
-			//console.log(data);
-			if (data.success) {
-				toastr.success("Player data wiped");
-				$("#broadcast_reset_data").modal("hide");
-			} else {
-				toastr.error(data.message);
-			}
-		});
 	});
 
 	$("#btn_full_reset").on("click", function () {
-		$.getJSON("/api/system/reset?access_token=" + TournamentSystem.token, function (data) {
-			//console.log(data);
-			if (data.success) {
-				toastr.success("Player data wiped");
-				$("#broadcast_reset_data").modal("hide");
-			} else {
-				toastr.error(data.message);
-			}
-		});
+		if($("#reset_confirmation").is(":checked")) {
+			$.ajax({
+				type: "DELETE",
+				url: "/api/v1/system/reset",
+				success: (data) => {
+					toastr.success("Data wiped");
+					$("#broadcast_reset_data").modal("hide");
+				},
+				error: (xhr, ajaxOptions, thrownError) => {
+					if (xhr.status == 0 || xhr.status == 503) {
+						toastr.error("Failed to communicate with backend server");
+						return;
+					}
+	
+					if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+						toastr.error(xhr.responseJSON.message);
+					} else {
+						toastr.error("Failed to remove data due to an unknown error");
+					}
+					console.error(xhr);
+				},
+				dataType: "json"
+			});
+		} else {
+			toastr.warning("Please verify that you want to delete the data");
+		}
 	});
 
 	$("#btn_broadcast").on("click", function () {
