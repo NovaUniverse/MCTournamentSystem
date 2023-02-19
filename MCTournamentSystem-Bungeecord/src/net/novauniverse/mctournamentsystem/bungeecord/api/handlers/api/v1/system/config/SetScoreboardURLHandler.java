@@ -1,8 +1,9 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config;
 
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -15,9 +16,11 @@ import net.zeeraa.novacore.commons.log.Log;
 
 public class SetScoreboardURLHandler extends APIEndpoint {
 	public SetScoreboardURLHandler() {
-		super(true);
+		super(false);
+		setAllowedMethods(HTTPMethod.GET, HTTPMethod.POST);
+		setMethodBasedPermission(HTTPMethod.POST, UserPermission.MANAGE_SETTINGS);
 	}
-	
+
 	@Override
 	public UserPermission getRequiredPermission() {
 		return UserPermission.MANAGE_SETTINGS;
@@ -27,9 +30,12 @@ public class SetScoreboardURLHandler extends APIEndpoint {
 	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
 		JSONObject json = new JSONObject();
 
-		if (params.containsKey("url")) {
-			String url = URLDecoder.decode(params.get("url"), StandardCharsets.UTF_8.name());
-			Log.info("SetScoreboardURL", "Setting scoreboard url to " + url);
+		if (method == HTTPMethod.GET) {
+			json.put("success", true);
+			json.put("scoreboard_url", TournamentSystemCommons.getScoreboardURL());
+		} else {
+			String url = IOUtils.toString(exchange.getRequestBody(), StandardCharsets.UTF_8);
+			Log.info("TournamentSystemAPI", "Setting scoreboard url to " + url);
 			try {
 				TournamentSystemCommons.setScoreboardURL(url);
 				json.put("success", true);
@@ -39,11 +45,6 @@ public class SetScoreboardURLHandler extends APIEndpoint {
 				json.put("message", e.getClass().getName() + " " + e.getMessage());
 				json.put("http_response_code", 500);
 			}
-		} else {
-			json.put("success", false);
-			json.put("error", "bad_request");
-			json.put("message", "missing parameter: url");
-			json.put("http_response_code", 400);
 		}
 
 		return json;

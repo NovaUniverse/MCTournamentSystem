@@ -66,15 +66,17 @@ public class WebServer {
 		createContext("/api/v1/system/status", new StatusHandler());
 		createContext("/api/v1/system/broadcast", new BroadcastHandler());
 		createContext("/api/v1/system/quick_message", new QuickMessageHandler());
-		createContext("/api/v1/system/phpmyadmin_url", new PHPMyAdminUrlHandler());
-		createContext("/api/v1/system/custom_themes", new GetCustomThemesHandler());
 		createContext("/api/v1/system/shutdown", new ShutdownHandler());
 		
 		createContext("/api/v1/system/reset", new ResetHandler());
 
-		createContext("/api/v1/system/settings/set_tournament_name", new SetTournamentNameHandler());
-		createContext("/api/v1/system/settings/set_scoreboard_url", new SetScoreboardURLHandler());
-		createContext("/api/v1/system/settings/set_motd", new SetMOTDHandler());
+		createContext("/api/v1/system/settings/tournament_name", new SetTournamentNameHandler());
+		createContext("/api/v1/system/settings/scoreboard_url", new SetScoreboardURLHandler());
+		createContext("/api/v1/system/settings/motd", new SetMOTDHandler());
+		
+
+		createContext("/api/v1/system/web/phpmyadmin_url", new PHPMyAdminUrlHandler());
+		createContext("/api/v1/system/web/custom_themes", new GetCustomThemesHandler());
 
 		// Dynamic config
 		createContext("/api/v1/system/dynamicconfig/reload", new ReloadDynamicConfig());

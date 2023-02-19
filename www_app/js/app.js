@@ -446,13 +446,28 @@ $(function () {
 	$("#btn_set_tournament_name").on("click", function () {
 		let name = $("#new_tournament_name").val();
 
-		$.getJSON("/api/system/settings/set_tournament_name?access_token=" + TournamentSystem.token + "&name=" + encodeURIComponent(name), function (data) {
-			if (data.success) {
+		$.ajax({
+			type: "POST",
+			url: "/api/v1/system/settings/tournament_name",
+			data: name,
+			success: (data) => {
 				$("#set_tournament_name_modal").modal("hide");
 				toastr.info("Tournament name changed to " + name + ". Please restart the server for it to update in game");
-			} else {
-				toastr.error("Failed to update name. " + data.message);
-			}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+		
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+					toastr.error(xhr.responseJSON.message);
+				} else {
+					toastr.error("Failed to update name due to an unknown error");
+				}
+				console.error(xhr);
+			},
+			dataType: "json"
 		});
 	});
 
@@ -466,13 +481,28 @@ $(function () {
 	$("#btn_set_scoreboard_url").on("click", function () {
 		let url = $("#new_scoreboard_url").val();
 
-		$.getJSON("/api/system/settings/set_scoreboard_url?access_token=" + TournamentSystem.token + "&url=" + encodeURIComponent(url), function (data) {
-			if (data.success) {
+		$.ajax({
+			type: "POST",
+			url: "/api/v1/system/settings/scoreboard_url",
+			data: url,
+			success: (data) => {
 				$("#set_scoreboard_url_modal").modal("hide");
 				toastr.info("Scoreboard url changed to " + url + ". Please restart the server for it to update in game");
-			} else {
-				toastr.error("Failed to update scoreboard url. " + data.message);
-			}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+		
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+					toastr.error(xhr.responseJSON.message);
+				} else {
+					toastr.error("Failed to update scoreboard url due to an unknown error");
+				}
+				console.error(xhr);
+			},
+			dataType: "json"
 		});
 	});
 
@@ -486,13 +516,28 @@ $(function () {
 	$("#btn_set_motd").on("click", function () {
 		let motd = $("#new_motd_value").val();
 
-		$.getJSON("/api/system/settings/set_motd?access_token=" + TournamentSystem.token + "&motd=" + encodeURIComponent(motd), function (data) {
-			if (data.success) {
+		$.ajax({
+			type: "POST",
+			url: "/api/v1/system/settings/motd",
+			data: motd,
+			success: (data) => {
 				$("#set_motd_modal").modal("hide");
 				toastr.info("MOTD Updated");
-			} else {
-				toastr.error("Failed to update MOTD. " + data.message);
-			}
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+		
+				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+					toastr.error(xhr.responseJSON.message);
+				} else {
+					toastr.error("Failed to update motd due to an unknown error");
+				}
+				console.error(xhr);
+			},
+			dataType: "json"
 		});
 	});
 
