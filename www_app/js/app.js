@@ -913,7 +913,7 @@ const TournamentSystem = {
 
 		$.ajax({
 			type: "GET",
-			url: "/api/chat/log",
+			url: "/api/v1/chat/log",
 			success: (data) => {
 				console.log(data);
 				let messages = "";
