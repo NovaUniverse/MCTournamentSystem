@@ -831,7 +831,7 @@ const TournamentSystem = {
 	activateTrigger: (triggerId) => {
 		$.ajax({
 			type: "POST",
-			url: "/api/game/trigger?triggerId=" + triggerId,
+			url: "/api/v1/game/trigger?triggerId=" + triggerId,
 			success: (data) => {
 				toastr.success("Success");
 			},
