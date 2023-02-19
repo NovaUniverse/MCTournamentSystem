@@ -134,7 +134,7 @@ $(function () {
 	$("#btn_upload_team_data").on("click", function () {
 		$.ajax({
 			type: "POST",
-			url: "/api/v1/team/upload_team?access_token=" + localStorage.getItem("token"),
+			url: "/api/v1/team/upload_team",
 			data: $("#json_output").text(),
 			success: function (data) {
 				console.log(data);
