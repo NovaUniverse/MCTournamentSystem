@@ -19,6 +19,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 public class CommentatorTPHandler extends APIEndpoint {
 	public CommentatorTPHandler() {
 		super(true);
+		setAllowedMethods(HTTPMethod.POST);
 	}
 
 	@Override

@@ -29,8 +29,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapsh
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapshot.ImportSnapshotHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.StaffHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.BroadcastHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.GetCustomThemesHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.PHPMyAdminUrlHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.QuickMessageHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ShutdownHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.StatusHandler;
@@ -39,6 +37,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetTournamentNameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.dynamicconfig.ReloadDynamicConfig;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.reset.ResetHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web.GetCustomThemesHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web.PHPMyAdminUrlHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.ExportTeamDataHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.UploadTeamHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.LoginHandler;

@@ -18,6 +18,7 @@ import net.zeeraa.novacore.commons.log.Log;
 public class SendServerCommandHandler extends APIEndpoint {
 	public SendServerCommandHandler() {
 		super(true);
+		setAllowedMethods(HTTPMethod.POST);
 	}
 
 	@Override

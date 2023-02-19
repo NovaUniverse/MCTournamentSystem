@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system;
+package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web;
 
 import java.util.Map;
 
@@ -15,6 +15,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 public class GetCustomThemesHandler extends APIEndpoint {
 	public GetCustomThemesHandler() {
 		super(false);
+		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override

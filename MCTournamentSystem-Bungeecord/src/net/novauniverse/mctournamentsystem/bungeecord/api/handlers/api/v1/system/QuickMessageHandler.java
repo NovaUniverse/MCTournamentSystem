@@ -16,6 +16,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermissi
 public class QuickMessageHandler extends APIEndpoint {
 	public QuickMessageHandler() {
 		super(true);
+		setAllowedMethods(HTTPMethod.POST);
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 public class WhoAmIHandler extends APIEndpoint {
 	public WhoAmIHandler() {
 		super(false);
+		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override

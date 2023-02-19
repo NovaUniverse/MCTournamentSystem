@@ -17,6 +17,7 @@ import com.sun.net.httpserver.HttpExchange;
 public class ExportTeamDataHandler extends APIEndpoint {
 	public ExportTeamDataHandler() {
 		super(true);
+		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override

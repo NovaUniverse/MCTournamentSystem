@@ -14,6 +14,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 public class GetServersHandler extends APIEndpoint {
 	public GetServersHandler() {
 		super(true);
+		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override

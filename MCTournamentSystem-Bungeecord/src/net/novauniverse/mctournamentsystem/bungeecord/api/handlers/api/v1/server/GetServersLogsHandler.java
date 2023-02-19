@@ -16,6 +16,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 public class GetServersLogsHandler extends APIEndpoint {
 	public GetServersLogsHandler() {
 		super(true);
+		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override

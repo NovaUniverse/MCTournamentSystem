@@ -15,6 +15,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 public class GetServersLogSessionIDHandler extends APIEndpoint {
 	public GetServersLogSessionIDHandler() {
 		super(true);
+		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override

@@ -14,7 +14,7 @@ $(() => {
 		} else {
 			console.log("Found key in localstorage");
 			console.log("Validating key");
-			$.getJSON("/api/system/status?commentator_key=" + accessKey, function (data) {
+			$.getJSON("/api/v1/system/status?commentator_key=" + accessKey, function (data) {
 				console.log("Key is valid");
 				setInterval(() => {
 					update();
@@ -34,7 +34,7 @@ $(() => {
 
 	$("#btn_login").on("click", function () {
 		let key = $("#commentator_key").val();
-		$.getJSON("/api/system/status?commentator_key=" + key, function (data) {
+		$.getJSON("/api/v1/system/status?commentator_key=" + key, function (data) {
 			localStorage.setItem("commentator_key", key);
 			window.location.reload();
 		}).fail((e) => {
@@ -63,7 +63,7 @@ $(() => {
 });
 
 function update() {
-	$.getJSON("/api/system/status?commentator_key=" + accessKey, function (data) {
+	$.getJSON("/api/v1/system/status?commentator_key=" + accessKey, function (data) {
 		let anyInGame = false;
 
 		let found = [];
@@ -149,12 +149,27 @@ function update() {
 				playerElement.on("click", function () {
 					let uuid = $(this).data("uuid");
 
-					$.getJSON("/api/commentator/tp?commentator_key=" + accessKey + "&target=" + uuid, function (data) {
-						if (data.success) {
-							toastr.success("Teleport successful");
-						} else {
-							toastr.error("Failed to teleport to player. " + data.message);
-						}
+					$.ajax({
+						type: "POST",
+						url: "/api/v1/commentator/tp?commentator_key=" + accessKey + "&target=" + uuid,
+						success: (data) => {
+							toastr.success("Player data wiped");
+							$("#broadcast_reset_data").modal("hide");
+						},
+						error: (xhr, ajaxOptions, thrownError) => {
+							if (xhr.status == 0 || xhr.status == 503) {
+								toastr.error("Failed to communicate with backend server");
+								return;
+							}
+
+							if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+								toastr.error("Failed to teleport to player. " + xhr.responseJSON.message);
+							} else {
+								toastr.error("Failed to remove data due to an unknown error");
+							}
+							console.error(xhr);
+						},
+						dataType: "json"
 					});
 				});
 
