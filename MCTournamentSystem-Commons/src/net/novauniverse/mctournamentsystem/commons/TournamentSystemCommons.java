@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.json.JSONObject;
 
 import net.md_5.bungee.api.ChatColor;
+import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPI;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.log.Log;
 
@@ -18,6 +19,8 @@ public class TournamentSystemCommons {
 	public static final String PLAYER_TELEMENTRY_CHANNEL = "mcts:ptelementry";
 
 	private static JSONObject tournamentSystemConfigData;
+	
+	private static SocketAPI socketAPI = null;
 
 	private static UUID sessionId = null;
 
@@ -27,6 +30,18 @@ public class TournamentSystemCommons {
 			Log.debug("TournamentSystemCommons", "Init sessionId as " + sessionId.toString());
 		}
 		return sessionId;
+	}
+	
+	public static SocketAPI getSocketAPI() {
+		return socketAPI;
+	}
+
+	public static boolean hasSocketAPI() {
+		return socketAPI != null;
+	}
+	
+	public static void setSocketAPI(SocketAPI socketAPI) {
+		TournamentSystemCommons.socketAPI = socketAPI;
 	}
 
 	private static DBConnection dbConnection;

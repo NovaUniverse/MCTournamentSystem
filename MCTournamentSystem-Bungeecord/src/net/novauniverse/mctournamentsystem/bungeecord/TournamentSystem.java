@@ -40,6 +40,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.config.InternetCafeOptions;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
+import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPIUtil;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
@@ -97,7 +98,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	public WebServer getWebServer() {
 		return webServer;
 	}
-	
+
 	public Map<String, CustomTheme> getCustomAdminUIThemes() {
 		return customAdminUIThemes;
 	}
@@ -278,6 +279,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
 
+		SocketAPIUtil.setupSocketAPI();
+
 		disableParentPidMonitoring = false;
 		if (config.has("disable_parent_pid_monitoring")) {
 			disableParentPidMonitoring = config.getBoolean("disable_parent_pid_monitoring");
@@ -387,7 +390,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 				String name = theme.getString("name");
 				String url = theme.getString("url");
 				String baseTheme = theme.optString("base_theme");
-				
+
 				JSONObject serverConsoleTheme = theme.optJSONObject("server_console_theme");
 
 				customAdminUIThemes.put(name, new CustomTheme(name, url, baseTheme, serverConsoleTheme));
@@ -588,6 +591,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
+		SocketAPIUtil.shutdown();
+
 		managedServers.stream().filter(ManagedServer::isRunning).forEach(ManagedServer::stop);
 		try {
 			Thread.sleep(3000);

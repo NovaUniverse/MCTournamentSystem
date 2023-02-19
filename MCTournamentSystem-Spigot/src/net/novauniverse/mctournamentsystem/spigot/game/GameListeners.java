@@ -12,8 +12,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPI;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bedwars.BedwarsManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourtail.BehindYourTailManager;
@@ -32,6 +36,7 @@ import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.IT
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.behindyourtail.BehindYourTailMetadataProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.common.PlayerYMetadataProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.tnttag.TNTTagMetadataProvider;
+import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
@@ -43,8 +48,14 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndE
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameLoadedEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.TeamEliminatedEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.TeamWinEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.map.mapmodules.graceperiod.graceperiod.event.GracePeriodFinishEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.mapselector.selectors.guivoteselector.GUIMapSelectorPlayerVotedEvent;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.DelayedGameTrigger;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.GameTrigger;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.RepeatingGameTrigger;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.event.GameTriggerTriggerEvent;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
@@ -58,7 +69,7 @@ public class GameListeners extends NovaModule implements Listener {
 	private static GameListeners instance;
 
 	private boolean disableAudoShutdown;
-	
+
 	private GameManager gameManager;
 
 	public static GameListeners getInstance() {
@@ -158,6 +169,10 @@ public class GameListeners extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameBegin(GameBeginEvent e) {
 		Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
+
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("game_begin", GameSummary.getGameSummaryAsJSON());
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -169,6 +184,9 @@ public class GameListeners extends NovaModule implements Listener {
 			Log.error("Failed to set active server name");
 			ex.printStackTrace();
 		}
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("countdown_start", SocketAPI.emptyResponse());
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -178,6 +196,39 @@ public class GameListeners extends NovaModule implements Listener {
 		} catch (Exception ex) {
 			Log.error("Failed to set active server name");
 			ex.printStackTrace();
+		}
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("game_start", GameSummary.getGameSummaryAsJSON());
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onGameTriggerTriggerEvent(GameTriggerTriggerEvent e) {
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+			JSONArray flags = new JSONArray();
+
+			GameTrigger trigger = e.getTrigger();
+
+			trigger.getFlags().forEach(flag -> flags.put(flag.name()));
+
+			data.put("name", trigger.getName());
+			data.put("trigger_count", trigger.getTriggerCount());
+			data.put("type", trigger.getType().name());
+			data.put("flags", flags);
+
+			if (trigger instanceof DelayedGameTrigger) {
+				DelayedGameTrigger dgt = (DelayedGameTrigger) trigger;
+				data.put("trigger_delay", dgt.getDelay());
+			}
+
+			if (trigger instanceof RepeatingGameTrigger) {
+				RepeatingGameTrigger rgt = (RepeatingGameTrigger) trigger;
+				data.put("trigger_delay", rgt.getDelay());
+				data.put("trigger_period", rgt.getPeriod());
+			}
+
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("game_trigger_activated", data);
 		}
 	}
 
@@ -189,8 +240,53 @@ public class GameListeners extends NovaModule implements Listener {
 				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + "Winner", ChatColor.GREEN + "Your team won", 10, 40, 10);
 				// player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1F, 2F);
 				VersionIndependentSound.ORB_PICKUP.play(player, 1F, 2F);
+
+				if (TournamentSystemCommons.hasSocketAPI()) {
+					TournamentSystemTeam team = (TournamentSystemTeam) e.getTeam();
+					JSONObject teamData = new JSONObject();
+					JSONArray members = new JSONArray();
+
+					team.getMembers().forEach(m -> members.put(m.toString()));
+
+					teamData.put("score", team.getScore());
+					teamData.put("team_number", team.getTeamNumber());
+					teamData.put("display_name", team.getDisplayName());
+					teamData.put("color", team.getTeamColor().getName());
+					teamData.put("members", members);
+
+					TournamentSystemCommons.getSocketAPI().sendEventAsync("team_win", teamData);
+				}
 			}
 		});
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onGracePeriodFinish(GracePeriodFinishEvent e) {
+		TournamentSystemCommons.getSocketAPI().sendEventAsync("grace_period_end", SocketAPI.emptyResponse());
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onTeamEliminated(TeamEliminatedEvent e) {
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			TournamentSystemTeam team = (TournamentSystemTeam) e.getTeam();
+
+			JSONObject data = new JSONObject();
+			JSONObject teamData = new JSONObject();
+			JSONArray members = new JSONArray();
+
+			team.getMembers().forEach(m -> members.put(m.toString()));
+
+			teamData.put("score", team.getScore());
+			teamData.put("team_number", team.getTeamNumber());
+			teamData.put("display_name", team.getDisplayName());
+			teamData.put("color", team.getTeamColor().getName());
+			teamData.put("members", members);
+
+			data.put("team", teamData);
+			data.put("placement", e.getPlacement());
+
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("player_eliminated", data);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -211,6 +307,27 @@ public class GameListeners extends NovaModule implements Listener {
 					provider.show(e);
 				}
 			}
+
+			if (TournamentSystemCommons.hasSocketAPI()) {
+				JSONObject data = new JSONObject();
+				JSONObject playerData = new JSONObject();
+				JSONObject killerData = null;
+
+				if (e.getKiller() != null) {
+					killerData = new JSONObject();
+
+					killerData.put("entity_type", e.getKiller().getType().name());
+					killerData.put("uuid", e.getKiller().getUniqueId().toString());
+					killerData.put("name", e.getKiller().getName());
+				}
+
+				data.put("player", playerData);
+				data.put("killer", killerData);
+				data.put("placement", e.getPlacement());
+				data.put("reason", e.getReason().name());
+
+				TournamentSystemCommons.getSocketAPI().sendEventAsync("player_eliminated", data);
+			}
 		}
 	}
 
@@ -221,6 +338,15 @@ public class GameListeners extends NovaModule implements Listener {
 		} catch (Exception ex) {
 			Log.error("Failed to reset active server name");
 			ex.printStackTrace();
+		}
+
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+			data.put("name", e.getGame().getName());
+			data.put("display_name", e.getGame().getDisplayNameFromGameManager());
+			data.put("game_class", e.getGame().getClass().getName());
+			data.put("end_reason", e.getReason());
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("game_end", data);
 		}
 
 		if (!disableAudoShutdown) {

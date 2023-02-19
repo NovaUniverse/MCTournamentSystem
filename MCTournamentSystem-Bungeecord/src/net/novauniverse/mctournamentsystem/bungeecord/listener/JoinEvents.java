@@ -2,6 +2,8 @@ package net.novauniverse.mctournamentsystem.bungeecord.listener;
 
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONObject;
+
 import de.dombo.bungeemessages.BungeeMessages;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -9,6 +11,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -60,5 +63,21 @@ public class JoinEvents implements Listener {
 				p.sendMessage(new ComponentBuilder(e.getPlayer().getName() + " connected. Click this message to send them to your server").color(ChatColor.GOLD).event(event).create());
 			}
 		});
+		
+		if(TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+			data.put("username", e.getPlayer().getName());
+			data.put("uuid", e.getPlayer().getUniqueId().toString());
+			data.put("version", e.getPlayer().getPendingConnection().getVersion());
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("proxy_player_join", data);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerDisconnect(PlayerDisconnectEvent e) {
+		JSONObject data = new JSONObject();
+		data.put("username", e.getPlayer().getName());
+		data.put("uuid", e.getPlayer().getUniqueId().toString());
+		TournamentSystemCommons.getSocketAPI().sendEventAsync("proxy_player_quit", data);
 	}
 }

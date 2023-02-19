@@ -33,6 +33,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
+import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPIUtil;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
@@ -488,6 +489,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
+		
+		SocketAPIUtil.setupSocketAPI();
 
 		disableParentPidMonitoring = false;
 		if (config.has("disable_parent_pid_monitoring")) {
@@ -859,6 +862,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		Task.tryStopTask(timerSeconds);
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
+		
+		SocketAPIUtil.shutdown();
 
 		if (placeholderAPIExpansion != null) {
 			if (placeholderAPIExpansion.isRegistered()) {
