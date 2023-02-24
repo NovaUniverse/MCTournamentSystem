@@ -12,8 +12,8 @@ import net.novauniverse.mctournamentsystem.spigot.messages.TSTeamEliminationMess
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.triggers.TriggerProvider;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreListener;
-import net.novauniverse.mctournamentsystem.spigot.tracker.EnemyPlayerCompassTracker;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.spigot.gameengine.compass.trackers.ClosestEnemyPlayerTracker;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.gamelobby.GameLobby;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.gamelobby.mapselector.selectors.RandomLobbyMapSelector;
@@ -43,7 +43,7 @@ public class GameSetup {
 		gameManager.setPlayerEliminationMessage(new TSPlayerEliminationMessage());
 
 		CompassTracker.getInstance().setStrictMode(true);
-		CompassTracker.getInstance().setCompassTrackerTarget(new EnemyPlayerCompassTracker());
+		CompassTracker.getInstance().setCompassTrackerTarget(new ClosestEnemyPlayerTracker());
 		Log.info("GameSetup", "Game variables set");
 
 		Log.info("GameSetup", "Loading lobby maps...");

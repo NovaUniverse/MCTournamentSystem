@@ -83,6 +83,7 @@ import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
+import net.zeeraa.novacore.spigot.gameengine.NovaCoreGameEngine;
 import net.zeeraa.novacore.spigot.language.LanguageReader;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.customitems.CustomItemManager;
@@ -138,7 +139,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private String cachedTournamentName;
 	private String cachedTournamentLink;
 
-	private String globalConfigPath;
+	private String globalDataDirectory;
 
 	private String resourcePackUrl;
 
@@ -304,8 +305,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return resourcePackUrl;
 	}
 
-	public String getGlobalConfigPath() {
-		return globalConfigPath;
+	public String getGlobalDataDirectory() {
+		return globalDataDirectory;
 	}
 
 	public File getNBSFolder() {
@@ -461,17 +462,17 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		saveDefaultConfig();
 		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
 
-		globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
+		globalDataDirectory = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 
-		this.nbsFolder = new File(TournamentSystem.getInstance().getGlobalConfigPath() + File.separator + "nbs");
+		this.nbsFolder = new File(TournamentSystem.getInstance().getGlobalDataDirectory() + File.separator + "nbs");
 		this.nbsFolder.mkdirs();
 
-		this.globalDataFolder = new File(globalConfigPath);
-		this.mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
+		this.globalDataFolder = new File(globalDataDirectory);
+		this.mapDataFolder = new File(globalDataDirectory + File.separator + "map_data");
 
 		TeamOverrides.readOverrides(globalDataFolder);
 
-		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
+		File configFile = new File(globalDataDirectory + File.separator + "tournamentconfig.json");
 		JSONObject config;
 		try {
 			if (!configFile.exists()) {
@@ -489,7 +490,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
-		
+
 		SocketAPIUtil.setupSocketAPI();
 
 		disableParentPidMonitoring = false;
@@ -634,6 +635,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		if (config.has("resource_pack")) {
 			resourcePackUrl = config.getString("resource_pack");
+		}
+
+		if (config.has("map_folder")) {
+			if (NovaCore.isNovaGameEngineEnabled()) {
+				File file = new File(getGlobalDataDirectory() + File.separator + config.getString("map_folder"));
+				Log.info("TournamentSystem", "Setting requested game data directory to " + file.getAbsolutePath());
+				NovaCoreGameEngine.getInstance().setRequestedGameDataDirectory(file);
+			}
 		}
 
 		JSONObject labymodBanner = config.getJSONObject("labymod_banner");
@@ -862,7 +871,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		Task.tryStopTask(timerSeconds);
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
-		
+
 		SocketAPIUtil.shutdown();
 
 		if (placeholderAPIExpansion != null) {

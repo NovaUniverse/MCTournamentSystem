@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.tracker;
+package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourtail;
 
 import java.util.ArrayList;
 import java.util.List;
