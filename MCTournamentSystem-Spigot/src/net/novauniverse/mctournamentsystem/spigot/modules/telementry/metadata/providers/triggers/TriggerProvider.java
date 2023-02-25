@@ -31,6 +31,7 @@ public class TriggerProvider implements ITelementryMetadataProvider {
 
 					triggerData.put("name", trigger.getName());
 					triggerData.put("type", trigger.getType());
+					triggerData.put("description", trigger.getDescription());
 					triggerData.put("trigger_count", trigger.getTriggerCount());
 					triggerData.put("flags", flags);
 

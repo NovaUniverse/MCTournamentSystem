@@ -1588,6 +1588,11 @@ const TournamentSystem = {
 					newElement.attr("data-trigger-name", trigger.name);
 
 					newElement.find(".trigger-name").text(trigger.name);
+					newElement.find(".trigger-description").text(trigger.description);
+					if((trigger.description + "").trim().length == 0) {
+						newElement.find(".trigger-description").hide();
+						newElement.find(".description-hr").hide();
+					}
 
 					if (!hasPermission("MANAGE_TRIGGERS")) {
 						newElement.find(".trigger-button").remove();
