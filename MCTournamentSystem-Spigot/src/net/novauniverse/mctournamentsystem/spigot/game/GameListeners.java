@@ -22,6 +22,7 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bedwars.BedwarsManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourtail.BehindYourTailManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bingo.BingoManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.capturetheflag.CaptureTheFlagManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.chickenout.ChickenOutManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.dropper.DropperManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.hive.HiveManager;
@@ -84,6 +85,7 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("dropper", DropperManager.class);
 		GAME_SPECIFIC_MODULES.put("tnttag", TNTTagManager.class);
 		GAME_SPECIFIC_MODULES.put("nova_bedwars", BedwarsManager.class);
+		GAME_SPECIFIC_MODULES.put("capturetheflag", CaptureTheFlagManager.class);
 
 		// NovaGames games
 		GAME_SPECIFIC_MODULES.put("chickenout", ChickenOutManager.class);
