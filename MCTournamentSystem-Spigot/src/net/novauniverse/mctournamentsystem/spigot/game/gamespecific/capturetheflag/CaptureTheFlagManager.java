@@ -16,6 +16,6 @@ public class CaptureTheFlagManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onFlagCaptured(FlagCapturedEvent e) {
-		Bukkit.getServer().broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "Flag Captured> " + e.getCarrierTeam().getTeam().getTeamColor() + ChatColor.BOLD + e.getCarrier().getName() + ChatColor.GOLD + ChatColor.BOLD + " captured the flag of team " + e.getFlag().getTeam().getTeam().getTeamColor() + ChatColor.BOLD + e.getFlag().getTeam().getTeam().getTeamColor());
+		Bukkit.getServer().broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "Flag Captured> " + e.getCarrierTeam().getTeam().getTeamColor() + ChatColor.BOLD + e.getCarrier().getName() + ChatColor.GOLD + ChatColor.BOLD + " captured the flag of team " + e.getFlag().getTeam().getTeam().getTeamColor() + ChatColor.BOLD + e.getFlag().getTeam().getTeam().getDisplayName());
 	}
 }
