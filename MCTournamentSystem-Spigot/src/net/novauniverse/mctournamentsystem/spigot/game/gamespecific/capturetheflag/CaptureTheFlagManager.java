@@ -1,6 +1,7 @@
 package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.capturetheflag;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -13,6 +14,7 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
@@ -20,6 +22,7 @@ import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 public class CaptureTheFlagManager extends NovaModule implements Listener {
 	public static int SUDDEN_DEATH_COUNTDOWN_LINE = 5;
 	public static int FLAG_CAPTURE_SCORE = 20;
+	public static int ELIMINATE_PLAYER_SCORE = 20;
 
 	private Task task;
 
@@ -46,7 +49,7 @@ public class CaptureTheFlagManager extends NovaModule implements Listener {
 					}
 				}
 			}
-		}, 10L);
+		}, 5L);
 	}
 
 	@Override
@@ -64,5 +67,16 @@ public class CaptureTheFlagManager extends NovaModule implements Listener {
 		Bukkit.getServer().broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "Flag Captured> " + e.getCarrierTeam().getTeam().getTeamColor() + ChatColor.BOLD + e.getCarrier().getName() + ChatColor.GOLD + ChatColor.BOLD + " captured the flag of team " + e.getFlag().getTeam().getTeam().getTeamColor() + ChatColor.BOLD + e.getFlag().getTeam().getTeam().getDisplayName());
 		e.getCarrier().sendMessage(ChatColor.GRAY + "Flag captured. +" + FLAG_CAPTURE_SCORE + " points");
 		ScoreManager.getInstance().addPlayerScore(e.getCarrier(), FLAG_CAPTURE_SCORE, true);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerEliminated(PlayerEliminatedEvent e) {
+		if (e.getKiller() != null) {
+			if (e.getKiller() instanceof Player) {
+				Player killer = (Player) e.getKiller();
+				killer.sendMessage(ChatColor.GRAY + "Player eliminated. +" + ELIMINATE_PLAYER_SCORE + " points");
+				ScoreManager.getInstance().addPlayerScore(killer, ELIMINATE_PLAYER_SCORE, true);
+			}
+		}
 	}
 }
