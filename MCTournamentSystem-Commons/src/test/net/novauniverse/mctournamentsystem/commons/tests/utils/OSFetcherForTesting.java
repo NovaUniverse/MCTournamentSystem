@@ -2,7 +2,7 @@ package net.novauniverse.mctournamentsystem.commons.tests.utils;
 
 import java.util.Locale;
 
-public class OSFetcher {
+public class OSFetcherForTesting {
 	public enum OSType {
 		Windows, MacOS, Linux, Other
 	};

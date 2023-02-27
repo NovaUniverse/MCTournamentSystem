@@ -2,7 +2,7 @@ package net.novauniverse.mctournamentsystem.commons.tests.pid;
 
 import org.junit.Test;
 
-import net.novauniverse.mctournamentsystem.commons.tests.utils.OSFetcher;
+import net.novauniverse.mctournamentsystem.commons.tests.utils.OSFetcherForTesting;
 import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
 
 public class PIDTest {
@@ -15,10 +15,10 @@ public class PIDTest {
 
 	@Test
 	public void isProcessRunningTest() {
-		OSFetcher.OSType os = OSFetcher.getOperatingSystemType();
+		OSFetcherForTesting.OSType os = OSFetcherForTesting.getOperatingSystemType();
 
 		System.out.println("Detected OS: " + os.name());
-		if (os == OSFetcher.OSType.Windows || os == OSFetcher.OSType.Linux) {
+		if (os == OSFetcherForTesting.OSType.Windows || os == OSFetcherForTesting.OSType.Linux) {
 			int ownPid = ProcessUtils.getOwnPID();
 			System.out.println("Our own is " + ownPid + ". Checking if we are running");
 			assert ProcessUtils.isProcessRunning(ownPid) : "ProcessUtils.isProcessRunning is reporting that we are not alive";

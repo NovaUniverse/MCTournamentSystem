@@ -42,7 +42,6 @@ import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
 import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPIUtil;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
-import net.novauniverse.mctournamentsystem.commons.tests.utils.OSFetcher;
 import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
