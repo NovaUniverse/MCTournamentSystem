@@ -42,6 +42,7 @@ import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
 import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPIUtil;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
+import net.novauniverse.mctournamentsystem.commons.tests.utils.OSFetcher;
 import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
@@ -49,6 +50,8 @@ import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.platform.OSPlatform;
+import net.zeeraa.novacore.commons.platform.OSPlatformUtils;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.commons.utils.network.api.ip.IPFetcher;
 
@@ -565,7 +568,16 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		Log.info("Registering channel " + TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
 		this.getProxy().registerChannel(TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
 
-		distroName = LinuxUtils.getLinuxDistroPrettyName();
+		distroName = null;
+
+		if (OSPlatformUtils.getPlatform() == OSPlatform.LINUX) {
+			try {
+				Log.info("TournamentSystem", "Fetching linux distro name");
+				distroName = LinuxUtils.getLinuxDistroPrettyName();
+			} catch (Exception e) {
+				Log.error("TournamentSystem", "Failed to fetch linux distro name. " + e.getClass().getName() + " " + e.getMessage());
+			}
+		}
 		if (distroName != null) {
 			Log.info("TournamentSystem", "Seems like we are running on " + distroName);
 		}
