@@ -11,7 +11,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
 			<resource>
 				<targetPath>.</targetPath>
