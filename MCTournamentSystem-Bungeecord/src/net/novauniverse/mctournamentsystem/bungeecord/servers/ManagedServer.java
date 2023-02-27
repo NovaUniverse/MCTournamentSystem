@@ -34,10 +34,12 @@ public class ManagedServer {
 
 	private String lastSessionId;
 
+	private boolean passServerName;
+
 	@Nullable
 	private ServerAutoRegisterData serverAutoRegisterData;
 
-	public ManagedServer(String name, String javaExecutable, String jvmArguments, String jar, File workingDirectory, boolean autoStart, @Nullable ServerAutoRegisterData serverAutoRegisterData) {
+	public ManagedServer(String name, String javaExecutable, String jvmArguments, String jar, File workingDirectory, boolean autoStart, @Nullable ServerAutoRegisterData serverAutoRegisterData, boolean passServerName) {
 		this.name = name;
 
 		this.javaExecutable = javaExecutable;
@@ -53,6 +55,8 @@ public class ManagedServer {
 		this.lastException = null;
 
 		this.serverAutoRegisterData = serverAutoRegisterData;
+
+		this.passServerName = passServerName;
 	}
 
 	public String getName() {
@@ -162,6 +166,10 @@ public class ManagedServer {
 			} catch (Exception e) {
 				Log.error("ManagedServer", "Failed to fetch own PID. " + e.getClass().getName() + " " + e.getMessage());
 			}
+		}
+
+		if (passServerName) {
+			command.add("-DtournamentServerNetworkName=" + name);
 		}
 
 		for (String string : jvmArguments.split("\\s")) {

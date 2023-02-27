@@ -828,6 +828,13 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			pluginMessageListener.tickSecond();
 		}, 20L);
 
+		/* ---- Final launch parameters ----- */
+		String tsServerNameParam = System.getProperty("tournamentServerNetworkName");
+		if (tsServerNameParam != null) {
+			Log.info("TournamentSystem", "Using server name " + tsServerNameParam + " from -DtournamentServerNetworkName flag");
+			serverName = tsServerNameParam;
+		}
+
 		// Register debug commands
 		new DebugCommands();
 

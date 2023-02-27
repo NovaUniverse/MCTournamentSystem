@@ -498,6 +498,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 				String jvmArguments = serverData.getString("jvm_arguments");
 				String jar = serverData.getString("jar");
 
+				boolean passName = serverData.optBoolean("pass_server_name", true);
+
 				if (!workingDirectory.exists()) {
 					Log.error("TournamentSystem", "Cant find working directory " + workingDirectory.getAbsolutePath() + " for server " + name + " in tournamentconfig.json");
 					continue;
@@ -508,7 +510,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 					autoStart = serverData.getBoolean("auto_start");
 				}
 
-				managedServers.add(new ManagedServer(name, javaExecutable, jvmArguments, jar, workingDirectory, autoStart, serverAutoRegisterData));
+				managedServers.add(new ManagedServer(name, javaExecutable, jvmArguments, jar, workingDirectory, autoStart, serverAutoRegisterData, passName));
 			}
 			Log.info("TournamentSystem", managedServers.size() + " servers configured to auto start");
 		}
