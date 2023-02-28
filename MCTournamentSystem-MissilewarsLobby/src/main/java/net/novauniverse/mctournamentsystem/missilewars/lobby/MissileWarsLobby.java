@@ -60,16 +60,16 @@ public class MissileWarsLobby extends NovaPlugin implements Listener {
 
 		String parentProcessIdStr = System.getProperty("tournamentServerParentProcessID");
 		if (parentProcessIdStr == null) {
-			Log.info("TournamentSystem", "Did not detect -DtournamentServerParentProcessID flag. We wont monitor for parent process");
+			Log.info("MissileWarsLobby", "Did not detect -DtournamentServerParentProcessID flag. We wont monitor for parent process");
 		} else {
-			Log.info("TournamentSystem", "Detected -DtournamentServerParentProcessID flag");
+			Log.info("MissileWarsLobby", "Detected -DtournamentServerParentProcessID flag");
 			try {
 				parentProcessID = Integer.parseInt(parentProcessIdStr);
-				Log.info("TournamentSystem", "Monitoring process " + parentProcessID + " for automatic shutdown");
+				Log.info("MissileWarsLobby", "Monitoring process " + parentProcessID + " for automatic shutdown");
 				parentPIDMonitoringTask = new SimpleTask(this, () -> {
 					if (!ProcessUtils.isProcessRunning(parentProcessID)) {
 						Task.tryStopTask(parentPIDMonitoringTask);
-						Log.warn("TournamentSystem", "Parent process " + parentProcessID + " no longer found. Shutting down");
+						Log.warn("MissileWarsLobby", "Parent process " + parentProcessID + " no longer found. Shutting down");
 						AsyncManager.runSync(() -> {
 							Bukkit.getServer().shutdown();
 						});
@@ -77,7 +77,7 @@ public class MissileWarsLobby extends NovaPlugin implements Listener {
 				}, 20 * 5);
 				Task.tryStartTask(parentPIDMonitoringTask);
 			} catch (Exception e) {
-				Log.fatal("tournamentSystem", "-DtournamentServerParentProcessID flag was set to non numeric value");
+				Log.fatal("MissileWarsLobby", "-DtournamentServerParentProcessID flag was set to non numeric value");
 				Bukkit.getServer().shutdown();
 			}
 		}
