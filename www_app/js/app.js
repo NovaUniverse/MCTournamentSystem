@@ -681,7 +681,7 @@ const TournamentSystem = {
 
 		if (stateReport.plugins != null) {
 			stateReport.plugins.forEach(plugin => {
-				console.log(plugin);
+				//console.log(plugin);
 				let newElement = $("<tr></tr>");
 				newElement.append(
 					$("<td></td>")
@@ -697,7 +697,7 @@ const TournamentSystem = {
 
 		if (stateReport.modules != null) {
 			stateReport.modules.forEach(novamodule => {
-				console.log(novamodule);
+				//console.log(novamodule);
 				let newElement = $("<tr></tr>");
 				newElement.append(
 					$("<td></td>")
@@ -712,7 +712,7 @@ const TournamentSystem = {
 		}
 
 		$("#serverInfoModal").modal("show");
-		console.log(server);
+		//console.log(server);
 	},
 
 	openChatLog: () => {
