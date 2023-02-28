@@ -52,6 +52,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.database.socials.imple
 import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.YoutubeCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.killstatusreporting.KillStatusReportingCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reloaddynamicconfig.ReloadDynamicConfigCommand;
@@ -98,7 +99,7 @@ import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class TournamentSystem extends JavaPlugin implements Listener {
-	public static final int STATUS_REPORTING_TIMEOUT = 30 * 1000;
+	public static final int STATUS_REPORTING_TIMEOUT = 10 * 1000;
 
 	private static TournamentSystem instance;
 
@@ -778,6 +779,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new CopyLocationCommand());
 		CommandRegistry.registerCommand(new ChatfilterCommand());
 		CommandRegistry.registerCommand(new ReloadDynamicConfigCommand());
+		CommandRegistry.registerCommand(new KillStatusReportingCommand());
 
 		if (config.has("socials")) {
 			JSONObject socials = config.getJSONObject("socials");
@@ -855,7 +857,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			pluginMessageListener.tickSecond();
 		}, 20L);
 
-		statusReportingTask = new SimpleTask(this, () -> reportServerStateAsync(), 20 * 60);
+		statusReportingTask = new SimpleTask(this, () -> reportServerStateAsync(), 20 * 20);
 
 		/* ---- Final launch parameters ----- */
 		stateReportingToken = null;
@@ -894,6 +896,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				Log.error("TournamentSystem", "Failed to update dynamic config");
 			}
 		}
+	}
+
+	public void killStatusReporting() {
+		Task.tryStopTask(statusReportingTask);
 	}
 
 	public void reportServerStateAsync() {
@@ -946,11 +952,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 				int httpResult = connection.getResponseCode();
 				if (httpResult != HttpURLConnection.HTTP_OK) {
-					Log.warn("TournamentSystem", "Status reporting failed with status code " + httpResult);
+					Log.warn("TournamentSystem", "Status reporting failed with status code " + httpResult + ". If this error occurs multiple times you can use the /killstatusreporting command to disable this feature");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.warn("TournamentSystem", "Status reporting failed. " + e.getClass().getName() + " " + e.getMessage());
+				Log.warn("TournamentSystem", "Status reporting failed. " + e.getClass().getName() + " " + e.getMessage() + ". If this error occurs multiple times you can use the /killstatusreporting command to disable this feature");
 			}
 		});
 	}
