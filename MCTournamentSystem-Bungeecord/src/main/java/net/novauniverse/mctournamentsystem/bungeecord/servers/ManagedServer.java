@@ -6,17 +6,22 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
+
+import org.json.JSONObject;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.utils.RandomGenerator;
 
 public class ManagedServer {
 	private String name;
@@ -35,6 +40,12 @@ public class ManagedServer {
 	private String lastSessionId;
 
 	private boolean passServerName;
+
+	private JSONObject lastStateReport;
+
+	private String stateReportingKey;
+
+	private Random random;
 
 	@Nullable
 	private ServerAutoRegisterData serverAutoRegisterData;
@@ -56,7 +67,29 @@ public class ManagedServer {
 
 		this.serverAutoRegisterData = serverAutoRegisterData;
 
+		this.lastStateReport = new JSONObject();
+
 		this.passServerName = passServerName;
+
+		this.random = new SecureRandom();
+
+		this.generateStatusReportingKey();
+	}
+
+	public void generateStatusReportingKey() {
+		this.stateReportingKey = RandomGenerator.randomAlphanumericString(16, random);
+	}
+
+	public String getStateReportingKey() {
+		return stateReportingKey;
+	}
+
+	public JSONObject getLastStateReport() {
+		return lastStateReport;
+	}
+
+	public void setLastStateReport(JSONObject lastStateReport) {
+		this.lastStateReport = lastStateReport;
 	}
 
 	public String getName() {
@@ -144,6 +177,8 @@ public class ManagedServer {
 			}
 		}
 
+		generateStatusReportingKey();
+
 		Log.info("ManagedServer", "Trying to start server " + name);
 
 		lastSessionId = UUID.randomUUID().toString();
@@ -171,6 +206,9 @@ public class ManagedServer {
 		if (passServerName) {
 			command.add("-DtournamentServerNetworkName=" + name);
 		}
+
+		command.add("-DtournamentStatusReportingKey=" + stateReportingKey);
+		command.add("-DtournamentAdminUIPort=" + TournamentSystem.getInstance().getWebServer().getPort());
 
 		for (String string : jvmArguments.split("\\s")) {
 			command.add(string);

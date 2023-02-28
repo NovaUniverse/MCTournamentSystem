@@ -243,6 +243,8 @@
 							<button type="button" class="btn mt-1 btn-dark get-server-logs-button">Logs</button>
 							<button type="button" class="btn mt-1 btn-info start-server-console-button">Open
 								console</button>
+							<button type="button"
+								class="btn mt-1 btn-secondary get-server-info">Info</button>
 						</div>
 					</div>
 				</div>
@@ -845,6 +847,50 @@
 			</div>
 		</div>
 
+		<div class="modal fade" id="serverInfoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+			aria-labelledby="serverInfoModalTitle" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="serverInfoModalTitle">Server info: null</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<h5>Plugins</h5>
+						<table class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Version</th>
+								</tr>
+							</thead>
+
+							<tbody id="server_info_plugins">
+
+							</tbody>
+						</table>
+
+						<h5>Plugins</h5>
+						<table class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Enabled</th>
+								</tr>
+							</thead>
+
+							<tbody id="server_info_modules">
+
+							</tbody>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div class="modal fade" id="selectThemeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="selectThemeModalTitle" aria-hidden="true">
 			<div class="modal-dialog modal-lg">
@@ -887,7 +933,9 @@
 			<div class="modal-dialog modal-fullscreen">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="serverConsoleModalTitle">Console</h5>
+						<h5 class="modal-title" id="serverConsoleModalTitle">
+							<span id="connected_server_title">Console</span>
+						</h5>
 						<button type="button" class="btn-close close-console-button" data-bs-dismiss="modal"
 							aria-label="Close"></button>
 					</div>

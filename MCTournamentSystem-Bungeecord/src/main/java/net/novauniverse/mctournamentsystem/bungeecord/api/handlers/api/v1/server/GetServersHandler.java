@@ -35,6 +35,7 @@ public class GetServersHandler extends APIEndpoint {
 			server.put("jar", s.getJar());
 			server.put("is_running", s.isRunning());
 			server.put("auto_start", s.isAutoStart());
+			server.put("last_state_report", s.getLastStateReport());
 			if (exception == null) {
 				server.put("last_exception", "");
 			} else {

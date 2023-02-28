@@ -21,7 +21,7 @@ const ServerConsole = {
 
 		this.terminal.clear();
 
-		$("#serverConsoleModalTitle").text("Console: " + server);
+		$("#connected_server_title").text("Console: " + server);
 		$("#serverConsoleModal").modal("show");
 
 		this.pollingIntervalId = setInterval(() => {

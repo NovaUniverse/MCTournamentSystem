@@ -2,9 +2,13 @@ package net.novauniverse.mctournamentsystem.spigot;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +98,8 @@ import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class TournamentSystem extends JavaPlugin implements Listener {
+	public static final int STATUS_REPORTING_TIMEOUT = 30 * 1000;
+
 	private static TournamentSystem instance;
 
 	private TournamentSystemTeamManager teamManager;
@@ -150,6 +156,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private Song gameEndMusic;
 
 	private Task timerSeconds;
+	private Task statusReportingTask;
 
 	private TSPluginMessageListnener pluginMessageListener;
 
@@ -167,6 +174,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private int parentProcessID;
 
 	private boolean disableParentPidMonitoring;
+
+	private String stateReportingToken;
+
+	private String adminUIUrl;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -456,7 +467,19 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		this.useItemsAdder = getConfig().getBoolean("enable_items_adder");
 
+		statusReportingTask = null;
 		parentProcessID = -1;
+
+		adminUIUrl = "http://127.0.0.1";
+		String tournamentAdminUIPort = System.getProperty("tournamentAdminUIPort");
+		if (tournamentAdminUIPort != null) {
+			try {
+				int port = Integer.parseInt(tournamentAdminUIPort);
+				adminUIUrl = getAdminUIUrl() + ":" + port;
+			} catch (Exception e) {
+				Log.error("TournamentSystem", "Failed to parse arg -DtournamentAdminUIPort. " + e.getClass().getName() + " " + e.getMessage());
+			}
+		}
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
@@ -596,6 +619,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		replaceEz = config.getBoolean("replace_ez");
 
 		chickenOutFeatherScoreMultiplier = getConfig().getDouble("chicken_out_feather_score_multiplier");
+
+		if (config.has("admin_ui_url")) {
+			adminUIUrl = config.getString("admin_ui_url");
+		}
 
 		if (config.has("dynamic_config_url")) {
 			dynamicConfigURL = config.getString("dynamic_config_url");
@@ -828,7 +855,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			pluginMessageListener.tickSecond();
 		}, 20L);
 
+		statusReportingTask = new SimpleTask(this, () -> reportServerStateAsync(), 20 * 60);
+
 		/* ---- Final launch parameters ----- */
+		stateReportingToken = null;
+		String tsStateReportingTokenParam = System.getProperty("tournamentStatusReportingKey");
+		if (tsStateReportingTokenParam != null) {
+			Log.info("TournamentSystem", "Found state reporting token");
+			stateReportingToken = tsStateReportingTokenParam;
+		}
+
 		String tsServerNameParam = System.getProperty("tournamentServerNetworkName");
 		if (tsServerNameParam != null) {
 			Log.info("TournamentSystem", "Using server name " + tsServerNameParam + " from -DtournamentServerNetworkName flag");
@@ -843,10 +879,12 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			@Override
 			public void run() {
 				Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
+				reportServerStateAsync();
 			}
 		}.runTaskLater(this, 1L);
 
 		Task.tryStartTask(timerSeconds);
+		Task.tryStartTask(statusReportingTask);
 
 		if (dynamicConfigURL != null) {
 			Log.info("TournamentSystem", "Trying to read dynamic config...");
@@ -856,6 +894,65 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				Log.error("TournamentSystem", "Failed to update dynamic config");
 			}
 		}
+	}
+
+	public void reportServerStateAsync() {
+		if (stateReportingToken == null) {
+			return;
+		}
+
+		final JSONObject json = new JSONObject();
+
+		JSONArray plugins = new JSONArray();
+		Arrays.asList(Bukkit.getServer().getPluginManager().getPlugins()).forEach(plugin -> {
+			JSONObject data = new JSONObject();
+			data.put("name", plugin.getName());
+			data.put("version", plugin.getDescription().getVersion());
+			plugins.put(data);
+		});
+
+		JSONArray modules = new JSONArray();
+		ModuleManager.getModules().forEach((className, module) -> {
+			JSONObject data = new JSONObject();
+			data.put("class_name", className);
+			data.put("name", module.getName());
+			data.put("enabled", module.isEnabled());
+			modules.put(data);
+		});
+
+		json.put("plugins", plugins);
+		json.put("modules", modules);
+		json.put("port", Bukkit.getServer().getPort());
+
+		AsyncManager.runAsync(() -> {
+			try {
+				URL url = new URL(adminUIUrl + "/api/internal/server/state_reporting");
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				connection.setDoOutput(true);
+				connection.setConnectTimeout(STATUS_REPORTING_TIMEOUT);
+				connection.setReadTimeout(STATUS_REPORTING_TIMEOUT);
+				connection.setInstanceFollowRedirects(true);
+				connection.setRequestMethod("POST");
+				connection.setRequestProperty("Content-Type", "application/json");
+				connection.setRequestProperty("charset", "utf-8");
+				connection.setRequestProperty("Authorization", "Bearer " + stateReportingToken);
+				connection.connect();
+
+				OutputStream os = connection.getOutputStream();
+				byte[] input = json.toString().getBytes("utf-8");
+				os.write(input, 0, input.length);
+				os.flush();
+				os.close();
+
+				int httpResult = connection.getResponseCode();
+				if (httpResult != HttpURLConnection.HTTP_OK) {
+					Log.warn("TournamentSystem", "Status reporting failed with status code " + httpResult);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.warn("TournamentSystem", "Status reporting failed. " + e.getClass().getName() + " " + e.getMessage());
+			}
+		});
 	}
 
 	public void updateScoreboard() {
@@ -876,6 +973,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	@Override
 	public void onDisable() {
 		Task.tryStopTask(timerSeconds);
+		Task.tryStopTask(statusReportingTask);
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
 
@@ -886,5 +984,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				placeholderAPIExpansion.unregister();
 			}
 		}
+	}
+
+	public String getAdminUIUrl() {
+		return adminUIUrl;
 	}
 }

@@ -283,7 +283,7 @@ $(function () {
 	});
 
 	$("#btn_full_reset").on("click", function () {
-		if($("#reset_confirmation").is(":checked")) {
+		if ($("#reset_confirmation").is(":checked")) {
 			$.ajax({
 				type: "DELETE",
 				url: "/api/v1/system/reset",
@@ -296,7 +296,7 @@ $(function () {
 						toastr.error("Failed to communicate with backend server");
 						return;
 					}
-	
+
 					if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 						toastr.error(xhr.responseJSON.message);
 					} else {
@@ -459,7 +459,7 @@ $(function () {
 					toastr.error("Failed to communicate with backend server");
 					return;
 				}
-		
+
 				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 					toastr.error(xhr.responseJSON.message);
 				} else {
@@ -494,7 +494,7 @@ $(function () {
 					toastr.error("Failed to communicate with backend server");
 					return;
 				}
-		
+
 				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 					toastr.error(xhr.responseJSON.message);
 				} else {
@@ -529,7 +529,7 @@ $(function () {
 					toastr.error("Failed to communicate with backend server");
 					return;
 				}
-		
+
 				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
 					toastr.error(xhr.responseJSON.message);
 				} else {
@@ -664,6 +664,56 @@ const TournamentSystem = {
 	staffTeam: {},
 	commentatorKeyShown: false,
 	activeServer: null,
+	lastServerData: [],
+
+	showServerState: (serverName) => {
+		let server = TournamentSystem.lastServerData.find(s => s.name == serverName);
+		if (server == null) {
+			toastr.error("Could not find server data for " + serverName);
+			return;
+		}
+
+		let stateReport = server.last_state_report;
+
+		$("#serverInfoModalTitle").text("Server info: " + server.name);
+		$("#server_info_plugins").find("tr").remove();
+		$("#server_info_modules").find("tr").remove();
+
+		if (stateReport.plugins != null) {
+			stateReport.plugins.forEach(plugin => {
+				console.log(plugin);
+				let newElement = $("<tr></tr>");
+				newElement.append(
+					$("<td></td>")
+						.text(plugin.name)
+				);
+				newElement.append(
+					$("<td></td>")
+						.text(plugin.version)
+				);
+				$("#server_info_plugins").append(newElement);
+			});
+		}
+
+		if (stateReport.modules != null) {
+			stateReport.modules.forEach(novamodule => {
+				console.log(novamodule);
+				let newElement = $("<tr></tr>");
+				newElement.append(
+					$("<td></td>")
+						.text(novamodule.name)
+				);
+				newElement.append(
+					$("<td></td>")
+						.text(novamodule.enabled ? "Enabled" : "Disabled")
+				);
+				$("#server_info_modules").append(newElement);
+			});
+		}
+
+		$("#serverInfoModal").modal("show");
+		console.log(server);
+	},
 
 	openChatLog: () => {
 		let content = $("#chat_log").text();
@@ -1171,6 +1221,8 @@ const TournamentSystem = {
 				displayedServers.push(name);
 			});
 
+			TournamentSystem.lastServerData = data.servers;
+
 			servers.forEach(server => {
 				if (!displayedServers.includes(server.name)) {
 					let newElement = $("#server_sample").clone();
@@ -1185,6 +1237,8 @@ const TournamentSystem = {
 					newElement.find(".stop-server-button").attr("data-server-name", server.name);
 					newElement.find(".get-server-logs-button").attr("data-server-name", server.name);
 					newElement.find(".start-server-console-button").attr("data-server-name", server.name);
+					newElement.find(".get-server-info").attr("data-server-name", server.name);
+
 
 					if (!hasPermission("MANAGE_SERVERS")) {
 						newElement.find(".start-server-button").attr("disabled", true);
@@ -1197,6 +1251,11 @@ const TournamentSystem = {
 					newElement.find(".start-server-console-button").on("click", function () {
 						let serverName = $(this).data("server-name");
 						ServerConsole.openConsole(serverName);
+					});
+
+					newElement.find(".get-server-info").on("click", function () {
+						let serverName = $(this).data("server-name");
+						TournamentSystem.showServerState(serverName);
 					});
 
 					newElement.find(".start-server-button").on("click", function () {
@@ -1589,7 +1648,7 @@ const TournamentSystem = {
 
 					newElement.find(".trigger-name").text(trigger.name);
 					newElement.find(".trigger-description").text(trigger.description);
-					if((trigger.description + "").trim().length == 0) {
+					if ((trigger.description + "").trim().length == 0) {
 						newElement.find(".trigger-description").hide();
 						newElement.find(".description-hr").hide();
 					}

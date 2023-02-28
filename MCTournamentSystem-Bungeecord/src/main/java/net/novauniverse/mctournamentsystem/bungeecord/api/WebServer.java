@@ -48,14 +48,17 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitel
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.StaticFileHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.FileNotFoundHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.internal.ManagedServerStateReportingEndpoint;
 import net.zeeraa.novacore.commons.log.Log;
 
 // If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
 public class WebServer {
+	private int port;
 	private HttpServer httpServer;
 	private boolean hasShutDown;
 
 	public WebServer(int port, File appRoot) throws IOException {
+		this.port = port;
 		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
 		hasShutDown = false;
 
@@ -67,13 +70,12 @@ public class WebServer {
 		createContext("/api/v1/system/broadcast", new BroadcastHandler());
 		createContext("/api/v1/system/quick_message", new QuickMessageHandler());
 		createContext("/api/v1/system/shutdown", new ShutdownHandler());
-		
+
 		createContext("/api/v1/system/reset", new ResetHandler());
 
 		createContext("/api/v1/system/settings/tournament_name", new SetTournamentNameHandler());
 		createContext("/api/v1/system/settings/scoreboard_url", new SetScoreboardURLHandler());
 		createContext("/api/v1/system/settings/motd", new SetMOTDHandler());
-		
 
 		createContext("/api/v1/system/web/phpmyadmin_url", new PHPMyAdminUrlHandler());
 		createContext("/api/v1/system/web/custom_themes", new GetCustomThemesHandler());
@@ -129,6 +131,9 @@ public class WebServer {
 		createContext("/api/v1/servers/log_session_id", new GetServersLogSessionIDHandler());
 		createContext("/api/v1/servers/run_command", new SendServerCommandHandler());
 
+		// Internal
+		createContext("/api/internal/server/state_reporting", new ManagedServerStateReportingEndpoint());
+
 		// File index
 		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot.getAbsolutePath(), "index.html");
 		createContext("/app", sfh);
@@ -141,6 +146,10 @@ public class WebServer {
 		httpServer.start();
 	}
 
+	public int getPort() {
+		return port;
+	}
+	
 	private void createContext(String string, HttpHandler httpHandler) {
 		Log.info("WebServer", "Creating context: " + string);
 		httpServer.createContext(string, httpHandler);

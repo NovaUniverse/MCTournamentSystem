@@ -330,7 +330,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			e.printStackTrace();
 			Log.error("TournamentSystem", "Failed to fetch MTOD");
 		}
-
+		
 		/* ----- Listeners ----- */
 		playerTelementryManager = new PlayerTelementryManager();
 		slowPlayerSender = new SlowPlayerSender(this);
