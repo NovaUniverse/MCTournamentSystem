@@ -11,12 +11,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.novauniverse.games.missilewars.game.team.MissileWarsTeam;
 import net.novauniverse.games.missilewars.game.team.TeamColor;
+import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
 import net.novauniverse.mctournamentsystem.missilewars.lobby.command.hub.HubCommand;
 import net.novauniverse.mctournamentsystem.missilewars.lobby.gamestarter.DefaultCountdownGameStarter;
 import net.novauniverse.mctournamentsystem.missilewars.lobby.gamestarter.GameStarter;
 import net.novauniverse.mctournamentsystem.missilewars.lobby.modules.GameStartScoreboardCountdown;
 import net.novauniverse.mctournamentsystem.missilewars.lobby.modules.MissileWarsHandler;
 import net.novauniverse.mctournamentsystem.missilewars.lobby.modules.MissilewarsScoreboard;
+import net.zeeraa.novacore.commons.async.AsyncManager;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameEndReason;
@@ -34,6 +37,8 @@ public class MissileWarsLobby extends NovaPlugin implements Listener {
 	private static MissileWarsLobby instance;
 	private GameStarter starter;
 
+	private int parentProcessID;
+
 	public static MissileWarsLobby getInstance() {
 		return instance;
 	}
@@ -43,6 +48,7 @@ public class MissileWarsLobby extends NovaPlugin implements Listener {
 	}
 
 	private Task checkTask;
+	private Task parentPIDMonitoringTask;
 	private int stopTimer;
 
 	@Override
@@ -50,6 +56,31 @@ public class MissileWarsLobby extends NovaPlugin implements Listener {
 		MissileWarsLobby.instance = this;
 
 		stopTimer = 30;
+		parentPIDMonitoringTask = null;
+
+		String parentProcessIdStr = System.getProperty("tournamentServerParentProcessID");
+		if (parentProcessIdStr == null) {
+			Log.info("TournamentSystem", "Did not detect -DtournamentServerParentProcessID flag. We wont monitor for parent process");
+		} else {
+			Log.info("TournamentSystem", "Detected -DtournamentServerParentProcessID flag");
+			try {
+				parentProcessID = Integer.parseInt(parentProcessIdStr);
+				Log.info("TournamentSystem", "Monitoring process " + parentProcessID + " for automatic shutdown");
+				parentPIDMonitoringTask = new SimpleTask(this, () -> {
+					if (!ProcessUtils.isProcessRunning(parentProcessID)) {
+						Task.tryStopTask(parentPIDMonitoringTask);
+						Log.warn("TournamentSystem", "Parent process " + parentProcessID + " no longer found. Shutting down");
+						AsyncManager.runSync(() -> {
+							Bukkit.getServer().shutdown();
+						});
+					}
+				}, 20 * 5);
+				Task.tryStartTask(parentPIDMonitoringTask);
+			} catch (Exception e) {
+				Log.fatal("tournamentSystem", "-DtournamentServerParentProcessID flag was set to non numeric value");
+				Bukkit.getServer().shutdown();
+			}
+		}
 
 		checkTask = new SimpleTask(this, new Runnable() {
 			@Override
@@ -129,6 +160,7 @@ public class MissileWarsLobby extends NovaPlugin implements Listener {
 	public void onDisable() {
 		this.cancelTasks(this);
 		Task.tryStopTask(checkTask);
+		Task.tryStopTask(parentPIDMonitoringTask);
 		Bukkit.getScheduler().cancelTasks(this);
 	}
 
