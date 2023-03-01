@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.json.JSONObject;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.games.chickenout.game.ChickenOut;
@@ -34,6 +35,8 @@ public class ChickenOutManager extends NovaModule implements Listener {
 	public static int FEATHER_COUNT_LINE = 6;
 	public static int FINAL_FEATHER_COUNT_LINE = 7;
 
+	private double CHICKEN_OUT_FEATHER_SCORE_MULTIPLIER = 0D;
+
 	public static String LINE_PREFIX = ChatColor.GOLD.toString();
 
 	private Task task;
@@ -46,6 +49,14 @@ public class ChickenOutManager extends NovaModule implements Listener {
 
 	@Override
 	public void onLoad() {
+		JSONObject scoreConfig = TournamentSystem.getInstance().getGameSpecificScoreSettings().optJSONObject("chickenout");
+		if (scoreConfig != null) {
+			if (scoreConfig.has("feather_score_multiplier")) {
+				CHICKEN_OUT_FEATHER_SCORE_MULTIPLIER = scoreConfig.getDouble("feather_score_multiplier");
+				Log.info(getName(), "Setting feather score multiplier to " + CHICKEN_OUT_FEATHER_SCORE_MULTIPLIER);
+			}
+		}
+		
 		gameManager = GameManager.getInstance();
 
 		// We use custom messages here instead
@@ -154,21 +165,23 @@ public class ChickenOutManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onChickenOutPlayerChickenOut(ChickenOutPlayerChickenOutEvent e) {
-		Player player = e.getPlayer();
-		int score = (int) Math.ceil(((double) e.getFeathers()) * TournamentSystem.getInstance().getChickenOutFeatherScoreMultiplier());
-		if (score <= 0) {
-			return;
-		}
-		if (TeamManager.hasTeamManager()) {
-			Team team = TeamManager.getTeamManager().getPlayerTeam(player);
-			if (team != null) {
-				team.sendMessage(ChatColor.GRAY + "+" + score + " points to team");
+		if (CHICKEN_OUT_FEATHER_SCORE_MULTIPLIER > 0) {
+			Player player = e.getPlayer();
+			int score = (int) Math.ceil(((double) e.getFeathers()) * CHICKEN_OUT_FEATHER_SCORE_MULTIPLIER);
+			if (score <= 0) {
+				return;
 			}
-		} else {
-			player.sendMessage(ChatColor.GRAY + "+" + score + " points");
-		}
+			if (TeamManager.hasTeamManager()) {
+				Team team = TeamManager.getTeamManager().getPlayerTeam(player);
+				if (team != null) {
+					team.sendMessage(ChatColor.GRAY + "+" + score + " points to team");
+				}
+			} else {
+				player.sendMessage(ChatColor.GRAY + "+" + score + " points");
+			}
 
-		ScoreManager.getInstance().addPlayerScore(player, score, true);
+			ScoreManager.getInstance().addPlayerScore(player, score, true);
+		}
 	}
 
 	@Override

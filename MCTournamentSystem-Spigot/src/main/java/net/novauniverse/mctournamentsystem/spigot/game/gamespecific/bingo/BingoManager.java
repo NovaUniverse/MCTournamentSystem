@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.json.JSONObject;
 
 import net.novauniverse.games.bingo.NovaBingo;
 import net.novauniverse.games.bingo.game.Bingo;
@@ -25,7 +26,7 @@ import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboar
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class BingoManager extends NovaModule implements Listener {
-	public static int POINTS_PER_ITEM = 10;
+	public static int POINTS_PER_ITEM = 0;
 	public static int TIME_LEFT_LINE = 5;
 
 	private Task task;
@@ -40,6 +41,14 @@ public class BingoManager extends NovaModule implements Listener {
 	@Override
 	public void onLoad() {
 		gameManager = GameManager.getInstance();
+
+		JSONObject scoreConfig = TournamentSystem.getInstance().getGameSpecificScoreSettings().optJSONObject("bingo");
+		if (scoreConfig != null) {
+			if (scoreConfig.has("points_per_item")) {
+				POINTS_PER_ITEM = scoreConfig.getInt("points_per_item");
+				Log.info(getName(), "Setting points per item to " + POINTS_PER_ITEM);
+			}
+		}
 
 		timeLeftLineShown = false;
 
@@ -104,8 +113,10 @@ public class BingoManager extends NovaModule implements Listener {
 
 		e.getTeam().sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + e.getPlayer().getName() + " found item " + ChatColor.AQUA + ChatColor.BOLD + e.getItemDisplayName());
 
-		e.getTeam().sendMessage(ChatColor.GRAY + "+" + POINTS_PER_ITEM + " points");
-		ScoreManager.getInstance().addPlayerScore(e.getPlayer(), POINTS_PER_ITEM, true);
+		if (POINTS_PER_ITEM > 0) {
+			e.getTeam().sendMessage(ChatColor.GRAY + "+" + POINTS_PER_ITEM + " points");
+			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), POINTS_PER_ITEM, true);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

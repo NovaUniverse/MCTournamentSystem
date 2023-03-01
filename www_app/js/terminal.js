@@ -63,7 +63,7 @@ const ServerConsole = {
 			}
 		}, 500);
 
-		this.terminal.writeln("Connecting to " + server + "...");
+		this.terminal.writeln(ConsoleColor.GREEN + "Connecting to " + server + "..." + ConsoleColor.RESET);
 
 		$.ajax({
 			type: "GET",
@@ -72,9 +72,9 @@ const ServerConsole = {
 				this.lastSessionId = data.session_id;
 				this.lastMessageId = -1;
 				if (data.session_id == undefined) {
-					this.terminal.writeln("Server not yet started. Logs will start to display as soon as the server goes online");
+					this.terminal.writeln(ConsoleColor.YELLOW + "Server not yet started. Logs will start to display as soon as the server goes online" + ConsoleColor.RESET);
 				} else {
-					this.terminal.writeln("Session id is: " + this.lastSessionId);
+					this.terminal.writeln(ConsoleColor.CYAN + "Session id is: " + this.lastSessionId + ConsoleColor.RESET);
 				}
 				this.ready = true;
 			},
@@ -82,14 +82,14 @@ const ServerConsole = {
 				console.error(xhr);
 
 				if (xhr.status == 0 || xhr.status == 503) {
-					this.terminal.writeln("Backend communication failure");
+					this.terminal.writeln(ConsoleColor.RED + "Backend communication failure" + ConsoleColor.RESET);
 					return;
 				}
 
 				if (xhr.status == 405 || xhr.status == 403 || xhr.status == 404 || xhr.status == 500) {
-					this.terminal.writeln("Failed to fetch session id. " + xhr.responseJSON.message);
+					this.terminal.writeln(ConsoleColor.RED + "Failed to fetch session id. " + xhr.responseJSON.message + ConsoleColor.RESET);
 				} else {
-					this.terminal.writeln("Failed to fetch session id due to an unknown error");
+					this.terminal.writeln(ConsoleColor.RED + "Failed to fetch session id due to an unknown error" + ConsoleColor.RESET);
 				}
 			},
 			dataType: "json"

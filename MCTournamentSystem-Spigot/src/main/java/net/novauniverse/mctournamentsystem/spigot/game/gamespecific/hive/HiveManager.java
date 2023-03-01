@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.JSONObject;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.games.hive.NovaHive;
@@ -23,6 +24,7 @@ import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
@@ -38,21 +40,31 @@ import net.zeeraa.novacore.spigot.teams.TeamManager;
 public class HiveManager extends NovaModule implements Listener {
 	public static int TIME_LINE = 5;
 	public static int HONEY_LINE = 6;
-	
+
+	public static double HONEY_SCORE_MULTIPLIER = 0D;
+
 	public static String LINE_PREFIX = ChatColor.GOLD.toString();
 
 	private Task task;
 
 	private GameManager gameManager;
-	
+
 	public HiveManager() {
 		super("TournamentSystem.GameSpecific.HiveManager");
 	}
 
 	@Override
 	public void onLoad() {
+		JSONObject scoreConfig = TournamentSystem.getInstance().getGameSpecificScoreSettings().optJSONObject("hive");
+		if (scoreConfig != null) {
+			if (scoreConfig.has("honey_score_multiplier")) {
+				HONEY_SCORE_MULTIPLIER = scoreConfig.getDouble("honey_score_multiplier");
+				Log.info(getName(), "Setting honey score multiplier " + HONEY_SCORE_MULTIPLIER);
+			}
+		}
+
 		gameManager = GameManager.getInstance();
-		
+
 		GameSetup.disableEliminationMessages();
 		gameManager.setPlayerEliminationMessage(new HiveEliminationMessages());
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
@@ -85,7 +97,7 @@ public class HiveManager extends NovaModule implements Listener {
 									HiveData hive = game.getHives().stream().filter(h -> h.getOwner().equals(team)).findFirst().orElse(null);
 									if (hive != null) {
 										boolean filled = hive.getHoney() >= game.getConfig().getHoneyRequiredtoFillJar();
-										NetherBoardScoreboard.getInstance().setPlayerLine(HONEY_LINE, player, LINE_PREFIX+ "Honey: " + (filled ? ChatColor.GREEN : ChatColor.WHITE) + hive.getHoney() + " / " + game.getConfig().getHoneyRequiredtoFillJar());
+										NetherBoardScoreboard.getInstance().setPlayerLine(HONEY_LINE, player, LINE_PREFIX + "Honey: " + (filled ? ChatColor.GREEN : ChatColor.WHITE) + hive.getHoney() + " / " + game.getConfig().getHoneyRequiredtoFillJar());
 									}
 								}
 							});
@@ -133,10 +145,12 @@ public class HiveManager extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onHivePlayerDepositHoney(HivePlayerDepositHoneyEvent e) {
 		Player player = e.getPlayer();
-		int score = e.getAmount();
+		if (HONEY_SCORE_MULTIPLIER > 0) {
+			int score = (int) Math.ceil(((double) e.getAmount()) * HONEY_SCORE_MULTIPLIER);
 
-		ScoreManager.getInstance().addPlayerScore(player, score, true);
-		player.sendMessage(ChatColor.GRAY + "+" + score + " points");
+			ScoreManager.getInstance().addPlayerScore(player, score, true);
+			player.sendMessage(ChatColor.GRAY + "+" + score + " points");
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

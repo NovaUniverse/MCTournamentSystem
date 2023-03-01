@@ -3,6 +3,7 @@ package net.novauniverse.mctournamentsystem.spigot;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -39,6 +40,7 @@ import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
 import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPIUtil;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
+import net.novauniverse.mctournamentsystem.commons.utils.ResourceUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
 import net.novauniverse.mctournamentsystem.spigot.command.bc.BCCommand;
@@ -111,16 +113,12 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private int[] winScore;
 
-	private int dropperCompleteLevelScore;
-
 	private boolean addXpLevelOnKill;
 	private boolean useExtendedSpawnLocations;
 	private boolean celebrationMode;
 	private boolean replaceEz;
 	private boolean noTeamsMode;
 	private boolean eliminationTitleMessageEnabled;
-
-	private double chickenOutFeatherScoreMultiplier;
 
 	private List<Consumer<Player>> respawnPlayerCallbacks;
 
@@ -180,12 +178,18 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private String adminUIUrl;
 
+	private JSONObject gameSpecificScoreSettings;
+
 	public static TournamentSystem getInstance() {
 		return instance;
 	}
 
 	public boolean isDisableParentPidMonitoring() {
 		return disableParentPidMonitoring;
+	}
+
+	public JSONObject getGameSpecificScoreSettings() {
+		return gameSpecificScoreSettings;
 	}
 
 	@Nullable
@@ -245,10 +249,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.playerEliminationMessageProvider = playerEliminationMessageProvider;
 	}
 
-	public int getDropperCompleteLevelScore() {
-		return dropperCompleteLevelScore;
-	}
-
 	public boolean isNoTeamsMode() {
 		return noTeamsMode;
 	}
@@ -287,10 +287,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public boolean isBuiltInScoreSystemDisabled() {
 		return builtInScoreSystemDisabled;
-	}
-
-	public double getChickenOutFeatherScoreMultiplier() {
-		return chickenOutFeatherScoreMultiplier;
 	}
 
 	public boolean isForceShowTeamNameInLeaderboard() {
@@ -448,8 +444,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.builtInScoreSystemDisabled = false;
 		this.eliminationTitleMessageEnabled = true;
 
-		this.chickenOutFeatherScoreMultiplier = 0;
-
 		this.forceShowTeamNameInLeaderboard = false;
 		this.makeTeamNamesBold = false;
 
@@ -508,6 +502,23 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			config = JSONFileUtils.readJSONObjectFromFile(configFile);
 		} catch (Exception e) {
 			Log.fatal("TournamentSystem", "Failed to parse/save the config file at " + configFile.getAbsolutePath());
+			e.printStackTrace();
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
+
+		File scoreConfigFile = new File(globalDataDirectory + File.separator + "GameSpecificScoreSettings.json");
+		try {
+			if (!scoreConfigFile.exists()) {
+				Log.info("TournamentSystem", "Creating score settings file at " + scoreConfigFile.getAbsolutePath());
+
+				JSONObject defaultConfig = new JSONObject(ResourceUtils.readResourceFromJARAsString("/GameSpecificScoreSettings.json", this));
+
+				JSONFileUtils.saveJson(scoreConfigFile, defaultConfig, 4);
+			}
+			gameSpecificScoreSettings = JSONFileUtils.readJSONObjectFromFile(scoreConfigFile);
+		} catch (Exception e) {
+			Log.fatal("TournamentSystem", "Failed to parse/save the GameSpecificScoreSettings.json at " + configFile.getAbsolutePath());
 			e.printStackTrace();
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
@@ -619,8 +630,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		celebrationMode = config.getBoolean("celebration_mode");
 		replaceEz = config.getBoolean("replace_ez");
 
-		chickenOutFeatherScoreMultiplier = getConfig().getDouble("chicken_out_feather_score_multiplier");
-
 		if (config.has("admin_ui_url")) {
 			adminUIUrl = config.getString("admin_ui_url");
 		}
@@ -696,8 +705,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		Log.info("TournamentSystem", "Win score: " + winScoreString);
-
-		dropperCompleteLevelScore = getConfig().getInt("dropper_level_complete_score");
 
 		/* ----- Depends ----- */
 		ModuleManager.require(NetherBoardScoreboard.class);
@@ -909,11 +916,30 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		final JSONObject json = new JSONObject();
 
+		JSONObject software = new JSONObject();
+		JSONObject bukkit = new JSONObject();
+		JSONObject java = new JSONObject();
+
+		bukkit.put("name", Bukkit.getName());
+		bukkit.put("version", Bukkit.getVersion());
+		bukkit.put("bukkit_version", Bukkit.getBukkitVersion());
+
+		java.put("version", System.getProperty("java.version"));
+		java.put("name", ManagementFactory.getRuntimeMXBean().getName());
+		java.put("vm_name", ManagementFactory.getRuntimeMXBean().getVmName());
+		java.put("vm_vendor", ManagementFactory.getRuntimeMXBean().getVmVendor());
+		java.put("vm_version", ManagementFactory.getRuntimeMXBean().getVmVersion());
+
+		software.put("bukkit", bukkit);
+		software.put("java", java);
+
 		JSONArray plugins = new JSONArray();
 		Arrays.asList(Bukkit.getServer().getPluginManager().getPlugins()).forEach(plugin -> {
 			JSONObject data = new JSONObject();
 			data.put("name", plugin.getName());
 			data.put("version", plugin.getDescription().getVersion());
+			data.put("authors", String.join(",", plugin.getDescription().getAuthors()));
+			data.put("enabled", plugin.isEnabled());
 			plugins.put(data);
 		});
 
@@ -928,6 +954,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		json.put("plugins", plugins);
 		json.put("modules", modules);
+		json.put("software", software);
 		json.put("port", Bukkit.getServer().getPort());
 
 		AsyncManager.runAsync(() -> {

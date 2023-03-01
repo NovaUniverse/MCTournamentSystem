@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.json.JSONObject;
 
 import net.novauniverse.bedwars.NovaBedwars;
 import net.novauniverse.bedwars.game.Bedwars;
@@ -15,6 +16,7 @@ import net.novauniverse.bedwars.game.config.event.BedwarsEvent;
 import net.novauniverse.bedwars.game.events.BedDestructionEvent;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.module.NovaModule;
@@ -25,7 +27,7 @@ public class BedwarsManager extends NovaModule implements Listener {
 	public static int BEDWARS_COUNTDOWN_LINE = 5;
 	public static int HAS_BED_LINE = 6;
 
-	public static int BED_DESTRUCTION_SCORE = 20;
+	public static int BED_DESTRUCTION_SCORE = 0;
 	private Task task;
 
 	private Comparator<BedwarsEvent> eventSorter;
@@ -38,6 +40,14 @@ public class BedwarsManager extends NovaModule implements Listener {
 
 	@Override
 	public void onLoad() {
+		JSONObject scoreConfig = TournamentSystem.getInstance().getGameSpecificScoreSettings().optJSONObject("bedwars");
+		if (scoreConfig != null) {
+			if (scoreConfig.has("bed_destruction_score")) {
+				BED_DESTRUCTION_SCORE = scoreConfig.getInt("bed_destruction_score");
+				Log.info(getName(), "Setting bed destruction score to " + BED_DESTRUCTION_SCORE);
+			}
+		}
+
 		task = new SimpleTask(TournamentSystem.getInstance(), new Runnable() {
 			@Override
 			public void run() {
@@ -63,9 +73,11 @@ public class BedwarsManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBedDestruction(BedDestructionEvent e) {
-		Player player = e.getPlayer();
-		player.sendMessage(ChatColor.GRAY + "Enemy bed destroyed. +" + BED_DESTRUCTION_SCORE + " points");
-		ScoreManager.getInstance().addPlayerScore(player, BED_DESTRUCTION_SCORE, true);
+		if (BED_DESTRUCTION_SCORE > 0) {
+			Player player = e.getPlayer();
+			player.sendMessage(ChatColor.GRAY + "Enemy bed destroyed. +" + BED_DESTRUCTION_SCORE + " points");
+			ScoreManager.getInstance().addPlayerScore(player, BED_DESTRUCTION_SCORE, true);
+		}
 	}
 
 	@Override

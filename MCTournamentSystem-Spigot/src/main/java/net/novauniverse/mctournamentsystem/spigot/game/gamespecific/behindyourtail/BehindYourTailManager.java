@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.json.JSONObject;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.behindyourtail.NovaBehindYourTail;
@@ -23,6 +24,7 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.CustomDefaultPlayerEliminationMessaageProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.PlayerHeadDrop;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
@@ -41,7 +43,7 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 import net.zeeraa.novacore.spigot.utils.VectorUtils;
 
 public class BehindYourTailManager extends NovaModule implements Listener {
-	public static int PLAYER_ATTACK_FOX_SCORE = 10;
+	public static int PLAYER_ATTACK_FOX_SCORE = 0;
 
 	public static double LINE_PARTICLE_COUNT = 50D;
 
@@ -67,6 +69,14 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 	@Override
 	public void onLoad() {
 		this.tracersDisabled = false;
+
+		JSONObject scoreConfig = TournamentSystem.getInstance().getGameSpecificScoreSettings().optJSONObject("behindyourtail");
+		if (scoreConfig != null) {
+			if (scoreConfig.has("attack_fox_score")) {
+				PLAYER_ATTACK_FOX_SCORE = scoreConfig.getInt("attack_fox_score");
+				Log.info(getName(), "Setting player attack fox score to " + PLAYER_ATTACK_FOX_SCORE);
+			}
+		}
 
 		CommandRegistry.registerCommand(new ToggleBehindYourTailTracers());
 
@@ -214,8 +224,10 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBehindYourTailPlayerDamageFox(BehindYourTailPlayerDamageFoxEvent e) {
-		Player player = e.getAttacker();
-		player.sendMessage(ChatColor.GRAY + "Damaged enemy fox. +" + PLAYER_ATTACK_FOX_SCORE + " points");
-		ScoreManager.getInstance().addPlayerScore(player, PLAYER_ATTACK_FOX_SCORE, true);
+		if (PLAYER_ATTACK_FOX_SCORE > 0) {
+			Player player = e.getAttacker();
+			player.sendMessage(ChatColor.GRAY + "Damaged enemy fox. +" + PLAYER_ATTACK_FOX_SCORE + " points");
+			ScoreManager.getInstance().addPlayerScore(player, PLAYER_ATTACK_FOX_SCORE, true);
+		}
 	}
 }

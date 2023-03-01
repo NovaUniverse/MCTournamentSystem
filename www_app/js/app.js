@@ -675,6 +675,20 @@ const TournamentSystem = {
 
 		let stateReport = server.last_state_report;
 
+		$("#server_info_software").text("Unknown");
+		$("#server_info_java_version").text("Unknown");
+
+		console.log(server);
+		if (stateReport.software != null) {
+			if (stateReport.software.bukkit != null) {
+				$("#server_info_software").text(stateReport.software.bukkit.bukkit_version + " " + stateReport.software.bukkit.version);
+			}
+
+			if (stateReport.software.java != null) {
+				$("#server_info_java_version").text(stateReport.software.java.version + " " + stateReport.software.java.vm_name);
+			}
+		}
+
 		$("#serverInfoModalTitle").text("Server info: " + server.name);
 		$("#server_info_plugins").find("tr").remove();
 		$("#server_info_modules").find("tr").remove();
@@ -691,6 +705,13 @@ const TournamentSystem = {
 					$("<td></td>")
 						.text(plugin.version)
 				);
+
+				if (plugin.enabled == false) {
+					newElement.addClass("table-danger");
+				}
+
+				newElement.attr("title", (plugin.enabled == false ? "Disabled" : "Enabled") + ". Authors: " + plugin.authors);
+
 				$("#server_info_plugins").append(newElement);
 			});
 		}

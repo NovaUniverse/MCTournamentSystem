@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.JSONObject;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.games.parkourrace.NovaParkourRace;
@@ -14,6 +15,7 @@ import net.novauniverse.games.parkourrace.game.event.ParkourRacePlayerCompleteEv
 import net.novauniverse.games.parkourrace.game.event.ParkourRacePlayerCompleteLapEvent;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
+import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.Callback;
 import net.zeeraa.novacore.commons.utils.TextUtils;
@@ -31,6 +33,8 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 	public static String LAP_PREFIX = ChatColor.AQUA.toString();
 	public static String COMPLETED_PREFIX = ChatColor.GREEN.toString();
 
+	public static int LAP_COMPLETED_SCORE = 0;
+
 	private Task task;
 
 	private GameManager gameManager;
@@ -41,6 +45,14 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 
 	@Override
 	public void onLoad() {
+		JSONObject scoreConfig = TournamentSystem.getInstance().getGameSpecificScoreSettings().optJSONObject("parkourrace");
+		if (scoreConfig != null) {
+			if (scoreConfig.has("lap_completed_score")) {
+				LAP_COMPLETED_SCORE = scoreConfig.getInt("lap_completed_score");
+				Log.info(getName(), "Setting lap completed score to " + LAP_COMPLETED_SCORE);
+			}
+		}
+		
 		gameManager = GameManager.getInstance();
 
 		TournamentSystem.getInstance().setBuiltInScoreSystemDisabled(true);
@@ -113,8 +125,10 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 		if (ParkourRaceManagerConfig.DisableTournamentSystemScoreSystem) {
 			return;
 		}
-		e.getPlayer().sendMessage(ChatColor.GRAY + "+10 points");
-		ScoreManager.getInstance().addPlayerScore(e.getPlayer(), 10, true);
+		if (LAP_COMPLETED_SCORE > 0) {
+			e.getPlayer().sendMessage(ChatColor.GRAY + "+" + LAP_COMPLETED_SCORE + " points");
+			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), LAP_COMPLETED_SCORE, true);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

@@ -1,0 +1,27 @@
+{
+	"bedwars": {
+		"bed_destruction_score": 20
+	},
+	"behindyourtail": {
+		"attack_fox_score": 10
+	},
+	"bingo": {
+		"points_per_item": 15
+	},
+	"capturetheflag": {
+		"flag_capture": 20,
+		"eliminate_player": 20
+	},
+	"chickenout": {
+		"feather_score_multiplier": 1.0
+	},
+	"dropper": {
+		"complete_level": 10
+	},
+	"hive": {
+		"honey_score_multiplier": 5.0
+	},
+	"parkourrace": {
+		"lap_completed_score": 20
+	}
+}

@@ -4,6 +4,8 @@ description: h
 version: 1.0
 api-version: 1.13
 
+authors: [Zeeraa, NovaUniverse]
+
 depend: [NovaCore, HolographicDisplays, ProtocolLib, TitleAPI, NovaMissileWars]
 softdepent: [NovaCoreGameEngine]
 loadbefore: [NovaGamesTarget]

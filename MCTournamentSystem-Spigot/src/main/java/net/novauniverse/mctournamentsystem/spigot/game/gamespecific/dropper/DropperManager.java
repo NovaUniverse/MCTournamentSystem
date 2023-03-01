@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.json.JSONObject;
 
 import net.novauniverse.games.dropper.NovaDropper;
 import net.novauniverse.games.dropper.game.Dropper;
@@ -28,6 +29,8 @@ public class DropperManager extends NovaModule implements Listener {
 	public static final int TIME_LEFT_LINE = 5;
 	public static final int DEATH_COUNT_LINE = 6;
 	public static final int REMAINING_PLAYERS_LINE = 7;
+	
+	public static int LEVEL_COMPLETED_SCORE = 0;
 
 	private Task task;
 	private boolean timeLeftLineShown;
@@ -40,6 +43,14 @@ public class DropperManager extends NovaModule implements Listener {
 
 	@Override
 	public void onLoad() {
+		JSONObject scoreConfig = TournamentSystem.getInstance().getGameSpecificScoreSettings().optJSONObject("dropper");
+		if (scoreConfig != null) {
+			if (scoreConfig.has("complete_level")) {
+				LEVEL_COMPLETED_SCORE = scoreConfig.getInt("complete_level");
+				Log.info(getName(), "Setting level complete score to " + LEVEL_COMPLETED_SCORE);
+			}
+		}
+		
 		gameManager = GameManager.getInstance();
 		timeLeftLineShown = false;
 
@@ -125,18 +136,16 @@ public class DropperManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onDropperPlayerCompleteRound(DropperPlayerCompleteRoundEvent e) {
-		int score = TournamentSystem.getInstance().getDropperCompleteLevelScore();
-
-		if (score > 0) {
+		if (LEVEL_COMPLETED_SCORE > 0) {
 			Player player = e.getPlayer();
-			ScoreManager.getInstance().addPlayerScore(player, score);
+			ScoreManager.getInstance().addPlayerScore(player, LEVEL_COMPLETED_SCORE);
 			if (TeamManager.hasTeamManager()) {
 				Team team = TeamManager.getTeamManager().getPlayerTeam(player);
 				if (team != null) {
-					team.sendMessage(ChatColor.GRAY + "+" + score + " points");
+					team.sendMessage(ChatColor.GRAY + "+" + LEVEL_COMPLETED_SCORE + " points");
 				}
 			} else {
-				player.sendMessage(ChatColor.GRAY + "+" + score + " points");
+				player.sendMessage(ChatColor.GRAY + "+" + LEVEL_COMPLETED_SCORE + " points");
 			}
 		}
 	}
