@@ -724,10 +724,13 @@ const TournamentSystem = {
 					$("<td></td>")
 						.text(novamodule.name)
 				);
-				newElement.append(
-					$("<td></td>")
-						.text(novamodule.enabled ? "Enabled" : "Disabled")
-				);
+
+				let moduleState = $("<td></td>");
+				moduleState.text(novamodule.enabled ? "Enabled" : "Disabled")
+				moduleState.addClass(novamodule.enabled ? "table-success" : "table-danger");
+
+				newElement.append(moduleState);
+				
 				$("#server_info_modules").append(newElement);
 			});
 		}
