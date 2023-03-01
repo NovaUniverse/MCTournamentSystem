@@ -18,6 +18,8 @@ import java.util.function.Consumer;
 import javax.annotation.Nullable;
 
 import org.apache.commons.io.FileUtils;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -180,8 +182,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private JSONObject gameSpecificScoreSettings;
 
+	private Metrics metrics;
+	
+	private String loadedGameName;
+
 	public static TournamentSystem getInstance() {
 		return instance;
+	}
+
+	public Metrics getMetrics() {
+		return metrics;
 	}
 
 	public boolean isDisableParentPidMonitoring() {
@@ -380,6 +390,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public TournamentTeamManagerSettings getTeamManagerSettings() {
 		return teamManager.getSettings();
 	}
+	
+	public String getLoadedGameName() {
+		return loadedGameName;
+	}
+	
+	public void setLoadedGameName(String loadedGameName) {
+		this.loadedGameName = loadedGameName;
+	}
 
 	public boolean reloadDynamicConfig() {
 		if (dynamicConfigURL == null) {
@@ -461,10 +479,17 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.dynamicConfigURL = null;
 
 		this.useItemsAdder = getConfig().getBoolean("enable_items_adder");
+		
+		this.loadedGameName = null;
 
 		statusReportingTask = null;
 		parentProcessID = -1;
 
+		metrics = new Metrics(this, 17833);
+		metrics.addCustomChart(new SimplePie("minigame_used", () -> {
+	        return loadedGameName == null ? "None" : loadedGameName;
+	    }));
+		
 		adminUIUrl = "http://127.0.0.1";
 		String tournamentAdminUIPort = System.getProperty("tournamentAdminUIPort");
 		if (tournamentAdminUIPort != null) {

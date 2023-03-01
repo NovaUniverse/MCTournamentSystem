@@ -133,6 +133,7 @@ public class GameListeners extends NovaModule implements Listener {
 		TabListMessage.setServerType(gameManager.getDisplayName());
 
 		String name = e.getGame().getName().toLowerCase();
+		TournamentSystem.getInstance().setLoadedGameName(name);
 		if (GAME_SPECIFIC_MODULES.containsKey(name)) {
 			Class<? extends NovaModule> clazz = GAME_SPECIFIC_MODULES.get(name);
 			if (ModuleManager.loadModule(TournamentSystem.getInstance(), clazz, true)) {
