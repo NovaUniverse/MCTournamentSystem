@@ -13,7 +13,7 @@
 		"eliminate_player": 20
 	},
 	"chickenout": {
-		"feather_score_multiplier": 1.0
+		"feather_score_multiplier": 0.5
 	},
 	"dropper": {
 		"complete_level": 10
