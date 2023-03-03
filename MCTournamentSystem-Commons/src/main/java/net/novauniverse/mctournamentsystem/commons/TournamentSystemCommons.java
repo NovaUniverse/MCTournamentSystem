@@ -18,8 +18,11 @@ public class TournamentSystemCommons {
 	public static final String DATA_CHANNEL = "mcts:controller";
 	public static final String PLAYER_TELEMENTRY_CHANNEL = "mcts:ptelementry";
 
+	public static final String IP_REGEX_IPv4 = "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b";
+	public static final String IP_REGEX_IPv6 = "\\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\b";
+
 	private static JSONObject tournamentSystemConfigData;
-	
+
 	private static SocketAPI socketAPI = null;
 
 	private static UUID sessionId = null;
@@ -31,7 +34,7 @@ public class TournamentSystemCommons {
 		}
 		return sessionId;
 	}
-	
+
 	public static SocketAPI getSocketAPI() {
 		return socketAPI;
 	}
@@ -39,7 +42,7 @@ public class TournamentSystemCommons {
 	public static boolean hasSocketAPI() {
 		return socketAPI != null;
 	}
-	
+
 	public static void setSocketAPI(SocketAPI socketAPI) {
 		TournamentSystemCommons.socketAPI = socketAPI;
 	}

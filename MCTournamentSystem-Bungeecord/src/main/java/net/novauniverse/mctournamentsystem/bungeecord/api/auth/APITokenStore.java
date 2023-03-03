@@ -12,7 +12,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermissi
 public class APITokenStore {
 	private static final List<APIAccessToken> tokens = new ArrayList<APIAccessToken>();
 
-	public static final APIAccessToken DUMMY_TOKEN = new APIAccessToken(UUID.fromString("00000000-0000-0000-0000-000000000000"), new APIUser("DevelopmentUser", "", UserPermission.generatePermissionList(UserPermission.ADMIN)));
+	public static final APIAccessToken DUMMY_TOKEN = new APIAccessToken(UUID.fromString("00000000-0000-0000-0000-000000000000"), new APIUser("DevelopmentUser", "", UserPermission.generatePermissionList(UserPermission.ADMIN), false));
 
 	public static final APIAccessToken createToken(APIUser user) {
 		if (APITokenStore.tokens.size() >= 500000) {

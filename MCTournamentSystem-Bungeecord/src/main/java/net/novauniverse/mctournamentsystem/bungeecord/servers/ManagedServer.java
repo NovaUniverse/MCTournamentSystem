@@ -7,7 +7,10 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -24,6 +27,8 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.RandomGenerator;
 
 public class ManagedServer {
+	public static final DateFormat LOG_DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd_hh-mm-ss");
+
 	private String name;
 
 	private String javaExecutable;
@@ -44,6 +49,8 @@ public class ManagedServer {
 	private JSONObject lastStateReport;
 
 	private String stateReportingKey;
+
+	private String lastLogName = "UNKNOWN";
 
 	private Random random;
 
@@ -183,8 +190,10 @@ public class ManagedServer {
 
 		lastSessionId = UUID.randomUUID().toString();
 
-		File log = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastSessionId + ".log");
-		File err = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastSessionId + ".err.log");
+		lastLogName = name + "_" + LOG_DATE_FORMAT.format(Calendar.getInstance().getTime()) + "_" + lastSessionId.toString();
+
+		File log = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".log");
+		File err = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".err.log");
 
 		ProcessBuilder builder = new ProcessBuilder();
 		Log.info("Starting process builder for server " + name);
@@ -271,12 +280,11 @@ public class ManagedServer {
 
 	public List<String> getLogFileLines() throws IOException {
 		if (lastSessionId != null) {
-			File logFile = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastSessionId + ".log");
+			File logFile = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".log");
 			if (logFile.exists()) {
 				return Files.readAllLines(Paths.get(logFile.getAbsolutePath()));
 			}
 		}
-
 		return new ArrayList<String>();
 	}
 }

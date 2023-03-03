@@ -1,9 +1,10 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey;
 
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.IPVisibilitySettings;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 
-public class APIKey extends Authentication {
+public class APIKey extends Authentication implements IPVisibilitySettings {
 	private String key;
 	private APIUser user;
 
@@ -20,9 +21,14 @@ public class APIKey extends Authentication {
 	public APIUser getUser() {
 		return user;
 	}
-	
+
 	@Override
 	public String getDescriptiveUserName() {
 		return "API key for user " + user.getUsername();
+	}
+
+	@Override
+	public boolean isHidePlayerIPs() {
+		return user.isHidePlayerIPs();
 	}
 }

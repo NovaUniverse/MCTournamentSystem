@@ -4,15 +4,19 @@ import java.util.List;
 
 import org.json.JSONArray;
 
-public class APIUser {
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.IPVisibilitySettings;
+
+public class APIUser implements IPVisibilitySettings {
 	private String username;
 	private String password;
 	private List<UserPermission> permissions;
+	private boolean hidePlayerIPs;
 
-	public APIUser(String username, String password, List<UserPermission> permissions) {
+	public APIUser(String username, String password, List<UserPermission> permissions, boolean hidePlayerIPs) {
 		this.username = username;
 		this.password = password;
 		this.permissions = permissions;
+		this.hidePlayerIPs = hidePlayerIPs;
 	}
 
 	public String getUsername() {
@@ -25,6 +29,11 @@ public class APIUser {
 
 	public List<UserPermission> getPermissions() {
 		return permissions;
+	}
+	
+	@Override
+	public boolean isHidePlayerIPs() {
+		return hidePlayerIPs;
 	}
 
 	public boolean hasPermission(UserPermission permission) {

@@ -5,11 +5,12 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.IPVisibilitySettings;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 
-public class CommentatorAuth extends Authentication {
-	public static final APIUser CommentatorUser = new APIUser("Commentator", "", UserPermission.blank());
+public class CommentatorAuth extends Authentication implements IPVisibilitySettings {
+	public static final APIUser CommentatorUser = new APIUser("Commentator", "", UserPermission.blank(), true);
 
 	private String key;
 	private UUID minecraftUserUUID;
@@ -38,7 +39,12 @@ public class CommentatorAuth extends Authentication {
 	public APIUser getUser() {
 		return CommentatorUser;
 	}
-	
+
+	@Override
+	public boolean isHidePlayerIPs() {
+		return true;
+	}
+
 	@Override
 	public String getDescriptiveUserName() {
 		return "Commentator " + identifier;

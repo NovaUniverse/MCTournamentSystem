@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
 
-public class APIAccessToken extends Authentication {
+public class APIAccessToken extends Authentication implements IPVisibilitySettings {
 	private UUID uuid;
 	private APIUser user;
 
@@ -21,7 +21,12 @@ public class APIAccessToken extends Authentication {
 	public UUID getUuid() {
 		return uuid;
 	}
-	
+
+	@Override
+	public boolean isHidePlayerIPs() {
+		return user.isHidePlayerIPs();
+	}
+
 	@Override
 	public String getDescriptiveUserName() {
 		return "User access token for " + user.getUsername();

@@ -254,11 +254,11 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		quickMessages = new ArrayList<>();
 
-		serverLogFolder = new File(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())).getAbsolutePath() + File.separator + "server_logs");
-		serverLogFolder.mkdir();
-
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 		globalConfigFolder = new File(globalConfigPath);
+
+		serverLogFolder = new File(globalConfigPath + File.separator + "Logs");
+		serverLogFolder.mkdir();
 
 		TeamOverrides.readOverrides(globalConfigFolder);
 
@@ -330,7 +330,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			e.printStackTrace();
 			Log.error("TournamentSystem", "Failed to fetch MTOD");
 		}
-		
+
 		/* ----- Listeners ----- */
 		playerTelementryManager = new PlayerTelementryManager();
 		slowPlayerSender = new SlowPlayerSender(this);
@@ -421,6 +421,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		for (int i = 0; i < webUsers.length(); i++) {
 			JSONObject user = webUsers.getJSONObject(i);
 
+			boolean hidePlayerIPs = user.optBoolean("hide_player_ips", false);
+
 			String username = user.getString("username");
 			String password = user.getString("password");
 			List<UserPermission> permissions = new ArrayList<UserPermission>();
@@ -435,9 +437,9 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 				}
 			}
 
-			apiUsers.add(new APIUser(username, password, permissions));
+			apiUsers.add(new APIUser(username, password, permissions, hidePlayerIPs));
 
-			Log.info("TournamentSystem", "Added user " + username + " to the web ui users");
+			Log.info("TournamentSystem", "Added user " + username + " to the web ui users. (hide ip: " + hidePlayerIPs + ")");
 		}
 
 		Log.info("TournamentSystem", apiUsers.size() + " user" + (apiUsers.size() == 1 ? "" : "s") + " configured for web ui");
