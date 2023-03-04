@@ -19,13 +19,13 @@ import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
+import net.zeeraa.novacore.spigot.abstraction.particle.NovaDustOptions;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
-import xyz.xenondevs.particle.ParticleEffect;
 
 @NovaAutoLoad(shouldEnable = false)
 public class YBorder extends NovaModule implements Listener {
@@ -47,6 +47,8 @@ public class YBorder extends NovaModule implements Listener {
 
 	public static final double PARTICLE_WIDTH = 7;
 	public static final double PARTICLE_DENSITY = 0.5;
+
+	public static NovaDustOptions PARTICLE_COLOR = new NovaDustOptions(Color.RED);
 
 	public YBorder() {
 		super("TournamentSystem.YBorder");
@@ -129,8 +131,8 @@ public class YBorder extends NovaModule implements Listener {
 				for (double x = 0; x <= PARTICLE_WIDTH; x += PARTICLE_DENSITY) {
 					for (double z = 0; z <= PARTICLE_WIDTH; z += PARTICLE_DENSITY) {
 						Location location = new Location(player.getWorld(), ((player.getLocation().getX()) - (PARTICLE_WIDTH / 2) + x), yLimit, ((player.getLocation().getZ() + z) - (PARTICLE_WIDTH / 2)));
-
-						ParticleEffect.REDSTONE.display(location, Color.RED, player);
+						NovaCore.getInstance().getNovaParticleProvider().showColoredRedstoneParticle(location, PARTICLE_COLOR);
+						// ParticleEffect.REDSTONE.display(location, Color.RED, player);
 					}
 				}
 			});
