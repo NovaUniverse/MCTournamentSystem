@@ -258,15 +258,37 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		globalConfigFolder = new File(globalConfigPath);
 
 		serverLogFolder = new File(globalConfigPath + File.separator + "Logs");
-		serverLogFolder.mkdir();
 
 		TeamOverrides.readOverrides(globalConfigFolder);
 
-		File configFile = new File(globalConfigPath + File.separator + "tournamentconfig.json");
+		String configFileOverride = null;
+		String logFolderOverride = null;
+
+		File overridesFile = new File(globalConfigPath + File.separator + "overrides.json");
+		if (overridesFile.exists()) {
+			try {
+				JSONObject overrides = JSONFileUtils.readJSONObjectFromFile(overridesFile);
+				configFileOverride = overrides.optString("config_file");
+				logFolderOverride = overrides.optString("server_log_directory");
+
+				if (logFolderOverride != null) {
+					serverLogFolder = new File(logFolderOverride);
+				}
+			} catch (Exception e) {
+				Log.error("TournamentSystem", "Failed to read overrides.json. " + e.getClass().getName() + " " + e.getMessage());
+				e.printStackTrace();
+				ProxyServer.getInstance().stop("Failed to enable tournament system: Failed to read overrides.json");
+				return;
+			}
+		}
+
+		serverLogFolder.mkdirs();
+
+		File configFile = new File(configFileOverride == null ? globalConfigPath + File.separator + "tournamentconfig.json" : configFileOverride);
 		JSONObject config;
 		try {
 			if (!configFile.exists()) {
-				Log.fatal("TournamentSystem", "Config file not found at " + configFile.getAbsolutePath() + ". Start the lobby once to generate a default config file");
+				Log.fatal("TournamentSystem", "Config file not found at " + configFile.getAbsolutePath());
 				ProxyServer.getInstance().stop("Failed to enable tournament system: No config file found");
 				return;
 			}

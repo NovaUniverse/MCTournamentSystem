@@ -183,7 +183,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private JSONObject gameSpecificScoreSettings;
 
 	private Metrics metrics;
-	
+
 	private String loadedGameName;
 
 	public static TournamentSystem getInstance() {
@@ -390,11 +390,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public TournamentTeamManagerSettings getTeamManagerSettings() {
 		return teamManager.getSettings();
 	}
-	
+
 	public String getLoadedGameName() {
 		return loadedGameName;
 	}
-	
+
 	public void setLoadedGameName(String loadedGameName) {
 		this.loadedGameName = loadedGameName;
 	}
@@ -479,7 +479,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.dynamicConfigURL = null;
 
 		this.useItemsAdder = getConfig().getBoolean("enable_items_adder");
-		
+
 		this.loadedGameName = null;
 
 		statusReportingTask = null;
@@ -487,9 +487,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		metrics = new Metrics(this, 17833);
 		metrics.addCustomChart(new SimplePie("minigame_used", () -> {
-	        return loadedGameName == null ? "None" : loadedGameName;
-	    }));
-		
+			return loadedGameName == null ? "None" : loadedGameName;
+		}));
+
 		adminUIUrl = "http://127.0.0.1";
 		String tournamentAdminUIPort = System.getProperty("tournamentAdminUIPort");
 		if (tournamentAdminUIPort != null) {
@@ -508,14 +508,43 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		globalDataDirectory = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 
 		this.nbsFolder = new File(TournamentSystem.getInstance().getGlobalDataDirectory() + File.separator + "nbs");
-		this.nbsFolder.mkdirs();
 
 		this.globalDataFolder = new File(globalDataDirectory);
 		this.mapDataFolder = new File(globalDataDirectory + File.separator + "map_data");
 
 		TeamOverrides.readOverrides(globalDataFolder);
 
-		File configFile = new File(globalDataDirectory + File.separator + "tournamentconfig.json");
+		String configFileOverride = null;
+		String mapDataFolderOverride = null;
+		String nbsFolderOverride = null;
+
+		File overridesFile = new File(globalDataDirectory + File.separator + "overrides.json");
+		if (overridesFile.exists()) {
+			try {
+				JSONObject overrides = JSONFileUtils.readJSONObjectFromFile(overridesFile);
+				configFileOverride = overrides.optString("config_file");
+				mapDataFolderOverride = overrides.optString("map_files");
+				nbsFolderOverride = overrides.optString("nbs_folder");
+
+				if (mapDataFolderOverride != null) {
+					mapDataFolder = new File(mapDataFolderOverride);
+				}
+
+				if (nbsFolderOverride != null) {
+					nbsFolder = new File(nbsFolderOverride);
+				}
+			} catch (Exception e) {
+				Log.error("TournamentSystem", "Failed to read overrides.json. " + e.getClass().getName() + " " + e.getMessage());
+				e.printStackTrace();
+				Bukkit.getPluginManager().disablePlugin(this);
+				return;
+			}
+		}
+		
+		this.mapDataFolder.mkdirs();
+		this.nbsFolder.mkdirs();
+
+		File configFile = new File(configFileOverride == null ? globalDataDirectory + File.separator + "tournamentconfig.json" : configFileOverride);
 		JSONObject config;
 		try {
 			if (!configFile.exists()) {
@@ -699,14 +728,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			resourcePackUrl = config.getString("resource_pack");
 		}
 
-		if (config.has("map_folder")) {
-			if (NovaCore.isNovaGameEngineEnabled()) {
-				File file = new File(getGlobalDataDirectory() + File.separator + config.getString("map_folder"));
-				Log.info("TournamentSystem", "Setting requested game data directory to " + file.getAbsolutePath());
-				NovaCoreGameEngine.getInstance().setRequestedGameDataDirectory(file);
-			}
-		}
-
 		JSONObject labymodBanner = config.getJSONObject("labymod_banner");
 		if (labymodBanner.getBoolean("enabled")) {
 			this.labymodBanner = labymodBanner.getString("url");
@@ -730,6 +751,11 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		Log.info("TournamentSystem", "Win score: " + winScoreString);
+
+		if (NovaCore.isNovaGameEngineEnabled()) {
+			Log.info("TournamentSystem", "Setting requested game data directory to " + mapDataFolder.getAbsolutePath());
+			NovaCoreGameEngine.getInstance().setRequestedGameDataDirectory(mapDataFolder);
+		}
 
 		/* ----- Depends ----- */
 		ModuleManager.require(NetherBoardScoreboard.class);
