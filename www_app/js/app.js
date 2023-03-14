@@ -953,10 +953,10 @@ const TournamentSystem = {
 		});
 	},
 
-	activateTrigger: (triggerId) => {
+	activateTrigger: (triggerId, sessionId) => {
 		$.ajax({
 			type: "POST",
-			url: "/api/v1/game/trigger?triggerId=" + triggerId,
+			url: "/api/v1/game/trigger?triggerId=" + triggerId + "&sessionId=" + sessionId,
 			success: (data) => {
 				toastr.success("Success");
 			},
@@ -1646,7 +1646,7 @@ const TournamentSystem = {
 			data.player_server_data.forEach(psd => {
 				if (psd.metadata.triggers != null) {
 					psd.metadata.triggers.forEach(trigger => {
-						if (triggers.filter(t => t.name == trigger.name).length == 0) {
+						if (triggers.filter(t => t.session_id == trigger.session_id).length == 0) {
 							triggers.push(trigger);
 						}
 					});
@@ -1656,20 +1656,23 @@ const TournamentSystem = {
 			let displayedTriggers = [];
 
 			$(".trigger-col").each(function () {
-				let name = $(this).data("trigger-name");
-				if (triggers.filter(t => t.name == name).length == 0) {
+				let session_id = $(this).data("trigger-sid");
+				if (triggers.filter(t => t.session_id == session_id).length == 0) {
 					$(this).remove();
 				}
-				displayedTriggers.push(name);
+				displayedTriggers.push(session_id);
 			});
 
 			triggers.forEach(trigger => {
-				if (!displayedTriggers.includes(trigger.name)) {
+				if (!displayedTriggers.includes(trigger.session_id)) {
 					let newElement = $("#trigger_sample").clone();
 					newElement.removeAttr("id");
 					newElement.addClass("trigger-col");
+					newElement.attr("data-trigger-sid", trigger.session_id);
 					newElement.attr("data-trigger-name", trigger.name);
-
+					
+					
+					newElement.find(".trigger-server-name").text(trigger.server);
 					newElement.find(".trigger-name").text(trigger.name);
 					newElement.find(".trigger-description").text(trigger.description);
 					if ((trigger.description + "").trim().length == 0) {
@@ -1681,9 +1684,11 @@ const TournamentSystem = {
 						newElement.find(".trigger-button").remove();
 					} else {
 						newElement.find(".trigger-button").attr("data-trigger-name", trigger.name);
+						newElement.find(".trigger-button").attr("data-trigger-sid", trigger.sessionId);
 						newElement.find(".trigger-button").on("click", function () {
 							let name = $(this).data("trigger-name");
-							TournamentSystem.activateTrigger(name);
+							let sessionId = $(this).data("trigger-sid");
+							TournamentSystem.activateTrigger(name, sessionId);
 						});
 					}
 
@@ -1692,8 +1697,8 @@ const TournamentSystem = {
 			})
 
 			$(".trigger-col").each(function () {
-				let name = $(this).data("trigger-name");
-				let trigger = triggers.filter(t => t.name == name)[0];
+				let session_id = $(this).data("trigger-sid");
+				let trigger = triggers.filter(t => t.session_id == session_id)[0];
 
 				$(this).find(".trigger-activation-count").text(trigger.trigger_count);
 

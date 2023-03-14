@@ -4,6 +4,8 @@ import org.bukkit.entity.Player;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.ITelementryMetadataProvider;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
@@ -23,12 +25,16 @@ public class TriggerProvider implements ITelementryMetadataProvider {
 
 		if (NovaCore.isNovaGameEngineEnabled()) {
 			if (gameManager.hasGame()) {
+				final String sessionId = TournamentSystemCommons.getSessionId().toString();
+
 				gameManager.getActiveGame().getTriggers().forEach(trigger -> {
 					JSONObject triggerData = new JSONObject();
 					JSONArray flags = new JSONArray();
 
 					trigger.getFlags().forEach(f -> flags.put(f.name()));
 
+					triggerData.put("session_id", sessionId);
+					triggerData.put("server", TournamentSystem.getInstance().getServerName());
 					triggerData.put("name", trigger.getName());
 					triggerData.put("type", trigger.getType());
 					triggerData.put("description", trigger.getDescription());
