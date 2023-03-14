@@ -14,9 +14,9 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 
-public class GetTriggers extends APIEndpoint {
+public class GetTriggersHandler extends APIEndpoint {
 
-	public GetTriggers() {
+	public GetTriggersHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.GET);
 	}

@@ -13,6 +13,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.chat.GetChatLogHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CommentatorTPHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.GetCommentatorGuestKeyHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.GetTriggersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.TriggerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.nextmingame.NextMinigameHandler;
@@ -94,6 +95,7 @@ public class WebServer {
 		// Game
 		createContext("/api/v1/game/start_game", new StartGameHandler());
 		createContext("/api/v1/game/trigger", new TriggerHandler());
+		createContext("/api/v1/game/triggers", new GetTriggersHandler());
 
 		// User
 		createContext("/api/v1/user/whoami", new WhoAmIHandler());
