@@ -1646,7 +1646,9 @@ const TournamentSystem = {
 					newElement.addClass("trigger-col");
 					newElement.attr("data-trigger-sid", trigger.session_id);
 					newElement.attr("data-trigger-name", trigger.name);
-
+					
+					
+					newElement.find(".trigger-server-name").text(trigger.server);
 					newElement.find(".trigger-name").text(trigger.name);
 					newElement.find(".trigger-description").text(trigger.description);
 					if ((trigger.description + "").trim().length == 0) {

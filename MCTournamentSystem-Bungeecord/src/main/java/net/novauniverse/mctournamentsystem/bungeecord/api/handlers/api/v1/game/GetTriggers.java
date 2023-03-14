@@ -13,7 +13,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.zeeraa.novacore.commons.utils.HashUtils;
 
 public class GetTriggers extends APIEndpoint {
 
