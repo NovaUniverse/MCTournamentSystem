@@ -79,6 +79,11 @@ public class TSPluginMessageListnener implements PluginMessageListener {
 							this.addRequest(requestUUID);
 
 							String name = in.readUTF();
+							String triggerSessionId = in.readUTF();
+
+							if (!triggerSessionId.equalsIgnoreCase(TournamentSystemCommons.getSessionId().toString())) {
+								break;
+							}
 
 							GameTrigger trigger = GameManager.getInstance().getActiveGame().getTrigger(name);
 
