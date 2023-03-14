@@ -1,6 +1,5 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.reset;
 
-import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ public class ResetHandler extends APIEndpoint {
 		super(true);
 		setAllowedMethods(HTTPMethod.DELETE);
 	}
-	
+
 	@Override
 	public UserPermission getRequiredPermission() {
 		return UserPermission.CLEAR_DATA;
@@ -32,11 +31,11 @@ public class ResetHandler extends APIEndpoint {
 		boolean success = true;
 
 		try {
-			String sql = "{ CALL reset_data() }";
-			CallableStatement cs = TournamentSystemCommons.getDBConnection().getConnection().prepareCall(sql);
+			String sql = "DELETE FROM teams";
+			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-			cs.execute();
-			cs.close();
+			ps.execute();
+			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -47,7 +46,22 @@ public class ResetHandler extends APIEndpoint {
 		}
 
 		try {
-			String sql = "DELETE FROM teams";
+			String sql = "DELETE FROM players";
+			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+
+			ps.execute();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			success = false;
+
+			json.put("error", "failed");
+			json.put("message", e.getClass().getName() + " " + e.getMessage());
+		}
+
+		try {
+			String sql = "UPDATE tsdata SET data_value = null WHERE data_key = \"active_server\"";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 			ps.execute();
