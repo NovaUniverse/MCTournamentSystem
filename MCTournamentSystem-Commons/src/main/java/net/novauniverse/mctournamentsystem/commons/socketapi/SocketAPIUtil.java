@@ -10,6 +10,10 @@ public class SocketAPIUtil {
 		JSONObject config = TournamentSystemCommons.getTournamentSystemConfigData();
 		try {
 			SocketAPIConfig socketAPIConfig = SocketAPIConfig.parse(config.optJSONObject("socket_api"));
+			String keyFromENV = System.getenv("WS_API_SERVER_KEY");
+			if(keyFromENV != null) {
+				socketAPIConfig.setKey(keyFromENV);
+			}
 			if (socketAPIConfig != null) {
 				if (socketAPIConfig.isEnabled()) {
 					Log.info("SocketAPI", "Starting SocketAPI");

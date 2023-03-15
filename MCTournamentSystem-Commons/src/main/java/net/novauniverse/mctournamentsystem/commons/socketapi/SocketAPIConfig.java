@@ -12,21 +12,25 @@ public class SocketAPIConfig {
 	public SocketAPIConfig(JSONObject json) {
 		enabled = json.optBoolean("enabled", false);
 		url = json.getString("url");
-		key = json.getString("key");
+		key = json.optString("key", "");
 	}
 
 	public String getUrl() {
 		return url;
 	}
-	
+
 	public String getKey() {
 		return key;
 	}
-	
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}
-	
+
 	@Nullable
 	public static final SocketAPIConfig parse(JSONObject json) {
 		if (json == null) {
