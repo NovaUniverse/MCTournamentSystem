@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPI;
 import net.zeeraa.novacore.commons.database.DBConnection;
+import net.zeeraa.novacore.commons.database.DBCredentials;
 import net.zeeraa.novacore.commons.log.Log;
 
 public class TournamentSystemCommons {
@@ -55,6 +56,52 @@ public class TournamentSystemCommons {
 
 	public static DBConnection getDBConnection() {
 		return dbConnection;
+	}
+
+	public static DBCredentials tryReadCredentialsFromENV() {
+		String driver = System.getenv("DB_DRIVER");
+		String host = System.getenv("DB_HOST");
+		String postStr = System.getenv("DB_PORT");
+		String username = System.getenv("DB_USERNAME");
+		String password = System.getenv("DB_PASSWORD");
+		String database = System.getenv("DB_DATABASE");
+
+		int port = 3306;
+
+		if (driver == null) {
+			driver = "com.mysql.jdbc.Driver";
+		}
+
+		if (host == null) {
+			Log.warn("TournamentSystem", "Cant read credentials from ENV data since DB_HOST is null");
+			return null;
+		}
+
+		if (username == null) {
+			Log.warn("TournamentSystem", "Cant read credentials from ENV data since DB_USERNAME is null");
+			return null;
+		}
+
+		if (password == null) {
+			Log.warn("TournamentSystem", "Cant read credentials from ENV data since DB_PASSWORD is null");
+			return null;
+		}
+
+		if (database == null) {
+			Log.warn("TournamentSystem", "Cant read credentials from ENV data since DB_DATABASE is null");
+			return null;
+		}
+
+		if (postStr != null) {
+			try {
+				port = Integer.parseInt(postStr);
+			} catch (Exception e) {
+				Log.error("TournamentSystem", "Cant read credentials from ENV data since DB_PORT could not be parsed as an integer");
+				return null;
+			}
+		}
+
+		return new DBCredentials(driver, "jdbc:mysql://" + host + ":" + port, username, password, database);
 	}
 
 	public static String getTournamentName() {

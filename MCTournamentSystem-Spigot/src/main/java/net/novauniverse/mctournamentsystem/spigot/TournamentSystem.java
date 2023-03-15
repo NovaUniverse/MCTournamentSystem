@@ -540,7 +540,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				return;
 			}
 		}
-		
+
 		this.mapDataFolder.mkdirs();
 		this.nbsFolder.mkdirs();
 
@@ -652,9 +652,25 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		/* ----- Database ----- */
 		// Connect to the database
-		JSONObject mysqlDatabaseConfig = config.getJSONObject("database").getJSONObject("mysql");
+		DBCredentials dbCredentials = null;
+		if (config.has("database")) {
+			if (config.has("mysql")) {
+				JSONObject mysqlDatabaseConfig = config.getJSONObject("database").getJSONObject("mysql");
 
-		DBCredentials dbCredentials = new DBCredentials(mysqlDatabaseConfig.getString("driver"), mysqlDatabaseConfig.getString("host"), mysqlDatabaseConfig.getString("username"), mysqlDatabaseConfig.getString("password"), mysqlDatabaseConfig.getString("database"));
+				dbCredentials = new DBCredentials(mysqlDatabaseConfig.getString("driver"), mysqlDatabaseConfig.getString("host"), mysqlDatabaseConfig.getString("username"), mysqlDatabaseConfig.getString("password"), mysqlDatabaseConfig.getString("database"));
+			}
+		}
+		
+		if (dbCredentials == null) {
+			Log.info("TournamentSystem", "DB Credentials not provided in json config file. Trying o get credentials from ENV instead");
+			dbCredentials = TournamentSystemCommons.tryReadCredentialsFromENV();
+		}
+
+		if (dbCredentials == null) {
+			Log.fatal("TournamentSystem", "Could not find any database credentials. Either provide them in the tournmanent config file or use env variables to set them");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
 
 		try {
 			DBConnection connection = new DBConnection();
@@ -773,6 +789,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		/* ----- Scoreboard ----- */
 		String tournamentName = TournamentSystemCommons.getTournamentName();
 		String scoreboardUrl = TournamentSystemCommons.getScoreboardURL();
+		
+		if(tournamentName == null) {
+			TournamentSystemCommons.setTournamentName("Tournament");
+			tournamentName = "Tournament";
+		}
+		
+		if(scoreboardUrl == null) {
+			TournamentSystemCommons.setScoreboardURL("");
+			scoreboardUrl = "";
+		}
 
 		if (tournamentName.equalsIgnoreCase(ChatColor.stripColor(tournamentName))) {
 			tournamentName = ChatColor.AQUA + "" + ChatColor.BOLD + TournamentSystemCommons.getTournamentName();

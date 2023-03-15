@@ -322,9 +322,25 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			staffRoles.add(staffRolesJSON.getString(i));
 		}
 
-		JSONObject mysqlDatabaseConfig = config.getJSONObject("database").getJSONObject("mysql");
+		DBCredentials dbCredentials = null;
+		if (config.has("database")) {
+			if (config.has("mysql")) {
+				JSONObject mysqlDatabaseConfig = config.getJSONObject("database").getJSONObject("mysql");
 
-		DBCredentials dbCredentials = new DBCredentials(mysqlDatabaseConfig.getString("driver"), mysqlDatabaseConfig.getString("host"), mysqlDatabaseConfig.getString("username"), mysqlDatabaseConfig.getString("password"), mysqlDatabaseConfig.getString("database"));
+				dbCredentials = new DBCredentials(mysqlDatabaseConfig.getString("driver"), mysqlDatabaseConfig.getString("host"), mysqlDatabaseConfig.getString("username"), mysqlDatabaseConfig.getString("password"), mysqlDatabaseConfig.getString("database"));
+			}
+		}
+
+		if (dbCredentials == null) {
+			Log.info("TournamentSystem", "DB Credentials not provided in json config file. Trying o get credentials from ENV instead");
+			dbCredentials = TournamentSystemCommons.tryReadCredentialsFromENV();
+		}
+
+		if (dbCredentials == null) {
+			Log.fatal("TournamentSystem", "Could not find any database credentials. Either provide them in the tournmanent config file or use env variables to set them");
+			ProxyServer.getInstance().stop("Failed to fetch database credentials");
+			return;
+		}
 
 		try {
 			DBConnection dbConnection;
