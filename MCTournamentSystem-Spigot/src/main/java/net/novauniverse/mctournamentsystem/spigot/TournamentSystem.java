@@ -82,6 +82,7 @@ import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentTeamManagerSettings;
 import net.novauniverse.mctournamentsystem.spigot.utils.TSItemsAdderUtils;
+import net.zeeraa.novacore.commons.api.novauniverse.NovaUniverseAPI;
 import net.zeeraa.novacore.commons.async.AsyncManager;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
@@ -540,7 +541,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				return;
 			}
 		}
-
+		
 		this.mapDataFolder.mkdirs();
 		this.nbsFolder.mkdirs();
 
@@ -578,6 +579,12 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			return;
 		}
 
+		String mojangAPIUrl = config.optString("mojang_api", "https://mojangapi.novauniverse.net");
+		if(mojangAPIUrl.startsWith("/")) {
+			mojangAPIUrl = "http://127.0.0.1" + mojangAPIUrl;
+		}
+		NovaUniverseAPI.setMojangAPIProxyBaseURL(mojangAPIUrl);
+		
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
 
 		SocketAPIUtil.setupSocketAPI();
@@ -654,15 +661,15 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		// Connect to the database
 		DBCredentials dbCredentials = null;
 		if (config.has("database")) {
-			if (config.has("mysql")) {
+			if (config.getJSONObject("database").has("mysql")) {
 				JSONObject mysqlDatabaseConfig = config.getJSONObject("database").getJSONObject("mysql");
 
 				dbCredentials = new DBCredentials(mysqlDatabaseConfig.getString("driver"), mysqlDatabaseConfig.getString("host"), mysqlDatabaseConfig.getString("username"), mysqlDatabaseConfig.getString("password"), mysqlDatabaseConfig.getString("database"));
 			}
 		}
-		
+
 		if (dbCredentials == null) {
-			Log.info("TournamentSystem", "DB Credentials not provided in json config file. Trying o get credentials from ENV instead");
+			Log.info("TournamentSystem", "DB Credentials not provided in json config file. Trying to get credentials from ENV instead");
 			dbCredentials = TournamentSystemCommons.tryReadCredentialsFromENV();
 		}
 

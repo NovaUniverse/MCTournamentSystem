@@ -46,6 +46,7 @@ import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
 import net.zeeraa.novacore.bungeecord.novaplugin.NovaPlugin;
+import net.zeeraa.novacore.commons.api.novauniverse.NovaUniverseAPI;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
 import net.zeeraa.novacore.commons.log.Log;
@@ -97,6 +98,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	private PingListeners pingListeners;
 
+	private String mojangAPIProxyURL;
+
 	public WebServer getWebServer() {
 		return webServer;
 	}
@@ -119,6 +122,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	public String getDynamicConfigUrl() {
 		return dynamicConfigURL;
+	}
+
+	public String getMojangAPIProxyURL() {
+		return mojangAPIProxyURL;
 	}
 
 	public void reloadDynamicConfig() throws Exception {
@@ -341,9 +348,16 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			staffRoles.add(staffRolesJSON.getString(i));
 		}
 
+		String mojangAPIUrl = config.optString("mojang_api", "https://mojangapi.novauniverse.net");
+		this.mojangAPIProxyURL = mojangAPIUrl;
+		if (mojangAPIUrl.startsWith("/")) {
+			mojangAPIUrl = "http://127.0.0.1" + mojangAPIUrl;
+		}
+		NovaUniverseAPI.setMojangAPIProxyBaseURL(mojangAPIUrl);
+
 		DBCredentials dbCredentials = null;
 		if (config.has("database")) {
-			if (config.has("mysql")) {
+			if (config.getJSONObject("database").has("mysql")) {
 				JSONObject mysqlDatabaseConfig = config.getJSONObject("database").getJSONObject("mysql");
 
 				dbCredentials = new DBCredentials(mysqlDatabaseConfig.getString("driver"), mysqlDatabaseConfig.getString("host"), mysqlDatabaseConfig.getString("username"), mysqlDatabaseConfig.getString("password"), mysqlDatabaseConfig.getString("database"));
@@ -351,7 +365,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		}
 
 		if (dbCredentials == null) {
-			Log.info("TournamentSystem", "DB Credentials not provided in json config file. Trying o get credentials from ENV instead");
+			Log.info("TournamentSystem", "DB Credentials not provided in json config file. Trying to get credentials from ENV instead");
 			dbCredentials = TournamentSystemCommons.tryReadCredentialsFromENV();
 		}
 

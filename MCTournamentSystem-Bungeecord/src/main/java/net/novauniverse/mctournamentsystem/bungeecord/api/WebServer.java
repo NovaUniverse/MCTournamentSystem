@@ -66,6 +66,9 @@ public class WebServer {
 		// Redirect
 		createContext("/", new FileNotFoundHandler(appRoot));
 
+		// Service providers
+		createContext("/api/v1/service_providers", new StatusHandler());
+		
 		// System
 		createContext("/api/v1/system/status", new StatusHandler());
 		createContext("/api/v1/system/broadcast", new BroadcastHandler());
