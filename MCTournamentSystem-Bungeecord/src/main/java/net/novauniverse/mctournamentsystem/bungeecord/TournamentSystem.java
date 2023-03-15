@@ -263,12 +263,14 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		String configFileOverride = null;
 		String logFolderOverride = null;
+		String webConfigOverride = null;
 
 		File overridesFile = new File(globalConfigPath + File.separator + "overrides.json");
 		if (overridesFile.exists()) {
 			try {
 				JSONObject overrides = JSONFileUtils.readJSONObjectFromFile(overridesFile);
 				configFileOverride = overrides.optString("config_file");
+				webConfigOverride = overrides.optString("web_config_file");
 				logFolderOverride = overrides.optString("server_log_directory");
 
 				if (logFolderOverride != null) {
@@ -283,6 +285,23 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		}
 
 		serverLogFolder.mkdirs();
+
+		File webConfigFile = new File(webConfigOverride == null ? globalConfigPath + File.separator + "web_config.json" : webConfigOverride);
+		JSONObject webConfig;
+		try {
+			if (!webConfigFile.exists()) {
+				Log.fatal("TournamentSystem", "Web config file not found at " + webConfigFile.getAbsolutePath());
+				ProxyServer.getInstance().stop("Failed to enable tournament system: No web config file found");
+				return;
+			}
+
+			webConfig = JSONFileUtils.readJSONObjectFromFile(webConfigFile);
+		} catch (Exception e) {
+			Log.fatal("TournamentSystem", "Failed to parse the web config file at " + webConfigFile.getAbsolutePath());
+			e.printStackTrace();
+			ProxyServer.getInstance().stop("Failed to enable tournament system: Failed to read web config file");
+			return;
+		}
 
 		File configFile = new File(configFileOverride == null ? globalConfigPath + File.separator + "tournamentconfig.json" : configFileOverride);
 		JSONObject config;
@@ -413,7 +432,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		Log.info("Setting up web server");
 
-		JSONObject webConfig = config.getJSONObject("web_ui");
+		JSONObject webUISettings = config.getJSONObject("web_ui");
 		JSONArray commentatorKeys = config.optJSONArray("commentator_keys");
 		JSONArray apiKeys = webConfig.optJSONArray("api_keys");
 		JSONArray webUsers = webConfig.getJSONArray("users");
@@ -558,8 +577,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		}
 
 		try {
-			int port = webConfig.getInt("port");
-			webserverDevelopmentMode = webConfig.getBoolean("development_mode");
+			int port = webUISettings.getInt("port");
 
 			if (webserverDevelopmentMode) {
 				Log.warn("TournamentSystem", "Development mode enabled for web server. No autentication will be required to access the web ui and api");
