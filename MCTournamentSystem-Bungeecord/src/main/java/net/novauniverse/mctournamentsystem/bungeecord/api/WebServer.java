@@ -10,6 +10,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.GetServiceProvidersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.chat.GetChatLogHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CommentatorTPHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.GetCommentatorGuestKeyHandler;
@@ -67,7 +68,7 @@ public class WebServer {
 		createContext("/", new FileNotFoundHandler(appRoot));
 
 		// Service providers
-		createContext("/api/v1/service_providers", new StatusHandler());
+		createContext("/api/v1/service_providers", new GetServiceProvidersHandler());
 		
 		// System
 		createContext("/api/v1/system/status", new StatusHandler());

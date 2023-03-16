@@ -1,6 +1,7 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.internal;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
@@ -59,5 +60,9 @@ public class ManagedServerStateReportingEndpoint implements HttpHandler {
 		String responseStr = response.toString();
 		byte[] responseByteArray = responseStr.getBytes(StandardCharsets.UTF_8);
 		exchange.sendResponseHeaders(responseCode, responseByteArray.length);
+
+		OutputStream os = exchange.getResponseBody();
+		os.write(responseByteArray);
+		os.close();
 	}
 }
