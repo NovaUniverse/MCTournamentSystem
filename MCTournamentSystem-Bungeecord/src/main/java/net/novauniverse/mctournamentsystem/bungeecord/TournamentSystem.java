@@ -353,6 +353,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		if (mojangAPIUrl.startsWith("/")) {
 			mojangAPIUrl = "http://127.0.0.1" + mojangAPIUrl;
 		}
+		Log.info("TournamentSystem", "Mojang api url: " + mojangAPIUrl);
 		NovaUniverseAPI.setMojangAPIProxyBaseURL(mojangAPIUrl);
 
 		DBCredentials dbCredentials = null;
