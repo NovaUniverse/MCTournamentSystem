@@ -56,6 +56,7 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.mapselector.sel
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.DelayedGameTrigger;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.GameTrigger;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.RepeatingGameTrigger;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.TriggerFlag;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.event.GameTriggerTriggerEvent;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
@@ -207,6 +208,10 @@ public class GameListeners extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onGameTriggerTriggerEvent(GameTriggerTriggerEvent e) {
+		if(e.getTrigger().hasFlag(TriggerFlag.DISABLE_LOGGING)) {
+			return;
+		}
+		
 		if (TournamentSystemCommons.hasSocketAPI()) {
 			JSONObject data = new JSONObject();
 			JSONArray flags = new JSONArray();
