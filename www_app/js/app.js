@@ -354,12 +354,12 @@ $(function () {
 	});
 
 	$("#btn_search_staff_user").on("click", function () {
-		$.getJSON("https://mojangapi.novauniverse.net/username_to_uuid/" + $("#tbx_add_staff_username").val(), function (data) {
+		$.getJSON(ServiceProviders.MojangAPIProxy + "/username_to_uuid/" + $("#tbx_add_staff_username").val(), function (data) {
 			let uuid = data.uuid;
 
 			TournamentSystem.addStaffUUID = uuid;
 
-			$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (profileData) {
+			$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (profileData) {
 				TournamentSystem.addStaffUsername = profileData.name;
 
 				$("#add_staff_username").text(TournamentSystem.addStaffUsername);
@@ -375,7 +375,7 @@ $(function () {
 			} else if (e.status == 400) {
 				toastr.error("Invalid username")
 			} else {
-				toastr.error("Failed to fetch data from https://mojangapi.novauniverse.net")
+				toastr.error("Failed to fetch data from mojang api")
 			}
 		});
 	});
@@ -401,7 +401,7 @@ $(function () {
 	$("#btn_search_whitelist_user").on("click", function () {
 		let username = $("#tbx_add_whitlelist_username").val();
 
-		$.getJSON("https://mojangapi.novauniverse.net/username_to_uuid/" + username, function (data) {
+		$.getJSON(ServiceProviders.MojangAPIProxy + "/username_to_uuid/" + username, function (data) {
 			let uuid = data.uuid;
 			$.ajax({
 				type: "PUT",
@@ -431,7 +431,7 @@ $(function () {
 			} else if (e.status == 400) {
 				toastr.error("Invalid username")
 			} else {
-				toastr.error("Failed to fetch data from https://mojangapi.novauniverse.net")
+				toastr.error("Failed to fetch data from mojang api")
 			}
 		});
 	});
@@ -1115,7 +1115,7 @@ const TournamentSystem = {
 			});
 
 
-			$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (data) {
+			$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (data) {
 				newElement.find(".staff-name").text(data.name);
 			});
 
@@ -1185,7 +1185,7 @@ const TournamentSystem = {
 				newElem.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + uuid);
 				newElem.find(".uuid").text(uuid);
 
-				$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (data) {
+				$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (data) {
 					newElem.find(".name").text(data.name);
 				});
 

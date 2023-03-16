@@ -325,10 +325,10 @@ function searchPlayer() {
 	let username = $("#add_player_username").val();
 
 	if (username.length > 0) {
-		$.getJSON("https://mojangapi.novauniverse.net/username_to_uuid/" + username, function (data) {
+		$.getJSON(ServiceProviders.MojangAPIProxy + "/username_to_uuid/" + username, function (data) {
 			let uuid = data.uuid
 			//console.log("The uuid of " + username + " is " + uuid);
-			$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (profileData) {
+			$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (profileData) {
 				let realUsername = profileData.name;
 
 				//console.log("The real username is " + realUsername);
@@ -356,7 +356,7 @@ function searchPlayer() {
 			} else if (e.status == 400) {
 				toastr.error("Invalid username")
 			} else {
-				toastr.error("Failed to fetch data from https://mojangapi.novauniverse.net")
+				toastr.error("Failed to fetch data from mojang api")
 			}
 		});
 	} else {
@@ -396,7 +396,7 @@ function updateUsernames() {
 
 		let element = $(this);
 
-		$.getJSON("https://mojangapi.novauniverse.net/profile/" + uuid, function (profileData) {
+		$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (profileData) {
 			let realUsername = profileData.username;
 			element.find(".player-username").text(realUsername);
 			element.attr("data-username", realUsername);
