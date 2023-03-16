@@ -131,8 +131,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private TournamentSystemDefaultPlayerEliminationMessage defaultPlayerEliminationMessage;
 
-	private String labymodBanner;
-
 	private Map<String, Group> staffGroups;
 	private Group defaultGroup;
 
@@ -234,10 +232,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public File getMapDataFolder() {
 		return mapDataFolder;
-	}
-
-	public String getLabymodBanner() {
-		return labymodBanner;
 	}
 
 	public boolean isUseExtendedSpawnLocations() {
@@ -447,7 +441,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		TournamentSystem.instance = this;
 		this.staffGroups = new HashMap<>();
-		this.labymodBanner = null;
 
 		this.noTeamsMode = false;
 
@@ -751,12 +744,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		if (config.has("resource_pack")) {
 			resourcePackUrl = config.getString("resource_pack");
 		}
-
-		JSONObject labymodBanner = config.getJSONObject("labymod_banner");
-		if (labymodBanner.getBoolean("enabled")) {
-			this.labymodBanner = labymodBanner.getString("url");
-		}
-
+		
 		lobbyServer = config.getString("lobby_server");
 
 		serverName = getConfig().getString("server_name");

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -14,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
+
 import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
@@ -26,10 +28,37 @@ public class UploadTeamHandler extends APIEndpoint {
 		super(true);
 		setAllowedMethods(HTTPMethod.POST);
 	}
-	
+
 	@Override
 	public UserPermission getRequiredPermission() {
 		return UserPermission.EDIT_TEAMS;
+	}
+
+	private void createPlayerIfNotExists(UUID uuid, String username) throws SQLException {
+		String sql;
+		PreparedStatement ps;
+		ResultSet rs;
+
+		boolean found = false;
+
+		sql = "SELECT id FROM players WHERE uuid = ?";
+		ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+		ps.setString(1, uuid.toString());
+		rs = ps.executeQuery();
+		if (rs.next()) {
+			found = true;
+		}
+		rs.close();
+		ps.close();
+
+		if (!found) {
+			sql = "INSERT INTO players (uuid, username) VALUES (?, ?)";
+			ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+			ps.setString(1, uuid.toString());
+			ps.setString(2, username);
+			ps.executeUpdate();
+			ps.close();
+		}
 	}
 
 	@Override
@@ -59,17 +88,22 @@ public class UploadTeamHandler extends APIEndpoint {
 			try {
 				for (int i = 0; i < teamData.length(); i++) {
 					JSONObject player = teamData.getJSONObject(i);
-					
-					if(!player.has("metadata")) {
+
+					if (!player.has("metadata")) {
 						player.put("metadata", new JSONObject());
 					}
 
 					keep.add(player.getString("uuid"));
 
+					UUID uuid = UUID.fromString(player.getString("uuid"));
+					String username = player.getString("username");
+
+					createPlayerIfNotExists(uuid, username);
+
 					String sql;
 					PreparedStatement ps;
 
-					sql = "CALL `set_player_team`(?, ?, ?, ?)";
+					sql = "UPDATE players SET username = ?, team_number = ?, metadata = ? WHERE uuid = ?";
 
 					if (player.getInt("team_number") == 0) {
 						Log.error("UploadTeamHandler", "Invalid team number: 0");
@@ -78,16 +112,15 @@ public class UploadTeamHandler extends APIEndpoint {
 
 					ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-					ps.setString(1, player.getString("uuid"));
-					ps.setString(2, player.getString("username"));
-					ps.setInt(3, player.getInt("team_number"));
-					ps.setString(4, player.getJSONObject("metadata").toString());
+					ps.setString(1, player.getString("username"));
+					ps.setInt(2, player.getInt("team_number"));
+					ps.setString(3, player.getJSONObject("metadata").toString());
+					ps.setString(4, uuid.toString());
 
 					// System.out.println("p1: " + player.getString("uuid") + " p2: " +
 					// player.getString("username") + " p3: " + player.getInt("team_number"));
 
 					ps.executeUpdate();
-
 					ps.close();
 				}
 

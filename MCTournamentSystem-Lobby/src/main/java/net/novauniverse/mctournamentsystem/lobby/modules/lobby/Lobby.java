@@ -63,9 +63,11 @@ import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
+import net.zeeraa.novacore.spigot.utils.LocationData;
 import net.zeeraa.novacore.spigot.utils.LocationUtils;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 import net.zeeraa.novacore.spigot.utils.VectorArea;
+import net.zeeraa.novacore.spigot.utils.XYZLocation;
 
 @NovaAutoLoad(shouldEnable = true)
 public class Lobby extends NovaModule implements Listener {
@@ -74,6 +76,7 @@ public class Lobby extends NovaModule implements Listener {
 
 	private Location lobbyLocation;
 
+	private boolean kotlEnabled;
 	private KingOfTheLadderScoreComparator kingOfTheLadderScoreComparator;
 	private Location kotlLocation;
 	private double kotlRadius;
@@ -125,6 +128,7 @@ public class Lobby extends NovaModule implements Listener {
 		this.gameRunningCheckTask = null;
 		this.loadScoreTask = null;
 		this.lobbyTask = null;
+		this.kotlEnabled = false;
 
 		this.spleefEnabled = false;
 		this.spleefArena = null;
@@ -201,6 +205,10 @@ public class Lobby extends NovaModule implements Listener {
 		this.kotlScoreTask = new SimpleTask(getPlugin(), new Runnable() {
 			@Override
 			public void run() {
+				if (!kotlEnabled) {
+					return;
+				}
+
 				Bukkit.getServer().getOnlinePlayers().stream().filter(player -> player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE).filter(player -> isInKOTLArena(player)).forEach(player -> {
 					int playerY = player.getLocation().getBlockY();
 					if (playerY >= kotlScoreHeightMin && playerY <= kotlScoreHeightMax) {
@@ -216,28 +224,30 @@ public class Lobby extends NovaModule implements Listener {
 					}
 				});
 
-				int line = 1;
+				if (kotlHologram != null) {
+					int line = 1;
 
-				for (KingOfTheLadderScore score : kotlScore.stream().sorted(kingOfTheLadderScoreComparator).limit(kotlHologramLines).collect(Collectors.toList())) {
-					net.md_5.bungee.api.ChatColor color = net.md_5.bungee.api.ChatColor.AQUA;
-					if (TeamManager.hasTeamManager()) {
-						Team team = TeamManager.getTeamManager().getPlayerTeam(score.getUuid());
-						if (team != null) {
-							color = team.getTeamColor();
+					for (KingOfTheLadderScore score : kotlScore.stream().sorted(kingOfTheLadderScoreComparator).limit(kotlHologramLines).collect(Collectors.toList())) {
+						net.md_5.bungee.api.ChatColor color = net.md_5.bungee.api.ChatColor.AQUA;
+						if (TeamManager.hasTeamManager()) {
+							Team team = TeamManager.getTeamManager().getPlayerTeam(score.getUuid());
+							if (team != null) {
+								color = team.getTeamColor();
+							}
 						}
+						((TextLine) kotlHologram.getLine(line)).setText(color + score.getName() + ChatColor.WHITE + " : " + ChatColor.AQUA + score.getScore());
+						line++;
 					}
-					((TextLine) kotlHologram.getLine(line)).setText(color + score.getName() + ChatColor.WHITE + " : " + ChatColor.AQUA + score.getScore());
-					line++;
-				}
 
-				for (; line <= kotlHologramLines; line++) {
-					((TextLine) kotlHologram.getLine(line)).setText(ChatColor.GRAY + "Empty");
+					for (; line <= kotlHologramLines; line++) {
+						((TextLine) kotlHologram.getLine(line)).setText(ChatColor.GRAY + "Empty");
+					}
+					/*
+					 * while (kotlHologram.size() - 1 < kotlHologramLines) {
+					 * kotlHologram.getLine(kotlHologramLines)
+					 * kotlHologram.appendTextLine(ChatColor.GRAY + "Empty"); }
+					 */
 				}
-				/*
-				 * while (kotlHologram.size() - 1 < kotlHologramLines) {
-				 * kotlHologram.getLine(kotlHologramLines)
-				 * kotlHologram.appendTextLine(ChatColor.GRAY + "Empty"); }
-				 */
 			}
 		}, 20L);
 		kotlScoreTask.start();
@@ -346,6 +356,10 @@ public class Lobby extends NovaModule implements Listener {
 		return lobbyLocation;
 	}
 
+	public void setLobbyLocation(LocationData locationData) {
+		this.setLobbyLocation(locationData.toLocation(getWorld()));
+	}
+
 	public void setLobbyLocation(Location lobbyLocation) {
 		this.lobbyLocation = lobbyLocation;
 		lobbyLocation.setWorld(multiverseWorld.getWorld());
@@ -355,20 +369,21 @@ public class Lobby extends NovaModule implements Listener {
 		return multiverseWorld.getWorld();
 	}
 
-	public void setKOTLLocation(double x, double z, double radius, int scoreHeightMin, int scoreHeightMax) {
-		this.kotlRadius = radius;
-		this.kotlLocation = new Location(multiverseWorld.getWorld(), x, 0, z);
+	public void enableKOTL(double x, double z, double radius, int scoreHeightMin, int scoreHeightMax) {
+		kotlEnabled = true;
+		kotlRadius = radius;
+		kotlLocation = new Location(multiverseWorld.getWorld(), x, 0, z);
 
-		this.kotlScoreHeightMin = scoreHeightMin;
-		this.kotlScoreHeightMax = scoreHeightMax;
+		kotlScoreHeightMin = scoreHeightMin;
+		kotlScoreHeightMax = scoreHeightMax;
 	}
 
 	public void setKOTLHologramLines(int kotlHologramLines) {
 		this.kotlHologramLines = kotlHologramLines;
 	}
 
-	public void setupKOTLHologram(double x, double y, double z, int lines) {
-		Location hologramLocation = new Location(multiverseWorld.getWorld(), x, y, z);
+	public void setupKOTLHologram(XYZLocation location, int lines) {
+		Location hologramLocation = location.toBukkitLocation(getWorld());
 		this.kotlHologram = HologramsAPI.createHologram(getPlugin(), hologramLocation);
 
 		kotlHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top KOTL Players");
@@ -491,7 +506,7 @@ public class Lobby extends NovaModule implements Listener {
 		if (e.getEntity() instanceof Player) {
 			if (lobbyLocation != null) {
 				if (e.getEntity().getWorld() == lobbyLocation.getWorld()) {
-					if (isInKOTLArena(e.getEntity())) {
+					if (isInKOTLArena(e.getEntity()) && kotlEnabled) {
 						e.setDamage(0);
 						e.setCancelled(false);
 						Log.trace("KOTL", "Allow damage event for player " + e.getEntity().getName() + " due to being inside the KTOL arena");

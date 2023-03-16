@@ -1,21 +1,19 @@
 package net.novauniverse.mctournamentsystem.lobby;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONArray;
-import org.json.JSONException;
+import org.json.JSONObject;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -38,17 +36,22 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
+import net.zeeraa.novacore.spigot.utils.LocationData;
 import net.zeeraa.novacore.spigot.utils.LocationUtils;
 import net.zeeraa.novacore.spigot.utils.XYZLocation;
 
 public class TournamentSystemLobby extends JavaPlugin implements Listener {
 	private static TournamentSystemLobby instance;
 
-	private Location lobbyLocation;
+	private LocationData lobbyLocation;
 	private boolean preventDamageMobs;
 
-	public Location getLobbyLocation() {
+	public LocationData getLobbyLocationData() {
 		return lobbyLocation;
+	}
+
+	public Location getLobbyLocation() {
+		return lobbyLocation.toLocation(Lobby.getInstance().getWorld());
 	}
 
 	public boolean isPreventDamageMobs() {
@@ -58,7 +61,7 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 	public static TournamentSystemLobby getInstance() {
 		return instance;
 	}
-	
+
 	public World getLobbyWorld() {
 		return Lobby.getInstance().getWorld();
 	}
@@ -73,36 +76,57 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 
+		File configFile = new File(TournamentSystem.getInstance().getMapDataFolder().getAbsolutePath() + File.separator + "lobby.json");
+		JSONObject config;
+		try {
+			config = JSONFileUtils.readJSONObjectFromFile(configFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.fatal("TournamentSystemLobby", "Failed to read config file at " + configFile.getAbsolutePath() + ". " + e.getClass().getName() + " " + e.getMessage());
+			Bukkit.getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+
 		if (getConfig().getBoolean("prevent_damage_mobs")) {
 			preventDamageMobs = true;
 		}
 
-		lobbyLocation = new Location(Lobby.getInstance().getWorld(), getConfig().getDouble("spawn_x"), getConfig().getDouble("spawn_y"), getConfig().getDouble("spawn_z"), (float) getConfig().getDouble("spawn_yaw"), (float) getConfig().getDouble("spawn_pitch"));
+		lobbyLocation = new LocationData(config.getJSONObject("spawn_location"));
 		Lobby.getInstance().setLobbyLocation(lobbyLocation);
 
-		Lobby.getInstance().setKOTLLocation(getConfig().getDouble("kotl_x"), getConfig().getDouble("kotl_z"), getConfig().getDouble("kotl_radius"), getConfig().getInt("kotl_score_height_min"), getConfig().getInt("kotl_score_height_max"));
+		JSONObject kotlConfig = config.optJSONObject("king_of_the_ladder");
+		if (kotlConfig != null) {
+			if (kotlConfig.optBoolean("enabled", false)) {
+				JSONObject center = kotlConfig.getJSONObject("center");
+				double centerX = center.getDouble("x");
+				double centerZ = center.getDouble("z");
 
-		ConfigurationSection kotlHologram = getConfig().getConfigurationSection("ktol_hologram");
-		if (kotlHologram.getBoolean("enabled")) {
-			double x = kotlHologram.getDouble("x");
-			double y = kotlHologram.getDouble("y");
-			double z = kotlHologram.getDouble("z");
-			
-			int lines = kotlHologram.getInt("lines");
+				double radius = kotlConfig.getDouble("radius");
 
-			Log.info(getName(), "Setting up KOTL hologram at X: " + x + " Y: " + y + " Z: " + z);
-			Lobby.getInstance().setKOTLHologramLines(lines);
-			Lobby.getInstance().setupKOTLHologram(x, y, z, lines);
-			
+				int minScoreHeight = kotlConfig.getInt("score_trigger_min_y");
+				int maxScoreHeight = kotlConfig.getInt("score_trigger_max_y");
+
+				Lobby.getInstance().enableKOTL(centerX, centerZ, radius, minScoreHeight, maxScoreHeight);
+			}
+
+			JSONObject hologram = kotlConfig.optJSONObject("hologram");
+			if (hologram != null) {
+				if (hologram.optBoolean("enabled", false)) {
+					int lines = hologram.optInt("lines", 10);
+					XYZLocation location = XYZLocation.fromJSON(hologram.getJSONObject("location"));
+					Log.info(getName(), "Setting up KOTL hologram at " + location.toString());
+					Lobby.getInstance().setupKOTLHologram(location, lines);
+				}
+			}
 		}
 
-		ConfigurationSection playerLeaderboard = getConfig().getConfigurationSection("lobby_player_leaderboard");
-		ConfigurationSection teamLeaderboard = getConfig().getConfigurationSection("lobby_team_leaderboard");
+		TSLeaderboard.getInstance().setLines(config.optInt("leaderboard_lines", 8));
 
-		TSLeaderboard.getInstance().setLines(8);
+		LocationData playerScoreLocation = LocationData.fromJSON(config.getJSONObject("player_leaderboard"));
+		LocationData teamScoreLocation = LocationData.fromJSON(config.getJSONObject("team_leaderboard"));
 
-		TSLeaderboard.getInstance().setPlayerHologramLocation(new Location(Lobby.getInstance().getWorld(), playerLeaderboard.getDouble("x"), playerLeaderboard.getDouble("y"), playerLeaderboard.getDouble("z")));
-		TSLeaderboard.getInstance().setTeamHologramLocation(new Location(Lobby.getInstance().getWorld(), teamLeaderboard.getDouble("x"), teamLeaderboard.getDouble("y"), teamLeaderboard.getDouble("z")));
+		TSLeaderboard.getInstance().setPlayerHologramLocation(playerScoreLocation.toLocation(Lobby.getInstance().getWorld()));
+		TSLeaderboard.getInstance().setTeamHologramLocation(teamScoreLocation.toLocation(Lobby.getInstance().getWorld()));
 
 		CommandRegistry.registerCommand(new AcceptDuelCommand());
 		CommandRegistry.registerCommand(new DuelCommand());
@@ -134,46 +158,31 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 			}
 		}.runTask(this);
 
-		ConfigurationSection hallOfFame = getConfig().getConfigurationSection("hall_of_fame");
+		JSONObject hallOfFame = config.optJSONObject("hall_of_fame");
+		if (hallOfFame != null) {
+			if (hallOfFame.optBoolean("enabled", false)) {
+				String url = hallOfFame.getString("data_url");
+				boolean debug = hallOfFame.optBoolean("debug", false);
+				XYZLocation nameHologramLocation = new XYZLocation(hallOfFame.getJSONObject("hologram_location"));
+				List<HallOfFameNPC> npcs = new ArrayList<>();
 
-		if (hallOfFame.getBoolean("enabled")) {
-			String url = hallOfFame.getString("stats_url");
-			XYZLocation nameHologramLocation = new XYZLocation(hallOfFame.getConfigurationSection("name_hologram_location"));
+				JSONArray npcsData = hallOfFame.getJSONArray("npcs");
+				for (int i = 0; i < npcsData.length(); i++) {
+					JSONObject npcData = npcsData.getJSONObject(i);
+					Location location = LocationUtils.fromJSONObject(npcData, Lobby.getInstance().getWorld());
+					npcs.add(new HallOfFameNPC(location));
+				}
 
-			List<HallOfFameNPC> npcs = new ArrayList<>();
+				HallOfFameConfig hallOfFameConfig = new HallOfFameConfig(nameHologramLocation, npcs, url, debug);
 
-			File npcLocationFile = new File(getDataFolder().getAbsolutePath() + File.separator + "hall_of_fame_npcs.json");
-
-			if (npcLocationFile.exists()) {
-				JSONArray npcLocations;
-				try {
-					npcLocations = JSONFileUtils.readJSONArrayFromFile(npcLocationFile);
-
-					for (int i = 0; i < npcLocations.length(); i++) {
-						Location location = LocationUtils.fromJSONObject(npcLocations.getJSONObject(i), Lobby.getInstance().getWorld());
-
-						npcs.add(new HallOfFameNPC(location));
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						HallOfFame hof = (HallOfFame) ModuleManager.getModule(HallOfFame.class);
+						hof.init(hallOfFameConfig);
 					}
-				} catch (JSONException | IOException e) {
-					e.printStackTrace();
-					Log.error("TournamentLobby", "Failed to read hall_of_fame_npcs.json in data directory. Hall of fame NPCs wont spawn");
-				}
-
-			} else {
-				Log.error("TournamentLobby", "Missing hall_of_fame_npcs.json in data directory. Hall of fame NPCs wont spawn");
+				}.runTaskLater(this, 20L);
 			}
-
-			boolean debug = hallOfFame.getBoolean("debug");
-
-			HallOfFameConfig hallOfFameConfig = new HallOfFameConfig(nameHologramLocation, npcs, url, debug);
-
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					HallOfFame hof = (HallOfFame) ModuleManager.getModule(HallOfFame.class);
-					hof.init(hallOfFameConfig);
-				}
-			}.runTaskLater(this, 20L);
 		}
 
 		TabListMessage.setServerType("Lobby");
