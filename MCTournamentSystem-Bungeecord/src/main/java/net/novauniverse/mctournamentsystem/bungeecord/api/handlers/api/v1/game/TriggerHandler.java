@@ -52,12 +52,14 @@ public class TriggerHandler extends APIEndpoint {
 					UUID requestUUID = UUID.randomUUID();
 
 					if (sessionId != null) {
+						final String sessionIdString = sessionId.toString();
 						ProxyServer.getInstance().getPlayers().forEach(player -> {
 							ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
 							out.writeUTF("trigger");
 							out.writeUTF(requestUUID.toString());
 							out.writeUTF(name);
+							out.writeUTF(sessionIdString);
 
 							player.getServer().getInfo().sendData(TournamentSystemCommons.DATA_CHANNEL, out.toByteArray());
 						});
