@@ -590,6 +590,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			}
 			Log.info("TournamentSystem", managedServers.size() + " servers configured to auto start");
 		}
+		
+		webserverDevelopmentMode = webUISettings.optBoolean("development_mode", false);
 
 		try {
 			int port = webUISettings.getInt("port");

@@ -143,6 +143,14 @@
 			</div>
 		</nav>
 
+		<div class="alert alert-danger mt-2 mx-2 d-none" id="alert_default_password" role="alert">
+			Warning: The default login admin/admin is enabled! Please change it in web_settings.json to prevent unautorised access to the system.
+		</div>
+
+		<div class="alert alert-danger mt-2 mx-2 d-none" id="alert_dev_mode" role="alert">
+			Warning: The admin ui is running in dev mode! this means that no login is required to access the system. You can disable this by setting development_mode to false in tournamentconfig.json
+		</div>
+
 		<ul class="nav nav-tabs mt-2 mx-2" id="admin_nav_tabs">
 			<li class="nav-item">
 				<a class="nav-link page-link active px-1 py-1" data-page="overview_page" href="#">Overview</a>
@@ -199,14 +207,14 @@
 						<div class="card-body">
 							<h3 class="card-title trigger-name">novauniverse.example</h3>
 							<p class="card-text">
-								<h5>Server: <span class="badge bg-info trigger-server-name">Unknown</span></h5>
-								<span class="trigger-description"></span>
-								<hr class="description-hr">
-								Status: <span class="trigger-running-status badge">Not running</span><br>
-								Activation count: <span class="trigger-activation-count badge bg-info">0</span><br>
-								Seconds left: <span class="trigger-seconds-left badge bg-primary">0</span><br>
-								Ticks left: <span class="trigger-ticks-left badge bg-primary">0</span><br><br><br>
-								Flags: <span class="trigger-flags badge bg-secondary"></span><br>
+							<h5>Server: <span class="badge bg-info trigger-server-name">Unknown</span></h5>
+							<span class="trigger-description"></span>
+							<hr class="description-hr">
+							Status: <span class="trigger-running-status badge">Not running</span><br>
+							Activation count: <span class="trigger-activation-count badge bg-info">0</span><br>
+							Seconds left: <span class="trigger-seconds-left badge bg-primary">0</span><br>
+							Ticks left: <span class="trigger-ticks-left badge bg-primary">0</span><br><br><br>
+							Flags: <span class="trigger-flags badge bg-secondary"></span><br>
 							</p>
 							<a href="#" class="btn btn-primary trigger-button">Trigger</a>
 						</div>
@@ -246,8 +254,7 @@
 							<button type="button" class="btn mt-1 btn-dark get-server-logs-button">Logs</button>
 							<button type="button" class="btn mt-1 btn-info start-server-console-button">Open
 								console</button>
-							<button type="button"
-								class="btn mt-1 btn-secondary get-server-info">Info</button>
+							<button type="button" class="btn mt-1 btn-secondary get-server-info">Info</button>
 						</div>
 					</div>
 				</div>
@@ -850,8 +857,8 @@
 			</div>
 		</div>
 
-		<div class="modal fade" id="serverInfoModal" tabindex="-1"
-			aria-labelledby="serverInfoModalTitle" aria-hidden="true">
+		<div class="modal fade" id="serverInfoModal" tabindex="-1" aria-labelledby="serverInfoModalTitle"
+			aria-hidden="true">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-header">

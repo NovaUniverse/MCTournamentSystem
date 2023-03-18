@@ -10,6 +10,17 @@ $(function () {
 		setCookie("ts_access_token", TournamentSystem.token, 999999);
 	}
 
+
+	$.getJSON("/api/v1/system/security_check", (data) => {
+		if(data.dev_mode) {
+			$("#alert_dev_mode").removeClass("d-none");
+		}
+
+		if(data.default_login_warning) {
+			$("#alert_default_password").removeClass("d-none");
+		}
+	});
+
 	$(".hidden-integration").hide();
 
 	$(".meow").on("click", () => {

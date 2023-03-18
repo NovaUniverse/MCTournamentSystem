@@ -32,6 +32,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapsh
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.StaffHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.BroadcastHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.QuickMessageHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.SecurityCheckHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ShutdownHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.StatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetMOTDHandler;
@@ -75,6 +76,7 @@ public class WebServer {
 		createContext("/api/v1/system/broadcast", new BroadcastHandler());
 		createContext("/api/v1/system/quick_message", new QuickMessageHandler());
 		createContext("/api/v1/system/shutdown", new ShutdownHandler());
+		createContext("/api/v1/system/security_check", new SecurityCheckHandler());
 
 		createContext("/api/v1/system/reset", new ResetHandler());
 
