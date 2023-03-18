@@ -136,7 +136,7 @@ public class YBorder extends NovaModule implements Listener {
 					}
 				}
 			});
-		}, 5L);
+		}, 10L);
 
 		decreaseTask.start();
 		damageTask.start();
