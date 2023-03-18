@@ -131,7 +131,7 @@ public class YBorder extends NovaModule implements Listener {
 				for (double x = 0; x <= PARTICLE_WIDTH; x += PARTICLE_DENSITY) {
 					for (double z = 0; z <= PARTICLE_WIDTH; z += PARTICLE_DENSITY) {
 						Location location = new Location(player.getWorld(), ((player.getLocation().getX()) - (PARTICLE_WIDTH / 2) + x), yLimit, ((player.getLocation().getZ() + z) - (PARTICLE_WIDTH / 2)));
-						NovaCore.getInstance().getNovaParticleProvider().showColoredRedstoneParticle(location, PARTICLE_COLOR);
+						NovaCore.getInstance().getNovaParticleProvider().showColoredRedstoneParticle(location, PARTICLE_COLOR, player);
 						// ParticleEffect.REDSTONE.display(location, Color.RED, player);
 					}
 				}
