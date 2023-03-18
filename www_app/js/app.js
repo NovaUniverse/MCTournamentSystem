@@ -1712,7 +1712,8 @@ const TournamentSystem = {
 
 			$(".trigger-col").each(function () {
 				let session_id = $(this).data("trigger-sid");
-				let trigger = triggers.filter(t => t.session_id == session_id)[0];
+				let name = $(this).data("trigger-name");
+				let trigger = triggers.filter(t => t.session_id == session_id && t.name == name)[0];
 
 				$(this).find(".trigger-activation-count").text(trigger.trigger_count);
 
