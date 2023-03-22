@@ -36,6 +36,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.misc.CustomTheme;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.SlowPlayerSender;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ServerAutoRegisterData;
+import net.novauniverse.mctournamentsystem.bungeecord.setup.Setup;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.config.InternetCafeOptions;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
@@ -390,6 +391,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			return;
 		}
 
+		Setup.run();
+
 		try {
 			String configuredMOTD = TournamentSystemCommons.getConfigValue("motd");
 			if (configuredMOTD == null) {
@@ -590,7 +593,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			}
 			Log.info("TournamentSystem", managedServers.size() + " servers configured to auto start");
 		}
-		
+
 		webserverDevelopmentMode = webUISettings.optBoolean("development_mode", false);
 
 		try {
