@@ -1706,9 +1706,7 @@ const TournamentSystem = {
 
 					$("#game_trigger_list").append(newElement);
 				}
-			})
-
-			console.log(displayedTriggers);
+			});
 
 			$(".trigger-col").each(function () {
 				let session_id = $(this).data("trigger-sid");
