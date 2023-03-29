@@ -63,8 +63,8 @@ public class JoinEvents implements Listener {
 				p.sendMessage(new ComponentBuilder(e.getPlayer().getName() + " connected. Click this message to send them to your server").color(ChatColor.GOLD).event(event).create());
 			}
 		});
-		
-		if(TournamentSystemCommons.hasSocketAPI()) {
+
+		if (TournamentSystemCommons.hasSocketAPI()) {
 			JSONObject data = new JSONObject();
 			data.put("username", e.getPlayer().getName());
 			data.put("uuid", e.getPlayer().getUniqueId().toString());
@@ -72,12 +72,14 @@ public class JoinEvents implements Listener {
 			TournamentSystemCommons.getSocketAPI().sendEventAsync("proxy_player_join", data);
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDisconnect(PlayerDisconnectEvent e) {
-		JSONObject data = new JSONObject();
-		data.put("username", e.getPlayer().getName());
-		data.put("uuid", e.getPlayer().getUniqueId().toString());
-		TournamentSystemCommons.getSocketAPI().sendEventAsync("proxy_player_quit", data);
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+			data.put("username", e.getPlayer().getName());
+			data.put("uuid", e.getPlayer().getUniqueId().toString());
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("proxy_player_quit", data);
+		}
 	}
 }
