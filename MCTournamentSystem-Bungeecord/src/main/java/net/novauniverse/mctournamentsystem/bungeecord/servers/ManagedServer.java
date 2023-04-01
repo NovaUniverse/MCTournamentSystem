@@ -177,7 +177,7 @@ public class ManagedServer {
 		return true;
 	}
 
-	public boolean start() {
+	public boolean start() throws MissingServerJarException {
 		if (process != null) {
 			if (process.isAlive()) {
 				return false;
@@ -205,7 +205,7 @@ public class ManagedServer {
 		if (!TournamentSystem.getInstance().isDisableParentPidMonitoring()) {
 			try {
 				int pid = ProcessUtils.getOwnPID();
-				Log.trace("ManagedServer", "Own pid: " + pid);
+				Log.debug("ManagedServer", "Own pid: " + pid);
 				command.add("-DtournamentServerParentProcessID=" + pid);
 			} catch (Exception e) {
 				Log.error("ManagedServer", "Failed to fetch own PID. " + e.getClass().getName() + " " + e.getMessage());
@@ -223,6 +223,12 @@ public class ManagedServer {
 			command.add(string);
 		}
 
+		File jarFile = new File(workingDirectory.getAbsolutePath() + File.separator + jar);
+		if (!jarFile.exists()) {
+			Log.error("ManagedServer", "Could not find server jar at location " + jarFile.getAbsolutePath());
+			throw new MissingServerJarException("Could not find server jar at location " + jarFile.getAbsolutePath());
+		}
+
 		command.add("-jar");
 		command.add(jar);
 
@@ -230,7 +236,7 @@ public class ManagedServer {
 			int port = serverAutoRegisterData.getPort();
 			command.add("--port");
 			command.add("" + port);
-			Log.trace("ManagedServer", "Using port " + port + " for server " + name);
+			Log.debug("ManagedServer", "Using port " + port + " for server " + name);
 		}
 
 		builder.command(command);
@@ -239,6 +245,7 @@ public class ManagedServer {
 		builder.redirectOutput(log);
 		builder.redirectError(err);
 
+		Log.trace("ManagedServer", "Starting process " + command + " in directory " + workingDirectory);
 		try {
 			process = builder.start();
 			return true;

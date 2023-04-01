@@ -54,6 +54,7 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.platform.OSPlatform;
 import net.zeeraa.novacore.commons.platform.OSPlatformUtils;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
+import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.commons.utils.network.api.ip.IPFetcher;
 
 public class TournamentSystem extends NovaPlugin implements Listener {
@@ -100,6 +101,14 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private PingListeners pingListeners;
 
 	private String mojangAPIProxyURL;
+	
+	private boolean makeMeSufferEasteregg;
+	
+	private String motd;
+	
+	public boolean isMakeMeSufferEasteregg() {
+		return makeMeSufferEasteregg;
+	}
 
 	public WebServer getWebServer() {
 		return webServer;
@@ -214,8 +223,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return disableParentPidMonitoring;
 	}
 
-	public String motd;
-
 	public String getMotd() {
 		return motd;
 	}
@@ -238,6 +245,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		distroName = null;
 		apiUsers = new ArrayList<>();
 		managedServers = new ArrayList<>();
+		makeMeSufferEasteregg = false;
 
 		publicIp = "Unknown";
 		motd = "Tournament System";
@@ -676,8 +684,17 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		Log.info("TournamentSystem", toAutoStart.size() + " servers configured to auto start");
 		toAutoStart.forEach(server -> {
 			Log.info("TournamentSystem", "Attempting to auto start server " + server.getName());
-			server.start();
+			try {
+				server.start();
+			} catch (Exception e) {
+			}
 		});
+		
+		Log.trace(webConfig.toString());
+		makeMeSufferEasteregg = webConfig.optBoolean("hey_what_if_we_made_the_logs_way_worse_to_read_like_for_real_give_me_brain_damage_pls", false);
+		if(makeMeSufferEasteregg) {
+			Log.info(TextUtils.englishToUWU("Hello World"));
+		}
 	}
 
 	@Override

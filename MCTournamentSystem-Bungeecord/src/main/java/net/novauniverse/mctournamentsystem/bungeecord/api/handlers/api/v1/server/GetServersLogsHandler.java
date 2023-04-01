@@ -14,6 +14,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.IPVisibilitySetti
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.utils.TextUtils;
 
 public class GetServersLogsHandler extends APIEndpoint {
 	public GetServersLogsHandler() {
@@ -56,6 +58,14 @@ public class GetServersLogsHandler extends APIEndpoint {
 				json.put("session_id", server.getLastSessionId());
 				json.put("log_data", logs);
 				json.put("is_hiding_ip", hideIPs);
+
+				if (TournamentSystem.getInstance().isMakeMeSufferEasteregg()) {
+					JSONArray logs2ElectricBoogaloo = new JSONArray();
+					for (int i = 0; i < logs.length(); i++) {
+						logs2ElectricBoogaloo.put(TextUtils.englishToUWU(logs.getString(i)));
+					}
+					json.put("log_data", logs2ElectricBoogaloo);
+				}
 			} else {
 				json.put("success", false);
 				json.put("error", "server_not_found");
