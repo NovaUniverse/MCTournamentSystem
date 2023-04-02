@@ -14,7 +14,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.IPVisibilitySetti
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
-import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 
 public class GetServersLogsHandler extends APIEndpoint {
