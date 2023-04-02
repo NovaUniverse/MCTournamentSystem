@@ -690,7 +690,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			}
 		});
 		
-		Log.trace(webConfig.toString());
 		makeMeSufferEasteregg = webConfig.optBoolean("hey_what_if_we_made_the_logs_way_worse_to_read_like_for_real_give_me_brain_damage_pls", false);
 		if(makeMeSufferEasteregg) {
 			Log.info(TextUtils.englishToUWU("Hello World"));
