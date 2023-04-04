@@ -264,7 +264,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		}
 
 		if (settings.shouldUpdateDisplayName() && !settings.getDisplayNameUpdateExemptList().contains(player.getUniqueId())) {
-			player.setDisplayName("| " + name);
+			player.setDisplayName(name);
 		}
 
 		if (settings.shouldUpdateListName() && !settings.getListNameUpdateExemptList().contains(player.getUniqueId())) {
