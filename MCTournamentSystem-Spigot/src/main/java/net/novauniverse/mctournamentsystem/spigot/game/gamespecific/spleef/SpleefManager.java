@@ -60,7 +60,7 @@ public class SpleefManager extends NovaModule implements Listener {
 											color = ChatColor.GREEN;
 										}
 
-										NetherBoardScoreboard.getInstance().setGlobalLine(SPLEEF_DECAY_LINE, ChatColor.GOLD + "Decay in: " + color + TextUtils.secondsToHoursMinutes(timeLeft));
+										NetherBoardScoreboard.getInstance().setGlobalLine(SPLEEF_DECAY_LINE, ChatColor.GOLD + "Decay in: " + color + TextUtils.secondsToMinutesSeconds(timeLeft));
 									} else {
 										if (decayLineShown) {
 											NetherBoardScoreboard.getInstance().clearGlobalLine(SPLEEF_DECAY_LINE);

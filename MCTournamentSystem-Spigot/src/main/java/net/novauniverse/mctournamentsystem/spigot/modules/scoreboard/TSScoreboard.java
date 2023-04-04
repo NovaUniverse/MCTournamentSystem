@@ -228,7 +228,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 							gameCountdownShown = true;
 
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-								NetherBoardScoreboard.getInstance().setPlayerLine(COUNTDOWN_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.starting_in") + ChatColor.AQUA + TextUtils.secondsToHoursMinutes(GameManager.getInstance().getCountdown().getTimeLeft()));
+								NetherBoardScoreboard.getInstance().setPlayerLine(COUNTDOWN_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.starting_in") + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(GameManager.getInstance().getCountdown().getTimeLeft()));
 							});
 						} else {
 							if (gameCountdownShown) {

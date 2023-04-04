@@ -41,7 +41,7 @@ public class GameStartScoreboardCountdown extends NovaModule {
 				// " + NovaMain.getInstance().getGameStarter().shouldShowCountdown());
 				if (MissileWarsLobby.getInstance().getStarter().shouldShowCountdown()) {
 					countdownVisible = true;
-					NetherBoardScoreboard.getInstance().setGlobalLine(countdownLine, ChatColor.GOLD + "Starting in: " + ChatColor.AQUA + TextUtils.secondsToHoursMinutes(MissileWarsLobby.getInstance().getStarter().getTimeLeft()));
+					NetherBoardScoreboard.getInstance().setGlobalLine(countdownLine, ChatColor.GOLD + "Starting in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(MissileWarsLobby.getInstance().getStarter().getTimeLeft()));
 				} else {
 					if (countdownVisible) {
 						NetherBoardScoreboard.getInstance().clearGlobalLine(countdownLine);

@@ -151,46 +151,36 @@ public class TournamentSystemCommons {
 
 	public static boolean hasConfigValue(String key) throws SQLException {
 		boolean result = false;
-		try {
-			String sql = "SELECT id FROM tsdata WHERE data_key = ?";
-			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+		String sql = "SELECT id FROM tsdata WHERE data_key = ?";
+		PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-			ps.setString(1, key);
+		ps.setString(1, key);
 
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				result = true;
-			}
-
-			rs.close();
-			ps.close();
-		} catch (Exception ee) {
-			Log.error("TournamentSystemCommons", "Failed to check if config value exist. " + ee.getClass().getName() + " " + ee.getMessage());
-			ee.printStackTrace();
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			result = true;
 		}
+
+		rs.close();
+		ps.close();
 
 		return result;
 	}
 
 	public static String getConfigValue(String key) throws SQLException {
 		String result = null;
-		try {
-			String sql = "SELECT data_value FROM tsdata WHERE data_key = ?";
-			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+		String sql = "SELECT data_value FROM tsdata WHERE data_key = ?";
+		PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-			ps.setString(1, key);
+		ps.setString(1, key);
 
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				result = rs.getString("data_value");
-			}
-
-			rs.close();
-			ps.close();
-		} catch (Exception ee) {
-			Log.error("TournamentSystemCommons", "Failed to fetch config value. " + ee.getClass().getName() + " " + ee.getMessage());
-			ee.printStackTrace();
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			result = rs.getString("data_value");
 		}
+
+		rs.close();
+		ps.close();
 
 		return result;
 	}
