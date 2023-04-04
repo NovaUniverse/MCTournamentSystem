@@ -1,5 +1,5 @@
 __tnPreloader_setOptions__ = {
-	custom_image: '/app/img/loading.gif',
+	custom_image: '/app/img/loading.webp',
 	custom_text: 'Loading...',
 	custom_text_color: '#ffffff',
 	background_is_img: false,
