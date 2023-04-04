@@ -393,7 +393,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public void setLoadedGameName(String loadedGameName) {
 		this.loadedGameName = loadedGameName;
 	}
-	
+
 	public boolean reloadDynamicConfig() {
 		if (dynamicConfigURL == null) {
 			return false;
@@ -534,7 +534,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				return;
 			}
 		}
-		
+
 		this.mapDataFolder.mkdirs();
 		this.nbsFolder.mkdirs();
 
@@ -573,12 +573,12 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		String mojangAPIUrl = config.optString("mojang_api", "https://mojangapi.novauniverse.net");
-		if(mojangAPIUrl.startsWith("/")) {
+		if (mojangAPIUrl.startsWith("/")) {
 			mojangAPIUrl = "http://127.0.0.1" + mojangAPIUrl;
 		}
 		Log.info("TournamentSystem", "Mojang api url: " + mojangAPIUrl);
 		NovaUniverseAPI.setMojangAPIProxyBaseURL(mojangAPIUrl);
-		
+
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
 
 		SocketAPIUtil.setupSocketAPI();
@@ -744,7 +744,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		if (config.has("resource_pack")) {
 			resourcePackUrl = config.getString("resource_pack");
 		}
-		
+
 		lobbyServer = config.getString("lobby_server");
 
 		serverName = getConfig().getString("server_name");
@@ -785,13 +785,13 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		/* ----- Scoreboard ----- */
 		String tournamentName = TournamentSystemCommons.getTournamentName();
 		String scoreboardUrl = TournamentSystemCommons.getScoreboardURL();
-		
-		if(tournamentName == null) {
+
+		if (tournamentName == null) {
 			TournamentSystemCommons.setTournamentName("Tournament");
 			tournamentName = "Tournament";
 		}
-		
-		if(scoreboardUrl == null) {
+
+		if (scoreboardUrl == null) {
 			TournamentSystemCommons.setScoreboardURL("");
 			scoreboardUrl = "";
 		}
