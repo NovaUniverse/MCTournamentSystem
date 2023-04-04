@@ -13,13 +13,15 @@ import net.zeeraa.novacore.spigot.teams.Team;
 public class TournamentSystemTeam extends Team {
 	private int teamNumber;
 	private int score;
+	private int kills;
 
 	private String badge;
 
-	public TournamentSystemTeam(int teamNumber, int score) {
+	public TournamentSystemTeam(int teamNumber, int score, int kills) {
 		this.teamNumber = teamNumber;
 		this.score = score;
 		this.badge = null;
+		this.kills = kills;
 	}
 
 	public int getTeamNumber() {
@@ -32,6 +34,14 @@ public class TournamentSystemTeam extends Team {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	public int getKills() {
+		return kills;
+	}
+
+	public void setKills(int kills) {
+		this.kills = kills;
 	}
 
 	/**

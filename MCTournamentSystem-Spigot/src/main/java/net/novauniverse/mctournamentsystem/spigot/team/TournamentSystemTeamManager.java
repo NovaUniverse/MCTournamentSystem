@@ -53,7 +53,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		playerColorCache = new HashMap<UUID, ChatColor>();
 
 		for (int i = 0; i < teamCount; i++) {
-			TournamentSystemTeam team = new TournamentSystemTeam(i + 1, 0);
+			TournamentSystemTeam team = new TournamentSystemTeam(i + 1, 0, 0);
 
 			this.teams.add(team);
 		}
@@ -195,7 +195,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 
 				// Update score
 				try {
-					String sql = "SELECT score, team_number FROM teams";
+					String sql = "SELECT score, team_number, kills FROM teams";
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 					ResultSet rs = ps.executeQuery();
@@ -204,6 +204,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 
 						if (team != null) {
 							team.setScore(rs.getInt("score"));
+							team.setKills(rs.getInt("kills"));
 						}
 					}
 

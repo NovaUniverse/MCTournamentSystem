@@ -83,7 +83,7 @@ public class PublicStatusHandler extends APIEndpoint {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				TeamData td = new TeamData(rs.getInt("team_number"), rs.getInt("score"));
+				TeamData td = new TeamData(rs.getInt("team_number"), rs.getInt("score"), rs.getInt("kills"));
 				teamDataList.add(td);
 			}
 
@@ -138,6 +138,7 @@ public class PublicStatusHandler extends APIEndpoint {
 
 			team.put("team_number", td.getTeamNumber());
 			team.put("score", td.getScore());
+			team.put("kills", td.getKills());
 			team.put("color", ChatColorRGBMapper.chatColorToRGBColorData(TeamColorProvider.getTeamColor(td.getTeamNumber())).toJSON());
 			team.put("display_name", TeamNameProvider.getDisplayName(td.getTeamNumber()));
 

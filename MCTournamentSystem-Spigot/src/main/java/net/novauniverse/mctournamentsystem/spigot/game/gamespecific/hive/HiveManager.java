@@ -129,6 +129,8 @@ public class HiveManager extends NovaModule implements Listener {
 			if (killer != null) {
 				if (NovaHive.getInstance().getGame().getPlayers().contains(killer.getUniqueId())) {
 					KillManager.addPlayerKill(killer);
+					
+					TeamManager.getTeamManager().ifHasTeam(killer, (team -> KillManager.addTeamKill((TournamentSystemTeam) team)));
 				}
 			}
 		}

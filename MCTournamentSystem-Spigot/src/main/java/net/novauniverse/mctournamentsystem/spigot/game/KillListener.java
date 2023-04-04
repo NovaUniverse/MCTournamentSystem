@@ -7,8 +7,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import net.novauniverse.mctournamentsystem.spigot.kills.KillManager;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerKillCache;
+import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.module.NovaModule;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 import net.zeeraa.novacore.spigot.utils.ProjectileUtils;
 
 public class KillListener extends NovaModule implements Listener {
@@ -40,6 +42,7 @@ public class KillListener extends NovaModule implements Listener {
 
 			if (killerPlayer != null) {
 				KillManager.addPlayerKill(killerPlayer);
+				TeamManager.getTeamManager().ifHasTeam(killerPlayer, (team -> KillManager.addTeamKill((TournamentSystemTeam) team)));
 			}
 		}
 	}

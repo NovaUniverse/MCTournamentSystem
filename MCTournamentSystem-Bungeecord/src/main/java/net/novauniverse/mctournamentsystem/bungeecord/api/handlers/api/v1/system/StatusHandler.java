@@ -93,7 +93,7 @@ public class StatusHandler extends APIEndpoint {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				TeamData td = new TeamData(rs.getInt("team_number"), rs.getInt("score"));
+				TeamData td = new TeamData(rs.getInt("team_number"), rs.getInt("score"), rs.getInt("kills"));
 				teamDataList.add(td);
 			}
 
@@ -149,6 +149,7 @@ public class StatusHandler extends APIEndpoint {
 
 			team.put("team_number", td.getTeamNumber());
 			team.put("score", td.getScore());
+			team.put("kills", td.getKills());
 			team.put("color", ChatColorRGBMapper.chatColorToRGBColorData(TeamColorProvider.getTeamColor(td.getTeamNumber())).toJSON());
 			team.put("display_name", TeamNameProvider.getDisplayName(td.getTeamNumber()));
 
@@ -230,7 +231,7 @@ public class StatusHandler extends APIEndpoint {
 
 		system.put("public_ip", TournamentSystem.getInstance().getPublicIp());
 		system.put("dynamic_config_url", TournamentSystem.getInstance().getDynamicConfigUrl());
-		
+
 		system.put("motd", TournamentSystem.getInstance().getMotd());
 
 		json.put("system", system);
