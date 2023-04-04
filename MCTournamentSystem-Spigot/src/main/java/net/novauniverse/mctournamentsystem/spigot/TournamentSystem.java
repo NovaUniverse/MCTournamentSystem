@@ -393,7 +393,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public void setLoadedGameName(String loadedGameName) {
 		this.loadedGameName = loadedGameName;
 	}
-
+	
 	public boolean reloadDynamicConfig() {
 		if (dynamicConfigURL == null) {
 			return false;
