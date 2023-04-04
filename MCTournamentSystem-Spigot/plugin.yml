@@ -9,3 +9,8 @@ authors: [Zeeraa, NovaUniverse]
 depend: [NovaCore, HolographicDisplays, ProtocolLib, TitleAPI, LuckPerms, Citizens, NoteBlockAPI]
 softdepend: [NovaCoreGameEngine, LabyApi, ItemsAdder, AdvancedGUI]
 loadbefore: [NovaGamesTarget, NovaSurvivalGames, ChickenOut, HolographicPlaceholders]
+
+permissions:
+  tournamentsystem.staff:
+    description: Indicates that the player is a staff member
+    default: false

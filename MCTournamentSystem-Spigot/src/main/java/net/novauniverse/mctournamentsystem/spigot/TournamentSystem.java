@@ -185,6 +185,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	private String loadedGameName;
 
+	private boolean hideTeamNameNextToPlayerIGN;
+
+	private String iaNoTeamIcon;
+
 	public static TournamentSystem getInstance() {
 		return instance;
 	}
@@ -394,6 +398,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.loadedGameName = loadedGameName;
 	}
 
+	public boolean isHideTeamNameNextToPlayerIGN() {
+		return hideTeamNameNextToPlayerIGN;
+	}
+
 	public boolean reloadDynamicConfig() {
 		if (dynamicConfigURL == null) {
 			return false;
@@ -432,6 +440,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		return true;
+	}
+	
+	public String getIANoTeamIcon() {
+		return iaNoTeamIcon;
 	}
 
 	@Override
@@ -744,6 +756,9 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		if (config.has("resource_pack")) {
 			resourcePackUrl = config.getString("resource_pack");
 		}
+
+		hideTeamNameNextToPlayerIGN = config.optBoolean("hide_team_name_next_to_ign");
+		iaNoTeamIcon = config.optString("ia_no_team_icon", null);
 
 		lobbyServer = config.getString("lobby_server");
 

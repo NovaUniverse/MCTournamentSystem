@@ -23,6 +23,7 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
+import net.zeeraa.novacore.spigot.utils.NovaItemsAdderUtils;
 
 public class TournamentSystemTeamManager extends TeamManager implements Listener {
 	private int teamCount = 12;
@@ -237,13 +238,28 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 
 		String name = "MissingNo";
 
+		String noTeamIcon = null;
+		if (TournamentSystem.getInstance().getIANoTeamIcon() != null) {
+			noTeamIcon = NovaItemsAdderUtils.getFontImage(TournamentSystem.getInstance().getIANoTeamIcon());
+		}
+
 		ChatColor color = ChatColor.YELLOW;
 		if (team == null) {
-			name = color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + "No team : " + ChatColor.RESET + player.getName();
+			boolean staff = player.hasPermission("tournamentsystem.staff");
+
+			if (TournamentSystem.getInstance().isHideTeamNameNextToPlayerIGN()) {
+				name = (noTeamIcon == null ? "" : noTeamIcon + " ") + (staff ? ChatColor.WHITE : ChatColor.GRAY) + player.getName() + ChatColor.RESET;
+			} else {
+				name = (noTeamIcon == null ? "" : noTeamIcon + " ") + color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + "No team : " + (staff ? ChatColor.WHITE : ChatColor.GRAY) + player.getName() + ChatColor.RESET;
+			}
 		} else {
 			if (((TournamentSystemTeam) team).getTeamNumber() >= 1) {
 				color = team.getTeamColor();
-				name = (team.hadBadge() ? team.getBadge() + " " : "") + color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + team.getDisplayName() + ChatColor.WHITE + " : " + ChatColor.RESET + player.getName();
+				if (TournamentSystem.getInstance().isHideTeamNameNextToPlayerIGN()) {
+					name = (team.hadBadge() ? team.getBadge() + " " : "") + color + player.getName() + ChatColor.RESET;
+				} else {
+					name = (team.hadBadge() ? team.getBadge() + " " : "") + color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + team.getDisplayName() + ChatColor.WHITE + " : " + color + player.getName() + ChatColor.RESET;
+				}
 			}
 		}
 
