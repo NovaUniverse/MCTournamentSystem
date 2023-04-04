@@ -32,10 +32,10 @@ public class ScoreSorterTest {
 	public void sortTeamScore() {
 		List<TeamScoreData> score = new ArrayList<>();
 
-		score.add(new TeamScoreData(new DummyTeam(1, 42)));
-		score.add(new TeamScoreData(new DummyTeam(2, 1337)));
-		score.add(new TeamScoreData(new DummyTeam(4, 69)));
-		score.add(new TeamScoreData(new DummyTeam(5, 420)));
+		score.add(new TeamScoreData(new DummyTeam(1, 42, 0)));
+		score.add(new TeamScoreData(new DummyTeam(2, 1337, 0)));
+		score.add(new TeamScoreData(new DummyTeam(4, 69, 0)));
+		score.add(new TeamScoreData(new DummyTeam(5, 420, 0)));
 
 		Collections.sort(score);
 		
