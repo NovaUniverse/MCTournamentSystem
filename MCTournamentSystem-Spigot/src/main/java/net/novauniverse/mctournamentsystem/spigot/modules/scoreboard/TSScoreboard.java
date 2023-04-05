@@ -243,7 +243,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 	}
 
-	private static String formatTime(long seconds) {
+	public static String formatTime(long seconds) {
 		int h = (int) (seconds / 3600);
 		int m = (int) ((seconds % 3600) / 60);
 		int s = (int) (seconds % 60);
