@@ -94,7 +94,7 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("behindyourtail", BehindYourTailManager.class);
 		GAME_SPECIFIC_MODULES.put("ng_hive", HiveManager.class);
 		GAME_SPECIFIC_MODULES.put("parkour_race", ParkourRaceManager.class);
-		
+
 		// Final games
 		GAME_SPECIFIC_MODULES.put("missilewars_finalgame", FinalMissileWarsManager.class);
 	}
@@ -212,10 +212,10 @@ public class GameListeners extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onGameTriggerTriggerEvent(GameTriggerTriggerEvent e) {
-		if(e.getTrigger().hasFlag(TriggerFlag.DISABLE_LOGGING)) {
+		if (e.getTrigger().hasFlag(TriggerFlag.DISABLE_LOGGING)) {
 			return;
 		}
-		
+
 		if (TournamentSystemCommons.hasSocketAPI()) {
 			JSONObject data = new JSONObject();
 			JSONArray flags = new JSONArray();
@@ -274,7 +274,9 @@ public class GameListeners extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGracePeriodFinish(GracePeriodFinishEvent e) {
-		TournamentSystemCommons.getSocketAPI().sendEventAsync("grace_period_end", SocketAPI.emptyResponse());
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("grace_period_end", SocketAPI.emptyResponse());
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
