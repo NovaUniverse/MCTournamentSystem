@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import net.novauniverse.behindyourtail.NovaBehindYourTail;
@@ -13,6 +12,7 @@ import net.novauniverse.behindyourtail.game.role.Role;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
+import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.modules.compass.CompassTarget;
 import net.zeeraa.novacore.spigot.module.modules.compass.CompassTrackerTarget;
 import net.zeeraa.novacore.spigot.teams.Team;
@@ -35,24 +35,24 @@ public class BehindYourTailCompassTracker implements CompassTrackerTarget {
 			}
 
 			for (UUID uuid : players) {
-				Player p = Bukkit.getServer().getPlayer(uuid);
+				Player target = Bukkit.getServer().getPlayer(uuid);
 
-				if (p != null) {
-					if (p.isOnline()) {
+				if (target != null) {
+					if (target.isOnline()) {
 						if (GameManager.getInstance().hasGame()) {
-							if (!GameManager.getInstance().getActiveGame().getPlayers().contains(p.getUniqueId())) {
+							if (!GameManager.getInstance().getActiveGame().getPlayers().contains(target.getUniqueId())) {
 								continue;
 							}
 						}
-						if (p.getLocation().getWorld() == player.getLocation().getWorld()) {
-							Role role = NovaBehindYourTail.getInstance().getGame().getPlayerRole(p.getUniqueId());
+						if (target.getLocation().getWorld() == player.getLocation().getWorld()) {
+							Role role = NovaBehindYourTail.getInstance().getGame().getPlayerRole(target.getUniqueId());
 
 							if(role == Role.HUNTER) {
 								continue;
 							}
 							
 							if (team != null) {
-								Team p2team = NovaCore.getInstance().getTeamManager().getPlayerTeam(p);
+								Team p2team = NovaCore.getInstance().getTeamManager().getPlayerTeam(target);
 
 								if (p2team != null) {
 									if (team.equals(p2team)) {
@@ -61,11 +61,11 @@ public class BehindYourTailCompassTracker implements CompassTrackerTarget {
 								}
 							}
 
-							double dist = player.getLocation().distance(p.getLocation());
+							double dist = player.getLocation().distance(target.getLocation());
 
 							if (dist < closestDistance) {
 								closestDistance = dist;
-								result = new CompassTarget(p.getLocation(), ChatColor.GREEN + "Tracking player " + ChatColor.AQUA + p.getName());
+								result = new CompassTarget(target.getLocation(), LanguageManager.getString(player, "tournamentsystem.game.behindyourtail.item.fox_tracker.tracking_message", target.getName()));
 							}
 						}
 					}

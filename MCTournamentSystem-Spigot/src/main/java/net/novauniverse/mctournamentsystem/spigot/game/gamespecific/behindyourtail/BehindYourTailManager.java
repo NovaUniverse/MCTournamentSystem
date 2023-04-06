@@ -33,6 +33,7 @@ import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerEliminationReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
+import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.compass.CompassTracker;
@@ -50,9 +51,6 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 	public BehindYourTailManager() {
 		super("TournamentSystem.GameSpecific.BehindYourTailManager");
 	}
-
-	private ItemStack tracker;
-	private ItemStack tracer;
 
 	private boolean tracersDisabled;
 
@@ -86,15 +84,6 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 		CompassTracker.getInstance().setStrictMode(false);
 		CompassTracker.getInstance().setCompassTrackerTarget(new BehindYourTailCompassTracker());
 
-		ItemBuilder trackerBuilder = new ItemBuilder(Material.COMPASS);
-		trackerBuilder.setName(ChatColor.GOLD + "" + ChatColor.BOLD + "Enemy fox tracker");
-		tracker = trackerBuilder.build();
-
-		ItemBuilder tracerBuilder = new ItemBuilder(Material.REDSTONE);
-		tracerBuilder.setName(org.bukkit.ChatColor.RED + "" + ChatColor.BOLD + "Show tracers");
-		tracerBuilder.addLore(ChatColor.WHITE + "Hold this in your hand to", ChatColor.WHITE + "show particle lines to enemies");
-		tracer = tracerBuilder.build();
-
 		TournamentSystem.getInstance().getDefaultPlayerEliminationMessage().addCustomProvider(PlayerEliminationReason.OTHER, new CustomDefaultPlayerEliminationMessaageProvider() {
 			@Override
 			public String getEliminationMessage(OfflinePlayer player, Entity killer, PlayerEliminationReason reason, int placement) {
@@ -109,7 +98,7 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 				}
 
 				if (role == Role.HUNTER) {
-					return ChatColor.RED + "" + ChatColor.BOLD + "Player Eliminated> " + color + ChatColor.BOLD + player.getName() + ChatColor.RED + ChatColor.BOLD + " failed to protect their fox";
+					return LanguageManager.getString(player.getUniqueId(), "tournamentsystem.game.behindyourtail.elimination.hunter_fail", color.name(), player.getName());
 				}
 
 				return "";
@@ -163,7 +152,7 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 						if (mainHand != null) {
 							if (VersionIndependentUtils.get().getItemInMainHand(player).getType() == Material.REDSTONE) {
 								if (tracersDisabled) {
-									VersionIndependentUtils.get().sendActionBarMessage(player, org.bukkit.ChatColor.RED + "Tracers are disabled right now");
+									VersionIndependentUtils.get().sendActionBarMessage(player, LanguageManager.getString(player, "tournamentsystem.game.behindyourtail.tracers.disabled"));
 								} else {
 									Role myRole = game.getPlayerRole(player.getUniqueId());
 									Role targetRole = game.getPlayerRole(player2.getUniqueId());
@@ -195,11 +184,16 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 
 	public void setupInventory(Player player) {
 		if (TournamentSystem.getInstance().isEnableBehindYourTailcompass()) {
-			player.getInventory().addItem(tracker.clone());
+			ItemBuilder trackerBuilder = new ItemBuilder(Material.COMPASS);
+			trackerBuilder.setName(LanguageManager.getString(player, "tournamentsystem.game.behindyourtail.item.fox_tracker.name"));
+			player.getInventory().addItem(trackerBuilder.build());
 		}
 
 		if (TournamentSystem.getInstance().isBehindYourTailParticles()) {
-			player.getInventory().addItem(tracer.clone());
+			ItemBuilder tracerBuilder = new ItemBuilder(Material.REDSTONE);
+			tracerBuilder.setName(LanguageManager.getString(player, "tournamentsystem.game.behindyourtail.item.tracer.name"));
+			tracerBuilder.addLore(LanguageManager.getString(player, "tournamentsystem.game.behindyourtail.item.tracer.lore").split("\n"));
+			player.getInventory().addItem(tracerBuilder.build());
 		}
 	}
 
@@ -226,7 +220,7 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 	public void onBehindYourTailPlayerDamageFox(BehindYourTailPlayerDamageFoxEvent e) {
 		if (PLAYER_ATTACK_FOX_SCORE > 0) {
 			Player player = e.getAttacker();
-			player.sendMessage(ChatColor.GRAY + "Damaged enemy fox. +" + PLAYER_ATTACK_FOX_SCORE + " points");
+			LanguageManager.messagePlayer(player, "tournamentsystem.game.behindyourtail.tag_enemy", PLAYER_ATTACK_FOX_SCORE);
 			ScoreManager.getInstance().addPlayerScore(player, PLAYER_ATTACK_FOX_SCORE, true);
 		}
 	}

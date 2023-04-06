@@ -22,6 +22,15 @@
 		"tournamentsystem.game.server.restarting": "§b%s server restarting, Please reconnect",
 		
 		"tournamentsystem.game.gameover.winner.player": "§a§lGAME OVER> §6§lWinning player: %s§l%s",
-		"tournamentsystem.game.gameover.winner.team": "§a§lGAME OVER> §6§lWinning team: %s§l%s"
+		"tournamentsystem.game.gameover.winner.team": "§a§lGAME OVER> §6§lWinning team: %s§l%s",
+
+		"tournamentsystem.game.behindyourtail.item.fox_tracker.name": "§6§lEnemy fox tracker",
+		"tournamentsystem.game.behindyourtail.item.fox_tracker.tracking_message": "§aTracking player §b%s",
+		"tournamentsystem.game.behindyourtail.item.tracer.name": "§c§lShow tracers",
+		"tournamentsystem.game.behindyourtail.item.tracer.lore": "§fHold this in your hand to\n§fshow particle lines to enemies",
+
+		"tournamentsystem.game.behindyourtail.tracers.disabled": "§cTracers are disabled right now",
+		"tournamentsystem.game.behindyourtail.elimination.hunter_fail": "§c§lPlayer Eliminated> %s§l%s §c§lfailed to protect their fox",
+		"tournamentsystem.game.behindyourtail.tag_enemy": "§7Damaged enemy fox. +%s points"
 	}
 }
