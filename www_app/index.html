@@ -144,11 +144,13 @@
 		</nav>
 
 		<div class="alert alert-danger mt-2 mx-2 d-none" id="alert_default_password" role="alert">
-			Warning: The default login admin/admin is enabled! Please change it in web_settings.json to prevent unautorised access to the system.
+			Warning: The default login admin/admin is enabled! Please change it in web_settings.json to prevent
+			unautorised access to the system.
 		</div>
 
 		<div class="alert alert-danger mt-2 mx-2 d-none" id="alert_dev_mode" role="alert">
-			Warning: The admin ui is running in dev mode! this means that no login is required to access the system. You can disable this by setting development_mode to false in tournamentconfig.json
+			Warning: The admin ui is running in dev mode! this means that no login is required to access the system. You
+			can disable this by setting development_mode to false in tournamentconfig.json
 		</div>
 
 		<ul class="nav nav-tabs mt-2 mx-2" id="admin_nav_tabs">
@@ -948,9 +950,12 @@
 			<div class="modal-dialog modal-fullscreen">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="serverConsoleModalTitle">
+						<div class="modal-title h5" id="serverConsoleModalTitle">
 							<span id="connected_server_title">Console</span>
-						</h5>
+							&nbsp;
+							<span id="connected_server_status_badge"
+								class="float-right badge rounded-pill bg-info">Unknown Status</span>
+						</div>
 						<button type="button" class="btn-close close-console-button" data-bs-dismiss="modal"
 							aria-label="Close"></button>
 					</div>

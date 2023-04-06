@@ -12,6 +12,13 @@ const ServerConsole = {
 	theme: null,
 
 	openConsole(server) {
+		$("#connected_server_status_badge").removeClass("bg-success");
+		$("#connected_server_status_badge").removeClass("bg-danger");
+		
+		$("#connected_server_status_badge").addClass("bg-info");
+		
+		$("#connected_server_status_badge").text("Loading...");
+
 		if (this.pollingIntervalId != null) {
 			this.closeConsole();
 		}
@@ -35,6 +42,22 @@ const ServerConsole = {
 					type: "GET",
 					url: "/api/v1/servers/logs?server=" + this.activeServer,
 					success: (data) => {
+						if (data.server_running) {
+							$("#connected_server_status_badge").removeClass("bg-danger");
+							$("#connected_server_status_badge").removeClass("bg-info");
+
+							$("#connected_server_status_badge").addClass("bg-success");
+
+							$("#connected_server_status_badge").text("Running");
+						} else {
+							$("#connected_server_status_badge").removeClass("bg-success");
+							$("#connected_server_status_badge").removeClass("bg-info");
+
+							$("#connected_server_status_badge").addClass("bg-danger");
+
+							$("#connected_server_status_badge").text("Offline");
+						}
+
 						if (data.session_id != this.lastSessionId) {
 							console.log("New session id detected. Clearing console");
 							this.terminal.clear();

@@ -54,6 +54,7 @@ public class GetServersLogsHandler extends APIEndpoint {
 				}
 
 				json.put("success", true);
+				json.put("server_running", server.isRunning());
 				json.put("session_id", server.getLastSessionId());
 				json.put("log_data", logs);
 				json.put("is_hiding_ip", hideIPs);
