@@ -56,6 +56,8 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 		for (int i = 0; i < teamCount; i++) {
 			TournamentSystemTeam team = new TournamentSystemTeam(i + 1, 0, 0);
 
+			team.applyTeamMetadataClasses();
+
 			this.teams.add(team);
 		}
 
