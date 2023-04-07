@@ -10,6 +10,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.internal.InternalAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.GetServiceProvidersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.chat.GetChatLogHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CommentatorTPHandler;
@@ -60,6 +61,8 @@ public class WebServer {
 	private HttpServer httpServer;
 	private boolean hasShutDown;
 
+	public static final InternalAuth InternalAPIAuthentication = new InternalAuth();
+	
 	public WebServer(int port, File appRoot) throws IOException {
 		this.port = port;
 		httpServer = HttpServer.create(new InetSocketAddress(port), 0);

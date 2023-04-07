@@ -38,6 +38,7 @@ import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.api.TournamentSystemAPI;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
 import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPIUtil;
@@ -57,6 +58,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.database.socials.imple
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.killstatusreporting.KillStatusReportingCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.managedserver.ManagedServerCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reloaddynamicconfig.ReloadDynamicConfigCommand;
@@ -105,6 +107,7 @@ import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class TournamentSystem extends JavaPlugin implements Listener {
 	public static final int STATUS_REPORTING_TIMEOUT = 10 * 1000;
+	public static final int INTERNAL_API_TIMEOUT = 10 * 1000;
 
 	private static TournamentSystem instance;
 
@@ -176,6 +179,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean disableParentPidMonitoring;
 
 	private String stateReportingToken;
+	private String internalAPIAccessToken;
 
 	private String adminUIUrl;
 
@@ -188,6 +192,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private boolean hideTeamNameNextToPlayerIGN;
 
 	private String iaNoTeamIcon;
+
+	private TournamentSystemAPI api;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -402,6 +408,19 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return hideTeamNameNextToPlayerIGN;
 	}
 
+	public String getInternalAPIAccessToken() {
+		return internalAPIAccessToken;
+	}
+
+	@Nullable
+	public TournamentSystemAPI getApi() {
+		return api;
+	}
+
+	public boolean hasApi() {
+		return api != null;
+	}
+
 	public boolean reloadDynamicConfig() {
 		if (dynamicConfigURL == null) {
 			return false;
@@ -441,7 +460,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		return true;
 	}
-	
+
 	public String getIANoTeamIcon() {
 		return iaNoTeamIcon;
 	}
@@ -487,6 +506,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.useItemsAdder = getConfig().getBoolean("enable_items_adder");
 
 		this.loadedGameName = null;
+
+		this.api = null;
 
 		statusReportingTask = null;
 		parentProcessID = -1;
@@ -875,6 +896,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new ChatfilterCommand());
 		CommandRegistry.registerCommand(new ReloadDynamicConfigCommand());
 		CommandRegistry.registerCommand(new KillStatusReportingCommand());
+		CommandRegistry.registerCommand(new ManagedServerCommand());
 
 		if (config.has("socials")) {
 			JSONObject socials = config.getJSONObject("socials");
@@ -962,10 +984,22 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			stateReportingToken = tsStateReportingTokenParam;
 		}
 
+		internalAPIAccessToken = null;
+		String tsInternalAPIAccessToken = System.getProperty("tournamentInternalAPIAccessKey");
+		if (tsInternalAPIAccessToken != null) {
+			Log.info("TournamentSystem", "Found internal api access token");
+			internalAPIAccessToken = tsInternalAPIAccessToken;
+		}
+
 		String tsServerNameParam = System.getProperty("tournamentServerNetworkName");
 		if (tsServerNameParam != null) {
 			Log.info("TournamentSystem", "Using server name " + tsServerNameParam + " from -DtournamentServerNetworkName flag");
 			serverName = tsServerNameParam;
+		}
+
+		if (internalAPIAccessToken != null) {
+			Log.info("TournamentSystem", "Setting up internal API instance");
+			api = new TournamentSystemAPI(adminUIUrl, tsInternalAPIAccessToken, INTERNAL_API_TIMEOUT);
 		}
 
 		// Register debug commands

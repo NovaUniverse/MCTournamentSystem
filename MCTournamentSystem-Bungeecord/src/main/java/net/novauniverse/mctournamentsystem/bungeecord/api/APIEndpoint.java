@@ -25,6 +25,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APITokenStore;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 
 // If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
 public abstract class APIEndpoint implements HttpHandler {
@@ -103,6 +104,25 @@ public abstract class APIEndpoint implements HttpHandler {
 							usedCookie = true;
 							authentication = APITokenStore.getToken(token);
 						}
+					}
+				}
+			}
+		}
+
+		if (authentication == null) {
+			String auth = exchange.getRequestHeaders().getFirst("authorization");
+			if (auth != null) {
+				if (auth.length() > 0) {
+					String[] authParts = auth.split(" ");
+					String thePartWeCareAbout = authParts[authParts.length - 1];
+
+					if (TournamentSystem.getInstance().getManagedServers()
+							.stream()
+							.filter(ManagedServer::isRunning)
+							.anyMatch(s -> s.getInternalAPIAccessKey().equals(thePartWeCareAbout))) {
+						authentication = WebServer.InternalAPIAuthentication;
+					} else {
+						authentication = APITokenStore.getToken(thePartWeCareAbout);
 					}
 				}
 			}

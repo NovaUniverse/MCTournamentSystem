@@ -24,7 +24,6 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.commons.utils.processes.ProcessUtils;
 import net.zeeraa.novacore.commons.log.Log;
-import net.zeeraa.novacore.commons.utils.RandomGenerator;
 
 public class ManagedServer {
 	public static final DateFormat LOG_DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd_hh-mm-ss");
@@ -54,8 +53,19 @@ public class ManagedServer {
 
 	private Random random;
 
+	private String internalAPIAccessKey;
+
 	@Nullable
 	private ServerAutoRegisterData serverAutoRegisterData;
+
+	private String getRandomHexString(Random random, int numchars) {
+		StringBuffer sb = new StringBuffer();
+		while (sb.length() < numchars) {
+			sb.append(Integer.toHexString(random.nextInt()));
+		}
+
+		return sb.toString().substring(0, numchars);
+	}
 
 	public ManagedServer(String name, String javaExecutable, String jvmArguments, String jar, File workingDirectory, boolean autoStart, @Nullable ServerAutoRegisterData serverAutoRegisterData, boolean passServerName) {
 		this.name = name;
@@ -81,10 +91,19 @@ public class ManagedServer {
 		this.random = new SecureRandom();
 
 		this.generateStatusReportingKey();
+		this.generateInternalAPIAccessKey();
+	}
+
+	public void generateInternalAPIAccessKey() {
+		this.internalAPIAccessKey = getRandomHexString(random, 64);
+	}
+
+	public String getInternalAPIAccessKey() {
+		return internalAPIAccessKey;
 	}
 
 	public void generateStatusReportingKey() {
-		this.stateReportingKey = RandomGenerator.randomAlphanumericString(16, random);
+		this.stateReportingKey = getRandomHexString(random, 64);
 	}
 
 	public String getStateReportingKey() {
@@ -185,6 +204,7 @@ public class ManagedServer {
 		}
 
 		generateStatusReportingKey();
+		generateInternalAPIAccessKey();
 
 		Log.info("ManagedServer", "Trying to start server " + name);
 
@@ -217,6 +237,7 @@ public class ManagedServer {
 		}
 
 		command.add("-DtournamentStatusReportingKey=" + stateReportingKey);
+		command.add("-DtournamentInternalAPIAccessKey=" + internalAPIAccessKey);
 		command.add("-DtournamentAdminUIPort=" + TournamentSystem.getInstance().getWebServer().getPort());
 
 		for (String string : jvmArguments.split("\\s")) {
