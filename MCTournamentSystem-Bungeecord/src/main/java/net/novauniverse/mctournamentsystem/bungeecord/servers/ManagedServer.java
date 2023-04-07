@@ -266,7 +266,11 @@ public class ManagedServer {
 		builder.redirectOutput(log);
 		builder.redirectError(err);
 
-		Log.trace("ManagedServer", "Starting process " + command + " in directory " + workingDirectory);
+		String commandSafeToLog = command.toString()
+				.replace(stateReportingKey, "[State report key hidden]")
+				.replace(internalAPIAccessKey, "[API access key hidden]");
+
+		Log.trace("ManagedServer", "Starting process " + commandSafeToLog + " in directory " + workingDirectory);
 		try {
 			process = builder.start();
 			return true;
