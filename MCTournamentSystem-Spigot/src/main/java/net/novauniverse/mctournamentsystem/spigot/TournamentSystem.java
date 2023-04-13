@@ -64,6 +64,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCom
 import net.novauniverse.mctournamentsystem.spigot.command.reloaddynamicconfig.ReloadDynamicConfigCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.respawnplayer.RespawnPlayerCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
+import net.novauniverse.mctournamentsystem.spigot.cosmetics.CosmeticsIntegrations;
 import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.ITournamentSystemPlayerEliminationMessageProvider;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.TournamentSystemDefaultPlayerEliminationMessage;
@@ -1016,6 +1017,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		Task.tryStartTask(timerSeconds);
 		Task.tryStartTask(statusReportingTask);
+
+		if (Bukkit.getServer().getPluginManager().getPlugin("CosmeticSystem") != null) {
+			ModuleManager.loadModule(this, CosmeticsIntegrations.class, true);
+		}
 
 		if (dynamicConfigURL != null) {
 			Log.info("TournamentSystem", "Trying to read dynamic config...");
