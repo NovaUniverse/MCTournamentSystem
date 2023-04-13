@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
+import net.zeeraa.novacore.spigot.teams.Team;
 
 public class TeamScoreData extends ScoreData {
 	private TournamentSystemTeam team;
@@ -41,5 +42,18 @@ public class TeamScoreData extends ScoreData {
 		}
 
 		return teamName + ChatColor.GOLD + " : " + ChatColor.AQUA + this.getScore();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof TeamScoreData) {
+			return ((TeamScoreData) obj).team.equals(team);
+		}
+
+		if (obj instanceof Team) {
+			return team.equals((Team) obj);
+		}
+
+		return super.equals(obj);
 	}
 }

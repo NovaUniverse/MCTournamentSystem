@@ -2,6 +2,8 @@ package net.novauniverse.mctournamentsystem.spigot.score;
 
 import java.util.UUID;
 
+import org.bukkit.entity.Player;
+
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerNameCache;
 import net.zeeraa.novacore.spigot.NovaCore;
@@ -32,5 +34,22 @@ public class PlayerScoreData extends ScoreData {
 		}
 
 		return color + PlayerNameCache.getInstance().getPlayerName(uuid) + ChatColor.GOLD + " : " + ChatColor.AQUA + this.getScore();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PlayerScoreData) {
+			return ((PlayerScoreData) obj).uuid.equals(uuid);
+		}
+
+		if (obj instanceof Player) {
+			return ((Player) obj).getUniqueId().equals(uuid);
+		}
+
+		if (obj instanceof UUID) {
+			return ((UUID) obj).equals(uuid);
+		}
+
+		return super.equals(obj);
 	}
 }
