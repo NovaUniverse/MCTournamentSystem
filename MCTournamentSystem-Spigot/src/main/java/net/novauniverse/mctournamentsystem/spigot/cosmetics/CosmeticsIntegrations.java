@@ -4,6 +4,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import net.novauniverse.costmeticsystem.CosmeticSystem;
 import net.novauniverse.costmeticsystem.cosmeticmanager.event.PrefixEquipEvent;
 import net.novauniverse.costmeticsystem.cosmeticmanager.event.PrefixUnequipEvent;
 import net.novauniverse.mctournamentsystem.spigot.modules.playerprefix.PlayerPrefixManager;
@@ -13,6 +14,11 @@ import net.zeeraa.novacore.spigot.module.NovaModule;
 public class CosmeticsIntegrations extends NovaModule implements Listener {
 	public CosmeticsIntegrations() {
 		super("TournamentSystem.CosmeticIntegration");
+	}
+	
+	@Override
+	public void onLoad() {
+		CosmeticSystem.getInstance().setDisableSetDisplayName(true);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
