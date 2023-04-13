@@ -61,7 +61,7 @@ public class TournamentSystemCommons {
 	public static DBCredentials tryReadCredentialsFromENV() {
 		String driver = System.getenv("DB_DRIVER");
 		String host = System.getenv("DB_HOST");
-		String postStr = System.getenv("DB_PORT");
+		String portStr = System.getenv("DB_PORT");
 		String username = System.getenv("DB_USERNAME");
 		String password = System.getenv("DB_PASSWORD");
 		String database = System.getenv("DB_DATABASE");
@@ -92,9 +92,9 @@ public class TournamentSystemCommons {
 			return null;
 		}
 
-		if (postStr != null) {
+		if (portStr != null) {
 			try {
-				port = Integer.parseInt(postStr);
+				port = Integer.parseInt(portStr);
 			} catch (Exception e) {
 				Log.error("TournamentSystem", "Cant read credentials from ENV data since DB_PORT could not be parsed as an integer");
 				return null;
