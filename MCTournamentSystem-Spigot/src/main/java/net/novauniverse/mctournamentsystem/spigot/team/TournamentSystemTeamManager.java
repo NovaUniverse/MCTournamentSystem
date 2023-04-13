@@ -19,7 +19,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.modules.playerprefix.PlayerPrefixManager;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
@@ -245,22 +247,31 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			noTeamIcon = NovaItemsAdderUtils.getFontImage(TournamentSystem.getInstance().getIANoTeamIcon());
 		}
 
+		String prefix = null;
+
+		if (ModuleManager.isEnabled(PlayerPrefixManager.class)) {
+			PlayerPrefixManager prefixManager = ModuleManager.getModule(PlayerPrefixManager.class);
+			if (prefixManager.hasPrefix(player)) {
+				prefix = prefixManager.getPrefix(player);
+			}
+		}
+
 		ChatColor color = ChatColor.YELLOW;
 		if (team == null) {
 			boolean staff = player.hasPermission("tournamentsystem.staff");
 
 			if (TournamentSystem.getInstance().isHideTeamNameNextToPlayerIGN()) {
-				name = (noTeamIcon == null ? "" : noTeamIcon + " ") + (staff ? ChatColor.WHITE : ChatColor.GRAY) + player.getName() + ChatColor.RESET;
+				name = (noTeamIcon == null ? "" : noTeamIcon + " ") + (prefix == null ? "" : ChatColor.RESET + prefix) + (staff ? ChatColor.WHITE : ChatColor.GRAY) + player.getName() + ChatColor.RESET;
 			} else {
-				name = (noTeamIcon == null ? "" : noTeamIcon + " ") + color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + "No team : " + (staff ? ChatColor.WHITE : ChatColor.GRAY) + player.getName() + ChatColor.RESET;
+				name = (noTeamIcon == null ? "" : noTeamIcon + " ") + color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + "No team : " + (prefix == null ? "" : ChatColor.RESET + prefix) + (staff ? ChatColor.WHITE : ChatColor.GRAY) + player.getName() + ChatColor.RESET;
 			}
 		} else {
 			if (((TournamentSystemTeam) team).getTeamNumber() >= 1) {
 				color = team.getTeamColor();
 				if (TournamentSystem.getInstance().isHideTeamNameNextToPlayerIGN()) {
-					name = (team.hadBadge() ? team.getBadge() + " " : "") + color + player.getName() + ChatColor.RESET;
+					name = (team.hadBadge() ? team.getBadge() + " " : "") + (prefix == null ? "" : ChatColor.RESET + prefix) + color + player.getName() + ChatColor.RESET;
 				} else {
-					name = (team.hadBadge() ? team.getBadge() + " " : "") + color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + team.getDisplayName() + ChatColor.WHITE + " : " + color + player.getName() + ChatColor.RESET;
+					name = (team.hadBadge() ? team.getBadge() + " " : "") + color + "" + (TournamentSystem.getInstance().isMakeTeamNamesBold() ? ChatColor.BOLD + "" : "") + team.getDisplayName() + ChatColor.WHITE + " : " + (prefix == null ? "" : ChatColor.RESET + prefix) + color + player.getName() + ChatColor.RESET;
 				}
 			}
 		}
