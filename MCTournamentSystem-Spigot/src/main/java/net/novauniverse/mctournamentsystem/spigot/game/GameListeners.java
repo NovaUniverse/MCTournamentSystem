@@ -200,6 +200,12 @@ public class GameListeners extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameStart(GameStartEvent e) {
 		try {
+			TournamentSystemCommons.setNextMinigame(null);
+		} catch (Exception ex) {
+			Log.error("Failed to reset next game");
+			ex.printStackTrace();
+		}
+		try {
 			TournamentSystemCommons.setActiveServer(TournamentSystem.getInstance().getServerName());
 		} catch (Exception ex) {
 			Log.error("Failed to set active server name");

@@ -17,7 +17,6 @@ public class BCCommand extends NovaCommand {
 		setPermission("tournamentcore.command.bc");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setAllowedSenders(AllowedSenders.ALL);
-
 		setEmptyTabMode(true);
 	}
 
