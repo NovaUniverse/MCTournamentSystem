@@ -222,6 +222,10 @@ public class ManagedServer {
 
 		command.add(javaExecutable);
 
+		if (TournamentSystem.getInstance().isAutoAppendAikarFlags()) {
+			AikarFlags.AIKAR_FLAGS.forEach(command::add);
+		}
+
 		if (!TournamentSystem.getInstance().isDisableParentPidMonitoring()) {
 			try {
 				int pid = ProcessUtils.getOwnPID();

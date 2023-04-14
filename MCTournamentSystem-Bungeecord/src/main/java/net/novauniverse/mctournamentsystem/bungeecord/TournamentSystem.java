@@ -105,6 +105,16 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private boolean makeMeSufferEasteregg;
 
 	private String motd;
+	
+	private boolean autoAppendAikarFlags;
+	
+	public boolean isAutoAppendAikarFlags() {
+		return autoAppendAikarFlags;
+	}
+	
+	public void setAutoAppendAikarFlags(boolean autoAppendAikarFlags) {
+		this.autoAppendAikarFlags = autoAppendAikarFlags;
+	}
 
 	public boolean isMakeMeSufferEasteregg() {
 		return makeMeSufferEasteregg;
@@ -340,6 +350,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		SocketAPIUtil.setupSocketAPI();
 
+		autoAppendAikarFlags = config.optBoolean("auto_append_aikar_flags", false);
+		
 		disableParentPidMonitoring = false;
 		if (config.has("disable_parent_pid_monitoring")) {
 			disableParentPidMonitoring = config.getBoolean("disable_parent_pid_monitoring");
