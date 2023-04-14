@@ -212,8 +212,8 @@ public class ManagedServer {
 
 		lastLogName = name + "_" + LOG_DATE_FORMAT.format(Calendar.getInstance().getTime()) + "_" + lastSessionId.toString();
 
-		File log = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".log");
-		File err = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".err.log");
+		File log = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".stdout.log");
+		File err = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".stderr.log");
 
 		ProcessBuilder builder = new ProcessBuilder();
 		Log.info("Starting process builder for server " + name);
