@@ -1018,8 +1018,23 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		Task.tryStartTask(timerSeconds);
 		Task.tryStartTask(statusReportingTask);
 
-		if (Bukkit.getServer().getPluginManager().getPlugin("CosmeticSystem") != null) {
-			ModuleManager.loadModule(this, CosmeticsIntegrations.class, true);
+		try {
+			if (Bukkit.getServer().getPluginManager().getPlugin("CosmeticSystem") != null) {
+				if (config.optBoolean("disable_cosmetic_system", false) || ("" + System.getenv("DISABLE_COSMETIC_SYSTEM")).equalsIgnoreCase("true")) {
+					Log.info("TournamentSystem", "Disabling cosmetic system since disable_cosmetic_system is set to true or the env variable ");
+					Bukkit.getServer().getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("CosmeticSystem"));
+				} else {
+					if (Bukkit.getServer().getPluginManager().getPlugin("CosmeticSystem").isEnabled()) {
+						Log.info("TournamentSystem", "Enabling cosmetic system integration");
+						ModuleManager.loadModule(this, CosmeticsIntegrations.class, true);
+					} else {
+						Log.info("TournamentSystem", "Skip enabling cosmetic system integration since the plugin is not enabled");
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.error("TournamentSystem", "An error occured when trying to set up costmetic system support");
 		}
 
 		if (dynamicConfigURL != null) {
