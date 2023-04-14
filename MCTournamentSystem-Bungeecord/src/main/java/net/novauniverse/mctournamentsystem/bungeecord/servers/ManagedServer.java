@@ -316,7 +316,7 @@ public class ManagedServer {
 
 	public List<String> getLogFileLines() throws IOException {
 		if (lastSessionId != null) {
-			File logFile = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".log");
+			File logFile = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".stdout.log");
 			if (logFile.exists()) {
 				return Files.readAllLines(Paths.get(logFile.getAbsolutePath()));
 			}
