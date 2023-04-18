@@ -31,6 +31,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.parkourrace.
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.spleef.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgames.SurvivalGamesManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.tnttag.TNTTagManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.turfwars.TurfWarsManager;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabListMessage;
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.PlayerTelementryManager;
@@ -88,6 +89,7 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("tnttag", TNTTagManager.class);
 		GAME_SPECIFIC_MODULES.put("nova_bedwars", BedwarsManager.class);
 		GAME_SPECIFIC_MODULES.put("capturetheflag", CaptureTheFlagManager.class);
+		GAME_SPECIFIC_MODULES.put("turfwars", TurfWarsManager.class);
 
 		// NovaGames games
 		GAME_SPECIFIC_MODULES.put("chickenout", ChickenOutManager.class);
