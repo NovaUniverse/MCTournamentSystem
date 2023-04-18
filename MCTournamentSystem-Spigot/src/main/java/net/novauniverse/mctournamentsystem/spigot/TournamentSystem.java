@@ -898,7 +898,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new ReloadDynamicConfigCommand());
 		CommandRegistry.registerCommand(new KillStatusReportingCommand());
 		CommandRegistry.registerCommand(new ManagedServerCommand());
-
+		
 		if (config.has("socials")) {
 			JSONObject socials = config.getJSONObject("socials");
 
