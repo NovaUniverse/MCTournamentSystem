@@ -32,7 +32,7 @@ public class TournamentSystemTurfWarsTeamPopulator implements TurfWarsTeamPopula
 				if (addToTeam1) {
 					team1.add(player);
 				} else {
-					team1.add(player);
+					team2.add(player);
 				}
 			}
 
