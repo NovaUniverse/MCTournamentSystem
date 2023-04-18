@@ -36,6 +36,7 @@ import net.novauniverse.mctournamentsystem.misc.ClosestEntityComparatorBlockCent
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.modules.tablistmessage.TabListMessage;
 import net.novauniverse.mctournamentsystem.spigot.utils.AdvancedGUIUtils;
+import net.novauniverse.mctournamentsystem.spigot.utils.WrappedAdvancedGUI;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
@@ -49,6 +50,8 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 
 	private LocationData lobbyLocation;
 	private boolean preventDamageMobs;
+
+	private List<WrappedAdvancedGUI> guis;
 
 	public LocationData getLobbyLocationData() {
 		return lobbyLocation;
@@ -75,6 +78,8 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 		TournamentSystemLobby.instance = this;
 
 		saveDefaultConfig();
+
+		guis = new ArrayList<>();
 
 		ModuleManager.scanForModules(this, "net.novauniverse.mctournamentsystem.lobby.modules");
 
@@ -142,34 +147,50 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 			CommandRegistry.registerCommand(new GiveMeFireworksCommand());
 		}
 
-		if (config.has("advancedgui")) {
-			if (Bukkit.getServer().getPluginManager().getPlugin("AdvancedGUI") != null) {
-				Log.info("TournamentSystemLobby", "AdvancedGUI detected. Trying to set up any configured displays");
-				JSONArray layouts = config.getJSONArray("advancedgui");
-				for (int i = 0; i < layouts.length(); i++) {
-					JSONObject layout = layouts.getJSONObject(i);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (config.has("advancedgui")) {
+					if (Bukkit.getServer().getPluginManager().getPlugin("AdvancedGUI") != null) {
+						Log.info("TournamentSystemLobby", "AdvancedGUI detected. Trying to set up any configured displays");
+						JSONArray layouts = config.getJSONArray("advancedgui");
 
-					LocationData locationData = LocationData.fromJSON(layout);
-					Location location = LocationUtils.fullyCenterLocation(locationData.toLocation(getLobbyWorld()));
-					ItemFrame itemFrame = (ItemFrame) location.getWorld().getNearbyEntities(location, 3, 3, 3).stream().filter(e -> e.getType() == EntityType.ITEM_FRAME).sorted(new ClosestEntityComparatorBlockCentered(location)).findFirst().orElse(null);
-					if (itemFrame == null) {
-						Log.warn("TournamentSystemLobby", "No item frame found near " + locationData.toVector().toString());
-					} else {
-						Log.debug("TournamentSystemLobby", "Found frame near " + locationData.toVector().toString() + " at " + itemFrame.getLocation() + " uuid: " + itemFrame.getUniqueId());
-						String directionName = layout.getString("direction");
-						String layoutName = layout.getString("layout");
-						int activationRadius = layout.getInt("activation_radius");
+						for (int i = 0; i < layouts.length(); i++) {
+							JSONObject layout = layouts.getJSONObject(i);
+							String layoutName = layout.getString("layout");
+							try {
+								AdvancedGUIUtils.deleteAllWithLayout(layoutName);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
 
-						try {
-							AdvancedGUIUtils.placeLayout(layoutName, activationRadius, itemFrame, directionName);
-						} catch (Exception e) {
-							e.printStackTrace();
-							Log.error("TournamentSystemLobby", "An error occured while trying to place AdvancedGUI layout. " + e.getClass().getName() + " " + e.getMessage());
+						for (int i = 0; i < layouts.length(); i++) {
+							JSONObject layout = layouts.getJSONObject(i);
+
+							LocationData locationData = LocationData.fromJSON(layout);
+							Location location = LocationUtils.fullyCenterLocation(locationData.toLocation(getLobbyWorld()));
+							ItemFrame itemFrame = (ItemFrame) location.getWorld().getNearbyEntities(location, 3, 3, 3).stream().filter(e -> e.getType() == EntityType.ITEM_FRAME).sorted(new ClosestEntityComparatorBlockCentered(location)).findFirst().orElse(null);
+							if (itemFrame == null) {
+								Log.warn("TournamentSystemLobby", "No item frame found near " + locationData.toVector().toString());
+							} else {
+								Log.debug("TournamentSystemLobby", "Found frame near " + locationData.toVector().toString() + " at " + itemFrame.getLocation() + " uuid: " + itemFrame.getUniqueId());
+								String directionName = layout.getString("direction");
+								String layoutName = layout.getString("layout");
+								int activationRadius = layout.getInt("activation_radius");
+
+								try {
+									guis.add(AdvancedGUIUtils.placeLayout(layoutName, activationRadius, itemFrame, directionName));
+								} catch (Exception e) {
+									e.printStackTrace();
+									Log.error("TournamentSystemLobby", "An error occured while trying to place AdvancedGUI layout. " + e.getClass().getName() + " " + e.getMessage());
+								}
+							}
 						}
 					}
-				}
+				}	
 			}
-		}
+		}.runTaskLater(this, 60L);
 
 		CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TournamentLobbyRemoveOnLoadTrait.class));
 		/* ----- Misc ----- */
@@ -225,5 +246,6 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 	public void onDisable() {
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
+		guis.forEach(WrappedAdvancedGUI::delete);
 	}
 }

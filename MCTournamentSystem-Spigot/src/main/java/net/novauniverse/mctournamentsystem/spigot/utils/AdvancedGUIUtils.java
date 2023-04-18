@@ -1,5 +1,8 @@
 package net.novauniverse.mctournamentsystem.spigot.utils;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.annotation.Nonnull;
 
 import org.bukkit.entity.ItemFrame;
@@ -17,19 +20,19 @@ public class AdvancedGUIUtils {
 		return LayoutManager.getInstance().getLayout(name);
 	}
 
-	public static void placeLayout(String layout, int activationRadius, ItemFrame frame, Direction direction) {
-		placeLayout(getLayout(layout), activationRadius, frame, direction);
+	public static WrappedAdvancedGUI placeLayout(String layout, int activationRadius, ItemFrame frame, Direction direction) {
+		return placeLayout(getLayout(layout), activationRadius, frame, direction);
 	}
 
-	public static void placeLayout(Layout layout, int activationRadius, ItemFrame frame, String direction) {
-		placeLayout(layout, activationRadius, frame, Direction.valueOf(direction));
+	public static WrappedAdvancedGUI placeLayout(Layout layout, int activationRadius, ItemFrame frame, String direction) {
+		return placeLayout(layout, activationRadius, frame, Direction.valueOf(direction));
 	}
 
-	public static void placeLayout(String layout, int activationRadius, ItemFrame frame, String direction) {
-		placeLayout(getLayout(layout), activationRadius, frame, Direction.valueOf(direction));
+	public static WrappedAdvancedGUI placeLayout(String layout, int activationRadius, ItemFrame frame, String direction) {
+		return placeLayout(getLayout(layout), activationRadius, frame, Direction.valueOf(direction));
 	}
 
-	public static void placeLayout(@Nonnull Layout layout, int activationRadius, ItemFrame frame, Direction direction) {
+	public static WrappedAdvancedGUI placeLayout(@Nonnull Layout layout, int activationRadius, ItemFrame frame, Direction direction) {
 		if (layout == null) {
 			throw new IllegalArgumentException("layout is null");
 		}
@@ -43,5 +46,13 @@ public class AdvancedGUIUtils {
 		});
 		guiWallInstance.populateFrames();
 		GuiWallManager.getInstance().registerInstance(guiWallInstance, true);
+		return new WrappedAdvancedGUI(guiWallInstance);
+	}
+
+	public static void deleteAllWithLayout(String layoutName) {
+		List<GuiWallInstance> guis = GuiWallManager.getInstance().getActiveInstances().stream().filter(gui -> gui.getLayout().getName().equals(layoutName)).collect(Collectors.toList());
+		guis.forEach(gui -> {
+			GuiWallManager.getInstance().unregisterInstance(gui, true);
+		});
 	}
 }
