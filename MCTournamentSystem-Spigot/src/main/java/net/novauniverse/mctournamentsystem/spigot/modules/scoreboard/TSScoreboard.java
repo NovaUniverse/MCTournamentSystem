@@ -4,6 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
 
+import me.lucko.spark.api.Spark;
+import me.lucko.spark.api.SparkProvider;
+import me.lucko.spark.api.statistic.StatisticWindow.TicksPerSecond;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerKillCache;
 import net.novauniverse.mctournamentsystem.spigot.modules.nextminigame.NextMinigameManager;
@@ -53,12 +56,24 @@ public class TSScoreboard extends NovaModule implements Listener {
 
 	private boolean minimalMode;
 
+	private boolean useSpark;
+
 	private ScoreboardStatsTextProvider statsTextProvider;
 
 	private GameManager gameManager;
 
+	private Spark spark;
+
 	public TSScoreboard() {
 		super("TournamentSystem.Scoreboard");
+	}
+
+	public void setUseSpark(boolean useSpark) {
+		this.useSpark = useSpark;
+	}
+
+	public boolean isUseSpark() {
+		return useSpark;
 	}
 
 	public ScoreboardStatsTextProvider getStatsTextProvider() {
@@ -98,6 +113,10 @@ public class TSScoreboard extends NovaModule implements Listener {
 		this.disablePing = false;
 		this.disableTPS = false;
 
+		this.useSpark = true;
+
+		spark = SparkProvider.get();
+
 		this.gameManager = null;
 		if (NovaCore.isNovaGameEngineEnabled()) {
 			this.gameManager = GameManager.getInstance();
@@ -121,7 +140,17 @@ public class TSScoreboard extends NovaModule implements Listener {
 					if (TournamentSystem.getInstance().isDisableScoreboard()) {
 						return;
 					}
-					final double[] recentTps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps();
+
+					double lastTps = 0;
+					if (!disableTPS) {
+						if (useSpark) {
+							lastTps = spark.tps().poll(TicksPerSecond.SECONDS_5);
+						} else {
+							lastTps = NovaCore.getInstance().getVersionIndependentUtils().getRecentTps()[0];
+						}
+					}
+
+					final double tps = lastTps;
 
 					Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 						if (!minimalMode) {
@@ -171,10 +200,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 						}
 
 						if (!disableTPS) {
-							if (recentTps.length > 0) {
-								double tps = recentTps[0];
-								NetherBoardScoreboard.getInstance().setPlayerLine(TPS_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
-							}
+							NetherBoardScoreboard.getInstance().setPlayerLine(TPS_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
 						}
 					});
 
