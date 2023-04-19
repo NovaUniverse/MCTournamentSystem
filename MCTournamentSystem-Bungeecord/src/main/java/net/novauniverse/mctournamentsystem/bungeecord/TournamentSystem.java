@@ -105,13 +105,19 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private boolean makeMeSufferEasteregg;
 
 	private String motd;
-	
+
 	private boolean autoAppendAikarFlags;
-	
+
+	private List<String> globalCustomLaunchFlags;
+
+	public List<String> getGlobalCustomLaunchFlags() {
+		return globalCustomLaunchFlags;
+	}
+
 	public boolean isAutoAppendAikarFlags() {
 		return autoAppendAikarFlags;
 	}
-	
+
 	public void setAutoAppendAikarFlags(boolean autoAppendAikarFlags) {
 		this.autoAppendAikarFlags = autoAppendAikarFlags;
 	}
@@ -260,6 +266,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		publicIp = "Unknown";
 		motd = "Tournament System";
 
+		globalCustomLaunchFlags = new ArrayList<>();
+
 		customAdminUIThemes = new HashMap<>();
 
 		try {
@@ -351,7 +359,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		SocketAPIUtil.setupSocketAPI();
 
 		autoAppendAikarFlags = config.optBoolean("auto_append_aikar_flags", false);
-		
+
 		disableParentPidMonitoring = false;
 		if (config.has("disable_parent_pid_monitoring")) {
 			disableParentPidMonitoring = config.getBoolean("disable_parent_pid_monitoring");
@@ -424,6 +432,14 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.error("TournamentSystem", "Failed to fetch MTOD");
+		}
+
+		if (config.has("global_custom_launch_flags")) {
+			JSONArray flags = config.getJSONArray("global_custom_launch_flags");
+			for (int i = 0; i < flags.length(); i++) {
+				globalCustomLaunchFlags.add(flags.getString(i));
+			}
+			Log.info("TournamentSystem", globalCustomLaunchFlags.size() + " global custom launch flags will be used");
 		}
 
 		/* ----- Listeners ----- */

@@ -226,6 +226,8 @@ public class ManagedServer {
 			AikarFlags.AIKAR_FLAGS.forEach(command::add);
 		}
 
+		TournamentSystem.getInstance().getGlobalCustomLaunchFlags().forEach(command::add);
+
 		if (!TournamentSystem.getInstance().isDisableParentPidMonitoring()) {
 			try {
 				int pid = ProcessUtils.getOwnPID();
