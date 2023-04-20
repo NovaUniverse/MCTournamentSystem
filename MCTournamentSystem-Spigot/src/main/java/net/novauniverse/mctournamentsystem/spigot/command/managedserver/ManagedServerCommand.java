@@ -1,5 +1,8 @@
 package net.novauniverse.mctournamentsystem.spigot.command.managedserver;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
@@ -81,6 +84,13 @@ class ManagedServerStart extends NovaSubCommand {
 		});
 		return true;
 	}
+	
+	@Override
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+		List<String> names = new ArrayList<>();
+		TournamentSystem.getInstance().getConfiguredManagedServers().forEach(names::add);
+		return names;
+	}
 }
 
 class ManagedServerKill extends NovaSubCommand {
@@ -123,5 +133,12 @@ class ManagedServerKill extends NovaSubCommand {
 			}
 		});
 		return true;
+	}
+	
+	@Override
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+		List<String> names = new ArrayList<>();
+		TournamentSystem.getInstance().getConfiguredManagedServers().forEach(names::add);
+		return names;
 	}
 }

@@ -195,6 +195,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private String iaNoTeamIcon;
 
 	private TournamentSystemAPI api;
+	
+	private List<String> configuredManagedServers;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -421,6 +423,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public boolean hasApi() {
 		return api != null;
 	}
+	
+	public List<String> getConfiguredManagedServers() {
+		return configuredManagedServers;
+	}
 
 	public boolean reloadDynamicConfig() {
 		if (dynamicConfigURL == null) {
@@ -472,6 +478,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		TournamentSystemCommons.getSessionId();
 
 		TournamentSystem.instance = this;
+		this.configuredManagedServers = new ArrayList<>();
 		this.staffGroups = new HashMap<>();
 
 		this.noTeamsMode = false;
@@ -731,6 +738,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		/* ----- Config ----- */
+		if(config.has("servers")) {
+			JSONArray serversJSON = config.getJSONArray("servers");
+			for(int i = 0; i < serversJSON.length(); i++) {
+				JSONObject serverData = serversJSON.getJSONObject(i);
+				if(serverData.has("name")) {
+					configuredManagedServers.add(serverData.getString("name"));
+				}
+			}
+		}
+		
 		useExtendedSpawnLocations = config.getBoolean("extended_spawn_locations");
 		celebrationMode = config.getBoolean("celebration_mode");
 		replaceEz = config.getBoolean("replace_ez");
