@@ -39,39 +39,41 @@ public class TurfWarsManager extends NovaModule implements Listener {
 			if (gameManager.hasGame()) {
 				TurfWars game = (TurfWars) gameManager.getActiveGame();
 
-				DelayedGameTrigger buildEndTrigger = game.getBuildTimeEndTrigger();
-				DelayedGameTrigger buildStartTrigger = game.getBuildTimeStartTrigger();
+				if (game.hasStarted()) {
+					DelayedGameTrigger buildEndTrigger = game.getBuildTimeEndTrigger();
+					DelayedGameTrigger buildStartTrigger = game.getBuildTimeStartTrigger();
 
-				if (buildEndTrigger.isRunning()) {
-					NetherBoardScoreboard.getInstance().setGlobalLine(BUILD_TIME_LINE, ChatColor.GOLD + "Build ends in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(buildEndTrigger.getTicksLeft() / 20));
-				} else if (buildStartTrigger.isRunning()) {
-					NetherBoardScoreboard.getInstance().setGlobalLine(BUILD_TIME_LINE, ChatColor.GOLD + "Build starts in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(buildStartTrigger.getTicksLeft() / 20));
-				}
-				Bukkit.getOnlinePlayers().forEach(player -> {
-					TurfWarsTeamData first = game.getTeam1();
-					TurfWarsTeamData second = game.getTeam2();
+					if (buildEndTrigger.isRunning()) {
+						NetherBoardScoreboard.getInstance().setGlobalLine(BUILD_TIME_LINE, ChatColor.GOLD + "Build ends in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(buildEndTrigger.getTicksLeft() / 20));
+					} else if (buildStartTrigger.isRunning()) {
+						NetherBoardScoreboard.getInstance().setGlobalLine(BUILD_TIME_LINE, ChatColor.GOLD + "Build starts in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(buildStartTrigger.getTicksLeft() / 20));
+					}
+					Bukkit.getOnlinePlayers().forEach(player -> {
+						TurfWarsTeamData first = game.getTeam1();
+						TurfWarsTeamData second = game.getTeam2();
 
-					if (game.isPlayerInGame(player)) {
-						TurfWarsTeamData playerTeam = game.getTeam(player);
-						if (playerTeam != null) {
-							if (playerTeam.getTeam() == TurfWarsTeam.TEAM_2) {
-								first = game.getTeam2();
-								second = game.getTeam1();
+						if (game.isPlayerInGame(player)) {
+							TurfWarsTeamData playerTeam = game.getTeam(player);
+							if (playerTeam != null) {
+								if (playerTeam.getTeam() == TurfWarsTeam.TEAM_2) {
+									first = game.getTeam2();
+									second = game.getTeam1();
+								}
 							}
 						}
-					}
 
-					int diff = first.getKills() - second.getKills();
+						int diff = first.getKills() - second.getKills();
 
-					int firstTurf = (game.getTurfSize() / 2) + diff;
-					int secondTurf = (game.getTurfSize() / 2) - diff;
+						int firstTurf = (game.getTurfSize() / 2) + diff;
+						int secondTurf = (game.getTurfSize() / 2) - diff;
 
-					if (game.isPlayerInGame(player)) {
-						NetherBoardScoreboard.getInstance().setPlayerLine(SCORE_LINE, player, ChatColor.GREEN + ChatColor.BOLD.toString() + "(You) " + firstTurf + ChatColor.WHITE + " vs " + ChatColor.RED + ChatColor.BOLD.toString() + secondTurf + " (Enemy)");
-					} else {
-						NetherBoardScoreboard.getInstance().setPlayerLine(SCORE_LINE, player, first.getTeamConfig().getChatColor() + ChatColor.BOLD.toString() + "team 1 " + firstTurf + ChatColor.WHITE + " vs " + second.getTeamConfig().getChatColor() + ChatColor.BOLD.toString() + secondTurf + " team 2");
-					}
-				});
+						if (game.isPlayerInGame(player)) {
+							NetherBoardScoreboard.getInstance().setPlayerLine(SCORE_LINE, player, ChatColor.GREEN + ChatColor.BOLD.toString() + "(You) " + firstTurf + ChatColor.WHITE + " vs " + ChatColor.RED + ChatColor.BOLD.toString() + secondTurf + " (Enemy)");
+						} else {
+							NetherBoardScoreboard.getInstance().setPlayerLine(SCORE_LINE, player, first.getTeamConfig().getChatColor() + ChatColor.BOLD.toString() + "team 1 " + firstTurf + ChatColor.WHITE + " vs " + second.getTeamConfig().getChatColor() + ChatColor.BOLD.toString() + secondTurf + " team 2");
+						}
+					});
+				}
 			}
 		}, 10L);
 	}
