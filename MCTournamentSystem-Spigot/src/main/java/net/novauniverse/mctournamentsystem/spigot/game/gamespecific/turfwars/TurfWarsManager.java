@@ -252,6 +252,7 @@ public class TurfWarsManager extends NovaModule implements Listener {
 							TournamentSystemTeam team = t.getTeam();
 							team.sendMessage(ChatColor.GRAY + "Team won. +" + TEAM_WIN_SCORE + " points");
 							ScoreManager.getInstance().addTeamScore(team, TEAM_WIN_SCORE);
+							team.distributePointsToPlayers(TEAM_WIN_SCORE);
 						});
 					}
 
@@ -271,7 +272,6 @@ public class TurfWarsManager extends NovaModule implements Listener {
 							if (score > WINNER_TEAM_KILL_SCORE_MAX) {
 								Log.trace("TurfWars(Team Won)", "Capping score to " + WINNER_TEAM_KILL_SCORE_MAX + " for team " + team.getDisplayName() + " since their score of " + score + " is above the max kill score");
 								score = WINNER_TEAM_KILL_SCORE_MAX;
-
 							}
 
 							if (score <= 0) {
@@ -279,7 +279,8 @@ public class TurfWarsManager extends NovaModule implements Listener {
 							} else {
 								Log.trace("TurfWars(Team Won)", "Team " + team.getDisplayName() + " had " + ((int) (killPercentage * 100D)) + "% of all kills and should get " + score + " as reward");
 								team.sendMessage(ChatColor.GRAY + "Team got " + t.getKills() + " kills. +" + score + " points");
-								ScoreManager.getInstance().addTeamScore(team, TEAM_WIN_SCORE);
+								ScoreManager.getInstance().addTeamScore(team, score);
+								team.distributePointsToPlayers(score);
 							}
 						});
 					}
@@ -324,7 +325,8 @@ public class TurfWarsManager extends NovaModule implements Listener {
 							} else {
 								Log.trace("TurfWars(Team Lost)", "Team " + team.getDisplayName() + " had " + ((int) (killPercentage * 100D)) + "% of all kills and should get " + score + " as reward");
 								team.sendMessage(ChatColor.GRAY + "Team got " + t.getKills() + " kills. +" + score + " points");
-								ScoreManager.getInstance().addTeamScore(team, TEAM_WIN_SCORE);
+								ScoreManager.getInstance().addTeamScore(team, score);
+								team.distributePointsToPlayers(score);
 							}
 						});
 					}
