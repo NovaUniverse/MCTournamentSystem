@@ -131,6 +131,7 @@ public class TNTTagManager extends NovaModule implements Listener {
 				JSONObject player = new JSONObject();
 				player.put("uuid", p.getUniqueId().toString());
 				player.put("name", p.getName());
+				taggedPlayers.put(player);
 			});
 			data.put("time", e.getRoundTime());
 			data.put("tagged_players", taggedPlayers);
