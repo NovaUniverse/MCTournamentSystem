@@ -1,13 +1,20 @@
 package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.turfwars;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.json.JSONObject;
 
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.game.turfwars.TurfWarsPlugin;
 import net.novauniverse.game.turfwars.game.TurfWars;
+import net.novauniverse.game.turfwars.game.event.TurfWarsBeginEvent;
+import net.novauniverse.game.turfwars.game.event.TurfWarsTurfChangeEvent;
 import net.novauniverse.game.turfwars.game.team.TurfWarsTeam;
 import net.novauniverse.game.turfwars.game.team.TurfWarsTeamData;
+import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
@@ -31,7 +38,7 @@ public class TurfWarsManager extends NovaModule implements Listener {
 
 	@Override
 	public void onLoad() {
-		TurfWarsPlugin.Companion.getInstance().setTurfWarsTeamPopulator(new TournamentSystemTurfWarsTeamPopulator());
+		TurfWarsPlugin.getInstance().setTurfWarsTeamPopulator(new TournamentSystemTurfWarsTeamPopulator());
 
 		gameManager = ModuleManager.getModule(GameManager.class);
 
@@ -86,5 +93,51 @@ public class TurfWarsManager extends NovaModule implements Listener {
 	@Override
 	public void onDisable() throws Exception {
 		Task.tryStopTask(updateTask);
+	}
+
+	public JSONObject turfwarsTeamDataToJSON(TurfWarsTeamData data) {
+		JSONObject result = new JSONObject();
+
+		result.put("team", data.getTeam().name());
+		result.put("display_name", data.getTeamConfig().getDisplayName());
+		result.put("chat_color", data.getTeamConfig().getChatColor().name());
+		result.put("dye_color", data.getTeamConfig().getDyeColor().name());
+
+		Color color = data.getTeamConfig().getColor();
+		JSONObject rgb = new JSONObject();
+		rgb.put("r", color.getRed());
+		rgb.put("g", color.getGreen());
+		rgb.put("b", color.getBlue());
+
+		result.put("color", rgb);
+
+		return result;
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onTurfWarsBegin(TurfWarsBeginEvent e) {
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+			JSONObject team1 = turfwarsTeamDataToJSON(e.getTeam1());
+			JSONObject team2 = turfwarsTeamDataToJSON(e.getTeam2());
+
+			data.put("team1", team1);
+			data.put("team2", team2);
+			data.put("team_turf_size", e.getTeamTurfSize());
+
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("turfwars_begin", data);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onTurfWarsTurfChange(TurfWarsTurfChangeEvent e) {
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+
+			data.put("team1_turf", e.getTeam1Turf());
+			data.put("team2_turf", e.getTeam2Turf());
+
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("turfwars_turf_change", data);
+		}
 	}
 }
