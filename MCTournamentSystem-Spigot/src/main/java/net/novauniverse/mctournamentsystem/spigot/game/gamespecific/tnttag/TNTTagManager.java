@@ -5,8 +5,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import net.novauniverse.games.tnttag.game.TNTTag;
 import net.novauniverse.games.tnttag.game.event.PlayerKilledPlayerInTNTTagEvent;
+import net.novauniverse.games.tnttag.game.event.TNTTagCountdownEvent;
+import net.novauniverse.games.tnttag.game.event.TNTTagPlayerTaggedEvent;
+import net.novauniverse.games.tnttag.game.event.TNTTagRoundEndEvent;
+import net.novauniverse.games.tnttag.game.event.TNTTagRoundStartEvent;
+import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.zeeraa.novacore.commons.tasks.Task;
@@ -102,6 +110,61 @@ public class TNTTagManager extends NovaModule implements Listener {
 			if (e.getKiller().isOnline()) {
 				e.getKiller().getPlayer().sendMessage(ChatColor.GRAY + "Player killed. +" + TournamentSystem.getInstance().getScoreListener().getKillScore() + " points");
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onTNTTagCountdown(TNTTagCountdownEvent e) {
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+			data.put("time", e.getSecondsLeft());
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("tnttag_time_left", data);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onTNTTagRoundStart(TNTTagRoundStartEvent e) {
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+			JSONArray taggedPlayers = new JSONArray();
+			e.getTaggedPlayers().forEach(p -> {
+				JSONObject player = new JSONObject();
+				player.put("uuid", p.getUniqueId().toString());
+				player.put("name", p.getName());
+			});
+			data.put("time", e.getRoundTime());
+			data.put("tagged_players", taggedPlayers);
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("tnttag_round_start", data);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onTNTTagRoundEnd(TNTTagRoundEndEvent e) {
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+			JSONArray eliminatedPlayers = new JSONArray();
+			e.getEliminatedPlayers().forEach(uuid -> eliminatedPlayers.put(uuid.toString()));
+			data.put("eliminated_players", eliminatedPlayers);
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("tnttag_round_end", data);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onTNTTagPlayerTagged(TNTTagPlayerTaggedEvent e) {
+		if (TournamentSystemCommons.hasSocketAPI()) {
+			JSONObject data = new JSONObject();
+			JSONObject player = new JSONObject();
+			player.put("uuid", e.getTaggedPlayer().getUniqueId().toString());
+			player.put("name", e.getTaggedPlayer().getName());
+
+			data.put("player", player);
+			if (e.getAttacker() != null) {
+				JSONObject attacker = new JSONObject();
+				attacker.put("uuid", e.getAttacker().getUniqueId().toString());
+				attacker.put("name", e.getAttacker().getName());
+				data.put("attacker", attacker);
+			}
+			TournamentSystemCommons.getSocketAPI().sendEventAsync("tnttag_player_tagged", data);
 		}
 	}
 }
