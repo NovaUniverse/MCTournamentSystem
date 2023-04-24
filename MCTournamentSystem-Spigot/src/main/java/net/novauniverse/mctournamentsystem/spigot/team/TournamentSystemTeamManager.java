@@ -170,12 +170,12 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			if (playerColorCache.containsKey(player.getUniqueId())) {
 				if (color != playerColorCache.get(player.getUniqueId())) {
 					Log.trace("Changing team color for player " + player.getName());
-					playerColorCache.put(player.getUniqueId(), team.getTeamColor());
+					playerColorCache.put(player.getUniqueId(), color);
 					NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, color);
 				}
 			} else {
 				Log.trace("Setting team color for player " + player.getName());
-				playerColorCache.put(player.getUniqueId(), team.getTeamColor());
+				playerColorCache.put(player.getUniqueId(), color);
 				NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, color);
 			}
 		}
