@@ -2,6 +2,7 @@ package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.turfwars;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -15,6 +16,8 @@ import net.novauniverse.game.turfwars.game.event.TurfWarsTurfChangeEvent;
 import net.novauniverse.game.turfwars.game.team.TurfWarsTeam;
 import net.novauniverse.game.turfwars.game.team.TurfWarsTeamData;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
@@ -23,6 +26,8 @@ import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
+import net.zeeraa.novacore.spigot.teams.Team;
+import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 public class TurfWarsManager extends NovaModule implements Listener {
 	public static int BUILD_TIME_LINE = 6;
@@ -39,6 +44,44 @@ public class TurfWarsManager extends NovaModule implements Listener {
 	@Override
 	public void onLoad() {
 		TurfWarsPlugin.getInstance().setTurfWarsTeamPopulator(new TournamentSystemTurfWarsTeamPopulator());
+
+		TournamentSystem.getInstance().addRespawnPlayerCallback(player -> {
+			Team playerTeam = TeamManager.getTeamManager().getPlayerTeam(player);
+			if (playerTeam == null) {
+				return;
+			}
+
+			if (gameManager.hasGame()) {
+				TurfWars game = (TurfWars) gameManager.getActiveGame();
+				if (!game.isPlayerInGame(player)) {
+					game.addPlayer(player);
+				}
+
+				TurfWarsTeamData existingTeam = game.getTeam(player);
+				if (existingTeam == null) {
+					TurfWarsTeamData recommended = game.getTeams()
+							.stream()
+							.filter(twt -> twt
+									.getMembers()
+									.stream()
+									.anyMatch(tm -> playerTeam
+											.isMember(tm)))
+							.findFirst()
+							.orElse(null);
+					if (recommended == null) {
+						int team1Members = (int) game.getTeam1().getMembers().stream().filter(uuid -> game.isPlayerInGame(uuid)).count();
+						int team2Members = (int) game.getTeam2().getMembers().stream().filter(uuid -> game.isPlayerInGame(uuid)).count();
+
+						recommended = team1Members > team2Members ? game.getTeam2() : game.getTeam1();
+					}
+
+					recommended.getMembers().add(player.getUniqueId());
+				}
+
+				game.tpPlayer(player);
+				setupOverrides(player);
+			}
+		});
 
 		gameManager = ModuleManager.getModule(GameManager.class);
 
@@ -85,6 +128,21 @@ public class TurfWarsManager extends NovaModule implements Listener {
 		}, 10L);
 	}
 
+	public void setupOverrides(Player player) {
+		if (gameManager.hasGame()) {
+			TurfWars game = (TurfWars) gameManager.getActiveGame();
+			if (game.isPlayerInGame(player)) {
+				TurfWarsTeamData team = game.getTeam(player);
+				if (team != null) {
+					TournamentSystemTeamManager.getInstance().setPlayerTeamColorOverride(player.getUniqueId(), team.getTeamConfig().getChatColor());
+					TournamentSystemTeamManager.getInstance().setPlayerTeamNameOverride(player.getUniqueId(), team.getTeamConfig().getDisplayName());
+					TournamentSystemTeamManager.getInstance().updateNetherboardColor(player);
+					TournamentSystemTeamManager.getInstance().updatePlayerName(player);
+				}
+			}
+		}
+	}
+
 	@Override
 	public void onEnable() throws Exception {
 		Task.tryStartTask(updateTask);
@@ -116,6 +174,8 @@ public class TurfWarsManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onTurfWarsBegin(TurfWarsBeginEvent e) {
+		Bukkit.getOnlinePlayers().forEach(this::setupOverrides);
+
 		if (TournamentSystemCommons.hasSocketAPI()) {
 			JSONObject data = new JSONObject();
 			JSONObject team1 = turfwarsTeamDataToJSON(e.getTeam1());
