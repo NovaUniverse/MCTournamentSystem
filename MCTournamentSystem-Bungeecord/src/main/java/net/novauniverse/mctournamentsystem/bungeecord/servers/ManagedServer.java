@@ -210,6 +210,8 @@ public class ManagedServer {
 
 		lastSessionId = UUID.randomUUID().toString();
 
+		TournamentSystem.getInstance().getServerLogFolder().mkdirs();
+
 		lastLogName = name + "_" + LOG_DATE_FORMAT.format(Calendar.getInstance().getTime()) + "_" + lastSessionId.toString();
 
 		File log = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".stdout.log");
