@@ -1,5 +1,6 @@
 var logged_in_user_username = "UwU";
 var user_permissions = [];
+var offlineModeHead = "bd482739-767c-45dc-a1f8-c33c40530952"; // MHF_Villager
 
 $(function () {
 	if (localStorage.getItem("token") == null) {
@@ -12,11 +13,11 @@ $(function () {
 
 
 	$.getJSON("/api/v1/system/security_check", (data) => {
-		if(data.dev_mode) {
+		if (data.dev_mode) {
 			$("#alert_dev_mode").removeClass("d-none");
 		}
 
-		if(data.default_login_warning) {
+		if (data.default_login_warning) {
 			$("#alert_default_password").removeClass("d-none");
 		}
 	});
@@ -365,36 +366,61 @@ $(function () {
 	});
 
 	$("#btn_search_staff_user").on("click", function () {
-		$.getJSON(ServiceProviders.MojangAPIProxy + "/username_to_uuid/" + $("#tbx_add_staff_username").val(), function (data) {
-			let uuid = data.uuid;
+		if ($("#cbx_add_staff_offlinemode").is(':checked')) {
+			$.getJSON("/api/v1/utils/offline_username_to_uuid?username=" + $("#tbx_add_staff_username").val(), function (data) {
+				let uuid = data.uuid;
 
-			TournamentSystem.addStaffUUID = uuid;
-
-			$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (profileData) {
-				TournamentSystem.addStaffUsername = profileData.name;
+				TournamentSystem.addStaffUUID = uuid;
+				TournamentSystem.addStaffUsername = $("#tbx_add_staff_username").val();
+				TournamentSystem.addStaffOffline = true;
 
 				$("#add_staff_username").text(TournamentSystem.addStaffUsername);
 				$("#add_staff_uuid").text(uuid);
-				$("#add_staff_head").attr("src", "https://mc-heads.net/avatar/" + uuid)
+				$("#add_staff_head").attr("src", "https://mc-heads.net/avatar/" + offlineModeHead);
 
 				$("#add_staff_modal").modal("hide");
 				$("#add_staff_role_modal").modal("show");
+			}).fail(function (e) {
+				toastr.error("Failed to communicate with backend server to get uuid from username");
 			});
-		}).fail(function (e) {
-			if (e.status == 404) {
-				toastr.error("Could not find player")
-			} else if (e.status == 400) {
-				toastr.error("Invalid username")
-			} else {
-				toastr.error("Failed to fetch data from mojang api")
-			}
-		});
+		} else {
+			$.getJSON(ServiceProviders.MojangAPIProxy + "/username_to_uuid/" + $("#tbx_add_staff_username").val(), function (data) {
+				let uuid = data.uuid;
+
+				TournamentSystem.addStaffUUID = uuid;
+				TournamentSystem.addStaffOffline = false;
+
+				$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (profileData) {
+					TournamentSystem.addStaffUsername = profileData.name;
+
+					$("#add_staff_username").text(TournamentSystem.addStaffUsername);
+					$("#add_staff_uuid").text(uuid);
+					$("#add_staff_head").attr("src", "https://mc-heads.net/avatar/" + uuid)
+
+					$("#add_staff_modal").modal("hide");
+					$("#add_staff_role_modal").modal("show");
+				});
+			}).fail(function (e) {
+				if (e.status == 404) {
+					toastr.error("Could not find player")
+				} else if (e.status == 400) {
+					toastr.error("Invalid username")
+				} else {
+					toastr.error("Failed to fetch data from mojang api")
+				}
+			});
+		}
 	});
 
 	$("#btn_add_staff_user").on("click", function () {
 		let role = $("#staff_role_selector").val();
 
-		TournamentSystem.staffTeam[TournamentSystem.addStaffUUID] = role;
+		TournamentSystem.staffTeam[TournamentSystem.addStaffUUID] = {
+			role: role,
+			username: TournamentSystem.addStaffUsername,
+			uuid: TournamentSystem.addStaffUUID,
+			offline_mode: TournamentSystem.addStaffOffline,
+		};
 
 		$("#add_staff_role_modal").modal("hide");
 
@@ -556,6 +582,11 @@ $(function () {
 		TournamentSystem.lastData = data;
 
 		TournamentSystem.activeServer = data.active_server;
+		TournamentSystem.isOfflineMode = data.system.offline_mode;
+
+		if (TournamentSystem.isOfflineMode) {
+			console.warn("We are running in offline mode");
+		}
 
 		for (let i = 0; i < data.servers.length; i++) {
 			let server = data.servers[i];
@@ -611,7 +642,7 @@ $(function () {
 		setInterval(() => TournamentSystem.updateServers(), 1000);
 		setInterval(() => TournamentSystem.update(), 1000);
 
-		$.getJSON("/api/v1/staff/get_staff", (staffData) => {
+		$.getJSON("/api/v1/staff", (staffData) => {
 			for (let i = 0; i < staffData.staff_roles.length; i++) {
 				let role = staffData.staff_roles[i];
 				TournamentSystem.staffRoles.push(role);
@@ -671,11 +702,13 @@ const TournamentSystem = {
 	lastData: null,
 	addStaffUUID: null,
 	addStaffUsername: null,
+	addStaffOffline: false,
 	staffRoles: [],
 	staffTeam: {},
 	commentatorKeyShown: false,
 	activeServer: null,
 	lastServerData: [],
+	isOfflineMode: false,
 
 	showServerState: (serverName) => {
 		let server = TournamentSystem.lastServerData.find(s => s.name == serverName);
@@ -1092,12 +1125,20 @@ const TournamentSystem = {
 				continue;
 			}
 
+			let userData = TournamentSystem.staffTeam[uuid];
+
 			let newElement = $("#staff_team_tr_template").clone();
 
 			newElement.removeAttr("id");
 			newElement.addClass("staff-tr");
 
 			newElement.attr("data-uuid", uuid);
+
+			newElement.find(".staff-offline").text(userData.offline_mode ? "yes" : "no");
+
+			if(userData.offline_mode) {
+				newElement.find("td").addClass("text-warning");
+			}
 
 			newElement.find(".staff-uuid").text(uuid);
 
@@ -1109,9 +1150,9 @@ const TournamentSystem = {
 				newElement.find(".staff-role-selector").append(newOption);
 			}
 
-			newElement.find(".staff-avatar").attr("src", "https://mc-heads.net/avatar/" + uuid);
+			newElement.find(".staff-avatar").attr("src", "https://mc-heads.net/avatar/" + (userData.offline_mode ? offlineModeHead : uuid));
 
-			newElement.find(".staff-role-selector").val(TournamentSystem.staffTeam[uuid]);
+			newElement.find(".staff-role-selector").val(userData.role);
 
 			newElement.find(".staff-role-selector").on("change", function () {
 				TournamentSystem.updateStaffTeam(true);
@@ -1126,9 +1167,13 @@ const TournamentSystem = {
 			});
 
 
-			$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (data) {
-				newElement.find(".staff-name").text(data.name);
-			});
+			newElement.find(".staff-name").text(userData.username);
+
+			if (!userData.offline_mode) {
+				$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (data) {
+					newElement.find(".staff-name").text(data.name);
+				});
+			}
 
 			$("#staff_tbody").append(newElement);
 		}
@@ -1138,9 +1183,16 @@ const TournamentSystem = {
 
 			$(".staff-tr").each(function () {
 				let uuid = $(this).data("uuid");
+				let username = $(this).find(".staff-name").text();
+				let offlineMode = $(this).find(".staff-offline").text() == "yes";
 				let role = $(this).find(".staff-role-selector").val();
 
-				TournamentSystem.staffTeam[uuid] = role;
+				TournamentSystem.staffTeam[uuid] = {
+					uuid: uuid,
+					role: role,
+					username: username,
+					offline_mode: offlineMode
+				}
 			});
 
 			$.ajax({
@@ -1149,7 +1201,6 @@ const TournamentSystem = {
 				data: JSON.stringify(TournamentSystem.staffTeam),
 				success: function (data) {
 					toastr.info("Staff updated");
-
 				},
 				error: (xhr) => {
 					if (xhr.status == 0 || xhr.status == 503) {
@@ -1193,7 +1244,7 @@ const TournamentSystem = {
 				newElem.removeAttr("id");
 				newElem.attr("data-uuid", uuid);
 				newElem.addClass("whitelist-tr");
-				newElem.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + uuid);
+				newElem.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + (TournamentSystem.isOfflineMode ? offlineModeHead : uuid));
 				newElem.find(".uuid").text(uuid);
 
 				$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (data) {
@@ -1590,7 +1641,7 @@ const TournamentSystem = {
 
 					$("#player_tbody").append(playerElement);
 
-					playerElement.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + player.uuid);
+					playerElement.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + (TournamentSystem.isOfflineMode ? offlineModeHead : uuid));
 					playerElement.find(".player-uuid").text(player.uuid);
 
 					playerElement.find(".player-send-to").on("click", function () {
