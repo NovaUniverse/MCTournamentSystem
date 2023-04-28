@@ -14,6 +14,9 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.zeeraa.novacore.commons.api.novauniverse.NovaUniverseAPI;
+import net.zeeraa.novacore.commons.api.novauniverse.data.MojangPlayerProfile;
+import net.zeeraa.novacore.commons.log.Log;
 
 public class ManageWhitelistUserHandler extends APIEndpoint {
 	public ManageWhitelistUserHandler() {
@@ -59,7 +62,7 @@ public class ManageWhitelistUserHandler extends APIEndpoint {
 				String sql;
 
 				boolean isInsert = false;
-				String name = "";
+				String name = null;
 				boolean offlineMode = false;
 
 				if (method == HTTPMethod.PUT) {
@@ -68,7 +71,7 @@ public class ManageWhitelistUserHandler extends APIEndpoint {
 					}
 
 					if (params.containsKey("offline_mode")) {
-						offlineMode = params.get("offline_mode").equalsIgnoreCase("false");
+						offlineMode = params.get("offline_mode").equalsIgnoreCase("true");
 					}
 
 					isInsert = true;
@@ -83,6 +86,17 @@ public class ManageWhitelistUserHandler extends APIEndpoint {
 				ps.setString(1, uuid.toString());
 
 				if (isInsert) {
+					if (name == null && offlineMode == false) {
+						try {
+							Log.trace("AddWhitelistHandler", "Trying to get name of " + uuid.toString());
+							MojangPlayerProfile profile = NovaUniverseAPI.getProfile(uuid);
+							name = profile.getName();
+							Log.trace("AddWhitelistHandler", "Name of " + uuid.toString() + " is " + name);
+						} catch (Exception e) {
+							Log.warn("AddWhitelistHandler", "Failed to get name of " + uuid.toString() + ". " + e.getClass().getName() + " " + e.getMessage());
+						}
+					}
+
 					ps.setString(2, name);
 					ps.setBoolean(3, offlineMode);
 				}

@@ -438,39 +438,69 @@ $(function () {
 	$("#btn_search_whitelist_user").on("click", function () {
 		let username = $("#tbx_add_whitlelist_username").val();
 
-		$.getJSON(ServiceProviders.MojangAPIProxy + "/username_to_uuid/" + username, function (data) {
-			let uuid = data.uuid;
-			$.ajax({
-				type: "PUT",
-				url: "/api/v1/whitelist/users?uuid=" + uuid,
-				success: (data) => {
-					toastr.info("User added");
-					$("#add_whitelist_modal").modal("hide");
-				},
-				error: (xhr, ajaxOptions, thrownError) => {
-					if (xhr.status == 0 || xhr.status == 503) {
-						toastr.error("Failed to communicate with backend server");
-						return;
-					}
+		if ($("#cbx_add_whitelist_offlinemode").is(':checked')) {
+			$.getJSON("/api/v1/utils/offline_username_to_uuid?username=" + username, function (data) {
+				let uuid = data.uuid;
+				$.ajax({
+					type: "PUT",
+					url: "/api/v1/whitelist/users?uuid=" + uuid + "&username=" + username + "&offline_mode=true",
+					success: (data) => {
+						toastr.info("User added");
+						$("#add_whitelist_modal").modal("hide");
+					},
+					error: (xhr, ajaxOptions, thrownError) => {
+						if (xhr.status == 0 || xhr.status == 503) {
+							toastr.error("Failed to communicate with backend server");
+							return;
+						}
 
-					if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
-						toastr.error(xhr.responseJSON.message);
-					} else {
-						toastr.error("Failed to add user to whitelist due to an unknown error");
-					}
-					console.error(xhr);
-				},
-				dataType: "json"
+						if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+							toastr.error(xhr.responseJSON.message);
+						} else {
+							toastr.error("Failed to add user to whitelist due to an unknown error");
+						}
+						console.error(xhr);
+					},
+					dataType: "json"
+				});
+			}).fail(function (e) {
+				toastr.error("Failed to communicate with backend server to get uuid from username");
 			});
-		}).fail(function (e) {
-			if (e.status == 404) {
-				toastr.error("Could not find player")
-			} else if (e.status == 400) {
-				toastr.error("Invalid username")
-			} else {
-				toastr.error("Failed to fetch data from mojang api")
-			}
-		});
+		} else {
+			$.getJSON(ServiceProviders.MojangAPIProxy + "/username_to_uuid/" + username, function (data) {
+				let uuid = data.uuid;
+				$.ajax({
+					type: "PUT",
+					url: "/api/v1/whitelist/users?uuid=" + uuid,
+					success: (data) => {
+						toastr.info("User added");
+						$("#add_whitelist_modal").modal("hide");
+					},
+					error: (xhr, ajaxOptions, thrownError) => {
+						if (xhr.status == 0 || xhr.status == 503) {
+							toastr.error("Failed to communicate with backend server");
+							return;
+						}
+
+						if (xhr.status == 405 || xhr.status == 403 || xhr.status == 401 || xhr.status == 500) {
+							toastr.error(xhr.responseJSON.message);
+						} else {
+							toastr.error("Failed to add user to whitelist due to an unknown error");
+						}
+						console.error(xhr);
+					},
+					dataType: "json"
+				});
+			}).fail(function (e) {
+				if (e.status == 404) {
+					toastr.error("Could not find player")
+				} else if (e.status == 400) {
+					toastr.error("Invalid username")
+				} else {
+					toastr.error("Failed to fetch data from mojang api")
+				}
+			});
+		}
 	});
 
 	$(".set-tournament-name").on("click", function () {
@@ -1136,7 +1166,7 @@ const TournamentSystem = {
 
 			newElement.find(".staff-offline").text(userData.offline_mode ? "yes" : "no");
 
-			if(userData.offline_mode) {
+			if (userData.offline_mode) {
 				newElement.find("td").addClass("text-warning");
 			}
 
@@ -1229,33 +1259,40 @@ const TournamentSystem = {
 
 			found.push(uuid);
 
-			if (!TournamentSystem.lastData.whitelist.includes(uuid)) {
+			if (!TournamentSystem.lastData.whitelist.some(e => e.uuid == uuid)) {
 				console.log("Removing whitelist entry: " + uuid);
 				$(this).remove();
 			}
 		});
 
-		TournamentSystem.lastData.whitelist.forEach(uuid => {
-			if (!found.includes(uuid)) {
-				console.log("Adding whitelist entry: " + uuid);
+		TournamentSystem.lastData.whitelist.forEach(entry => {
+			if (!found.includes(entry.uuid)) {
+				console.log("Adding whitelist entry: " + entry.uuid);
 
-				let newElem = $("#whitelist_tr_template").clone();
+				let newElement = $("#whitelist_tr_template").clone();
 
-				newElem.removeAttr("id");
-				newElem.attr("data-uuid", uuid);
-				newElem.addClass("whitelist-tr");
-				newElem.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + (TournamentSystem.isOfflineMode ? offlineModeHead : uuid));
-				newElem.find(".uuid").text(uuid);
+				newElement.removeAttr("id");
+				newElement.attr("data-uuid", entry.uuid);
+				newElement.addClass("whitelist-tr");
+				newElement.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + (entry.offline_mode ? offlineModeHead : entry.uuid));
+				newElement.find(".uuid").text(entry.uuid);
 
-				$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + uuid, function (data) {
-					newElem.find(".name").text(data.name);
-				});
+				newElement.find(".offline_mode").text(entry.offline_mode ? "yes" : "no");
 
-				if (!hasPermission("MANAGE_WHITELIST")) {
-					newElem.find(".btn-whitelist-remove").attr("disabled", true);
+				if (entry.offline_mode) {
+					newElement.find("td").addClass("text-warning");
+					newElement.find(".name").text(entry.username);
+				} else {
+					$.getJSON(ServiceProviders.MojangAPIProxy + "/profile/" + entry.uuid, function (data) {
+						newElement.find(".name").text(data.name);
+					});
 				}
 
-				newElem.find(".btn-whitelist-remove").on("click", function () {
+				if (!hasPermission("MANAGE_WHITELIST")) {
+					newElement.find(".btn-whitelist-remove").attr("disabled", true);
+				}
+
+				newElement.find(".btn-whitelist-remove").on("click", function () {
 					let uuidToRemove = $(this).parent().parent().data("uuid");
 
 					console.log("Remove clicked for " + uuidToRemove);
@@ -1285,7 +1322,7 @@ const TournamentSystem = {
 					});
 				});
 
-				$("#whitelist_entries").append(newElem);
+				$("#whitelist_entries").append(newElement);
 			}
 		});
 	},
