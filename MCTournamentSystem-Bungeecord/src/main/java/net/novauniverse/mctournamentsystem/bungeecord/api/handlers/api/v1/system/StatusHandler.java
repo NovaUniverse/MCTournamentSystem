@@ -214,6 +214,8 @@ public class StatusHandler extends APIEndpoint {
 		/* ===== System ===== */
 		JSONObject system = new JSONObject();
 
+		system.put("offline_mode", TournamentSystem.getInstance().isOfflineMode());
+
 		system.put("tournament_name", TournamentSystemCommons.getTournamentName());
 		system.put("scoreboard_url", TournamentSystemCommons.getScoreboardURL());
 

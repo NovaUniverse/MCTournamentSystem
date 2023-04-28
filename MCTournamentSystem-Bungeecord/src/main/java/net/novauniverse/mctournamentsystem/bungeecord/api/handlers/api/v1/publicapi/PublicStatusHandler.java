@@ -165,6 +165,8 @@ public class PublicStatusHandler extends APIEndpoint {
 
 			onlinePlayers.put(p);
 		});
+		
+		json.put("offline_mode", TournamentSystem.getInstance().isOfflineMode());
 
 		json.put("online_players", onlinePlayers);
 
