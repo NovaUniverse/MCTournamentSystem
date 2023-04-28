@@ -47,6 +47,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.E
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.UploadTeamHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.LoginHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.WhoAmIHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.util.OfflineUsernameToUUIDHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ManageWhitelistUserHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ClearWhitelistHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
@@ -62,7 +63,7 @@ public class WebServer {
 	private boolean hasShutDown;
 
 	public static final InternalAuth InternalAPIAuthentication = new InternalAuth();
-	
+
 	public WebServer(int port, File appRoot) throws IOException {
 		this.port = port;
 		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
@@ -73,7 +74,7 @@ public class WebServer {
 
 		// Service providers
 		createContext("/api/v1/service_providers", new GetServiceProvidersHandler());
-		
+
 		// System
 		createContext("/api/v1/system/status", new StatusHandler());
 		createContext("/api/v1/system/broadcast", new BroadcastHandler());
@@ -122,6 +123,9 @@ public class WebServer {
 		createContext("/api/v1/commentator/get_guest_key", new GetCommentatorGuestKeyHandler());
 
 		// Public
+		createContext("/api/v1/utils/offline_username_to_uuid", new OfflineUsernameToUUIDHandler());
+
+		// Public
 		createContext("/api/v1/public/status", new PublicStatusHandler());
 
 		// Snapshots
@@ -160,7 +164,7 @@ public class WebServer {
 	public int getPort() {
 		return port;
 	}
-	
+
 	private void createContext(String string, HttpHandler httpHandler) {
 		Log.info("WebServer", "Creating context: " + string);
 		httpServer.createContext(string, httpHandler);
