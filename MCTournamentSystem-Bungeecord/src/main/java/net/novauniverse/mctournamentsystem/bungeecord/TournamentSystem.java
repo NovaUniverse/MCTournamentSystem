@@ -268,6 +268,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		distroName = null;
 		apiUsers = new ArrayList<>();
 		managedServers = new ArrayList<>();
+		globalCustomLaunchFlags = new ArrayList<>();
 		makeMeSufferEasteregg = false;
 
 		publicIp = "Unknown";
