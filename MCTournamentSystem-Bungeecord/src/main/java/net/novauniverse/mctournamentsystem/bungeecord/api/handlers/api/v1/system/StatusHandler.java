@@ -112,19 +112,18 @@ public class StatusHandler extends APIEndpoint {
 		playerDataList.forEach(pd -> {
 			JSONObject p = new JSONObject();
 
-			// im not going to use a short name for this one
-			ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(pd.getUuid());
+			ProxiedPlayer pp = ProxyServer.getInstance().getPlayer(pd.getUuid());
 
 			boolean online = false;
 			int ping = -1;
 			String serverName = null;
 
-			if (proxiedPlayer != null) {
-				if (proxiedPlayer.isConnected()) {
-					if (proxiedPlayer.getServer() != null) {
+			if (pp != null) {
+				if (pp.isConnected()) {
+					if (pp.getServer() != null) {
 						online = true;
-						serverName = proxiedPlayer.getServer().getInfo().getName();
-						ping = proxiedPlayer.getPing();
+						serverName = pp.getServer().getInfo().getName();
+						ping = pp.getPing();
 					}
 				}
 			}
@@ -182,12 +181,18 @@ public class StatusHandler extends APIEndpoint {
 		/* ===== Whitelist ===== */
 		JSONArray whitelist = new JSONArray();
 		try {
-			String sql = "SELECT uuid FROM whitelist";
+			String sql = "SELECT uuid, username, offline_mode FROM whitelist";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				whitelist.put(rs.getString("uuid"));
+				JSONObject entry = new JSONObject();
+				
+				entry.put("uuid", rs.getString("uuid"));
+				entry.put("username", rs.getString("username"));
+				entry.put("offline_mode", rs.getBoolean("offline_mode"));
+				
+				whitelist.put(entry);
 			}
 
 			rs.close();
