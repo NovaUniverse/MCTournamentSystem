@@ -162,6 +162,8 @@ $(function () {
 	setCookie("exported_team_data", "", 0);
 
 	$.getJSON("/api/v1/system/status", function (data) {
+		console.log(data);
+
 		console.log("It seems like the team editor is running on the same web server as TournamentSystem");
 		$("#back_to_admin_li").show();
 		$("#btn_upload_team_data").show();
@@ -177,17 +179,18 @@ $(function () {
 
 			toastr.info("Team data loaded from TournamentSystem");
 		}).fail((e) => {
-			if (e.status == 0 | e.status == 503) {
+			if (e.status == 0 || e.status == 503) {
 				toastr.error("Failed to communicate with backend server");
 			} else {
 				toastr.error("Could not fetch team data from tournament system. Please check that you are logged in");
 			}
 		});
 	}).fail((e) => {
-		if (e.status == 0 | e.status == 503) {
+		console.log("No connection to tournament system");
+		if (e.status == 0 || e.status == 503) {
 			toastr.error("Failed to communicate with backend server");
-		} else {
-			toastr.error("Running in offline mo");
+		} else if(e.status == 401){
+			window.location = "/app/login/?redirect=/app/editor/";
 		}
 	});
 

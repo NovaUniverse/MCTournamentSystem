@@ -36,7 +36,9 @@ function login(username, password, isStored = false) {
 				localStorage.setItem("stored_credentials", encoded);
 			}
 
-			window.location = "/app/";
+			let customRedirectURL = getUrlParameter("redirect");
+
+			window.location = customRedirectURL == null ? "/app/" : customRedirectURL;
 		},
 		error: (xhr, ajaxOptions, thrownError) => {
 			if (xhr.status == 0 || xhr.status == 503) {
