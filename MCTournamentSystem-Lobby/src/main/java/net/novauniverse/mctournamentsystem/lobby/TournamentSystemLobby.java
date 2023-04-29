@@ -2,9 +2,13 @@ package net.novauniverse.mctournamentsystem.lobby;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -170,6 +174,12 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 
 							LocationData locationData = LocationData.fromJSON(layout);
 							Location location = LocationUtils.fullyCenterLocation(locationData.toLocation(getLobbyWorld()));
+
+							Collection<Chunk> chunks = getNearbyChunks(location.getChunk(), 5);
+							Log.debug("TournamentSystemLobby", "Loading " + chunks.size() + " chunks to make sure the item frames are loaded");
+							chunks.forEach(Chunk::load);
+
+							location.getChunk().load();
 							ItemFrame itemFrame = (ItemFrame) location.getWorld().getNearbyEntities(location, 3, 3, 3).stream().filter(e -> e.getType() == EntityType.ITEM_FRAME).sorted(new ClosestEntityComparatorBlockCentered(location)).findFirst().orElse(null);
 							if (itemFrame == null) {
 								Log.warn("TournamentSystemLobby", "No item frame found near " + locationData.toVector().toString());
@@ -188,7 +198,7 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 							}
 						}
 					}
-				}	
+				}
 			}
 		}.runTaskLater(this, 60L);
 
@@ -247,5 +257,22 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
 		guis.forEach(WrappedAdvancedGUI::delete);
+	}
+
+	public static Collection<Chunk> getNearbyChunks(Chunk origin, int radius) {
+		World world = origin.getWorld();
+
+		int length = (radius * 2) + 1;
+		Set<Chunk> chunks = new HashSet<>(length * length);
+
+		int cX = origin.getX();
+		int cZ = origin.getZ();
+
+		for (int x = -radius; x <= radius; x++) {
+			for (int z = -radius; z <= radius; z++) {
+				chunks.add(world.getChunkAt(cX + x, cZ + z));
+			}
+		}
+		return chunks;
 	}
 }
