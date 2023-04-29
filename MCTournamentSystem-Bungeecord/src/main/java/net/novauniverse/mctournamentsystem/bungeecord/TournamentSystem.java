@@ -110,6 +110,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	private List<String> globalCustomLaunchFlags;
 
+	private boolean offlineMode;
+
 	public List<String> getGlobalCustomLaunchFlags() {
 		return globalCustomLaunchFlags;
 	}
@@ -243,6 +245,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return motd;
 	}
 
+	public boolean isOfflineMode() {
+		return offlineMode;
+	}
+
 	public void setMotd(String motd) {
 		try {
 			TournamentSystemCommons.setConfigValue("motd", motd);
@@ -253,6 +259,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		this.motd = motd;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable() {
 		TournamentSystem.instance = this;
@@ -261,12 +268,13 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		distroName = null;
 		apiUsers = new ArrayList<>();
 		managedServers = new ArrayList<>();
+		globalCustomLaunchFlags = new ArrayList<>();
 		makeMeSufferEasteregg = false;
 
 		publicIp = "Unknown";
 		motd = "Tournament System";
 
-		globalCustomLaunchFlags = new ArrayList<>();
+		offlineMode = !ProxyServer.getInstance().getConfig().isOnlineMode();
 
 		customAdminUIThemes = new HashMap<>();
 

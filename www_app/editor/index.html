@@ -22,7 +22,6 @@
 	<script src="../js/ServiceProviderManager.js"></script>
 	<script src="../js/team_editor.js"></script>
 	<script src="../js/vibe.js"></script>
-	<script src="../js/editor_auto_login.js"></script>
 
 	<script>
 		const THEME_DIR = "../css/themes/";
@@ -79,6 +78,10 @@
 	</div>
 
 	<div id="app">
+		<div class="alert alert-warning mt-2 mx-2 d-none" id="offline_mode_warning" role="alert">
+			Running in offline mode
+		</div>
+
 		<div>
 			<span class="float-end mt-2 mb-2 mx-2">
 				<button class="btn btn-info mr-2" id="btn_update_usernames">Update usernames</button>

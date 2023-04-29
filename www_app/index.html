@@ -308,6 +308,7 @@
 									<th>UUID</th>
 									<th>Username</th>
 									<th>Role</th>
+									<th>Offline mode</th>
 									<th class="t-fit"></th>
 								</tr>
 							</thead>
@@ -324,6 +325,7 @@
 										<select class="staff-role-selector form-select">
 										</select>
 									</td>
+									<td class="staff-offline"></td>
 									<td>
 										<button class="btn btn-danger btn-remove-staff">Remove</button>
 									</td>
@@ -521,6 +523,7 @@
 									<th></th>
 									<th>UUID</th>
 									<th>Username</th>
+									<th>Offline mode</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -533,6 +536,7 @@
 									</td>
 									<td class="uuid"></td>
 									<td class="name">Loading...</td>
+									<td class="offline_mode">no</td>
 									<td>
 										<button class="btn btn-danger btn-whitelist-remove float-end">Remove</button>
 									</td>
@@ -598,6 +602,13 @@
 								<input type="text" id="tbx_add_staff_username" class="form-control" maxlength="16"
 									placeholder="Username">
 							</div>
+
+							<div class="form-group mt-2">
+								<input class="form-check-input" type="checkbox" value="" id="cbx_add_staff_offlinemode">
+								<label class="form-check-label" for="cbx_add_staff_offlinemode">
+									Offline mode user
+								</label>
+							</div>
 						</form>
 					</div>
 					<div class="modal-footer">
@@ -613,7 +624,7 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="addWhitelistTitle">Add staff member</h5>
+						<h5 class="modal-title" id="addWhitelistTitle">Add user to whitelist</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
@@ -621,6 +632,13 @@
 							<div class="form-group">
 								<input type="text" id="tbx_add_whitlelist_username" class="form-control" maxlength="16"
 									placeholder="Username">
+							</div>
+
+							<div class="form-group mt-2">
+								<input class="form-check-input" type="checkbox" value="" id="cbx_add_whitelist_offlinemode">
+								<label class="form-check-label" for="cbx_add_whitelist_offlinemode">
+									Offline mode user
+								</label>
 							</div>
 						</form>
 					</div>

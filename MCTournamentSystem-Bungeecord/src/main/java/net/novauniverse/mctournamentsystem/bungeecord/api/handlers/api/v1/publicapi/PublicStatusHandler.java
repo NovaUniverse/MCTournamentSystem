@@ -102,19 +102,18 @@ public class PublicStatusHandler extends APIEndpoint {
 		playerDataList.forEach(pd -> {
 			JSONObject p = new JSONObject();
 
-			// im not going to use a short name for this one
-			ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(pd.getUuid());
+			ProxiedPlayer pp = ProxyServer.getInstance().getPlayer(pd.getUuid());
 
 			boolean online = false;
 			int ping = -1;
 			String serverName = null;
 
-			if (proxiedPlayer != null) {
-				if (proxiedPlayer.isConnected()) {
-					if (proxiedPlayer.getServer() != null) {
+			if (pp != null) {
+				if (pp.isConnected()) {
+					if (pp.getServer() != null) {
 						online = true;
-						serverName = proxiedPlayer.getServer().getInfo().getName();
-						ping = proxiedPlayer.getPing();
+						serverName = pp.getServer().getInfo().getName();
+						ping = pp.getPing();
 					}
 				}
 			}
@@ -165,6 +164,8 @@ public class PublicStatusHandler extends APIEndpoint {
 
 			onlinePlayers.put(p);
 		});
+		
+		json.put("offline_mode", TournamentSystem.getInstance().isOfflineMode());
 
 		json.put("online_players", onlinePlayers);
 

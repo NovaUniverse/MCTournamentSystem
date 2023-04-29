@@ -7,6 +7,8 @@ var sortDirection = true;
 
 var showMetadata = false;
 
+var offlineMode = false;
+
 function expandTeamSize(size) {
 	if (size > 12) {
 		size = size - 12;
@@ -46,7 +48,11 @@ $(function () {
 	});
 
 	$("#btn_search_player").on("click", function () {
-		searchPlayer();
+		if (offlineMode) {
+			searchPlayerOffline();
+		} else {
+			searchPlayer();
+		}
 	});
 
 	$("#add_player_username").on("input propertychange paste", function () {
@@ -84,7 +90,11 @@ $(function () {
 
 	$("#add_player_username").on("keypress", function (e) {
 		if (e.key == "Enter") {
-			searchPlayer();
+			if (offlineMode) {
+				searchPlayerOffline();
+			} else {
+				searchPlayer();
+			}
 		}
 	});
 
@@ -162,6 +172,17 @@ $(function () {
 	setCookie("exported_team_data", "", 0);
 
 	$.getJSON("/api/v1/system/status", function (data) {
+		console.log(data);
+
+		offlineMode = data.system.offline_mode;
+
+		if (offlineMode) {
+			console.warn("Running in offline mode");
+			$("#offline_mode_warning").removeClass("d-none");
+			$("#btn_update_usernames").attr("disabled", "1");
+			setTimeout(() => toastr.warning("Running in offline mode"), 500);
+		}
+
 		console.log("It seems like the team editor is running on the same web server as TournamentSystem");
 		$("#back_to_admin_li").show();
 		$("#btn_upload_team_data").show();
@@ -177,17 +198,18 @@ $(function () {
 
 			toastr.info("Team data loaded from TournamentSystem");
 		}).fail((e) => {
-			if (e.status == 0 | e.status == 503) {
+			if (e.status == 0 || e.status == 503) {
 				toastr.error("Failed to communicate with backend server");
 			} else {
 				toastr.error("Could not fetch team data from tournament system. Please check that you are logged in");
 			}
 		});
 	}).fail((e) => {
-		if (e.status == 0 | e.status == 503) {
+		console.log("No connection to tournament system");
+		if (e.status == 0 || e.status == 503) {
 			toastr.error("Failed to communicate with backend server");
-		} else {
-			toastr.error("Running in offline mo");
+		} else if (e.status == 401) {
+			window.location = "/app/login/?redirect=/app/editor/";
 		}
 	});
 
@@ -321,6 +343,34 @@ function addPlayer(uuid, username, teamNumber, metadata = {}) {
 	updateMetadataDisplayState();
 }
 
+function searchPlayerOffline() {
+	let username = $("#add_player_username").val();
+
+	if (username.length > 0) {
+		$.getJSON("/api/v1/utils/offline_username_to_uuid?username=" + username, function (data) {
+			let uuid = data.uuid
+
+			addPlayerUUID = uuid;
+			addPlayerUsername = username;
+
+			$("#preview_uuid").text(uuid);
+			$("#preview_username").text(username);
+
+			$("#preview_image").attr("src", "https://crafatar.com/avatars/bd482739-767c-45dc-a1f8-c33c40530952");
+
+			$("#btn_add_player").prop('disabled', false);
+
+			$("#player_preview_div").show();
+
+			$("#btn_add_player").trigger('focus');
+		}).fail(function (e) {
+			toastr.error("Server communication failure")
+		});
+	} else {
+		toastr.error("Please provide a username");
+	}
+}
+
 function searchPlayer() {
 	let username = $("#add_player_username").val();
 
@@ -390,6 +440,10 @@ function loadData(data) {
 }
 
 function updateUsernames() {
+	if (offlineMode) {
+		console.log("Skip username update since we are running in offline mode");
+	}
+
 	toastr.info("Fetching latest username for all players");
 	$(".player-tr").each(function () {
 		let uuid = $(this).attr("data-uuid");

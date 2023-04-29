@@ -4,8 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Map;
-import java.util.UUID;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
@@ -48,8 +46,17 @@ public class StaffHandler extends APIEndpoint {
 				while (rs.next()) {
 					String uuid = rs.getString("uuid");
 					String role = rs.getString("role");
+					String username = rs.getString("username");
+					boolean offlineMode = rs.getBoolean("offline_mode");
 
-					staff.put(uuid, role);
+					JSONObject data = new JSONObject();
+
+					data.put("uuid", uuid);
+					data.put("role", role);
+					data.put("username", username);
+					data.put("offline_mode", offlineMode);
+
+					staff.put(uuid, data);
 				}
 
 				rs.close();
@@ -95,15 +102,15 @@ public class StaffHandler extends APIEndpoint {
 				ps.executeUpdate();
 				ps.close();
 
-				sql = "INSERT INTO staff (uuid, role) VALUES (?, ?)";
+				sql = "INSERT INTO staff (uuid, role, username, offline_mode) VALUES (?, ?, ?, ?)";
 
 				for (String key : staffData.keySet()) {
-					UUID uuid = UUID.fromString(key);
-					String role = staffData.getString(key);
-
+					JSONObject data = staffData.getJSONObject(key);
 					ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
-					ps.setString(1, uuid.toString());
-					ps.setString(2, role);
+					ps.setString(1, data.getString("uuid"));
+					ps.setString(2, data.getString("role"));
+					ps.setString(3, data.optString("username", null));
+					ps.setBoolean(4, data.optBoolean("offline_mode", false));
 					ps.executeUpdate();
 					ps.close();
 				}

@@ -14,13 +14,16 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.zeeraa.novacore.commons.api.novauniverse.NovaUniverseAPI;
+import net.zeeraa.novacore.commons.api.novauniverse.data.MojangPlayerProfile;
+import net.zeeraa.novacore.commons.log.Log;
 
 public class ManageWhitelistUserHandler extends APIEndpoint {
 	public ManageWhitelistUserHandler() {
 		super(false);
-		
+
 		setAllowedMethods(HTTPMethod.PUT, HTTPMethod.DELETE, HTTPMethod.GET);
-		
+
 		setMethodBasedPermission(HTTPMethod.PUT, UserPermission.MANAGE_WHITELIST);
 		setMethodBasedPermission(HTTPMethod.DELETE, UserPermission.MANAGE_WHITELIST);
 	}
@@ -32,13 +35,19 @@ public class ManageWhitelistUserHandler extends APIEndpoint {
 		if (method == HTTPMethod.GET) {
 			JSONArray data = new JSONArray();
 
-			String sql = "SELECT uuid FROM whitelist";
+			String sql = "SELECT * FROM whitelist";
 
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				data.put(rs.getString("uuid"));
+				JSONObject entry = new JSONObject();
+
+				entry.put("uuid", rs.getString("uuid"));
+				entry.put("username", rs.getString("username"));
+				entry.put("offline_mode", rs.getBoolean("offline_mode"));
+
+				data.put(entry);
 			}
 
 			rs.close();
@@ -52,8 +61,22 @@ public class ManageWhitelistUserHandler extends APIEndpoint {
 
 				String sql;
 
+				boolean isInsert = false;
+				String name = null;
+				boolean offlineMode = false;
+
 				if (method == HTTPMethod.PUT) {
-					sql = "REPLACE INTO whitelist (id, uuid) VALUES(null, ?)";
+					if (params.containsKey("username")) {
+						name = params.get("username");
+					}
+
+					if (params.containsKey("offline_mode")) {
+						offlineMode = params.get("offline_mode").equalsIgnoreCase("true");
+					}
+
+					isInsert = true;
+
+					sql = "REPLACE INTO whitelist (id, uuid, username, offline_mode) VALUES(null, ?, ?, ?)";
 				} else {
 					sql = "DELETE FROM whitelist WHERE uuid = ?";
 				}
@@ -61,6 +84,22 @@ public class ManageWhitelistUserHandler extends APIEndpoint {
 				PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 				ps.setString(1, uuid.toString());
+
+				if (isInsert) {
+					if (name == null && offlineMode == false) {
+						try {
+							Log.trace("AddWhitelistHandler", "Trying to get name of " + uuid.toString());
+							MojangPlayerProfile profile = NovaUniverseAPI.getProfile(uuid);
+							name = profile.getName();
+							Log.trace("AddWhitelistHandler", "Name of " + uuid.toString() + " is " + name);
+						} catch (Exception e) {
+							Log.warn("AddWhitelistHandler", "Failed to get name of " + uuid.toString() + ". " + e.getClass().getName() + " " + e.getMessage());
+						}
+					}
+
+					ps.setString(2, name);
+					ps.setBoolean(3, offlineMode);
+				}
 
 				ps.executeUpdate();
 				ps.close();
