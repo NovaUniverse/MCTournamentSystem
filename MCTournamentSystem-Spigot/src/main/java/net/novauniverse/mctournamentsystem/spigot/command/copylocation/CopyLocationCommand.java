@@ -21,7 +21,7 @@ public class CopyLocationCommand extends NovaCommand {
 
 		setAliases(generateAliasList("cl"));
 		setAllowedSenders(AllowedSenders.PLAYERS);
-		setPermission("gamemapdesigntoolkit.copylocation");
+		setPermission("tournamentsystem.command.copylocation");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setPermissionDescription("Allow the player to use the copy location command");
 		setUsage("/copylocation [-v | --verbose] [-c | --center] [-l | --location-only]");

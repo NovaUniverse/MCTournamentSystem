@@ -13,7 +13,7 @@ public class CSPCommand extends NovaCommand {
 	public CSPCommand() {
 		super("csp", TournamentSystem.getInstance());
 		setDescription("Change to spectator mode");
-		setPermission("tournamentcore.command.csp");
+		setPermission("tournamentsystem.command.csp");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setAllowedSenders(AllowedSenders.PLAYERS);
 

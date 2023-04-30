@@ -1,4 +1,4 @@
-package net.novauniverse.mctournamentsystem.spigot.command.database.socials;
+package net.novauniverse.mctournamentsystem.spigot.command.socials;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
@@ -15,7 +15,7 @@ public abstract class AbstractSocialsCommand extends NovaCommand {
 		this.url = url;
 
 		setPermission("tournamentsystem.command.social");
-		setPermissionDefaultValue(PermissionDefault.OP);
+		setPermissionDefaultValue(PermissionDefault.TRUE);
 		setAllowedSenders(AllowedSenders.PLAYERS);
 		setRequireOp(false);
 		setEmptyTabMode(true);

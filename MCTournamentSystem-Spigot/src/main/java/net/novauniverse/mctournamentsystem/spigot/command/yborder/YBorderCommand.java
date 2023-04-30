@@ -18,7 +18,7 @@ public class YBorderCommand extends NovaCommand {
 		super("yborder", TournamentSystem.getInstance());
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.yborder");
+		setPermission("tournamentsystem.command.yborder");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Command to manage y border");
 

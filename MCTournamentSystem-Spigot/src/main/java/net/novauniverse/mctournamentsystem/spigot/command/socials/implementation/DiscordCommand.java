@@ -1,12 +1,11 @@
-package net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation;
+package net.novauniverse.mctournamentsystem.spigot.command.socials.implementation;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 
-import net.novauniverse.mctournamentsystem.spigot.command.database.socials.AbstractSocialsCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.socials.AbstractSocialsCommand;
 
 public class DiscordCommand extends AbstractSocialsCommand {
-
 	public DiscordCommand(Plugin plugin, String url) {
 		super("discord", plugin, url);
 	}

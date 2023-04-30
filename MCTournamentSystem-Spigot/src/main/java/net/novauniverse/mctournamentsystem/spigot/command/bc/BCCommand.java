@@ -14,7 +14,7 @@ public class BCCommand extends NovaCommand {
 	public BCCommand() {
 		super("bc", TournamentSystem.getInstance());
 		setDescription("Send a message in the chat");
-		setPermission("tournamentcore.command.bc");
+		setPermission("tournamentsystem.command.bc");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setAllowedSenders(AllowedSenders.ALL);
 		setEmptyTabMode(true);

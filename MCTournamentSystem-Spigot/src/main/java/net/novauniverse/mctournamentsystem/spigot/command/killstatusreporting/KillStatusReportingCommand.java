@@ -13,7 +13,7 @@ public class KillStatusReportingCommand extends NovaCommand {
 		super("killstatusreporting", TournamentSystem.getInstance());
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.killstatusreporting");
+		setPermission("tournamentsystem.command.killstatusreporting");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setEmptyTabMode(true);
 		setUsage("/killstatusreporting");

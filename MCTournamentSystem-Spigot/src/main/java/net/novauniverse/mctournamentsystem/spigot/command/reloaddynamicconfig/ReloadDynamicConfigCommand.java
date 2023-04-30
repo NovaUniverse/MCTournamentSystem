@@ -13,7 +13,7 @@ public class ReloadDynamicConfigCommand extends NovaCommand {
 		super("reloaddynamicconfig", TournamentSystem.getInstance());
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.reloaddynamicconfig");
+		setPermission("tournamentsystem.command.reloaddynamicconfig");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setEmptyTabMode(true);
 		setUsage("/reloaddynamicconfig");

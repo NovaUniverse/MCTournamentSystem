@@ -18,7 +18,7 @@ public class ChatfilterCommand extends NovaCommand {
 		super("chatfilter", TournamentSystem.getInstance());
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.chatfilter");
+		setPermission("tournamentsystem.command.chatfilter");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Command to manage chat filter");
 

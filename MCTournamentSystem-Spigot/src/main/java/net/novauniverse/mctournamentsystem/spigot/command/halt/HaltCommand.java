@@ -45,7 +45,7 @@ class HaltConfirmCommand extends NovaSubCommand {
 		super("confirm");
 		setAllowedSenders(AllowedSenders.ALL);
 		setPermissionDefaultValue(PermissionDefault.FALSE);
-		setPermission("tournamentcore.command.halt");
+		setPermission("tournamentsystem.command.halt");
 	}
 
 	@Override

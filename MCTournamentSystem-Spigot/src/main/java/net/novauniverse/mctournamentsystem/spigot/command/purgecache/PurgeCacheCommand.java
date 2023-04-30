@@ -16,7 +16,7 @@ public class PurgeCacheCommand extends NovaCommand {
 
 		setAliases(NovaCommand.generateAliasList("clearcache"));
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.purgecache");
+		setPermission("tournamentsystem.command.purgecache");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setEmptyTabMode(true);
 		setUsage("/purgecache");

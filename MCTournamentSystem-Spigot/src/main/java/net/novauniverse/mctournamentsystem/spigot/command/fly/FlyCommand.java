@@ -14,7 +14,7 @@ public class FlyCommand extends NovaCommand {
 	public FlyCommand() {
 		super("fly", TournamentSystem.getInstance());
 		setDescription("Enable flight for you or another player");
-		setPermission("tournamentcore.command.fly");
+		setPermission("tournamentsystem.command.fly");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setAllowedSenders(AllowedSenders.ALL);
 

@@ -24,7 +24,7 @@ public class RespawnPlayerCommand extends NovaCommand {
 	public RespawnPlayerCommand() {
 		super("respawnplayer", TournamentSystem.getInstance());
 		setDescription("Respawn a player");
-		setPermission("tournamentcore.command.respawnplayer");
+		setPermission("tournamentsystem.command.respawnplayer");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setAllowedSenders(AllowedSenders.PLAYERS);
 

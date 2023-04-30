@@ -16,7 +16,7 @@ public class ReconnectCommand extends NovaCommand {
 		super("reconnect", TournamentSystem.getInstance());
 
 		this.setAllowedSenders(AllowedSenders.PLAYERS);
-		this.setPermission("tournamentcore.command.reconnect");
+		this.setPermission("tournamentsystem.command.reconnect");
 		this.setPermissionDefaultValue(PermissionDefault.TRUE);
 		this.setDescription("Reconnect to a game");
 

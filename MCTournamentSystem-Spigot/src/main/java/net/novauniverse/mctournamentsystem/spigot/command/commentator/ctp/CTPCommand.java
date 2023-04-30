@@ -20,7 +20,7 @@ public class CTPCommand extends NovaCommand {
 	public CTPCommand() {
 		super("ctp", TournamentSystem.getInstance());
 		setDescription("Teleport to a players thats in game");
-		setPermission("tournamentcore.command.ctp");
+		setPermission("tournamentsystem.command.ctp");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setAllowedSenders(AllowedSenders.PLAYERS);
 

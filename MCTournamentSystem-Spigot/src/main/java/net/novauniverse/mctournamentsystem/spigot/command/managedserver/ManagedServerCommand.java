@@ -21,7 +21,7 @@ public class ManagedServerCommand extends NovaCommand {
 		setDescription("This command is used to start and stop servers related to the tournament system");
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentsystem.commands.managedserver");
+		setPermission("tournamentsystem.command.managedserver");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setPermissionDescription("Allow the user to use the managedserver command");
 

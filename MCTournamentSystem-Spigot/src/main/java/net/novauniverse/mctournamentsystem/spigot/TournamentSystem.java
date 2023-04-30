@@ -52,9 +52,6 @@ import net.novauniverse.mctournamentsystem.spigot.command.commentator.csp.CSPCom
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.ctp.CTPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.copylocation.CopyLocationCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
-import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.DiscordCommand;
-import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.PatreonCommand;
-import net.novauniverse.mctournamentsystem.spigot.command.database.socials.implementation.YoutubeCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.killstatusreporting.KillStatusReportingCommand;
@@ -63,6 +60,9 @@ import net.novauniverse.mctournamentsystem.spigot.command.purgecache.PurgeCacheC
 import net.novauniverse.mctournamentsystem.spigot.command.reconnect.ReconnectCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.reloaddynamicconfig.ReloadDynamicConfigCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.respawnplayer.RespawnPlayerCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.socials.implementation.DiscordCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.socials.implementation.PatreonCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.socials.implementation.YoutubeCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
 import net.novauniverse.mctournamentsystem.spigot.cosmetics.CosmeticsIntegrations;
 import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
