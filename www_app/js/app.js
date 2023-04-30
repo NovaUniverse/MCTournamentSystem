@@ -1678,7 +1678,7 @@ const TournamentSystem = {
 
 					$("#player_tbody").append(playerElement);
 
-					playerElement.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + (TournamentSystem.isOfflineMode ? offlineModeHead : uuid));
+					playerElement.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + (TournamentSystem.isOfflineMode ? offlineModeHead : player.uuid));
 					playerElement.find(".player-uuid").text(player.uuid);
 
 					playerElement.find(".player-send-to").on("click", function () {
