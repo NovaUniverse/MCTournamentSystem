@@ -1,9 +1,15 @@
 package net.novauniverse.mctournamentsystem.bungeecord.servers;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
+import java.nio.charset.MalformedInputException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
@@ -18,6 +24,9 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.json.JSONObject;
+
+import com.ibm.icu.text.CharsetDetector;
+import com.ibm.icu.text.CharsetMatch;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -55,6 +64,10 @@ public class ManagedServer {
 
 	private String internalAPIAccessKey;
 
+	private Charset logCharset;
+
+	private boolean charsetAutoDetectAttempted;
+
 	@Nullable
 	private ServerAutoRegisterData serverAutoRegisterData;
 
@@ -89,6 +102,10 @@ public class ManagedServer {
 		this.passServerName = passServerName;
 
 		this.random = new SecureRandom();
+
+		this.logCharset = StandardCharsets.UTF_8;
+
+		this.charsetAutoDetectAttempted = false;
 
 		this.generateStatusReportingKey();
 		this.generateInternalAPIAccessKey();
@@ -202,7 +219,9 @@ public class ManagedServer {
 				return false;
 			}
 		}
-		
+
+		charsetAutoDetectAttempted = false;
+
 		generateStatusReportingKey();
 		generateInternalAPIAccessKey();
 
@@ -321,8 +340,37 @@ public class ManagedServer {
 	public List<String> getLogFileLines() throws IOException {
 		if (lastSessionId != null) {
 			File logFile = new File(TournamentSystem.getInstance().getServerLogFolder() + File.separator + lastLogName + ".stdout.log");
+
 			if (logFile.exists()) {
-				return Files.readAllLines(Paths.get(logFile.getAbsolutePath()));
+				try {
+					return Files.readAllLines(Paths.get(logFile.getAbsolutePath()), logCharset);
+				} catch (MalformedInputException e) {
+					// Seems like some times the logs just fails to open on windows. Lets try to
+					// change encoding once and see if it works
+					if (!charsetAutoDetectAttempted) {
+						charsetAutoDetectAttempted = true;
+						Log.warn("ManagedServer", "An error occured while trying to read the log file of server " + name + ". Trying to use CharsetDetector to change charset");
+						InputStream stream = new FileInputStream(logFile);
+						BufferedInputStream bufferedStream = new BufferedInputStream(stream);
+						CharsetDetector charsetDetector = new CharsetDetector();
+						charsetDetector.setText(bufferedStream);
+						bufferedStream.close();
+						stream.close();
+						CharsetMatch match = charsetDetector.detect();
+						if (match == null) {
+							// Rip
+							Log.error("ManagedServer", "Failed to auto detect charset");
+						} else {
+							// Potential success
+							Log.info("ManagedServer", "Potential charset used for logging: " + match.getName() + ". Confidence: " + match.getConfidence());
+							logCharset = Charset.forName(match.getName());
+							// Try again
+							return Files.readAllLines(Paths.get(logFile.getAbsolutePath()), logCharset);
+						}
+						// Fuck
+						throw e;
+					}
+				}
 			}
 		}
 		return new ArrayList<String>();
