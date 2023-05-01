@@ -26,6 +26,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
+import net.zeeraa.novacore.commons.log.Log;
 
 // If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
 public abstract class APIEndpoint implements HttpHandler {
@@ -228,6 +229,10 @@ public abstract class APIEndpoint implements HttpHandler {
 							result.put("error", "exception");
 							result.put("message", "An internal exception occured while trying to proccess your request. " + e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
 							result.put("http_response_code", 500);
+							if (TournamentSystem.getInstance().isLogWebServerExceptions()) {
+								Log.error("TournamentSystem", "An error occured in APIEndpoint " + this.getClass().getName() + ". Exception: " + e.getClass().getName() + " " + e.getMessage());
+								e.printStackTrace();
+							}
 						}
 					}
 				}

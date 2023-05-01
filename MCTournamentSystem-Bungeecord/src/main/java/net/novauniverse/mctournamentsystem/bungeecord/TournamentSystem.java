@@ -111,6 +111,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private List<String> globalCustomLaunchFlags;
 
 	private boolean offlineMode;
+	
+	private boolean logWebServerExceptions;
 
 	public List<String> getGlobalCustomLaunchFlags() {
 		return globalCustomLaunchFlags;
@@ -258,6 +260,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		}
 		this.motd = motd;
 	}
+	
+	public boolean isLogWebServerExceptions() {
+		return logWebServerExceptions;
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -270,6 +276,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		managedServers = new ArrayList<>();
 		globalCustomLaunchFlags = new ArrayList<>();
 		makeMeSufferEasteregg = false;
+		logWebServerExceptions = false;
 
 		publicIp = "Unknown";
 		motd = "Tournament System";
@@ -726,6 +733,11 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			}
 		});
 
+		logWebServerExceptions = webConfig.optBoolean("log_exceptions", false);
+		if(logWebServerExceptions) {
+			Log.info("TournamentSystem", "Exceptions in web server will be logged");
+		}
+		
 		makeMeSufferEasteregg = webConfig.optBoolean("hey_what_if_we_made_the_logs_way_worse_to_read_like_for_real_give_me_brain_damage_pls", false);
 		if (makeMeSufferEasteregg) {
 			Log.info(TextUtils.englishToUWU("Hello World"));
