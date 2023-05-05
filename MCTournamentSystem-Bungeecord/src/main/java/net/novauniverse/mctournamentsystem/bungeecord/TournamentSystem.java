@@ -111,11 +111,19 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private List<String> globalCustomLaunchFlags;
 
 	private boolean offlineMode;
-	
+
 	private boolean logWebServerExceptions;
+
+	private String chatFilterURL;
+
+	private String skinRenderAPIUrl;
 
 	public List<String> getGlobalCustomLaunchFlags() {
 		return globalCustomLaunchFlags;
+	}
+
+	public String getSkinRenderAPIUrl() {
+		return skinRenderAPIUrl;
 	}
 
 	public boolean isAutoAppendAikarFlags() {
@@ -177,6 +185,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		config.getTeamBadges().forEach((team, badgeName) -> {
 			TeamOverrides.badges.put(team, badgeName);
 		});
+	}
+
+	public String getChatFilterURL() {
+		return chatFilterURL;
 	}
 
 	public static final String formatMOTD(String motd) {
@@ -260,7 +272,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		}
 		this.motd = motd;
 	}
-	
+
 	public boolean isLogWebServerExceptions() {
 		return logWebServerExceptions;
 	}
@@ -277,6 +289,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		globalCustomLaunchFlags = new ArrayList<>();
 		makeMeSufferEasteregg = false;
 		logWebServerExceptions = false;
+		chatFilterURL = null;
+		skinRenderAPIUrl = "https://skinrender.novauniverse.net";
 
 		publicIp = "Unknown";
 		motd = "Tournament System";
@@ -499,6 +513,13 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			}
 		}
 
+		if (config.has("chat_filter")) {
+			JSONObject cfc = config.getJSONObject("chat_filter");
+			if (cfc.optBoolean("enabled", false)) {
+				chatFilterURL = cfc.optString("url", mojangAPIUrl);
+			}
+		}
+
 		Log.info("Setting up web server");
 
 		JSONObject webUISettings = config.getJSONObject("web_ui");
@@ -664,6 +685,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			return;
 		}
 
+		if (config.has("skin_render_api_url")) {
+			skinRenderAPIUrl = config.getString("skin_render_api_url");
+		}
+
 		if (config.has("internet_cafe_settings")) {
 			JSONObject internetCafeSettingsJSON = config.getJSONObject("internet_cafe_settings");
 
@@ -734,10 +759,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		});
 
 		logWebServerExceptions = webConfig.optBoolean("log_exceptions", false);
-		if(logWebServerExceptions) {
+		if (logWebServerExceptions) {
 			Log.info("TournamentSystem", "Exceptions in web server will be logged");
 		}
-		
+
 		makeMeSufferEasteregg = webConfig.optBoolean("hey_what_if_we_made_the_logs_way_worse_to_read_like_for_real_give_me_brain_damage_pls", false);
 		if (makeMeSufferEasteregg) {
 			Log.info(TextUtils.englishToUWU("Hello World"));

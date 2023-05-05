@@ -38,7 +38,7 @@ function login(username, password, isStored = false) {
 
 			let customRedirectURL = getUrlParameter("redirect");
 
-			window.location = customRedirectURL == null ? "/app/" : customRedirectURL;
+			window.location = customRedirectURL == null ? "/app/" : decodeURIComponent(customRedirectURL);
 		},
 		error: (xhr, ajaxOptions, thrownError) => {
 			if (xhr.status == 0 || xhr.status == 503) {

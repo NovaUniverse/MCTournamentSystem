@@ -970,7 +970,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				}
 			}
 
-			if (filter.has("enabled")) {
+			if (filter.optBoolean("enabled", false)) {
 				ModuleManager.enable(ChatFilter.class);
 			}
 		}

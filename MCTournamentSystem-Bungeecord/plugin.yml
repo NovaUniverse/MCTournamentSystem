@@ -3,3 +3,4 @@ name: TournamentSystem
 version: 1.0.0
 authors: [Zeeraa]
 depends: [NovaCore, BungeeMessages]
+softDepends: [SkinsRestorer]

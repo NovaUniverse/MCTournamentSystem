@@ -28,10 +28,12 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.SendServerCommandHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.StartServersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.StopServersHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.skinrestorer.GetSkinrestorerSkinHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapshot.ExportSnapshotHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapshot.ImportSnapshotHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.StaffHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.BroadcastHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ModeHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.QuickMessageHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.SecurityCheckHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ShutdownHandler;
@@ -81,6 +83,7 @@ public class WebServer {
 		createContext("/api/v1/system/quick_message", new QuickMessageHandler());
 		createContext("/api/v1/system/shutdown", new ShutdownHandler());
 		createContext("/api/v1/system/security_check", new SecurityCheckHandler());
+		createContext("/api/v1/system/mode", new ModeHandler());
 
 		createContext("/api/v1/system/reset", new ResetHandler());
 
@@ -145,6 +148,9 @@ public class WebServer {
 		createContext("/api/v1/servers/logs", new GetServersLogsHandler());
 		createContext("/api/v1/servers/log_session_id", new GetServersLogSessionIDHandler());
 		createContext("/api/v1/servers/run_command", new SendServerCommandHandler());
+
+		// Skinrestorer
+		createContext("/api/skinrestorer/get_user_skin", new GetSkinrestorerSkinHandler());
 
 		// Internal
 		createContext("/api/internal/server/state_reporting", new ManagedServerStateReportingEndpoint());
