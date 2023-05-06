@@ -102,7 +102,7 @@ const update = () => {
 		data.teams.sort((a, b) => b.score - a.score);
 		data.players.sort((a, b) => b.score - a.score);
 
-		console.log(data);
+		//console.log(data);
 
 		$("#teams_tbody").children().remove();
 		let teamPlacement = 0;
