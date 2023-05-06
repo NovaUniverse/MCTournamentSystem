@@ -1,6 +1,8 @@
 var logged_in_user_username = "UwU";
 var user_permissions = [];
-var offlineModeHead = "bd482739-767c-45dc-a1f8-c33c40530952"; // MHF_Villager
+var offlineModeHead = "c06f8906-4c8a-4911-9c29-ea1dbd1aab82"; // MHF_Steve
+var checkedOfflineModePlayers = [];
+var offlineSkinCache = new Map();
 
 $(function () {
 	if (localStorage.getItem("token") == null) {
@@ -11,6 +13,61 @@ $(function () {
 		setCookie("ts_access_token", TournamentSystem.token, 999999);
 	}
 
+	$.getJSON("/api/v1/service_providers", (data) => {
+		TournamentSystem.skinRenderAPIUrl = data.skin_render_api;
+		if (TournamentSystem.skinRenderAPIUrl != null) {
+			console.log("Skin render api url: " + TournamentSystem.skinRenderAPIUrl);
+		}
+	});
+
+	$.getJSON("/api/v1/system/mode", (data) => {
+		if (data.offline_mode) {
+			setInterval(() => {
+				//console.log("Requesting skin renewal");
+				checkedOfflineModePlayers = [];
+			}, 1000 * 20);
+
+			setInterval(() => {
+				if (TournamentSystem.skinRenderAPIUrl == null) {
+					return;
+				}
+
+				$(".player-avatar").each(function () {
+					let username = $(this).data("username");
+
+					if(username == undefined) {
+						return;
+					}
+
+					let src = $(this).attr("src");
+
+					if (!checkedOfflineModePlayers.includes(username)) {
+						checkedOfflineModePlayers.push(username);
+						$.getJSON("/api/skinrestorer/get_user_skin?username=" + username, (data) => {
+							if (data.has_skin) {
+								let skinData = JSON.parse(atob(data.skin_data));
+								if (skinData.textures != null) {
+									if (skinData.textures.SKIN != null) {
+										let skinUrl = skinData.textures.SKIN.url;
+										//console.log(username + " has the skin " + skinUrl);
+										offlineSkinCache.set(username, skinUrl);
+									}
+								}
+							}
+						});
+					}
+
+					if (offlineSkinCache.has(username)) {
+						let url = TournamentSystem.skinRenderAPIUrl + "/from_image/face/skin.png?resolution=256&url=" + offlineSkinCache.get(username);
+						if (src != url) {
+							//console.log("Changing skin url of " + username + " to " + url);
+							$(this).attr("src", url);
+						}
+					}
+				})
+			}, 1500);
+		}
+	});
 
 	$.getJSON("/api/v1/system/security_check", (data) => {
 		if (data.dev_mode) {
@@ -739,6 +796,7 @@ const TournamentSystem = {
 	activeServer: null,
 	lastServerData: [],
 	isOfflineMode: false,
+	skinRenderAPIUrl: null,
 
 	showServerState: (serverName) => {
 		let server = TournamentSystem.lastServerData.find(s => s.name == serverName);
@@ -1679,6 +1737,7 @@ const TournamentSystem = {
 					$("#player_tbody").append(playerElement);
 
 					playerElement.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + (TournamentSystem.isOfflineMode ? offlineModeHead : player.uuid));
+					playerElement.find(".player-avatar").attr("data-username", player.username);
 					playerElement.find(".player-uuid").text(player.uuid);
 
 					playerElement.find(".player-send-to").on("click", function () {
