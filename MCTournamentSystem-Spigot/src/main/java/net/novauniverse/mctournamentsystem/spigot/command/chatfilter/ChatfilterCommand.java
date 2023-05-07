@@ -43,7 +43,7 @@ class Disable extends NovaSubCommand {
 		super("disable");
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.chatfilter");
+		setPermission("tournamentsystem.command.chatfilter");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Enable the chat filter");
 
@@ -73,7 +73,7 @@ class Enable extends NovaSubCommand {
 		super("enable");
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.chatfilter");
+		setPermission("tournamentsystem.command.chatfilter");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Enable chat filter");
 

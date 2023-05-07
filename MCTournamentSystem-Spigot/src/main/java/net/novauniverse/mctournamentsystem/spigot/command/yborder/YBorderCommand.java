@@ -48,7 +48,7 @@ class YBorderDisable extends NovaSubCommand {
 		setAliases(NovaCommand.generateAliasList("stop"));
 		
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.yborder");
+		setPermission("tournamentsystem.command.yborder");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Enable y border");
 
@@ -80,7 +80,7 @@ class YBorderEnable extends NovaSubCommand {
 		setAliases(NovaCommand.generateAliasList("start"));
 		
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.yborder");
+		setPermission("tournamentsystem.command.yborder");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Enable y border");
 
@@ -118,7 +118,7 @@ class YBorderPause extends NovaSubCommand {
 		super("pause");
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.yborder");
+		setPermission("tournamentsystem.command.yborder");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Reset y border");
 
@@ -151,7 +151,7 @@ class YBorderSet extends NovaSubCommand {
 		super("set");
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.yborder");
+		setPermission("tournamentsystem.command.yborder");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Set y border limit");
 
@@ -193,7 +193,7 @@ class YBorderReset extends NovaSubCommand {
 		super("reset");
 
 		setAllowedSenders(AllowedSenders.ALL);
-		setPermission("tournamentcore.command.yborder");
+		setPermission("tournamentsystem.command.yborder");
 		setPermissionDefaultValue(PermissionDefault.OP);
 		setDescription("Pause y border");
 
