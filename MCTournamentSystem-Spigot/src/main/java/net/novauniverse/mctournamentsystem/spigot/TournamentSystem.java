@@ -72,6 +72,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.misc.GameEndSoundtrackManager;
 import net.novauniverse.mctournamentsystem.spigot.game.util.DefaultPlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
+import net.novauniverse.mctournamentsystem.spigot.labymod.LabyModIntegration;
 import net.novauniverse.mctournamentsystem.spigot.misc.CustomItemTest;
 import net.novauniverse.mctournamentsystem.spigot.modules.chatfilter.ChatFilter;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
@@ -195,7 +196,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private String iaNoTeamIcon;
 
 	private TournamentSystemAPI api;
-	
+
 	private List<String> configuredManagedServers;
 
 	public static TournamentSystem getInstance() {
@@ -423,7 +424,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	public boolean hasApi() {
 		return api != null;
 	}
-	
+
 	public List<String> getConfiguredManagedServers() {
 		return configuredManagedServers;
 	}
@@ -738,16 +739,16 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		/* ----- Config ----- */
-		if(config.has("servers")) {
+		if (config.has("servers")) {
 			JSONArray serversJSON = config.getJSONArray("servers");
-			for(int i = 0; i < serversJSON.length(); i++) {
+			for (int i = 0; i < serversJSON.length(); i++) {
 				JSONObject serverData = serversJSON.getJSONObject(i);
-				if(serverData.has("name")) {
+				if (serverData.has("name")) {
 					configuredManagedServers.add(serverData.getString("name"));
 				}
 			}
 		}
-		
+
 		useExtendedSpawnLocations = config.getBoolean("extended_spawn_locations");
 		celebrationMode = config.getBoolean("celebration_mode");
 		replaceEz = config.getBoolean("replace_ez");
@@ -915,7 +916,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new ReloadDynamicConfigCommand());
 		CommandRegistry.registerCommand(new KillStatusReportingCommand());
 		CommandRegistry.registerCommand(new ManagedServerCommand());
-		
+
 		if (config.has("socials")) {
 			JSONObject socials = config.getJSONObject("socials");
 
@@ -1034,6 +1035,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		Task.tryStartTask(timerSeconds);
 		Task.tryStartTask(statusReportingTask);
+
+		if (Bukkit.getServer().getPluginManager().getPlugin("LabyApi") != null) {
+			ModuleManager.loadModule(this, LabyModIntegration.class, true);
+		}
 
 		try {
 			if (Bukkit.getServer().getPluginManager().getPlugin("CosmeticSystem") != null) {

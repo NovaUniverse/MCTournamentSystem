@@ -52,8 +52,12 @@
 					<relocations>
 						<relocation>
 							<pattern>org.bstats</pattern>
-							<!-- Replace this with your package! -->
-							<shadedPattern>net.novauniverse.mctournamentsystem.spigot.bstats</shadedPattern>
+							<shadedPattern>net.novauniverse.mctournamentsystem.shaded.org.bstats</shadedPattern>
+						</relocation>
+						
+						<relocation>
+							<pattern>net.novauniverse.labymodapiplus</pattern>
+							<shadedPattern>net.novauniverse.mctournamentsystem.shaded.net.novauniverse.labymodapiplus</shadedPattern>
 						</relocation>
 					</relocations>
 				</configuration>
@@ -159,19 +163,7 @@
 			<version>2.22.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Dependencies -->
-		<dependency>
-			<groupId>me.leoko.advancedgui</groupId>
-			<artifactId>AdvancedGUI</artifactId>
-			<version>2.1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>me.lucko</groupId>
-			<artifactId>spark-api</artifactId>
-			<version>0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- Shaded Dependencies -->
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
@@ -185,16 +177,47 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
-			<version>1.8.8-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<groupId>net.novauniverse</groupId>
+			<artifactId>LabyModAPIPlus</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.novauniverse.mctournamentsystem</groupId>
 			<artifactId>MCTournamentSystem-Commons</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.14</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Dependencies -->
+		<dependency>
+			<groupId>net.labymod</groupId>
+			<artifactId>labymod-api</artifactId>
+			<version>2.0.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>me.leoko.advancedgui</groupId>
+			<artifactId>AdvancedGUI</artifactId>
+			<version>2.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>me.lucko</groupId>
+			<artifactId>spark-api</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.8.8-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.novauniverse</groupId>
@@ -251,12 +274,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.14</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>net.novauniverse</groupId>
 			<artifactId>NovaSpleef</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
@@ -285,18 +302,6 @@
 			<artifactId>TitleAPI</artifactId>
 			<version>1.7.6</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.labymod</groupId>
-			<artifactId>LabyApi</artifactId>
-			<version>2.0.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.labymod.serverapi.common</groupId>
-			<artifactId>Widgets</artifactId>
-			<version>1.1.1</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.novauniverse</groupId>

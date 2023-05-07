@@ -33,6 +33,7 @@ import net.novauniverse.mctournamentsystem.lobby.modules.celebrationmode.LobbyCe
 import net.novauniverse.mctournamentsystem.lobby.modules.halloffame.HallOfFame;
 import net.novauniverse.mctournamentsystem.lobby.modules.halloffame.HallOfFameConfig;
 import net.novauniverse.mctournamentsystem.lobby.modules.halloffame.HallOfFameNPC;
+import net.novauniverse.mctournamentsystem.lobby.modules.labymod.LabyModLobbyIntegration;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.Lobby;
 import net.novauniverse.mctournamentsystem.lobby.modules.scoreboard.TSLeaderboard;
 import net.novauniverse.mctournamentsystem.lobby.npc.trait.TournamentLobbyRemoveOnLoadTrait;
@@ -250,6 +251,10 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 		}
 
 		TabListMessage.setServerType("Lobby");
+
+		if (Bukkit.getServer().getPluginManager().getPlugin("LabyApi") != null) {
+			ModuleManager.loadModule(this, LabyModLobbyIntegration.class, true);
+		}
 	}
 
 	@Override

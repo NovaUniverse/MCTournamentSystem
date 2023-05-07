@@ -32,7 +32,7 @@
 					<relocations>
 						<relocation>
 							<pattern>com.ibm.icu</pattern>
-							<shadedPattern>net.novauniverse.mctournament.thridparty.com.ibm.icu</shadedPattern>
+							<shadedPattern>net.novauniverse.mctournamentsystem.shaded.com.ibm.icu</shadedPattern>
 						</relocation>
 					</relocations>
 				</configuration>

@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.NOPEliminationMessage;
+import net.novauniverse.mctournamentsystem.spigot.labymod.LabyModGameIntegration;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSActionBarCombatTagMessage;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSPlayerEliminationMessage;
 import net.novauniverse.mctournamentsystem.spigot.messages.TSTeamEliminationMessage;
@@ -60,6 +61,10 @@ public class GameSetup {
 		Log.success("GameSetup", "Game support enabled");
 
 		PlayerTelementryManager.getInstance().addMetadataProvider(new TriggerProvider());
+		
+		if (Bukkit.getServer().getPluginManager().getPlugin("LabyApi") != null) {
+			ModuleManager.loadModule(tournamentSystem, LabyModGameIntegration.class, true);
+		}
 	}
 
 	public static void disableEliminationMessages() {

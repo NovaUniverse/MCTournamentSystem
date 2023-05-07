@@ -7,7 +7,7 @@ api-version: 1.13
 authors: [Zeeraa, NovaUniverse]
 
 depend: [NovaCore, HolographicDisplays, ProtocolLib, TitleAPI, LuckPerms, Citizens, NoteBlockAPI, spark]
-softdepend: [NovaCoreGameEngine, LabyApi, ItemsAdder, AdvancedGUI, CosmeticSystem]
+softdepend: [NovaCoreGameEngine, LabyApi, ItemsAdder, AdvancedGUI, CosmeticSystem, LabyApi]
 loadbefore: [NovaGamesTarget, NovaSurvivalGames, ChickenOut, HolographicPlaceholders]
 
 permissions:
