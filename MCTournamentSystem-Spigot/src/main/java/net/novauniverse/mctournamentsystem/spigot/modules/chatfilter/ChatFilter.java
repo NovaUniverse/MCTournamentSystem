@@ -28,7 +28,7 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
 @NovaAutoLoad(shouldEnable = false)
 public class ChatFilter extends NovaModule implements Listener {
-	public static final String NOTIFY_PERMISSION = "tournamentcore.notify.swear";
+	public static final String NOTIFY_PERMISSION = "tournamentsystem.notify.swear";
 	public static final String DEFAULT_CHAT_FILTER_URL = "https://chatfilter.novauniverse.net/";
 	public static final RequestConfig REQUEST_CONFIG;
 	public static int API_TIMEOUT = 3000;
