@@ -609,6 +609,7 @@ $(function () {
 			type: "POST",
 			url: "/api/v1/system/settings/scoreboard_url",
 			data: url,
+			contentType: 'text/plain',
 			success: (data) => {
 				$("#set_scoreboard_url_modal").modal("hide");
 				toastr.info("Scoreboard url changed to " + url + ". Please restart the server for it to update in game");
@@ -644,6 +645,7 @@ $(function () {
 			type: "POST",
 			url: "/api/v1/system/settings/motd",
 			data: motd,
+			contentType: 'text/plain',
 			success: (data) => {
 				$("#set_motd_modal").modal("hide");
 				toastr.info("MOTD Updated");
@@ -944,6 +946,7 @@ const TournamentSystem = {
 			type: "POST",
 			url: "/api/v1/system/broadcast",
 			data: text,
+			contentType: 'text/plain',
 			success: (data) => {
 				toastr.success("Message sent");
 			},
@@ -1033,6 +1036,7 @@ const TournamentSystem = {
 			type: "POST",
 			url: "/api/v1/next_minigame",
 			data: name,
+			contentType: 'text/plain',
 			success: (data) => {
 				toastr.success("Next minigame cleared");
 				$("#next_minigame_model").modal("hide");
