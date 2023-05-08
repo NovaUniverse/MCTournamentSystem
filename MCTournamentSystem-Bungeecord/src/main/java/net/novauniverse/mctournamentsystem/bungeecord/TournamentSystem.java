@@ -1,6 +1,7 @@
 package net.novauniverse.mctournamentsystem.bungeecord;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -449,12 +450,33 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		}
 
 		Setup.run();
+		String initialConfigURL = System.getenv("INITIAL_SETUP_URL");
+		if (initialConfigURL != null) {
+			if (initialConfigURL.trim().length() > 0) {
+				try {
+					Setup.importFromURL(initialConfigURL);
+				} catch (IOException e) {
+					Log.error("TournamentSystem", "An error occured while trying to load initial config from url");
+					e.printStackTrace();
+				}
+			}
+		}
 
 		try {
 			String configuredMOTD = TournamentSystemCommons.getConfigValue("motd");
 			if (configuredMOTD == null) {
-				TournamentSystemCommons.setConfigValue("motd", "Tournament System");
-				Log.info("TournamentSystem", "Setting default motd in database");
+				String motdEnv = System.getenv("TOURNAMENT_MOTD");
+				if (motdEnv != null) {
+					if (motdEnv.trim().length() == 0) {
+						motdEnv = null;
+					}
+				}
+
+				String toUse = motdEnv == null ? "Tournament System" : motdEnv;
+
+				TournamentSystemCommons.setConfigValue("motd", toUse);
+				motd = toUse;
+				Log.info("TournamentSystem", "Setting default motd in database as: " + toUse);
 			} else {
 				motd = configuredMOTD;
 			}
