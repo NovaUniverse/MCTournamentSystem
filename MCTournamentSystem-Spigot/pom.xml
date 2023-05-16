@@ -220,24 +220,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.novauniverse</groupId>
-			<artifactId>NovaSurvivalGames</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.novauniverse</groupId>
-			<artifactId>NovaTNTTag</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.novauniverse</groupId>
-			<artifactId>NovaDropper</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.comphenix.protocol</groupId>
 			<artifactId>ProtocolLib</artifactId>
 			<version>4.6.0</version>
@@ -274,12 +256,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.novauniverse</groupId>
-			<artifactId>NovaSpleef</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20230227</version>
@@ -301,6 +277,37 @@
 			<groupId>com.github.ConnorLinfoot</groupId>
 			<artifactId>TitleAPI</artifactId>
 			<version>1.7.6</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.11.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.LoneDev6</groupId>
+			<artifactId>api-itemsadder</artifactId>
+			<version>3.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Minigames -->
+		<dependency>
+			<groupId>net.novauniverse</groupId>
+			<artifactId>NovaSurvivalGames</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.novauniverse</groupId>
+			<artifactId>NovaTNTTag</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.novauniverse</groupId>
+			<artifactId>NovaDropper</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -358,15 +365,15 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>me.clip</groupId>
-			<artifactId>placeholderapi</artifactId>
-			<version>2.11.2</version>
+			<groupId>net.novauniverse</groupId>
+			<artifactId>SwordGame</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.LoneDev6</groupId>
-			<artifactId>api-itemsadder</artifactId>
-			<version>3.0.0</version>
+			<groupId>net.novauniverse</groupId>
+			<artifactId>NovaSpleef</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

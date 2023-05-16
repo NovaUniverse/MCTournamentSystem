@@ -34,7 +34,7 @@ public class TNTTagManager extends NovaModule implements Listener {
 	private GameManager gameManager;
 
 	public TNTTagManager() {
-		super("TournamentSystem.BingoManager");
+		super("TournamentSystem.GameSpecific.TNTTagManager");
 	}
 
 	@Override

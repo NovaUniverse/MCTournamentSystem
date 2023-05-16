@@ -30,6 +30,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.hive.HiveMan
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.parkourrace.ParkourRaceManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.spleef.SpleefManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.survivalgames.SurvivalGamesManager;
+import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.swordgame.SwordGameManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.tnttag.TNTTagManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.turfwars.TurfWarsManager;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
@@ -81,7 +82,7 @@ public class GameListeners extends NovaModule implements Listener {
 	}
 
 	static {
-		// Original MCF games
+		// Original MCF / MCClassics games
 		GAME_SPECIFIC_MODULES.put("survivalgames", SurvivalGamesManager.class);
 		GAME_SPECIFIC_MODULES.put("bingo", BingoManager.class);
 		GAME_SPECIFIC_MODULES.put("spleef", SpleefManager.class);
@@ -90,6 +91,7 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("nova_bedwars", BedwarsManager.class);
 		GAME_SPECIFIC_MODULES.put("capturetheflag", CaptureTheFlagManager.class);
 		GAME_SPECIFIC_MODULES.put("turfwars", TurfWarsManager.class);
+		GAME_SPECIFIC_MODULES.put("swordgame", SwordGameManager.class);
 
 		// NovaGames games
 		GAME_SPECIFIC_MODULES.put("chickenout", ChickenOutManager.class);

@@ -56,7 +56,7 @@ public class TurfWarsManager extends NovaModule implements Listener {
 	private GameManager gameManager;
 
 	public TurfWarsManager() {
-		super("TournamentSystem.TurfWarsManager");
+		super("TournamentSystem.GameSpecific.TurfWarsManager");
 	}
 
 	@Override
