@@ -14,7 +14,7 @@ public class SurvivalGamesManager extends NovaModule {
 	public void onEnable() {
 		if (TournamentSystem.getInstance().isUseExtendedSpawnLocations()) {
 			Log.info("SurvivalGamesManager", "Setting use extended spawn locations to true");
-			SurvivalGamesPlugin.getInstance().setUseExtendedSpawnLocations(true);
+			SurvivalGamesPlugin.getInstance().getSurvivalGamesConfig().setUseExtendedSpawnLocations(true);
 		}
 	}
 }

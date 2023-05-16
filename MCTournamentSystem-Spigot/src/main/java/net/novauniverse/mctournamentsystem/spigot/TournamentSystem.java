@@ -842,7 +842,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		String scoreboardUrl = TournamentSystemCommons.getScoreboardURL();
 
 		if (tournamentName == null) {
-			tournamentName= "";
+			tournamentName = "";
 		}
 
 		if (scoreboardUrl == null) {

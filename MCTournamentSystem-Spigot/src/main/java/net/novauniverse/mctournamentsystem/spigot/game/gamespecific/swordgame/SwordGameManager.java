@@ -36,7 +36,7 @@ public class SwordGameManager extends NovaModule implements Listener {
 	public SwordGameManager() {
 		super("TournamentSystem.GameSpecific.SwordGameManager");
 	}
-
+	
 	@Override
 	public void onLoad() {
 		gameManager = ModuleManager.getModule(GameManager.class);
