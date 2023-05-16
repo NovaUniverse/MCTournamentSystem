@@ -88,8 +88,8 @@ public class SwordGameManager extends NovaModule implements Listener {
 								}
 							}
 
-							NetherBoardScoreboard.getInstance().setGlobalLine(TIER_LINE, ChatColor.GOLD + "Tier: " + ChatColor.AQUA + tier + " / " + maxTier);
-							NetherBoardScoreboard.getInstance().setGlobalLine(KILL_LINE, ChatColor.GOLD + "Sword Game Kills: " + ChatColor.AQUA + kills);
+							NetherBoardScoreboard.getInstance().setPlayerLine(TIER_LINE, player, ChatColor.GOLD + "Tier: " + ChatColor.AQUA + tier + " / " + maxTier);
+							NetherBoardScoreboard.getInstance().setPlayerLine(KILL_LINE, player, ChatColor.GOLD + "Sword Game Kills: " + ChatColor.AQUA + kills);
 						});
 					}
 				}
