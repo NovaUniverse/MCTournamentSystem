@@ -1,7 +1,10 @@
 package net.novauniverse.mctournamentsystem.spigot.game.gamespecific.swordgame;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -13,7 +16,6 @@ import net.novauniverse.game.swordgame.game.data.PlayerDataWrapper;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
-import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameEndReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.DelayedGameTrigger;
@@ -36,7 +38,7 @@ public class SwordGameManager extends NovaModule implements Listener {
 	public SwordGameManager() {
 		super("TournamentSystem.GameSpecific.SwordGameManager");
 	}
-	
+
 	@Override
 	public void onLoad() {
 		gameManager = ModuleManager.getModule(GameManager.class);
@@ -64,37 +66,40 @@ public class SwordGameManager extends NovaModule implements Listener {
 							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, ChatColor.GOLD + "Game ends in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(endTrigger.getTicksLeft() / 20));
 						}
 
-						Map<Team, Integer> teamKills = new HashMap<>();
-
-						TeamManager.getTeamManager().stream().forEach(team -> {
-							teamKills.put(team,
-									team.getMembers().stream().mapToInt(member -> {
-										PlayerDataWrapper data = game.getPlayerData(member);
-										return data.getKills();
-									}).sum());
-						});
+						final List<SwordGameTeamResult> teamScore = getTeamResults();
 
 						Bukkit.getOnlinePlayers().forEach(player -> {
-							int kills = 0;
-							int tier = 0;
+							AtomicInteger kills = new AtomicInteger(0);
+							AtomicInteger tier = new AtomicInteger(0);
 							if (game.isPlayerInGame(player)) {
 								PlayerDataWrapper data = game.getPlayerData(player);
-								Team team = TeamManager.getTeamManager().getPlayerTeam(player);
+								tier.set(data.getTier());
 
-								tier = data.getTier();
-
-								if (team != null) {
-									kills = teamKills.get(team);
-								}
+								TeamManager.getTeamManager().ifHasTeam(player, team -> {
+									teamScore.stream().filter(t -> t.getTeam().equals(team)).findFirst().ifPresent(teamData -> {
+										kills.set(teamData.getKills());
+									});
+								});
 							}
 
-							NetherBoardScoreboard.getInstance().setPlayerLine(TIER_LINE, player, ChatColor.GOLD + "Tier: " + ChatColor.AQUA + tier + " / " + maxTier);
-							NetherBoardScoreboard.getInstance().setPlayerLine(KILL_LINE, player, ChatColor.GOLD + "Sword Game Kills: " + ChatColor.AQUA + kills);
+							NetherBoardScoreboard.getInstance().setPlayerLine(TIER_LINE, player, ChatColor.GOLD + "Tier: " + ChatColor.AQUA + tier.get() + " / " + maxTier);
+							NetherBoardScoreboard.getInstance().setPlayerLine(KILL_LINE, player, ChatColor.GOLD + "Sword Game Kills: " + ChatColor.AQUA + kills.get());
 						});
 					}
 				}
 			}
 		}, 10L);
+	}
+
+	public List<SwordGameTeamResult> getTeamResults() {
+		List<SwordGameTeamResult> result = new ArrayList<>();
+		TeamManager.getTeamManager().stream().forEach(team -> {
+			result.add(new SwordGameTeamResult(team, team.getMembers().stream().mapToInt(member -> {
+				PlayerDataWrapper data = ((SwordGame) gameManager.getActiveGame()).getPlayerData(member);
+				return data.getKills();
+			}).sum()));
+		});
+		return result;
 	}
 
 	@Override
@@ -109,8 +114,27 @@ public class SwordGameManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onGameEnd(GameEndEvent e) {
-		if (e.getReason() == GameEndReason.WIN) {
+		final List<SwordGameTeamResult> teamScore = getTeamResults();
+		Collections.sort(teamScore, Comparator.comparing(SwordGameTeamResult::getKills).reversed());
+		
+		Bukkit.broadcastMessage(ChatColor.AQUA + ChatColor.BOLD.toString()+ "----- Top teams -----");
+	}
 
+	public class SwordGameTeamResult {
+		protected final Team team;
+		protected final int kills;
+
+		public SwordGameTeamResult(Team team, int kills) {
+			this.team = team;
+			this.kills = kills;
+		}
+
+		public Team getTeam() {
+			return team;
+		}
+
+		public int getKills() {
+			return kills;
 		}
 	}
 }
