@@ -93,6 +93,7 @@ export default class Client {
 									clearTimeout(this.timeout);
 									this.timeout = null;
 								}
+								return;
 							}
 						}
 					}

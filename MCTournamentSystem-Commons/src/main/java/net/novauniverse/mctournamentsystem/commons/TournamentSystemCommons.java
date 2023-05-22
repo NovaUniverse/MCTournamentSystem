@@ -53,7 +53,7 @@ public class TournamentSystemCommons {
 		JSONObject config = tournamentSystemConfigData.optJSONObject("rabbitmq", new JSONObject());
 
 		if (connectionString == null) {
-			connectionString = config.optString("connection_string");
+			connectionString = config.optString("connection_string", null);
 		}
 
 		if (connectionString == null) {

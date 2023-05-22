@@ -29,7 +29,7 @@ public class TournamentRabbitMQManager {
 	public static final String INTERNAL_EXCHANGE = "ts_internal_exchange";
 	public static final String INTERNAL_QUEUE = "ts_internal_queue";
 	public static final String WEBSOCKET_EXCHANGE = "ts_ws_data";
-	
+
 	public static final int EXPIRATION = 1000 * 2; // 2 seconds
 
 	private final String connectionString;
@@ -66,6 +66,12 @@ public class TournamentRabbitMQManager {
 		this.properties = new BasicProperties.Builder().deliveryMode(2).expiration("" + TournamentRabbitMQManager.EXPIRATION).build();
 
 		this.listeners = new ArrayList<>();
+
+		try {
+			this.connect();
+		} catch (Exception e) {
+			Log.error("RabbitMQ", "Failed to connect to RabbitMQ server. " + e.getClass().getName() + " " + e.getMessage());
+		}
 	}
 
 	public Channel getInternalChannel() {
@@ -75,9 +81,9 @@ public class TournamentRabbitMQManager {
 	public Channel getWebsocketAPIChannel() {
 		return websocketAPIChannel;
 	}
-	
+
 	public boolean isConnected() {
-		if(connection != null) {
+		if (connection != null) {
 			return connection.isOpen();
 		}
 		return false;
@@ -166,6 +172,10 @@ public class TournamentRabbitMQManager {
 			}
 		});
 	}
+	
+	public void addMessageReceiver(String route, Consumer<JSONObject> consumer) {
+		listeners.add(new MassageListener(route, consumer));
+	}
 
 	public boolean sendMessage(String route, JSONObject json) {
 		try {
@@ -188,6 +198,10 @@ public class TournamentRabbitMQManager {
 				resultCallback.accept(success);
 			}
 		});
+	}
+	
+	public static JSONObject empty() {
+		return new JSONObject();
 	}
 }
 

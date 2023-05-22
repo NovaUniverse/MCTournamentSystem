@@ -32,6 +32,7 @@ public class SocketAPI {
 
 				AsyncManager.runAsync(() -> {
 					try {
+						Log.trace("SocketAPI", "Sending message with event name " + eventName);
 						channel.basicPublish(TournamentRabbitMQManager.WEBSOCKET_EXCHANGE, "", PROPERTIES, json.toString().getBytes(StandardCharsets.UTF_8));
 					} catch (IOException e) {
 						Log.error("SocketAPI", "Failed to send message with key " + eventName + ". RabbitMQ might not be connected. " + e.getClass().getName() + " " + e.getMessage());

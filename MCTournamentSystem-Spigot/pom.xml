@@ -63,8 +63,8 @@
 							<shadedPattern>net.novauniverse.mctournamentsystem.shaded.com.rabbitmq</shadedPattern>
 						</relocation>
 						<relocation>
-							<pattern>org.apache</pattern>
-							<shadedPattern>net.novauniverse.mctournamentsystem.shaded.org.apache</shadedPattern>
+							<pattern>org.apache.http</pattern>
+							<shadedPattern>net.novauniverse.mctournamentsystem.shaded.org.apache.http</shadedPattern>
 						</relocation>
 					</relocations>
 				</configuration>
@@ -193,7 +193,7 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5.14</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Dependencies -->
 		<dependency>

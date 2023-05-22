@@ -97,6 +97,7 @@ import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.gameengine.NovaCoreGameEngine;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.language.LanguageReader;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.customitems.CustomItemManager;
@@ -463,6 +464,21 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.error("TournamentSystem", "Failed to update dynamic config. Cause: " + e.getClass().getName() + " " + e.getMessage());
+		}
+
+		if (TournamentSystemCommons.hasRabbitMQManager()) {
+			TournamentSystemCommons.getRabbitMQManager().addMessageReceiver("start_game", (data) -> {
+				if (GameManager.getInstance().isEnabled()) {
+					if (GameManager.getInstance().hasGame()) {
+						if (!GameManager.getInstance().getCountdown().hasCountdownStarted() && !GameManager.getInstance().getCountdown().hasCountdownFinished()) {
+							Log.info("TSPluginMessageListnener", "Starting countdown");
+							GameManager.getInstance().getCountdown().startCountdown();
+							Log.info("TSPluginMessageListnener", "Setting reconnect server");
+							TournamentSystemCommons.setActiveServer(TournamentSystem.getInstance().getServerName());
+						}
+					}
+				}
+			});
 		}
 
 		return true;
