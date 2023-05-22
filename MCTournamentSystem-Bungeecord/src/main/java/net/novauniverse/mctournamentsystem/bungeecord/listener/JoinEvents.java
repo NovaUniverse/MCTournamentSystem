@@ -18,6 +18,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPI;
 import net.zeeraa.novacore.commons.log.Log;
 
 public class JoinEvents implements Listener {
@@ -64,22 +65,22 @@ public class JoinEvents implements Listener {
 			}
 		});
 
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 			data.put("username", e.getPlayer().getName());
 			data.put("uuid", e.getPlayer().getUniqueId().toString());
 			data.put("version", e.getPlayer().getPendingConnection().getVersion());
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("proxy_player_join", data);
+			SocketAPI.trySendAsync("proxy_player_join", data);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDisconnect(PlayerDisconnectEvent e) {
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 			data.put("username", e.getPlayer().getName());
 			data.put("uuid", e.getPlayer().getUniqueId().toString());
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("proxy_player_quit", data);
+			SocketAPI.trySendAsync("proxy_player_quit", data);
 		}
 	}
 }

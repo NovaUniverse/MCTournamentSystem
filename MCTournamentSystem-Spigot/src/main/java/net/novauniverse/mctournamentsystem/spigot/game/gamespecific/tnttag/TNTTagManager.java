@@ -14,7 +14,7 @@ import net.novauniverse.games.tnttag.game.event.TNTTagCountdownEvent;
 import net.novauniverse.games.tnttag.game.event.TNTTagPlayerTaggedEvent;
 import net.novauniverse.games.tnttag.game.event.TNTTagRoundEndEvent;
 import net.novauniverse.games.tnttag.game.event.TNTTagRoundStartEvent;
-import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPI;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
 import net.zeeraa.novacore.commons.tasks.Task;
@@ -115,16 +115,16 @@ public class TNTTagManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onTNTTagCountdown(TNTTagCountdownEvent e) {
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 			data.put("time", e.getSecondsLeft());
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("tnttag_time_left", data);
+			SocketAPI.trySendAsync("tnttag_time_left", data);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onTNTTagRoundStart(TNTTagRoundStartEvent e) {
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 			JSONArray taggedPlayers = new JSONArray();
 			e.getTaggedPlayers().forEach(p -> {
@@ -135,24 +135,24 @@ public class TNTTagManager extends NovaModule implements Listener {
 			});
 			data.put("time", e.getRoundTime());
 			data.put("tagged_players", taggedPlayers);
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("tnttag_round_start", data);
+			SocketAPI.trySendAsync("tnttag_round_start", data);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onTNTTagRoundEnd(TNTTagRoundEndEvent e) {
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 			JSONArray eliminatedPlayers = new JSONArray();
 			e.getEliminatedPlayers().forEach(uuid -> eliminatedPlayers.put(uuid.toString()));
 			data.put("eliminated_players", eliminatedPlayers);
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("tnttag_round_end", data);
+			SocketAPI.trySendAsync("tnttag_round_end", data);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onTNTTagPlayerTagged(TNTTagPlayerTaggedEvent e) {
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 			JSONObject player = new JSONObject();
 			player.put("uuid", e.getTaggedPlayer().getUniqueId().toString());
@@ -165,7 +165,7 @@ public class TNTTagManager extends NovaModule implements Listener {
 				attacker.put("name", e.getAttacker().getName());
 				data.put("attacker", attacker);
 			}
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("tnttag_player_tagged", data);
+			SocketAPI.trySendAsync("tnttag_player_tagged", data);
 		}
 	}
 }

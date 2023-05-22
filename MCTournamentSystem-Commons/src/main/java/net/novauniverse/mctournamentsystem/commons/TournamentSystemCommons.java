@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.json.JSONObject;
 
 import net.md_5.bungee.api.ChatColor;
-import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPI;
+import net.novauniverse.mctournamentsystem.commons.rabbitmq.TournamentRabbitMQManager;
 import net.zeeraa.novacore.commons.database.DBConnection;
 import net.zeeraa.novacore.commons.database.DBCredentials;
 import net.zeeraa.novacore.commons.log.Log;
@@ -24,29 +24,9 @@ public class TournamentSystemCommons {
 
 	private static JSONObject tournamentSystemConfigData;
 
-	private static SocketAPI socketAPI = null;
+	private static TournamentRabbitMQManager rabbitMQManager = null;
 
 	private static UUID sessionId = null;
-
-	public static UUID getSessionId() {
-		if (sessionId == null) {
-			sessionId = UUID.randomUUID();
-			Log.debug("TournamentSystemCommons", "Init sessionId as " + sessionId.toString());
-		}
-		return sessionId;
-	}
-
-	public static SocketAPI getSocketAPI() {
-		return socketAPI;
-	}
-
-	public static boolean hasSocketAPI() {
-		return socketAPI != null;
-	}
-
-	public static void setSocketAPI(SocketAPI socketAPI) {
-		TournamentSystemCommons.socketAPI = socketAPI;
-	}
 
 	private static DBConnection dbConnection;
 
@@ -56,6 +36,67 @@ public class TournamentSystemCommons {
 
 	public static DBConnection getDBConnection() {
 		return dbConnection;
+	}
+
+	public static void setupRabbitMQ() {
+		if (rabbitMQManager != null) {
+			Log.info("Tournamentsystem", "Existing RabbitMQ connection detected. Closing it before trying to connect again");
+			rabbitMQManager.close();
+		}
+
+		String connectionString = System.getenv("RABBITMQ_CONNECTION_STRING");
+		String host = System.getenv("RABBITMQ_HOST");
+		String portStr = System.getenv("RABBITMQ_PORT");
+
+		int port = 5672;
+
+		JSONObject config = tournamentSystemConfigData.optJSONObject("rabbitmq", new JSONObject());
+
+		if (connectionString == null) {
+			connectionString = config.optString("connection_string");
+		}
+
+		if (connectionString == null) {
+			if (host == null) {
+				host = config.optString("host", "127.0.0.1");
+			}
+
+			if (portStr != null) {
+				try {
+					port = Integer.parseInt(portStr);
+				} catch (Exception e) {
+					Log.error("TournamentSystem", "Failed to parse port number for rabbitmq: " + portStr + ". Using default: " + port);
+				}
+			} else {
+				port = config.optInt("port", port);
+			}
+		}
+
+		if (connectionString != null) {
+			Log.info("TournamentSystem", "Connecting to RabbitMQ using connection string");
+			rabbitMQManager = new TournamentRabbitMQManager(connectionString);
+		} else if (host != null) {
+			Log.info("TournamentSystem", "Connecting to RabbitMQ " + host + ":" + port);
+			rabbitMQManager = new TournamentRabbitMQManager(host, port);
+		} else {
+			Log.error("TournamentSystem", "No RabbitMQ server configured. Some features will be unavailable");
+		}
+	}
+
+	public static UUID getSessionId() {
+		if (sessionId == null) {
+			sessionId = UUID.randomUUID();
+			Log.debug("TournamentSystemCommons", "Init sessionId as " + sessionId.toString());
+		}
+		return sessionId;
+	}
+
+	public static TournamentRabbitMQManager getRabbitMQManager() {
+		return rabbitMQManager;
+	}
+
+	public static boolean hasRabbitMQManager() {
+		return rabbitMQManager != null;
 	}
 
 	public static DBCredentials tryReadCredentialsFromENV() {

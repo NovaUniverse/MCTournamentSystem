@@ -19,7 +19,7 @@ import net.novauniverse.game.turfwars.game.event.TurfWarsDeathEvent;
 import net.novauniverse.game.turfwars.game.event.TurfWarsTurfChangeEvent;
 import net.novauniverse.game.turfwars.game.team.TurfWarsTeam;
 import net.novauniverse.game.turfwars.game.team.TurfWarsTeamData;
-import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPI;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.kills.KillManager;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
@@ -339,7 +339,7 @@ public class TurfWarsManager extends NovaModule implements Listener {
 	public void onTurfWarsBegin(TurfWarsBeginEvent e) {
 		Bukkit.getOnlinePlayers().forEach(this::setupOverrides);
 
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 			JSONObject team1 = turfwarsTeamDataToJSON(e.getTeam1());
 			JSONObject team2 = turfwarsTeamDataToJSON(e.getTeam2());
@@ -348,19 +348,19 @@ public class TurfWarsManager extends NovaModule implements Listener {
 			data.put("team2", team2);
 			data.put("team_turf_size", e.getTeamTurfSize());
 
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("turfwars_begin", data);
+			SocketAPI.trySendAsync("turfwars_begin", data);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onTurfWarsTurfChange(TurfWarsTurfChangeEvent e) {
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 
 			data.put("team1_turf", e.getTeam1Turf());
 			data.put("team2_turf", e.getTeam2Turf());
 
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("turfwars_turf_change", data);
+			SocketAPI.trySendAsync("turfwars_turf_change", data);
 		}
 	}
 }

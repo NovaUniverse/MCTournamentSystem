@@ -182,9 +182,7 @@ public class GameListeners extends NovaModule implements Listener {
 	public void onGameBegin(GameBeginEvent e) {
 		Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
 
-		if (TournamentSystemCommons.hasSocketAPI()) {
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("game_begin", GameSummary.getGameSummaryAsJSON());
-		}
+		SocketAPI.trySendAsync("game_begin", GameSummary.getGameSummaryAsJSON());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -196,9 +194,8 @@ public class GameListeners extends NovaModule implements Listener {
 			Log.error("Failed to set active server name");
 			ex.printStackTrace();
 		}
-		if (TournamentSystemCommons.hasSocketAPI()) {
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("countdown_start", SocketAPI.emptyResponse());
-		}
+
+		SocketAPI.trySendAsync("countdown_start");
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -215,9 +212,7 @@ public class GameListeners extends NovaModule implements Listener {
 			Log.error("Failed to set active server name");
 			ex.printStackTrace();
 		}
-		if (TournamentSystemCommons.hasSocketAPI()) {
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("game_start", GameSummary.getGameSummaryAsJSON());
-		}
+		SocketAPI.trySendAsync("game_start", GameSummary.getGameSummaryAsJSON());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -226,7 +221,7 @@ public class GameListeners extends NovaModule implements Listener {
 			return;
 		}
 
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 			JSONArray flags = new JSONArray();
 
@@ -250,7 +245,7 @@ public class GameListeners extends NovaModule implements Listener {
 				data.put("trigger_period", rgt.getPeriod());
 			}
 
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("game_trigger_activated", data);
+			SocketAPI.trySendAsync("game_trigger_activated", data);
 		}
 	}
 
@@ -263,7 +258,7 @@ public class GameListeners extends NovaModule implements Listener {
 				// player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1F, 2F);
 				VersionIndependentSound.ORB_PICKUP.play(player, 1F, 2F);
 
-				if (TournamentSystemCommons.hasSocketAPI()) {
+				if (SocketAPI.isAvailable()) {
 					TournamentSystemTeam team = (TournamentSystemTeam) e.getTeam();
 					JSONObject teamData = new JSONObject();
 					JSONArray members = new JSONArray();
@@ -276,7 +271,7 @@ public class GameListeners extends NovaModule implements Listener {
 					teamData.put("color", team.getTeamColor().getName());
 					teamData.put("members", members);
 
-					TournamentSystemCommons.getSocketAPI().sendEventAsync("team_win", teamData);
+					SocketAPI.trySendAsync("team_win", teamData);
 				}
 			}
 		});
@@ -284,14 +279,14 @@ public class GameListeners extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGracePeriodFinish(GracePeriodFinishEvent e) {
-		if (TournamentSystemCommons.hasSocketAPI()) {
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("grace_period_end", SocketAPI.emptyResponse());
+		if (SocketAPI.isAvailable()) {
+			SocketAPI.trySendAsync("grace_period_end");
 		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onTeamEliminated(TeamEliminatedEvent e) {
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			TournamentSystemTeam team = (TournamentSystemTeam) e.getTeam();
 
 			JSONObject data = new JSONObject();
@@ -309,7 +304,7 @@ public class GameListeners extends NovaModule implements Listener {
 			data.put("team", teamData);
 			data.put("placement", e.getPlacement());
 
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("player_eliminated", data);
+			SocketAPI.trySendAsync("player_eliminated", data);
 		}
 	}
 
@@ -332,7 +327,7 @@ public class GameListeners extends NovaModule implements Listener {
 				}
 			}
 
-			if (TournamentSystemCommons.hasSocketAPI()) {
+			if (SocketAPI.isAvailable()) {
 				JSONObject data = new JSONObject();
 				JSONObject playerData = new JSONObject();
 				JSONObject killerData = null;
@@ -350,7 +345,7 @@ public class GameListeners extends NovaModule implements Listener {
 				data.put("placement", e.getPlacement());
 				data.put("reason", e.getReason().name());
 
-				TournamentSystemCommons.getSocketAPI().sendEventAsync("player_eliminated", data);
+				SocketAPI.trySendAsync("player_eliminated", data);
 			}
 		}
 	}
@@ -364,13 +359,13 @@ public class GameListeners extends NovaModule implements Listener {
 			ex.printStackTrace();
 		}
 
-		if (TournamentSystemCommons.hasSocketAPI()) {
+		if (SocketAPI.isAvailable()) {
 			JSONObject data = new JSONObject();
 			data.put("name", e.getGame().getName());
 			data.put("display_name", e.getGame().getDisplayNameFromGameManager());
 			data.put("game_class", e.getGame().getClass().getName());
 			data.put("end_reason", e.getReason());
-			TournamentSystemCommons.getSocketAPI().sendEventAsync("game_end", data);
+			SocketAPI.trySendAsync("game_end", data);
 		}
 
 		if (!disableAudoShutdown) {

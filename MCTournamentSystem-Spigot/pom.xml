@@ -58,6 +58,14 @@
 							<pattern>net.novauniverse.labymodapiplus</pattern>
 							<shadedPattern>net.novauniverse.mctournamentsystem.shaded.net.novauniverse.labymodapiplus</shadedPattern>
 						</relocation>
+						<relocation>
+							<pattern>com.rabbitmq</pattern>
+							<shadedPattern>net.novauniverse.mctournamentsystem.shaded.com.rabbitmq</shadedPattern>
+						</relocation>
+						<relocation>
+							<pattern>org.apache</pattern>
+							<shadedPattern>net.novauniverse.mctournamentsystem.shaded.org.apache</shadedPattern>
+						</relocation>
 					</relocations>
 				</configuration>
 				<executions>
@@ -167,12 +175,6 @@
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
 			<version>3.0.2</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.socket</groupId>
-			<artifactId>socket.io-client</artifactId>
-			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

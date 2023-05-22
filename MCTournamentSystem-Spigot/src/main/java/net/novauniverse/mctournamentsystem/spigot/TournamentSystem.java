@@ -41,7 +41,6 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.api.TournamentSystemAPI;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
-import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPIUtil;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.ResourceUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
@@ -623,7 +622,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
 
-		SocketAPIUtil.setupSocketAPI();
+		TournamentSystemCommons.setupRabbitMQ();
 
 		disableParentPidMonitoring = false;
 		if (config.has("disable_parent_pid_monitoring")) {
@@ -1172,7 +1171,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
 
-		SocketAPIUtil.shutdown();
+		TournamentSystemCommons.getRabbitMQManager().close();
 
 		if (placeholderAPIExpansion != null) {
 			if (placeholderAPIExpansion.isRegistered()) {
