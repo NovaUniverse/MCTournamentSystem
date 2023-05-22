@@ -56,8 +56,8 @@ export default class TournamentSystemWebsocketAPI {
 			}
 		}
 		this.channel = await this.rabbitmq.createChannel()
-		await this.channel.assertQueue('ws_data', { durable: true })
-		this.channel.consume('ws_data', consumer(this.channel))
+		await this.channel.assertQueue('ts_ws_data', { durable: true })
+		this.channel.consume('ts_ws_data', consumer(this.channel))
 	}
 
 	public tryLogin(key: string): boolean {
