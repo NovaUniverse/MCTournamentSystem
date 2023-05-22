@@ -33,5 +33,4 @@ public class OfflineUsernameToUUIDHandler extends APIEndpoint {
 		}
 		return json;
 	}
-
 }
