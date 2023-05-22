@@ -29,6 +29,8 @@ public class TournamentRabbitMQManager {
 	public static final String INTERNAL_EXCHANGE = "ts_internal_exchange";
 	public static final String INTERNAL_QUEUE = "ts_internal_queue";
 	public static final String WEBSOCKET_EXCHANGE = "ts_ws_data";
+	
+	public static final int EXPIRATION = 1000 * 2; // 2 seconds
 
 	private final String connectionString;
 
@@ -61,7 +63,7 @@ public class TournamentRabbitMQManager {
 		this.internalChannel = null;
 		this.websocketAPIChannel = null;
 
-		this.properties = new BasicProperties.Builder().deliveryMode(2).build();
+		this.properties = new BasicProperties.Builder().deliveryMode(2).expiration("" + TournamentRabbitMQManager.EXPIRATION).build();
 
 		this.listeners = new ArrayList<>();
 	}

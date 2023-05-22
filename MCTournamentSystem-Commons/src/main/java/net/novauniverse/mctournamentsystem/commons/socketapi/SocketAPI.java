@@ -14,7 +14,7 @@ import net.zeeraa.novacore.commons.async.AsyncManager;
 import net.zeeraa.novacore.commons.log.Log;
 
 public class SocketAPI {
-	public static final BasicProperties PROPERTIES = new BasicProperties.Builder().deliveryMode(2).build();
+	public static final BasicProperties PROPERTIES = new BasicProperties.Builder().deliveryMode(2).expiration("" + TournamentRabbitMQManager.EXPIRATION).build();
 
 	public static boolean trySendAsync(String eventName) {
 		return SocketAPI.trySendAsync(eventName, new JSONObject());
