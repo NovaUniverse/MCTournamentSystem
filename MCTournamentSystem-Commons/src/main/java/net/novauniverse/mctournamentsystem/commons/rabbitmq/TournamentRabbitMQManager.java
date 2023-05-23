@@ -43,7 +43,7 @@ public class TournamentRabbitMQManager {
 
 	private BasicProperties properties;
 
-	private List<MassageListener> listeners;
+	private List<MessageListener> listeners;
 
 	public TournamentRabbitMQManager(String connectionString) {
 		this(connectionString, null, 0);
@@ -63,7 +63,7 @@ public class TournamentRabbitMQManager {
 		this.internalChannel = null;
 		this.websocketAPIChannel = null;
 
-		this.properties = new BasicProperties.Builder().deliveryMode(2).expiration("" + TournamentRabbitMQManager.EXPIRATION).build();
+		this.properties = new BasicProperties.Builder().deliveryMode(2).expiration("" + TournamentRabbitMQManager.EXPIRATION).type(BuiltinExchangeType.FANOUT.name()).build();
 
 		this.listeners = new ArrayList<>();
 
@@ -146,7 +146,7 @@ public class TournamentRabbitMQManager {
 		internalChannel.queueDeclare(INTERNAL_QUEUE, false, false, false, null);
 		internalChannel.queueBind(INTERNAL_QUEUE, INTERNAL_EXCHANGE, "#");
 
-		internalChannel.basicConsume(INTERNAL_QUEUE, true, new DefaultConsumer(internalChannel) {
+		internalChannel.basicConsume(INTERNAL_QUEUE, false, new DefaultConsumer(internalChannel) {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
 				String route = envelope.getRoutingKey();
@@ -161,6 +161,8 @@ public class TournamentRabbitMQManager {
 					return;
 				}
 
+				Log.trace("RabbitMQ", "Received message " + content + " on route " + route);
+
 				listeners.stream().filter(l -> l.getRoute().equalsIgnoreCase(route)).forEach(listener -> {
 					try {
 						listener.getConsumer().accept(json);
@@ -172,9 +174,9 @@ public class TournamentRabbitMQManager {
 			}
 		});
 	}
-	
+
 	public void addMessageReceiver(String route, Consumer<JSONObject> consumer) {
-		listeners.add(new MassageListener(route, consumer));
+		listeners.add(new MessageListener(route, consumer));
 	}
 
 	public boolean sendMessage(String route, JSONObject json) {
@@ -199,17 +201,17 @@ public class TournamentRabbitMQManager {
 			}
 		});
 	}
-	
+
 	public static JSONObject empty() {
 		return new JSONObject();
 	}
 }
 
-class MassageListener {
+class MessageListener {
 	private final String route;
 	private final Consumer<JSONObject> consumer;
 
-	public MassageListener(String route, Consumer<JSONObject> consumer) {
+	public MessageListener(String route, Consumer<JSONObject> consumer) {
 		this.route = route;
 		this.consumer = consumer;
 	}

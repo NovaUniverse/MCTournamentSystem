@@ -466,21 +466,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			Log.error("TournamentSystem", "Failed to update dynamic config. Cause: " + e.getClass().getName() + " " + e.getMessage());
 		}
 
-		if (TournamentSystemCommons.hasRabbitMQManager()) {
-			TournamentSystemCommons.getRabbitMQManager().addMessageReceiver("start_game", (data) -> {
-				if (GameManager.getInstance().isEnabled()) {
-					if (GameManager.getInstance().hasGame()) {
-						if (!GameManager.getInstance().getCountdown().hasCountdownStarted() && !GameManager.getInstance().getCountdown().hasCountdownFinished()) {
-							Log.info("TSPluginMessageListnener", "Starting countdown");
-							GameManager.getInstance().getCountdown().startCountdown();
-							Log.info("TSPluginMessageListnener", "Setting reconnect server");
-							TournamentSystemCommons.setActiveServer(TournamentSystem.getInstance().getServerName());
-						}
-					}
-				}
-			});
-		}
-
 		return true;
 	}
 
@@ -1079,6 +1064,26 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			} else {
 				Log.error("TournamentSystem", "Failed to update dynamic config");
 			}
+		}
+
+		if (TournamentSystemCommons.hasRabbitMQManager()) {
+			Log.info("TournamentSystem", "Registering RabbitMQ listeners");
+			TournamentSystemCommons.getRabbitMQManager().addMessageReceiver("start_game", (data) -> {
+				if (NovaCore.isNovaGameEngineEnabled()) {
+					if (GameManager.getInstance().isEnabled()) {
+						if (GameManager.getInstance().hasGame()) {
+							if (!GameManager.getInstance().getCountdown().hasCountdownStarted() && !GameManager.getInstance().getCountdown().hasCountdownFinished()) {
+								Log.info("TSPluginMessageListnener", "Starting countdown");
+								GameManager.getInstance().getCountdown().startCountdown();
+								Log.info("TSPluginMessageListnener", "Setting reconnect server");
+								TournamentSystemCommons.setActiveServer(TournamentSystem.getInstance().getServerName());
+							}
+						}
+					}
+				}
+			});
+		} else {
+			Log.warn("TournamentSystem", "RabbitMQ not available");
 		}
 	}
 
