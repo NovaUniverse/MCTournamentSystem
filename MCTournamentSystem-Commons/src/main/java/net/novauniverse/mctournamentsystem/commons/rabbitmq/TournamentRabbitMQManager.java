@@ -27,7 +27,6 @@ import net.zeeraa.novacore.commons.log.Log;
 
 public class TournamentRabbitMQManager {
 	public static final String INTERNAL_EXCHANGE = "ts_internal_exchange";
-	public static final String INTERNAL_QUEUE = "ts_internal_queue";
 	public static final String WEBSOCKET_EXCHANGE = "ts_ws_data";
 
 	public static final int EXPIRATION = 1000 * 2; // 2 seconds
@@ -40,6 +39,8 @@ public class TournamentRabbitMQManager {
 	private Connection connection;
 	private Channel internalChannel;
 	private Channel websocketAPIChannel;
+
+	private String internalQueue = null;
 
 	private BasicProperties properties;
 
@@ -143,10 +144,12 @@ public class TournamentRabbitMQManager {
 		internalChannel.exchangeDeclare(INTERNAL_EXCHANGE, BuiltinExchangeType.FANOUT);
 		websocketAPIChannel.exchangeDeclare(WEBSOCKET_EXCHANGE, BuiltinExchangeType.FANOUT);
 
-		internalChannel.queueDeclare(INTERNAL_QUEUE, false, false, false, null);
-		internalChannel.queueBind(INTERNAL_QUEUE, INTERNAL_EXCHANGE, "#");
+		internalQueue = internalChannel.queueDeclare().getQueue();
+		Log.trace("RabbitMQ", "Internall queue is " + internalQueue);
 
-		internalChannel.basicConsume(INTERNAL_QUEUE, false, new DefaultConsumer(internalChannel) {
+		internalChannel.queueBind(internalQueue, INTERNAL_EXCHANGE, "#");
+
+		internalChannel.basicConsume(internalQueue, false, new DefaultConsumer(internalChannel) {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
 				String route = envelope.getRoutingKey();
@@ -160,8 +163,6 @@ public class TournamentRabbitMQManager {
 					Log.debug("RabbitMQManager", "The previous message that failed to parse had the content: " + content);
 					return;
 				}
-
-				Log.trace("RabbitMQ", "Received message " + content + " on route " + route);
 
 				listeners.stream().filter(l -> l.getRoute().equalsIgnoreCase(route)).forEach(listener -> {
 					try {
