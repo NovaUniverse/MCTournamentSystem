@@ -26,8 +26,8 @@ import net.zeeraa.novacore.commons.async.AsyncManager;
 import net.zeeraa.novacore.commons.log.Log;
 
 public class TournamentRabbitMQManager {
-	public static final String INTERNAL_EXCHANGE = "ts_internal_exchange";
-	public static final String WEBSOCKET_EXCHANGE = "ts_ws_data";
+	public static final String INTERNAL_EXCHANGE = "ts.internal";
+	public static final String WEBSOCKET_EXCHANGE = "ts.wsdata";
 
 	public static final int EXPIRATION = 1000 * 2; // 2 seconds
 
