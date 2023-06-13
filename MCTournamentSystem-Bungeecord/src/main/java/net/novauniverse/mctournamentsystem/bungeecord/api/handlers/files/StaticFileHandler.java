@@ -12,6 +12,7 @@ import java.util.Map;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+// Code based on https://stackoverflow.com/a/42404471
 public class StaticFileHandler implements HttpHandler {
 	private static final Map<String, String> MIME_MAP = new HashMap<>();
 	static {
