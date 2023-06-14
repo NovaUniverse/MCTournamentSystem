@@ -1,41 +1,36 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
-
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.zeeraa.novacore.commons.log.Log;
 
-public class SetMOTDHandler extends APIEndpoint {
-	public SetMOTDHandler() {
+public class MOTDHandler extends TournamentEndpoint {
+	public MOTDHandler() {
 		super(false);
 		setAllowedMethods(HTTPMethod.GET, HTTPMethod.POST);
-		setMethodBasedPermission(HTTPMethod.POST, UserPermission.MANAGE_SETTINGS);
+		setMethodBasedPermission(HTTPMethod.POST, AuthPermission.MANAGE_SETTINGS);
 	}
 
 	@Override
-	public UserPermission getRequiredPermission() {
-		return UserPermission.MANAGE_SETTINGS;
-	}
-
-	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
+		int code = 200;
 
-		if (method == HTTPMethod.GET) {
+		if (request.getMethod() == HTTPMethod.GET) {
 			json.put("success", true);
 			json.put("motd", TournamentSystem.getInstance().getMotd());
 		} else {
-			String motd = IOUtils.toString(exchange.getRequestBody(), StandardCharsets.UTF_8);
+			String motd = IOUtils.toString(request.getRequestBody(), StandardCharsets.UTF_8);
 			Log.info("TournamentSystemAPI", "Setting motd to " + motd);
 			try {
 				TournamentSystem.getInstance().setMotd(motd);
@@ -45,9 +40,10 @@ public class SetMOTDHandler extends APIEndpoint {
 				json.put("error", e.getClass().getName());
 				json.put("message", e.getClass().getName() + " " + e.getMessage());
 				json.put("http_response_code", 500);
+				code = 500;
 			}
 		}
-		
-		return json;
+
+		return new JSONResponse(json, code);
 	}
 }

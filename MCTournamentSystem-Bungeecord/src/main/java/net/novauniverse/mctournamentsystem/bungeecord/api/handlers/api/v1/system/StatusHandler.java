@@ -4,20 +4,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.PlayerData;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.TeamData;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -26,7 +28,7 @@ import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
 import net.zeeraa.novacore.bungeecord.utils.ChatColorRGBMapper;
 
-public class StatusHandler extends APIEndpoint {
+public class StatusHandler extends TournamentEndpoint {
 	public StatusHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.GET);
@@ -38,13 +40,16 @@ public class StatusHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
-		JSONObject loggedInUser = new JSONObject();
-		loggedInUser.put("username", authentication.getUser().getUsername());
-		loggedInUser.put("permissions", authentication.getUser().getPermissionsAsJSON());
-		json.put("user", loggedInUser);
+		if (authentication instanceof APIKeyAuth) {
+			JSONObject loggedInUser = new JSONObject();
+			APIKeyAuth auth = (APIKeyAuth) authentication;
+			loggedInUser.put("username", auth.getUser().getUsername());
+			loggedInUser.put("permissions", auth.getUser().getPermissionsAsJSON());
+			json.put("user", loggedInUser);
+		}
 
 		/* ===== Servers ===== */
 		JSONArray servers = new JSONArray();
@@ -84,6 +89,7 @@ public class StatusHandler extends APIEndpoint {
 			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		}
 
 		List<TeamData> teamDataList = new ArrayList<TeamData>();
@@ -101,6 +107,7 @@ public class StatusHandler extends APIEndpoint {
 			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		}
 
 		JSONArray playerServerData = new JSONArray();
@@ -187,11 +194,11 @@ public class StatusHandler extends APIEndpoint {
 
 			while (rs.next()) {
 				JSONObject entry = new JSONObject();
-				
+
 				entry.put("uuid", rs.getString("uuid"));
 				entry.put("username", rs.getString("username"));
 				entry.put("offline_mode", rs.getBoolean("offline_mode"));
-				
+
 				whitelist.put(entry);
 			}
 
@@ -199,6 +206,7 @@ public class StatusHandler extends APIEndpoint {
 			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		}
 
 		json.put("whitelist", whitelist);
@@ -246,6 +254,6 @@ public class StatusHandler extends APIEndpoint {
 		json.put("active_server", TournamentSystemCommons.getActiveServer());
 		json.put("next_minigame", TournamentSystemCommons.getNextMinigame());
 
-		return json;
+		return new JSONResponse(json);
 	}
 }

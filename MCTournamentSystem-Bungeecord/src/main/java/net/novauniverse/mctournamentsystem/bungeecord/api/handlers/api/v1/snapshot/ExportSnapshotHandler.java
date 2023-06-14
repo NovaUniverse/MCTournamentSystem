@@ -2,26 +2,25 @@ package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snaps
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
-
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-public class ExportSnapshotHandler extends APIEndpoint {
+public class ExportSnapshotHandler extends TournamentEndpoint {
 	public ExportSnapshotHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject result = new JSONObject();
 		JSONArray players = new JSONArray();
 		JSONArray teams = new JSONArray();
@@ -47,10 +46,7 @@ public class ExportSnapshotHandler extends APIEndpoint {
 			rs.close();
 			ps.close();
 		} catch (Exception e) {
-			result.put("success", false);
-			result.put("message", e.getClass().getName() + " " + e.getMessage());
-			result.put("http_response_code", 500);
-			return result;
+			throw e;
 		}
 
 		try {
@@ -72,10 +68,7 @@ public class ExportSnapshotHandler extends APIEndpoint {
 			rs.close();
 			ps.close();
 		} catch (Exception e) {
-			result.put("success", false);
-			result.put("message", e.getClass().getName() + " " + e.getMessage());
-			result.put("http_response_code", 500);
-			return result;
+			throw e;
 		}
 
 		JSONObject data = new JSONObject();
@@ -86,6 +79,6 @@ public class ExportSnapshotHandler extends APIEndpoint {
 		result.put("success", true);
 		result.put("data", data);
 
-		return result;
+		return new JSONResponse(result);
 	}
 }

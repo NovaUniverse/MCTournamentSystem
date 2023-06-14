@@ -4,20 +4,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.PlayerData;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.TeamData;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -25,19 +26,14 @@ import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
 import net.zeeraa.novacore.bungeecord.utils.ChatColorRGBMapper;
 
-public class PublicStatusHandler extends APIEndpoint {
+public class PublicStatusHandler extends TournamentEndpoint {
 	public PublicStatusHandler() {
 		super(false);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override
-	public boolean allowCommentatorAccess() {
-		return false;
-	}
-
-	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
 		/* ===== Servers ===== */
@@ -74,6 +70,7 @@ public class PublicStatusHandler extends APIEndpoint {
 			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		}
 
 		List<TeamData> teamDataList = new ArrayList<TeamData>();
@@ -91,6 +88,7 @@ public class PublicStatusHandler extends APIEndpoint {
 			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		}
 
 		JSONArray playerServerData = new JSONArray();
@@ -164,7 +162,7 @@ public class PublicStatusHandler extends APIEndpoint {
 
 			onlinePlayers.put(p);
 		});
-		
+
 		json.put("offline_mode", TournamentSystem.getInstance().isOfflineMode());
 
 		json.put("online_players", onlinePlayers);
@@ -173,6 +171,6 @@ public class PublicStatusHandler extends APIEndpoint {
 		json.put("next_minigame", TournamentSystemCommons.getNextMinigame());
 		json.put("dynamic_config_url", TournamentSystem.getInstance().getDynamicConfigUrl());
 
-		return json;
+		return new JSONResponse(json);
 	}
 }

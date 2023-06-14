@@ -1,40 +1,35 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
-public class SetScoreboardURLHandler extends APIEndpoint {
-	public SetScoreboardURLHandler() {
+public class ScoreboardURLHandler extends TournamentEndpoint {
+	public ScoreboardURLHandler() {
 		super(false);
 		setAllowedMethods(HTTPMethod.GET, HTTPMethod.POST);
-		setMethodBasedPermission(HTTPMethod.POST, UserPermission.MANAGE_SETTINGS);
+		setMethodBasedPermission(HTTPMethod.POST, AuthPermission.MANAGE_SETTINGS);
 	}
 
 	@Override
-	public UserPermission getRequiredPermission() {
-		return UserPermission.MANAGE_SETTINGS;
-	}
-
-	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, net.novauniverse.apilib.http.auth.Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
+		int code = 200;
 
-		if (method == HTTPMethod.GET) {
+		if (request.getMethod() == HTTPMethod.GET) {
 			json.put("success", true);
 			json.put("scoreboard_url", TournamentSystemCommons.getScoreboardURL());
 		} else {
-			String url = IOUtils.toString(exchange.getRequestBody(), StandardCharsets.UTF_8);
+			String url = IOUtils.toString(request.getRequestBody(), StandardCharsets.UTF_8);
 			Log.info("TournamentSystemAPI", "Setting scoreboard url to " + url);
 			try {
 				TournamentSystemCommons.setScoreboardURL(url);
@@ -47,6 +42,6 @@ public class SetScoreboardURLHandler extends APIEndpoint {
 			}
 		}
 
-		return json;
+		return new JSONResponse(json, code);
 	}
 }

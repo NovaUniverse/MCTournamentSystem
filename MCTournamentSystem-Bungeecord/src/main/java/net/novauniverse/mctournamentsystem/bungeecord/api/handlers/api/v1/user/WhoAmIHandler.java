@@ -1,23 +1,24 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user;
 
-import java.util.Map;
-
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-
-public class WhoAmIHandler extends APIEndpoint {
+public class WhoAmIHandler extends TournamentEndpoint {
 	public WhoAmIHandler() {
 		super(false);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject result = new JSONObject();
 
 		result.put("success", true);
@@ -25,11 +26,21 @@ public class WhoAmIHandler extends APIEndpoint {
 		if (authentication == null) {
 			result.put("logged_in", false);
 		} else {
-			result.put("logged_in", true);
-			result.put("username", authentication.getUser().getUsername());
-			result.put("permissions", authentication.getUser().getPermissionsAsJSON());
+			if (authentication instanceof APIKeyAuth) {
+				APIKeyAuth auth = (APIKeyAuth) authentication;
+				result.put("logged_in", true);
+				result.put("type", "user");
+				result.put("username", auth.getUser().getUsername());
+				result.put("permissions", auth.getUser().getPermissionsAsJSON());
+			} else if (authentication instanceof CommentatorAuth) {
+				CommentatorAuth commentatorAuth = (CommentatorAuth) authentication;
+				result.put("logged_in", true);
+				result.put("type", "commentator");
+				result.put("username", commentatorAuth.getName());
+				result.put("uuid", commentatorAuth.getMinecraftUuid().toString());
+			}
 		}
 
-		return result;
+		return new JSONResponse(result);
 	}
 }

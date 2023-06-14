@@ -2,26 +2,25 @@ package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-import com.sun.net.httpserver.HttpExchange;
-
-public class ExportTeamDataHandler extends APIEndpoint {
+public class ExportTeamDataHandler extends TournamentEndpoint {
 	public ExportTeamDataHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
 		JSONArray teamEntries = new JSONArray();
@@ -53,6 +52,6 @@ public class ExportTeamDataHandler extends APIEndpoint {
 
 		json.put("teams_data", teamEntries);
 
-		return json;
+		return new JSONResponse(json);
 	}
 }

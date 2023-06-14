@@ -1,22 +1,23 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator;
 
-import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONObject;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-public class CommentatorTPHandler extends APIEndpoint {
+public class CommentatorTPHandler extends TournamentEndpoint {
 	public CommentatorTPHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.POST);
@@ -28,28 +29,31 @@ public class CommentatorTPHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
+		int code = 200;
 
 		if (authentication instanceof CommentatorAuth) {
+			CommentatorAuth auth = (CommentatorAuth) authentication;
 			UUID target = null;
 
-			if (params.containsKey("target")) {
+			if (request.getQueryParameters().containsKey("target")) {
 				try {
-					target = UUID.fromString(params.get("target"));
+					target = UUID.fromString(request.getQueryParameters().get("target"));
 				} catch (Exception e) {
 				}
 			}
 
 			if (target != null) {
-				if (((CommentatorAuth) authentication).getMinecraftUserUUID() == null) {
+				if (auth.getMinecraftUuid() == null) {
 					json.put("success", false);
 					json.put("error", "unauthorized");
 					json.put("message", "Guest commentators cant use the tp function. Please ask the staff if you want a full access commentator key");
 					json.put("http_response_code", 401);
+					code = 401;
 				} else {
 
-					UUID uuid = ((CommentatorAuth) authentication).getMinecraftUserUUID();
+					UUID uuid = auth.getMinecraftUuid();
 
 					ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
 					if (player != null) {
@@ -73,14 +77,16 @@ public class CommentatorTPHandler extends APIEndpoint {
 				json.put("error", "bad request");
 				json.put("message", "Missing or invalid parameter: target");
 				json.put("http_response_code", 400);
+				code = 400;
 			}
 		} else {
 			json.put("success", false);
 			json.put("error", "unauthorized");
 			json.put("message", "Invalid auth type: " + authentication.getClass().getName());
 			json.put("http_response_code", 400);
+			code = 400;
 		}
 
-		return json;
+		return new JSONResponse(json, code);
 	}
 }

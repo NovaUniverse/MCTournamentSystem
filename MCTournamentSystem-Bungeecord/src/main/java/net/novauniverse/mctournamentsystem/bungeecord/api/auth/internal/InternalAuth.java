@@ -1,19 +1,25 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.auth.internal;
 
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.TournamentSystemAuth;
 
-public class InternalAuth extends Authentication {
-	private static final APIUser user = new APIUser("InternalAPIAccess", "", UserPermission.generatePermissionList(UserPermission.ADMIN), false);
+public class InternalAuth extends TournamentSystemAuth {
+	public InternalAuth() {
+		super(AuthPermission.admin());
+	}
 
 	@Override
-	public APIUser getUser() {
-		return user;
+	public String getName() {
+		return "Internal";
 	}
 
 	@Override
 	public String getDescriptiveUserName() {
-		return "Internal API user";
+		return "Internal Authentication";
+	}
+	
+	@Override
+	public boolean isHidePlayerIPs() {
+		return false;
 	}
 }

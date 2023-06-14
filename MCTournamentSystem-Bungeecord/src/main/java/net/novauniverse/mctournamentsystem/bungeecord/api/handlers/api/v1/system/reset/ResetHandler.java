@@ -1,34 +1,32 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.reset;
 
 import java.sql.PreparedStatement;
-import java.util.Map;
-
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.MissingTeamFixer;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-public class ResetHandler extends APIEndpoint {
+public class ResetHandler extends TournamentEndpoint {
 	public ResetHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.DELETE);
 	}
 
 	@Override
-	public UserPermission getRequiredPermission() {
-		return UserPermission.CLEAR_DATA;
+	public AuthPermission getRequiredPermission() {
+		return AuthPermission.CLEAR_DATA;
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
-
-		boolean success = true;
 
 		try {
 			String sql = "DELETE FROM teams";
@@ -38,11 +36,7 @@ public class ResetHandler extends APIEndpoint {
 			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-
-			success = false;
-
-			json.put("error", "failed");
-			json.put("message", e.getClass().getName() + " " + e.getMessage());
+			throw e;
 		}
 
 		try {
@@ -53,11 +47,7 @@ public class ResetHandler extends APIEndpoint {
 			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-
-			success = false;
-
-			json.put("error", "failed");
-			json.put("message", e.getClass().getName() + " " + e.getMessage());
+			throw e;
 		}
 
 		try {
@@ -68,17 +58,12 @@ public class ResetHandler extends APIEndpoint {
 			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-
-			success = false;
-
-			json.put("error", "failed");
-			json.put("message", e.getClass().getName() + " " + e.getMessage());
+			throw e;
 		}
 
 		MissingTeamFixer.fixTeams();
 
-		json.put("success", success);
-
-		return json;
+		json.put("success", true);
+		return new JSONResponse(json);
 	}
 }

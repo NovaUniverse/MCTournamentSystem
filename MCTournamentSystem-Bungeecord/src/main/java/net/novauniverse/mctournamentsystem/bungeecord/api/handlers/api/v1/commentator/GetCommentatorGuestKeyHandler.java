@@ -1,29 +1,25 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator;
 
-import java.util.Map;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 
-public class GetCommentatorGuestKeyHandler extends APIEndpoint {
+public class GetCommentatorGuestKeyHandler extends TournamentEndpoint {
 	public GetCommentatorGuestKeyHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override
-	public boolean allowCommentatorAccess() {
-		return true;
-	}
-
-	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 		json.put("commentator_guest_key", TournamentSystem.getInstance().getCommentatorGuestKey().getKey());
-		return json;
+		return new JSONResponse(json);
 	}
 }

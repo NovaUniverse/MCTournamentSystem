@@ -23,6 +23,7 @@ function login(username, password, isStored = false) {
 			password: password
 		}),
 		success: (data) => {
+			//console.log(data);
 			localStorage.setItem("token", data.token);
 
 			if ($("#cbx_remember_me").is(':checked')) {
@@ -38,6 +39,7 @@ function login(username, password, isStored = false) {
 
 			let customRedirectURL = getUrlParameter("redirect");
 
+			debugger;
 			window.location = customRedirectURL == null ? "/app/" : decodeURIComponent(customRedirectURL);
 		},
 		error: (xhr, ajaxOptions, thrownError) => {

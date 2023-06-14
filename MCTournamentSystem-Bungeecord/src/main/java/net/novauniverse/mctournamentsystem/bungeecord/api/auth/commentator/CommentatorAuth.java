@@ -1,52 +1,44 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator;
 
+import java.util.Collections;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.TournamentSystemAuth;
 
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.IPVisibilitySettings;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
-
-public class CommentatorAuth extends Authentication implements IPVisibilitySettings {
-	public static final APIUser CommentatorUser = new APIUser("Commentator", "", UserPermission.blank(), true);
-
+public class CommentatorAuth extends TournamentSystemAuth {
+	private String name;
 	private String key;
-	private UUID minecraftUserUUID;
-	private String identifier;
 
-	public CommentatorAuth(String key, UUID minecraftUserUUID, String identifier) {
+	private UUID minecraftUuid;
+
+	public CommentatorAuth(String name, String key, UUID minecraftUuid) {
+		super(Collections.emptyList());
+
+		this.name = name;
 		this.key = key;
-		this.minecraftUserUUID = minecraftUserUUID;
-		this.identifier = identifier;
+		this.minecraftUuid = minecraftUuid;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getDescriptiveUserName() {
+		return "Commentator key for " + name;
 	}
 
 	public String getKey() {
 		return key;
 	}
 
-	@Nullable
-	public UUID getMinecraftUserUUID() {
-		return minecraftUserUUID;
-	}
-
-	@Override
-	public APIUser getUser() {
-		return CommentatorUser;
+	public UUID getMinecraftUuid() {
+		return minecraftUuid;
 	}
 
 	@Override
 	public boolean isHidePlayerIPs() {
 		return true;
-	}
-
-	@Override
-	public String getDescriptiveUserName() {
-		return "Commentator " + identifier;
 	}
 }

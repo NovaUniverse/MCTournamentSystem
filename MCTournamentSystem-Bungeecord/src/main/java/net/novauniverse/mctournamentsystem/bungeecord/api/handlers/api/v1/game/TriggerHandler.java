@@ -1,52 +1,49 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game;
 
-import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONObject;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.sun.net.httpserver.HttpExchange;
 import net.md_5.bungee.api.ProxyServer;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-public class TriggerHandler extends APIEndpoint {
+public class TriggerHandler extends TournamentEndpoint {
 	public TriggerHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.POST);
 	}
 
 	@Override
-	public boolean allowCommentatorAccess() {
-		return false;
+	public AuthPermission getRequiredPermission() {
+		return AuthPermission.MANAGE_TRIGGERS;
 	}
 
 	@Override
-	public UserPermission getRequiredPermission() {
-		return UserPermission.MANAGE_TRIGGERS;
-	}
-
-	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
+		int code = 200;
 
-		if (params.containsKey("triggerId")) {
-			if (params.containsKey("sessionId")) {
+		if (request.getQueryParameters().containsKey("triggerId")) {
+			if (request.getQueryParameters().containsKey("sessionId")) {
 				if (ProxyServer.getInstance().getOnlineCount() == 0) {
 					json.put("success", false);
 					json.put("error", "no_players");
 					json.put("message", "No players online to use for plugin message channel. Try again when there are players online");
 					json.put("http_response_code", 409);
 				} else {
-					String name = params.get("triggerId");
+					String name = request.getQueryParameters().get("triggerId");
 					UUID sessionId = null;
 					try {
-						sessionId = UUID.fromString(params.get("sessionId"));
+						sessionId = UUID.fromString(request.getQueryParameters().get("sessionId"));
 					} catch (IllegalArgumentException e) {
 					}
 					UUID requestUUID = UUID.randomUUID();
@@ -69,6 +66,7 @@ public class TriggerHandler extends APIEndpoint {
 						json.put("error", "bad request");
 						json.put("message", "sessionId is not a valid uuid");
 						json.put("http_response_code", 400);
+						code = 400;
 					}
 				}
 			} else {
@@ -76,14 +74,16 @@ public class TriggerHandler extends APIEndpoint {
 				json.put("error", "bad request");
 				json.put("message", "Missing or invalid parameter: sessionId");
 				json.put("http_response_code", 400);
+				code = 400;
 			}
 		} else {
 			json.put("success", false);
 			json.put("error", "bad request");
 			json.put("message", "Missing or invalid parameter: triggerId");
 			json.put("http_response_code", 400);
+			code = 400;
 		}
-
-		return json;
+		
+		return new JSONResponse(json, code);
 	}
 }

@@ -1,17 +1,16 @@
-package net.novauniverse.mctournamentsystem.bungeecord.api.auth;
+package net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKey;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 
 public class APIKeyStore {
-	private static final List<APIKey> apiKeys = new ArrayList<APIKey>();
+	private static final List<APIKeyAuth> apiKeys = new ArrayList<APIKeyAuth>();
 	private static final List<CommentatorAuth> commentatorKeys = new ArrayList<CommentatorAuth>();
 
-	public static List<APIKey> getApiKeys() {
+	public static List<APIKeyAuth> getApiKeys() {
 		return apiKeys;
 	}
 
@@ -19,7 +18,7 @@ public class APIKeyStore {
 		return commentatorKeys;
 	}
 
-	public static void addApiKey(APIKey key) {
+	public static void addApiKey(APIKeyAuth key) {
 		apiKeys.add(key);
 	}
 
@@ -28,7 +27,7 @@ public class APIKeyStore {
 	}
 
 	@Nullable
-	public static APIKey getAPIKey(String key) {
+	public static APIKeyAuth getAPIKey(String key) {
 		return apiKeys.stream().filter(k -> k.getKey().equals(key)).findFirst().orElse(null);
 	}
 
