@@ -319,7 +319,7 @@ function addPlayer(uuid, username, teamNumber, metadata = {}) {
 	newPlayer.find(".player-username").text(username);
 	newPlayer.find(".metadata-input").val(JSON.stringify(metadata));
 
-	newPlayer.find(".player-avatar").attr("src", "https://crafatar.com/avatars/" + uuid);
+	newPlayer.find(".player-avatar").attr("src", "https://mc-heads.net/avatar/" + uuid);
 
 	newPlayer.find(".btn-remove-player").on("click", function () {
 		$(this).parent().parent().remove();
@@ -356,7 +356,7 @@ function searchPlayerOffline() {
 			$("#preview_uuid").text(uuid);
 			$("#preview_username").text(username);
 
-			$("#preview_image").attr("src", "https://crafatar.com/avatars/bd482739-767c-45dc-a1f8-c33c40530952");
+			$("#preview_image").attr("src", "https://mc-heads.net/avatar/bd482739-767c-45dc-a1f8-c33c40530952");
 
 			$("#btn_add_player").prop('disabled', false);
 
@@ -387,7 +387,7 @@ function searchPlayer() {
 					toastr.warning("Warning: This player has to be in team 4. NO EXCEPTIONS");
 				}
 
-				$("#preview_image").attr("src", "https://crafatar.com/avatars/" + uuid);
+				$("#preview_image").attr("src", "https://mc-heads.net/avatar/" + uuid);
 				$("#preview_uuid").text(uuid);
 				$("#preview_username").text(realUsername);
 

@@ -1,37 +1,35 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
-
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
-public class UploadTeamHandler extends APIEndpoint {
+public class UploadTeamHandler extends TournamentEndpoint {
 	public UploadTeamHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.POST);
 	}
 
 	@Override
-	public UserPermission getRequiredPermission() {
-		return UserPermission.EDIT_TEAMS;
+	public AuthPermission getRequiredPermission() {
+		return AuthPermission.EDIT_TEAMS;
 	}
 
 	private void createPlayerIfNotExists(UUID uuid, String username) throws SQLException {
@@ -62,23 +60,21 @@ public class UploadTeamHandler extends APIEndpoint {
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject result = new JSONObject();
-
 		JSONArray teamData = null;
-
 		boolean failed = false;
+		int code = 200;
 
 		try {
-			String body = IOUtils.toString(exchange.getRequestBody(), StandardCharsets.UTF_8);
-
-			teamData = new JSONArray(body);
+			teamData = new JSONArray(request.getBody());
 		} catch (Exception e) {
 			result.put("success", false);
 			result.put("error", "bad_request");
 			result.put("message", "Missing or invalid json data");
 			result.put("exception", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
 			result.put("http_response_code", 400);
+			code = 400;
 			failed = true;
 		}
 
@@ -131,6 +127,7 @@ public class UploadTeamHandler extends APIEndpoint {
 				result.put("error", "failed");
 				result.put("message", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
 				result.put("http_response_code", 500);
+				code = 500;
 			}
 		}
 
@@ -165,6 +162,7 @@ public class UploadTeamHandler extends APIEndpoint {
 				result.put("error", "failed");
 				result.put("message", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
 				result.put("http_response_code", 500);
+				code = 500;
 			}
 		}
 
@@ -184,10 +182,11 @@ public class UploadTeamHandler extends APIEndpoint {
 				result.put("error", "failed");
 				result.put("message", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
 				result.put("http_response_code", 500);
+				code = 500;
 				break;
 			}
 		}
 
-		return result;
+		return new JSONResponse(result, code);
 	}
 }

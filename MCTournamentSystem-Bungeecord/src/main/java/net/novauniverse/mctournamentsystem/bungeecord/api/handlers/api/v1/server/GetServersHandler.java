@@ -1,24 +1,24 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server;
 
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 
-public class GetServersHandler extends APIEndpoint {
+public class GetServersHandler extends TournamentEndpoint {
 	public GetServersHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
 		JSONArray servers = new JSONArray();
@@ -47,7 +47,7 @@ public class GetServersHandler extends APIEndpoint {
 
 		json.put("success", true);
 		json.put("servers", servers);
-
-		return json;
+		
+		return new JSONResponse(json);
 	}
 }

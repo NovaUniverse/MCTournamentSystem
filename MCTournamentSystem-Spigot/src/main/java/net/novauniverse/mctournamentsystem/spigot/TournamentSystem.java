@@ -41,7 +41,6 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.api.TournamentSystemAPI;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
-import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPIUtil;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.ResourceUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
@@ -98,6 +97,7 @@ import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.gameengine.NovaCoreGameEngine;
+import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.language.LanguageReader;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.customitems.CustomItemManager;
@@ -623,7 +623,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
 
-		SocketAPIUtil.setupSocketAPI();
+		TournamentSystemCommons.setupRabbitMQ();
 
 		disableParentPidMonitoring = false;
 		if (config.has("disable_parent_pid_monitoring")) {
@@ -1065,6 +1065,26 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				Log.error("TournamentSystem", "Failed to update dynamic config");
 			}
 		}
+
+		if (TournamentSystemCommons.hasRabbitMQManager()) {
+			Log.info("TournamentSystem", "Registering RabbitMQ listeners");
+			TournamentSystemCommons.getRabbitMQManager().addMessageReceiver("start_game", (data) -> {
+				if (NovaCore.isNovaGameEngineEnabled()) {
+					if (GameManager.getInstance().isEnabled()) {
+						if (GameManager.getInstance().hasGame()) {
+							if (!GameManager.getInstance().getCountdown().hasCountdownStarted() && !GameManager.getInstance().getCountdown().hasCountdownFinished()) {
+								Log.info("TSPluginMessageListnener", "Starting countdown");
+								GameManager.getInstance().getCountdown().startCountdown();
+								Log.info("TSPluginMessageListnener", "Setting reconnect server");
+								TournamentSystemCommons.setActiveServer(TournamentSystem.getInstance().getServerName());
+							}
+						}
+					}
+				}
+			});
+		} else {
+			Log.warn("TournamentSystem", "RabbitMQ not available");
+		}
 	}
 
 	public void killStatusReporting() {
@@ -1172,7 +1192,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll((Plugin) this);
 
-		SocketAPIUtil.shutdown();
+		TournamentSystemCommons.getRabbitMQManager().close();
 
 		if (placeholderAPIExpansion != null) {
 			if (placeholderAPIExpansion.isRegistered()) {

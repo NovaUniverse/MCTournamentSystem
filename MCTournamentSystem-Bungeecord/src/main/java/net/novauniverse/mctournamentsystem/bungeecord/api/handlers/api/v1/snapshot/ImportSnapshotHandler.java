@@ -1,50 +1,49 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.snapshot;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Map;
-import org.apache.commons.io.IOUtils;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.enums.HTTPResponseCode;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.log.Log;
 
-public class ImportSnapshotHandler extends APIEndpoint {
+public class ImportSnapshotHandler extends TournamentEndpoint {
 	public ImportSnapshotHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.POST);
 	}
 
 	@Override
-	public UserPermission getRequiredPermission() {
-		return UserPermission.IMPORT_SCORE_SNAPSHOT;
+	public AuthPermission getRequiredPermission() {
+		return AuthPermission.IMPORT_SCORE_SNAPSHOT;
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject result = new JSONObject();
-
 		JSONObject data = null;
+		int code = 200;
 
 		try {
-			String body = IOUtils.toString(exchange.getRequestBody(), StandardCharsets.UTF_8);
-
-			data = new JSONObject(body);
+			data = new JSONObject(request.getBody());
 		} catch (Exception e) {
 			result.put("success", false);
 			result.put("error", "bad_request");
 			result.put("message", "Missing or invalid json data");
 			result.put("exception", e.getClass().getName() + " " + ExceptionUtils.getMessage(e));
 			result.put("http_response_code", 400);
-			return result;
+			return new JSONResponse(result, HTTPResponseCode.BAD_REQUEST);
 		}
 
 		try {
@@ -92,7 +91,9 @@ public class ImportSnapshotHandler extends APIEndpoint {
 			result.put("success", false);
 			result.put("message", "Failed to import snapshot. " + e.getClass().getName() + " " + e.getMessage());
 			result.put("http_response_code", 400);
+			code = 400;
 		}
-		return result;
+
+		return new JSONResponse(data, code);
 	}
 }

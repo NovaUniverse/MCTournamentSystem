@@ -1,29 +1,29 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1;
 
-import java.util.Map;
-
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 
-public class GetServiceProvidersHandler extends APIEndpoint {
+public class GetServiceProvidersHandler extends TournamentEndpoint {
 	public GetServiceProvidersHandler() {
 		super(false);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 	
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
-		JSONObject result = new JSONObject();
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
+JSONObject result = new JSONObject();
 		
 		result.put("mojang_api_proxy", TournamentSystem.getInstance().getMojangAPIProxyURL());
 		result.put("chat_filter", TournamentSystem.getInstance().getChatFilterURL());
 		result.put("skin_render_api", TournamentSystem.getInstance().getSkinRenderAPIUrl());
 		
-		return result;
+		return new JSONResponse(result);
 	}
 }

@@ -18,11 +18,12 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.novauniverse.mctournamentsystem.bungeecord.api.WebServer;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.APIKeyStore;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKey;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth.Type;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyStore;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere.SendHereCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.timeout.TimeoutCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
@@ -42,7 +43,6 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.config.InternetCafeOptions;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
-import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPIUtil;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.LinuxUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
@@ -314,7 +314,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		chatListener = new ChatListener();
 
-		commentatorGuestKey = new CommentatorAuth(UUID.randomUUID().toString(), null, "guest");
+		commentatorGuestKey = new CommentatorAuth(UUID.randomUUID().toString(), "guest", null);
 
 		quickMessages = new ArrayList<>();
 
@@ -386,7 +386,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		TournamentSystemCommons.setTournamentSystemConfigData(config);
 
-		SocketAPIUtil.setupSocketAPI();
+		TournamentSystemCommons.setupRabbitMQ();
 
 		autoAppendAikarFlags = config.optBoolean("auto_append_aikar_flags", false);
 
@@ -584,7 +584,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 					continue;
 				}
 
-				APIKeyStore.addCommentatorKey(new CommentatorAuth(key, uuid, identifier));
+				APIKeyStore.addCommentatorKey(new CommentatorAuth(identifier, key, uuid));
 			}
 		}
 		for (int i = 0; i < webUsers.length(); i++) {
@@ -594,13 +594,13 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 			String username = user.getString("username");
 			String password = user.getString("password");
-			List<UserPermission> permissions = new ArrayList<UserPermission>();
+			List<AuthPermission> permissions = new ArrayList<AuthPermission>();
 
 			JSONArray permissionStrings = user.getJSONArray("permissions");
 			for (int j = 0; j < permissionStrings.length(); j++) {
 				String permissionName = permissionStrings.getString(j);
 				try {
-					permissions.add(UserPermission.valueOf(permissionName));
+					permissions.add(AuthPermission.valueOf(permissionName));
 				} catch (Exception e) {
 					Log.error("TournamentSystem", "Invalid permission " + permissionName + " for user " + username);
 				}
@@ -623,7 +623,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 				if (user == null) {
 					Log.error("TournamentSystem", "Invalid user " + userName + " configured for api key");
 				} else {
-					APIKeyStore.addApiKey(new APIKey(key, user));
+					APIKeyStore.addApiKey(new APIKeyAuth(key, user, Type.API_KEY));
 				}
 			}
 			Log.info("TournamentSystem", APIKeyStore.getApiKeys().size() + " api keys loaded");
@@ -793,7 +793,9 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
-		SocketAPIUtil.shutdown();
+		if (TournamentSystemCommons.hasRabbitMQManager()) {
+			TournamentSystemCommons.getRabbitMQManager().close();
+		}
 
 		managedServers.stream().filter(ManagedServer::isRunning).forEach(ManagedServer::stop);
 		try {

@@ -1,29 +1,30 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist;
 
 import java.sql.PreparedStatement;
-import java.util.Map;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 
-public class ClearWhitelistHandler extends APIEndpoint {
+public class ClearWhitelistHandler extends TournamentEndpoint {
 	public ClearWhitelistHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.POST);
 	}
 	
 	@Override
-	public UserPermission getRequiredPermission() {
-		return UserPermission.MANAGE_WHITELIST;
+	public AuthPermission getRequiredPermission() {
+		return AuthPermission.MANAGE_WHITELIST;
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
 		String sql = "TRUNCATE whitelist";
@@ -33,6 +34,6 @@ public class ClearWhitelistHandler extends APIEndpoint {
 
 		json.put("success", true);
 
-		return json;
+		return new JSONResponse(json);
 	}
 }

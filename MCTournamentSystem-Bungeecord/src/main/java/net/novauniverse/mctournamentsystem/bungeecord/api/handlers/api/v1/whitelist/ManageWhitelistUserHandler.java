@@ -2,37 +2,39 @@ package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.white
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpExchange;
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserPermission;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.zeeraa.novacore.commons.api.novauniverse.NovaUniverseAPI;
 import net.zeeraa.novacore.commons.api.novauniverse.data.MojangPlayerProfile;
 import net.zeeraa.novacore.commons.log.Log;
 
-public class ManageWhitelistUserHandler extends APIEndpoint {
+public class ManageWhitelistUserHandler extends TournamentEndpoint {
 	public ManageWhitelistUserHandler() {
 		super(false);
 
 		setAllowedMethods(HTTPMethod.PUT, HTTPMethod.DELETE, HTTPMethod.GET);
 
-		setMethodBasedPermission(HTTPMethod.PUT, UserPermission.MANAGE_WHITELIST);
-		setMethodBasedPermission(HTTPMethod.DELETE, UserPermission.MANAGE_WHITELIST);
+		setMethodBasedPermission(HTTPMethod.PUT, AuthPermission.MANAGE_WHITELIST);
+		setMethodBasedPermission(HTTPMethod.DELETE, AuthPermission.MANAGE_WHITELIST);
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
+		int code = 200;
 
-		if (method == HTTPMethod.GET) {
+		if (request.getMethod() == HTTPMethod.GET) {
 			JSONArray data = new JSONArray();
 
 			String sql = "SELECT * FROM whitelist";
@@ -56,8 +58,8 @@ public class ManageWhitelistUserHandler extends APIEndpoint {
 			json.put("success", true);
 			json.put("users", data);
 		} else {
-			if (params.containsKey("uuid")) {
-				UUID uuid = UUID.fromString(params.get("uuid"));
+			if (request.getQueryParameters().containsKey("uuid")) {
+				UUID uuid = UUID.fromString(request.getQueryParameters().get("uuid"));
 
 				String sql;
 
@@ -65,13 +67,13 @@ public class ManageWhitelistUserHandler extends APIEndpoint {
 				String name = null;
 				boolean offlineMode = false;
 
-				if (method == HTTPMethod.PUT) {
-					if (params.containsKey("username")) {
-						name = params.get("username");
+				if (request.getMethod() == HTTPMethod.PUT) {
+					if (request.getQueryParameters().containsKey("username")) {
+						name = request.getQueryParameters().get("username");
 					}
 
-					if (params.containsKey("offline_mode")) {
-						offlineMode = params.get("offline_mode").equalsIgnoreCase("true");
+					if (request.getQueryParameters().containsKey("offline_mode")) {
+						offlineMode = request.getQueryParameters().get("offline_mode").equalsIgnoreCase("true");
 					}
 
 					isInsert = true;
@@ -110,9 +112,10 @@ public class ManageWhitelistUserHandler extends APIEndpoint {
 				json.put("error", "bad_request");
 				json.put("message", "missing parameter: uuid");
 				json.put("http_response_code", 400);
+				code = 400;
 			}
 		}
 
-		return json;
+		return new JSONResponse(json, code);
 	}
 }

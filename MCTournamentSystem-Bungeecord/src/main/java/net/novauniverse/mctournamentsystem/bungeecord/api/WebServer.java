@@ -2,15 +2,16 @@ package net.novauniverse.mctournamentsystem.bungeecord.api;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.BindException;
 
-import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpHandler;
-
+import net.novauniverse.apilib.http.HTTPServer;
+import net.novauniverse.apilib.http.enums.ExceptionMode;
+import net.novauniverse.apilib.http.enums.StandardResponseType;
+import net.novauniverse.apilib.http.middleware.middlewares.CorsAnywhereMiddleware;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.internal.InternalAuth;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuthProvider;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuthProvider;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.internal.InternalAuthProvider;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.GetServiceProvidersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.chat.GetChatLogHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CommentatorTPHandler;
@@ -38,9 +39,9 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.SecurityCheckHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ShutdownHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.StatusHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetMOTDHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetScoreboardURLHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.SetTournamentNameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.MOTDHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.ScoreboardURLHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.TournamentNameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.dynamicconfig.ReloadDynamicConfig;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.reset.ResetHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web.GetCustomThemesHandler;
@@ -50,178 +51,127 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.U
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.LoginHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.WhoAmIHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.util.OfflineUsernameToUUIDHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ManageWhitelistUserHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ClearWhitelistHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ManageWhitelistUserHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.StaticFileHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.FileNotFoundHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.internal.ManagedServerStateReportingEndpoint;
-import net.zeeraa.novacore.commons.log.Log;
 
-// If you get warnings here in eclipse follow this guide https://stackoverflow.com/a/25945740
 public class WebServer {
 	private int port;
-	private HttpServer httpServer;
-	private boolean hasShutDown;
+	private HTTPServer server;
 
-	public static final InternalAuth InternalAPIAuthentication = new InternalAuth();
-
-	public WebServer(int port, File appRoot) throws IOException {
+	public WebServer(int port, File appRoot) throws BindException, IOException {
 		this.port = port;
-		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
-		hasShutDown = false;
+		this.server = new HTTPServer(port);
 
-		// Redirect
-		createContext("/", new FileNotFoundHandler(appRoot));
+		server.addMiddleware(new CorsAnywhereMiddleware());
+		server.addAuthenticationProvider(new InternalAuthProvider());
+		server.addAuthenticationProvider(new APIKeyAuthProvider());
+		server.addAuthenticationProvider(new CommentatorAuthProvider());
+
+		server.setStandardResponseType(StandardResponseType.JSON);
+		server.setExceptionMode(ExceptionMode.MESSAGE);
+
+		// Redirect and favicon
+		server.getHttpServer().createContext("/", new FileNotFoundHandler(appRoot));
+		server.getHttpServer().createContext("/favicon.ico", new FaviconHandler(TournamentSystem.getInstance().getDataFolder().getPath()));
 
 		// Service providers
-		createContext("/api/v1/service_providers", new GetServiceProvidersHandler());
+		server.addEndpoint("/api/v1/service_providers", new GetServiceProvidersHandler());
 
 		// System
-		createContext("/api/v1/system/status", new StatusHandler());
-		createContext("/api/v1/system/broadcast", new BroadcastHandler());
-		createContext("/api/v1/system/quick_message", new QuickMessageHandler());
-		createContext("/api/v1/system/shutdown", new ShutdownHandler());
-		createContext("/api/v1/system/security_check", new SecurityCheckHandler());
-		createContext("/api/v1/system/mode", new ModeHandler());
+		server.addEndpoint("/api/v1/system/status", new StatusHandler());
+		server.addEndpoint("/api/v1/system/broadcast", new BroadcastHandler());
+		server.addEndpoint("/api/v1/system/quick_message", new QuickMessageHandler());
+		server.addEndpoint("/api/v1/system/shutdown", new ShutdownHandler());
+		server.addEndpoint("/api/v1/system/security_check", new SecurityCheckHandler());
+		server.addEndpoint("/api/v1/system/mode", new ModeHandler());
 
-		createContext("/api/v1/system/reset", new ResetHandler());
+		server.addEndpoint("/api/v1/system/reset", new ResetHandler());
 
-		createContext("/api/v1/system/settings/tournament_name", new SetTournamentNameHandler());
-		createContext("/api/v1/system/settings/scoreboard_url", new SetScoreboardURLHandler());
-		createContext("/api/v1/system/settings/motd", new SetMOTDHandler());
+		server.addEndpoint("/api/v1/system/settings/tournament_name", new TournamentNameHandler());
+		server.addEndpoint("/api/v1/system/settings/scoreboard_url", new ScoreboardURLHandler());
+		server.addEndpoint("/api/v1/system/settings/motd", new MOTDHandler());
 
-		createContext("/api/v1/system/web/phpmyadmin_url", new PHPMyAdminUrlHandler());
-		createContext("/api/v1/system/web/custom_themes", new GetCustomThemesHandler());
+		server.addEndpoint("/api/v1/system/web/phpmyadmin_url", new PHPMyAdminUrlHandler());
+		server.addEndpoint("/api/v1/system/web/custom_themes", new GetCustomThemesHandler());
 
 		// Dynamic config
-		createContext("/api/v1/system/dynamicconfig/reload", new ReloadDynamicConfig());
+		server.addEndpoint("/api/v1/system/dynamicconfig/reload", new ReloadDynamicConfig());
 
 		// Team
-		createContext("/api/v1/team/export_team_data", new ExportTeamDataHandler());
-		createContext("/api/v1/team/upload_team", new UploadTeamHandler());
+		server.addEndpoint("/api/v1/team/export_team_data", new ExportTeamDataHandler());
+		server.addEndpoint("/api/v1/team/upload_team", new UploadTeamHandler());
 
 		// Send
-		createContext("/api/v1/send/send_player", new SendPlayerHandler());
-		createContext("/api/v1/send/send_players", new SendPlayersHandler());
+		server.addEndpoint("/api/v1/send/send_player", new SendPlayerHandler());
+		server.addEndpoint("/api/v1/send/send_players", new SendPlayersHandler());
 
 		// Game
-		createContext("/api/v1/game/start_game", new StartGameHandler());
-		createContext("/api/v1/game/trigger", new TriggerHandler());
-		createContext("/api/v1/game/triggers", new GetTriggersHandler());
+		server.addEndpoint("/api/v1/game/start_game", new StartGameHandler());
+		server.addEndpoint("/api/v1/game/trigger", new TriggerHandler());
+		server.addEndpoint("/api/v1/game/triggers", new GetTriggersHandler());
 
 		// User
-		createContext("/api/v1/user/whoami", new WhoAmIHandler());
-		createContext("/api/v1/user/login", new LoginHandler());
+		server.addEndpoint("/api/v1/user/whoami", new WhoAmIHandler());
+		server.addEndpoint("/api/v1/user/login", new LoginHandler());
 
 		// Staff
-		createContext("/api/v1/staff", new StaffHandler());
+		server.addEndpoint("/api/v1/staff", new StaffHandler());
 
 		// Whitelist
-		createContext("/api/v1/whitelist/users", new ManageWhitelistUserHandler());
-		createContext("/api/v1/whitelist/clear", new ClearWhitelistHandler());
+		server.addEndpoint("/api/v1/whitelist/users", new ManageWhitelistUserHandler());
+		server.addEndpoint("/api/v1/whitelist/clear", new ClearWhitelistHandler());
 
 		// Commentator
-		createContext("/api/v1/commentator/tp", new CommentatorTPHandler());
-		createContext("/api/v1/commentator/get_guest_key", new GetCommentatorGuestKeyHandler());
+		server.addEndpoint("/api/v1/commentator/tp", new CommentatorTPHandler());
+		server.addEndpoint("/api/v1/commentator/get_guest_key", new GetCommentatorGuestKeyHandler());
 
 		// Public
-		createContext("/api/v1/utils/offline_username_to_uuid", new OfflineUsernameToUUIDHandler());
+		server.addEndpoint("/api/v1/utils/offline_username_to_uuid", new OfflineUsernameToUUIDHandler());
 
 		// Public
-		createContext("/api/v1/public/status", new PublicStatusHandler());
+		server.addEndpoint("/api/v1/public/status", new PublicStatusHandler());
 
 		// Snapshots
-		createContext("/api/v1/snapshot/export", new ExportSnapshotHandler());
-		createContext("/api/v1/snapshot/import", new ImportSnapshotHandler());
-
+		server.addEndpoint("/api/v1/snapshot/export", new ExportSnapshotHandler());
+		server.addEndpoint("/api/v1/snapshot/import", new ImportSnapshotHandler());
+		
 		// Chat
-		createContext("/api/v1/chat/log", new GetChatLogHandler());
+		server.addEndpoint("/api/v1/chat/log", new GetChatLogHandler());
 
 		// Next minigame
-		createContext("/api/v1/next_minigame", new NextMinigameHandler());
+		server.addEndpoint("/api/v1/next_minigame", new NextMinigameHandler());
 
 		// Servers
-		createContext("/api/v1/servers/get_servers", new GetServersHandler());
-		createContext("/api/v1/servers/start", new StartServersHandler());
-		createContext("/api/v1/servers/stop", new StopServersHandler());
-		createContext("/api/v1/servers/logs", new GetServersLogsHandler());
-		createContext("/api/v1/servers/log_session_id", new GetServersLogSessionIDHandler());
-		createContext("/api/v1/servers/run_command", new SendServerCommandHandler());
+		server.addEndpoint("/api/v1/servers/get_servers", new GetServersHandler());
+		server.addEndpoint("/api/v1/servers/start", new StartServersHandler());
+		server.addEndpoint("/api/v1/servers/stop", new StopServersHandler());
+		server.addEndpoint("/api/v1/servers/logs", new GetServersLogsHandler());
+		server.addEndpoint("/api/v1/servers/log_session_id", new GetServersLogSessionIDHandler());
+		server.addEndpoint("/api/v1/servers/run_command", new SendServerCommandHandler());
 
 		// Skinrestorer
-		createContext("/api/skinrestorer/get_user_skin", new GetSkinrestorerSkinHandler());
+		server.addEndpoint("/api/skinrestorer/get_user_skin", new GetSkinrestorerSkinHandler());
 
 		// Internal
-		createContext("/api/internal/server/state_reporting", new ManagedServerStateReportingEndpoint());
+		server.getHttpServer().createContext("/api/internal/server/state_reporting", new ManagedServerStateReportingEndpoint());
 
-		// File index
-		StaticFileHandler sfh = new StaticFileHandler("/app/", appRoot.getAbsolutePath(), "index.html");
-		createContext("/app", sfh);
+		// Static files
+		server.addStaticFileHandler("/app/", appRoot, "index.html");
 
-		// Icon
-		createContext("/favicon.ico", new FaviconHandler(TournamentSystem.getInstance().getDataFolder().getPath()));
-
-		// Start the server
-		httpServer.setExecutor(null);
-		httpServer.start();
 	}
 
 	public int getPort() {
 		return port;
 	}
 
-	private void createContext(String string, HttpHandler httpHandler) {
-		Log.info("WebServer", "Creating context: " + string);
-		httpServer.createContext(string, httpHandler);
-	}
-
-	public boolean hasShutDown() {
-		return hasShutDown;
-	}
-
-	public boolean kill() {
-		if (hasShutDown) {
-			return false;
-		}
-		httpServer.stop(0);
-		hasShutDown = true;
-		return true;
+	public HTTPServer getServer() {
+		return server;
 	}
 
 	public boolean stop() {
-		if (hasShutDown) {
-			return false;
-		}
-		httpServer.stop(10);
-		hasShutDown = true;
-		return true;
-	}
-
-	public HttpServer getHttpServer() {
-		return httpServer;
-	}
-
-	/**
-	 * returns the url parameters in a map
-	 * 
-	 * @param query The query
-	 * @return map result
-	 */
-	public static Map<String, String> queryToMap(String query) {
-		try {
-			Map<String, String> result = new HashMap<String, String>();
-			for (String param : query.split("&")) {
-				String pair[] = param.split("=");
-				if (pair.length > 1) {
-					result.put(pair[0], pair[1]);
-				} else {
-					result.put(pair[0], "");
-				}
-			}
-			return result;
-		} catch (Exception e) {
-			return new HashMap<String, String>();
-		}
+		return server.stop();
 	}
 }

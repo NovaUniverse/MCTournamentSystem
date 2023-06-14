@@ -1,37 +1,38 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.util;
 
-import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONObject;
 
 import com.google.common.base.Charsets;
-import com.sun.net.httpserver.HttpExchange;
+import net.novauniverse.apilib.http.auth.Authentication;
+import net.novauniverse.apilib.http.enums.HTTPMethod;
+import net.novauniverse.apilib.http.enums.HTTPResponseCode;
+import net.novauniverse.apilib.http.request.Request;
+import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
+import net.novauniverse.apilib.http.response.JSONResponse;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 
-import net.novauniverse.mctournamentsystem.bungeecord.api.APIEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.HTTPMethod;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.Authentication;
-
-public class OfflineUsernameToUUIDHandler extends APIEndpoint {
+public class OfflineUsernameToUUIDHandler extends TournamentEndpoint {
 	public OfflineUsernameToUUIDHandler() {
 		super(false);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override
-	public JSONObject handleRequest(HttpExchange exchange, Map<String, String> params, Authentication authentication, HTTPMethod method) throws Exception {
+	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
-		if (params.containsKey("username")) {
-			String name = params.get("username");
+		if (request.getQueryParameters().containsKey("username")) {
+			String name = request.getQueryParameters().get("username");
 			json.put("name", name);
 			json.put("uuid", UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)).toString());
+			return new JSONResponse(json);
 		} else {
 			json.put("success", false);
 			json.put("error", "bad_request");
 			json.put("message", "missing parameter: username");
 			json.put("http_response_code", 400);
+			return new JSONResponse(json, HTTPResponseCode.BAD_REQUEST);
 		}
-		return json;
 	}
-
 }
