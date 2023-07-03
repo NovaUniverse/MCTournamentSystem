@@ -46,7 +46,7 @@ public class GetChatLogHandler extends TournamentEndpoint {
 
 		result.put("success", true);
 		result.put("messages", messages);
-		
+
 		return new JSONResponse(result);
 	}
 }

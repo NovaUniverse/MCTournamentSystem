@@ -15,15 +15,15 @@ public class GetServiceProvidersHandler extends TournamentEndpoint {
 		super(false);
 		setAllowedMethods(HTTPMethod.GET);
 	}
-	
+
 	@Override
 	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
-JSONObject result = new JSONObject();
-		
+		JSONObject result = new JSONObject();
+
 		result.put("mojang_api_proxy", TournamentSystem.getInstance().getMojangAPIProxyURL());
 		result.put("chat_filter", TournamentSystem.getInstance().getChatFilterURL());
 		result.put("skin_render_api", TournamentSystem.getInstance().getSkinRenderAPIUrl());
-		
+
 		return new JSONResponse(result);
 	}
 }
