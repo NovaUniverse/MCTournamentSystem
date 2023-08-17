@@ -76,7 +76,7 @@ public class BedwarsManager extends NovaModule implements Listener {
 		if (BED_DESTRUCTION_SCORE > 0) {
 			Player player = e.getPlayer();
 			player.sendMessage(ChatColor.GRAY + "Enemy bed destroyed. +" + BED_DESTRUCTION_SCORE + " points");
-			ScoreManager.getInstance().addPlayerScore(player, BED_DESTRUCTION_SCORE, true);
+			ScoreManager.getInstance().addPlayerScore(player, BED_DESTRUCTION_SCORE, true, "Bedwars player destroyed bed of team " + e.getOwnerTeam().getDisplayName());
 		}
 	}
 

@@ -50,9 +50,9 @@ public class TournamentSystemTeam extends Team {
 	 * 
 	 * @param score The amount to distribute
 	 */
-	public void distributePointsToPlayers(int score) {
+	public void distributePointsToPlayers(int score, String reason) {
 		int toAdd = (int) Math.floor(score / members.size());
-		members.forEach(uuid -> ScoreManager.getInstance().addPlayerScore(uuid, toAdd, false));
+		members.forEach(uuid -> ScoreManager.getInstance().addPlayerScore(uuid, toAdd, false, reason));
 	}
 
 	public String getMemberString() {

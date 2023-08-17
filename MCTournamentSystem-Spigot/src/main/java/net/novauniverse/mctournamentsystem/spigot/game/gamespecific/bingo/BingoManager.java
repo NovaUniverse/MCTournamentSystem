@@ -110,12 +110,11 @@ public class BingoManager extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBingoPlayerFindItem(BingoPlayerFindItemEvent e) {
-
 		e.getTeam().sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + e.getPlayer().getName() + " found item " + ChatColor.AQUA + ChatColor.BOLD + e.getItemDisplayName());
 
 		if (POINTS_PER_ITEM > 0) {
 			e.getTeam().sendMessage(ChatColor.GRAY + "+" + POINTS_PER_ITEM + " points");
-			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), POINTS_PER_ITEM, true);
+			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), POINTS_PER_ITEM, true, "Bingo item found score");
 		}
 	}
 
@@ -137,7 +136,7 @@ public class BingoManager extends NovaModule implements Listener {
 		Bukkit.getServer().broadcastMessage(e.getTeam().getTeamColor() + "" + ChatColor.BOLD + e.getTeam().getDisplayName() + ChatColor.GREEN + ChatColor.BOLD + " has found all items. " + TextUtils.ordinal(e.getPlacement()) + " place");
 
 		e.getTeam().sendMessage(ChatColor.GRAY + "+" + score + " points");
-		ScoreManager.getInstance().addTeamScore((TournamentSystemTeam) e.getTeam(), score);
+		ScoreManager.getInstance().addTeamScore((TournamentSystemTeam) e.getTeam(), score, "Bingo completion at " + TextUtils.ordinal(e.getPlacement()) + " place");
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

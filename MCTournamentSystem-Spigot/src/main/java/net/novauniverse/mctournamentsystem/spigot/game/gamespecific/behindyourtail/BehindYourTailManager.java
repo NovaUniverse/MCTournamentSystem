@@ -221,7 +221,7 @@ public class BehindYourTailManager extends NovaModule implements Listener {
 		if (PLAYER_ATTACK_FOX_SCORE > 0) {
 			Player player = e.getAttacker();
 			LanguageManager.messagePlayer(player, "tournamentsystem.game.behindyourtail.tag_enemy", PLAYER_ATTACK_FOX_SCORE);
-			ScoreManager.getInstance().addPlayerScore(player, PLAYER_ATTACK_FOX_SCORE, true);
+			ScoreManager.getInstance().addPlayerScore(player, PLAYER_ATTACK_FOX_SCORE, true, "BehindYourTail player damaged fox");
 		}
 	}
 }

@@ -129,7 +129,7 @@ public class HiveManager extends NovaModule implements Listener {
 			if (killer != null) {
 				if (NovaHive.getInstance().getGame().getPlayers().contains(killer.getUniqueId())) {
 					KillManager.addPlayerKill(killer);
-					
+
 					TeamManager.getTeamManager().ifHasTeam(killer, (team -> KillManager.addTeamKill((TournamentSystemTeam) team)));
 				}
 			}
@@ -150,7 +150,7 @@ public class HiveManager extends NovaModule implements Listener {
 		if (HONEY_SCORE_MULTIPLIER > 0) {
 			int score = (int) Math.ceil(((double) e.getAmount()) * HONEY_SCORE_MULTIPLIER);
 
-			ScoreManager.getInstance().addPlayerScore(player, score, true);
+			ScoreManager.getInstance().addPlayerScore(player, score, true, "Hive " + e.getAmount() + " honey deposited");
 			player.sendMessage(ChatColor.GRAY + "+" + score + " points");
 		}
 	}
@@ -167,10 +167,10 @@ public class HiveManager extends NovaModule implements Listener {
 
 		if (score > 0) {
 			team.sendMessage(ChatColor.GRAY + "+" + score + " points");
-			ScoreManager.getInstance().addTeamScore(team, score);
+			ScoreManager.getInstance().addTeamScore(team, score, "Hive completion at " + TextUtils.ordinal(e.getPlacement()) + " place");
 			List<Player> members = team.getOnlinePlayers();
 			int playerScore = (int) Math.floor(score / members.size());
-			members.forEach(player -> ScoreManager.getInstance().addPlayerScore(player, playerScore, false));
+			members.forEach(player -> ScoreManager.getInstance().addPlayerScore(player, playerScore, false, "Hive completion distrubution at " + TextUtils.ordinal(e.getPlacement()) + " place"));
 		}
 	}
 }

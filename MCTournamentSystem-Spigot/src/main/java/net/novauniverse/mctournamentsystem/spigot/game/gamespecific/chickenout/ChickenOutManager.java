@@ -136,10 +136,10 @@ public class ChickenOutManager extends NovaModule implements Listener {
 			int score = winScore[e.getPlacement() - 1];
 
 			TournamentSystemTeam team = (TournamentSystemTeam) e.getTeam();
-			ScoreManager.getInstance().addTeamScore(team, score);
+			ScoreManager.getInstance().addTeamScore(team, score, "Chicken out team placement " + TextUtils.ordinal(e.getPlacement()) + " place");
 			team.sendMessage(ChatColor.GRAY + "+" + score + " points");
 			team.sendTitle(ChatColor.GREEN + TextUtils.ordinal(e.getPlacement()) + " place", "", 20, 60, 20);
-			team.distributePointsToPlayers(score);
+			team.distributePointsToPlayers(score, "Chicken out team placement " + TextUtils.ordinal(e.getPlacement()) + " place");
 		}
 	}
 
@@ -154,7 +154,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 		if ((e.getPlacement() - 1) < winScore.length) {
 			int score = winScore[e.getPlacement() - 1];
 
-			ScoreManager.getInstance().addPlayerScore(e.getUuid(), score);
+			ScoreManager.getInstance().addPlayerScore(e.getUuid(), score, "Chicken out player placement " + TextUtils.ordinal(e.getPlacement()) + " place");
 			Player player = Bukkit.getServer().getPlayer(e.getUuid());
 			if (player != null) {
 				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + TextUtils.ordinal(e.getPlacement()) + " place", "", 20, 60, 20);
@@ -180,7 +180,7 @@ public class ChickenOutManager extends NovaModule implements Listener {
 				player.sendMessage(ChatColor.GRAY + "+" + score + " points");
 			}
 
-			ScoreManager.getInstance().addPlayerScore(player, score, true);
+			ScoreManager.getInstance().addPlayerScore(player, score, true, "Checken out score for " + e.getFeathers() + " feathers");
 		}
 	}
 

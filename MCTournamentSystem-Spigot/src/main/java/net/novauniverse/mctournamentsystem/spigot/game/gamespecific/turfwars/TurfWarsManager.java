@@ -251,8 +251,8 @@ public class TurfWarsManager extends NovaModule implements Listener {
 						teamResults.forEach(t -> {
 							TournamentSystemTeam team = t.getTeam();
 							team.sendMessage(ChatColor.GRAY + "Team won. +" + TEAM_WIN_SCORE + " points");
-							ScoreManager.getInstance().addTeamScore(team, TEAM_WIN_SCORE);
-							team.distributePointsToPlayers(TEAM_WIN_SCORE);
+							ScoreManager.getInstance().addTeamScore(team, TEAM_WIN_SCORE, "TurfWars team win score distributed");
+							team.distributePointsToPlayers(TEAM_WIN_SCORE, "TurfWars team win score");
 						});
 					}
 
@@ -279,8 +279,8 @@ public class TurfWarsManager extends NovaModule implements Listener {
 							} else {
 								Log.trace("TurfWars(Team Won)", "Team " + team.getDisplayName() + " had " + ((int) (killPercentage * 100D)) + "% of all kills and should get " + score + " as reward");
 								team.sendMessage(ChatColor.GRAY + "Team got " + t.getKills() + " kills. +" + score + " points");
-								ScoreManager.getInstance().addTeamScore(team, score);
-								team.distributePointsToPlayers(score);
+								ScoreManager.getInstance().addTeamScore(team, score, "TurfWars team win kill score player distribution");
+								team.distributePointsToPlayers(score, "TurfWars team win kill score");
 							}
 						});
 					}
@@ -325,8 +325,8 @@ public class TurfWarsManager extends NovaModule implements Listener {
 							} else {
 								Log.trace("TurfWars(Team Lost)", "Team " + team.getDisplayName() + " had " + ((int) (killPercentage * 100D)) + "% of all kills and should get " + score + " as reward");
 								team.sendMessage(ChatColor.GRAY + "Team got " + t.getKills() + " kills. +" + score + " points");
-								ScoreManager.getInstance().addTeamScore(team, score);
-								team.distributePointsToPlayers(score);
+								ScoreManager.getInstance().addTeamScore(team, score, "TurfWars team lost kill score player distribution");
+								team.distributePointsToPlayers(score, "TurfWars team lost kill score");
 							}
 						});
 					}

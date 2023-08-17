@@ -116,7 +116,7 @@ public class DropperManager extends NovaModule implements Listener {
 
 			switch (e.getType()) {
 			case PLAYER:
-				ScoreManager.getInstance().addPlayerScore(e.getUuid(), score);
+				ScoreManager.getInstance().addPlayerScore(e.getUuid(), score, "Dropper player placement");
 				Player player = Bukkit.getServer().getPlayer(e.getUuid());
 				if (player != null) {
 					player.sendMessage(ChatColor.GRAY + "+" + score + " points");
@@ -126,7 +126,7 @@ public class DropperManager extends NovaModule implements Listener {
 			case TEAM:
 				TournamentSystemTeam team = (TournamentSystemTeam) TeamManager.getTeamManager().getTeamByTeamUUID(e.getUuid());
 				if (team != null) {
-					ScoreManager.getInstance().addTeamScore(team, score);
+					ScoreManager.getInstance().addTeamScore(team, score, "Dropper team placement");
 					team.sendMessage(ChatColor.GRAY + "+" + score + " points");
 				}
 				break;
@@ -138,7 +138,7 @@ public class DropperManager extends NovaModule implements Listener {
 	public void onDropperPlayerCompleteRound(DropperPlayerCompleteRoundEvent e) {
 		if (LEVEL_COMPLETED_SCORE > 0) {
 			Player player = e.getPlayer();
-			ScoreManager.getInstance().addPlayerScore(player, LEVEL_COMPLETED_SCORE);
+			ScoreManager.getInstance().addPlayerScore(player, LEVEL_COMPLETED_SCORE, "Dropper round completion");
 			if (TeamManager.hasTeamManager()) {
 				Team team = TeamManager.getTeamManager().getPlayerTeam(player);
 				if (team != null) {

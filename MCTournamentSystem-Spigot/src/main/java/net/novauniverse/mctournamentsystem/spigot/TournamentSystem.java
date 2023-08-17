@@ -1,7 +1,6 @@
 package net.novauniverse.mctournamentsystem.spigot;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +16,6 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.io.FileUtils;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
@@ -139,7 +137,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private Map<String, Group> staffGroups;
 	private Group defaultGroup;
 
-	private File sqlFixFile;
 	private File mapDataFolder;
 	private File nbsFolder;
 	private File globalDataFolder;
@@ -222,10 +219,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 	public void setPlayerEliminatedTitleProvider(@Nullable PlayerEliminatedTitleProvider playerEliminatedTitleProvider) {
 		this.playerEliminatedTitleProvider = playerEliminatedTitleProvider;
-	}
-
-	public File getSqlFixFile() {
-		return sqlFixFile;
 	}
 
 	public TournamentSystemTeamManager getTeamManager() {
@@ -539,7 +532,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
-		sqlFixFile = new File(this.getDataFolder().getPath() + File.separator + "sql_fix.sql");
 
 		globalDataDirectory = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 
@@ -681,16 +673,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		defaultGroup = LuckPermsProvider.get().getGroupManager().getGroup("default");
 		if (defaultGroup == null) {
 			Log.error(getName(), "Could not find luckperms group default. Please add it to luckperms");
-		}
-
-		// Try to create the files and folders and load the worlds
-		try {
-			FileUtils.touch(sqlFixFile);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			Log.fatal("TournamentSystem", "Failed to setup data directory");
-			Bukkit.getPluginManager().disablePlugin(this);
-			return;
 		}
 
 		/* ----- Database ----- */

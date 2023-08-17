@@ -106,7 +106,7 @@ public class TNTTagManager extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerKilledPlayerInTNTTag(PlayerKilledPlayerInTNTTagEvent e) {
 		if (TournamentSystem.getInstance().getScoreListener().isKillScoreEnabled()) {
-			ScoreManager.getInstance().addPlayerScore(e.getKiller(), TournamentSystem.getInstance().getScoreListener().getKillScore());
+			ScoreManager.getInstance().addPlayerScore(e.getKiller(), TournamentSystem.getInstance().getScoreListener().getKillScore(), "TNT Tag kill score. " + e.getKiller().getName() + " killed " + e.getKilledPlayer().getName());
 			if (e.getKiller().isOnline()) {
 				e.getKiller().getPlayer().sendMessage(ChatColor.GRAY + "Player killed. +" + TournamentSystem.getInstance().getScoreListener().getKillScore() + " points");
 			}

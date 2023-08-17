@@ -238,9 +238,9 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 					});
 				});
 
-				// Update score
+				// Update score and kills
 				try {
-					String sql = "SELECT score, team_number, kills FROM teams";
+					String sql = "SELECT t.team_number AS team_number, t.kills AS kills, IFNULL(SUM(s.amount), 0) AS total_score FROM teams AS t LEFT JOIN team_score AS s ON s.team_id = t.id  GROUP BY t.id";
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 					ResultSet rs = ps.executeQuery();
@@ -248,8 +248,8 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 						TournamentSystemTeam team = getTeam(rs.getInt("team_number"));
 
 						if (team != null) {
-							team.setScore(rs.getInt("score"));
 							team.setKills(rs.getInt("kills"));
+							team.setScore(rs.getInt("total_score"));
 						}
 					}
 
@@ -257,7 +257,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 					ps.close();
 				} catch (Exception e) {
 					e.printStackTrace();
-					Log.warn("TournamentCoreTeamManager", "Failed to update team score");
+					Log.warn("TournamentCoreTeamManager", "Failed to update team score and kills");
 					return;
 				}
 
