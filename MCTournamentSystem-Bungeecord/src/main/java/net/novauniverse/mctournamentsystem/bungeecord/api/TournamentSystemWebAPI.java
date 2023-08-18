@@ -21,6 +21,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.S
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.TriggerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.nextmingame.NextMinigameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.publicapi.PublicStatusHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.score.ScoreHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.send.SendPlayerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.send.SendPlayersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.server.GetServersHandler;
@@ -57,11 +58,11 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.Favicon
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.FileNotFoundHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.internal.ManagedServerStateReportingEndpoint;
 
-public class WebServer {
+public class TournamentSystemWebAPI {
 	private int port;
 	private HTTPServer server;
 
-	public WebServer(int port, File appRoot) throws BindException, IOException {
+	public TournamentSystemWebAPI(int port, File appRoot) throws BindException, IOException {
 		this.port = port;
 		this.server = new HTTPServer(port);
 
@@ -137,7 +138,7 @@ public class WebServer {
 		// Snapshots
 		server.addEndpoint("/api/v1/snapshot/export", new ExportSnapshotHandler());
 		server.addEndpoint("/api/v1/snapshot/import", new ImportSnapshotHandler());
-		
+
 		// Chat
 		server.addEndpoint("/api/v1/chat/log", new GetChatLogHandler());
 
@@ -151,6 +152,9 @@ public class WebServer {
 		server.addEndpoint("/api/v1/servers/logs", new GetServersLogsHandler());
 		server.addEndpoint("/api/v1/servers/log_session_id", new GetServersLogSessionIDHandler());
 		server.addEndpoint("/api/v1/servers/run_command", new SendServerCommandHandler());
+
+		// Score
+		server.addEndpoint("/api/v1/score", new ScoreHandler());
 
 		// Skinrestorer
 		server.addEndpoint("/api/skinrestorer/get_user_skin", new GetSkinrestorerSkinHandler());

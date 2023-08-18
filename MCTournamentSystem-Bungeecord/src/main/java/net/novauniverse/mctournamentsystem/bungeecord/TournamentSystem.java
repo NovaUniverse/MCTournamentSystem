@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
-import net.novauniverse.mctournamentsystem.bungeecord.api.WebServer;
+import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentSystemWebAPI;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth.Type;
@@ -61,7 +61,7 @@ import net.zeeraa.novacore.commons.utils.network.api.ip.IPFetcher;
 public class TournamentSystem extends NovaPlugin implements Listener {
 	private static TournamentSystem instance;
 
-	private WebServer webServer;
+	private TournamentSystemWebAPI webServer;
 	private boolean webserverDevelopmentMode;
 	private List<String> staffRoles;
 	private List<String> quickMessages;
@@ -139,7 +139,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return makeMeSufferEasteregg;
 	}
 
-	public WebServer getWebServer() {
+	public TournamentSystemWebAPI getWebServer() {
 		return webServer;
 	}
 
@@ -698,7 +698,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			}
 
 			Log.info("Starting web server on port " + port);
-			webServer = new WebServer(port, wwwAppFile);
+			webServer = new TournamentSystemWebAPI(port, wwwAppFile);
 			Log.success("Web server started");
 		} catch (Exception e) {
 			Log.fatal("Failed to start web server");
