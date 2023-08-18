@@ -35,7 +35,7 @@ $(function () {
 				$(".player-avatar").each(function () {
 					let username = $(this).data("username");
 
-					if(username == undefined) {
+					if (username == undefined) {
 						return;
 					}
 
@@ -153,15 +153,11 @@ $(function () {
 	$("#btn_export_snapshot").on("click", function () {
 		toastr.info("Exporting snapshot...");
 		$.getJSON("/api/v1/snapshot/export", function (data) {
-			if (!data.success) {
-				toastr.error("Could not export score snapshot");
-				return;
-			}
 
 			console.log(data);
 			console.log("Data collected. Downloading...");
 
-			let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data.data, null, 4));
+			let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 4));
 			let downloadAnchorNode = document.createElement('a');
 			downloadAnchorNode.setAttribute("href", dataStr);
 			downloadAnchorNode.setAttribute("download", "TournamentScoreSnapshot.json");
