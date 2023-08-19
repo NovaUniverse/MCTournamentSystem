@@ -4,7 +4,7 @@ SELECT
 	p.username AS username,
 	p.kills AS kills,
 	t.team_number AS team_number,
-	COALESCE(ps.total_score, 0) AS total_score,
+	COALESCE(ps.total_score, 0) AS player_score,
 	COALESCE(ts.team_score, 0) AS team_score
 FROM
 	players AS p
