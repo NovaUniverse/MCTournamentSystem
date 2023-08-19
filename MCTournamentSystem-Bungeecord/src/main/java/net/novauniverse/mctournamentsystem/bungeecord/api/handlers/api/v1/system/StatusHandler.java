@@ -70,7 +70,23 @@ public class StatusHandler extends TournamentEndpoint {
 		List<PlayerData> playerDataList = new ArrayList<PlayerData>();
 
 		try {
-			String sql = "SELECT p.metadata AS metadata, p.uuid AS uuid, p.username AS username, p.score AS player_score, p.kills AS kills, t.team_number AS team_number, t.score AS team_score FROM players AS p LEFT JOIN teams AS t ON t.team_number = p.team_number";
+			String sql = "SELECT"
+					+ " p.id AS id,"
+					+ "	p.metadata AS metadata,"
+					+ "	p.uuid AS uuid,\r\n"
+					+ "	p.username AS username,"
+					+ "	p.kills AS kills,"
+					+ "	t.team_number AS team_number,"
+					+ "	IFNULL(SUM(ps.amount), 0) AS player_score,"
+					+ "	IFNULL(SUM(ts.amount), 0) AS team_score"
+					+ "	FROM players AS p"
+					+ " LEFT JOIN player_score AS ps"
+					+ "	ON ps.player_id = p.id"
+					+ " LEFT JOIN teams AS t"
+					+ "	ON t.team_number = p.team_number"
+					+ " LEFT JOIN team_score AS ts"
+					+ "	ON ts.team_id = t.id"
+					+ " GROUP BY p.id";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
@@ -80,7 +96,7 @@ public class StatusHandler extends TournamentEndpoint {
 				if (rs.getString("metadata") != null) {
 					metadata = new JSONObject(rs.getString("metadata"));
 				}
-				PlayerData playerData = new PlayerData(UUID.fromString(rs.getString("uuid")), rs.getInt("kills"), rs.getInt("player_score"), rs.getInt("team_score"), (teamNumber == 0 ? -1 : teamNumber), rs.getString("username"), metadata);
+				PlayerData playerData = new PlayerData(rs.getInt("id"), UUID.fromString(rs.getString("uuid")), rs.getInt("kills"), rs.getInt("player_score"), rs.getInt("team_score"), (teamNumber == 0 ? -1 : teamNumber), rs.getString("username"), metadata);
 
 				playerDataList.add(playerData);
 			}
@@ -94,12 +110,20 @@ public class StatusHandler extends TournamentEndpoint {
 
 		List<TeamData> teamDataList = new ArrayList<TeamData>();
 		try {
-			String sql = "SELECT * FROM teams";
+			String sql = "SELECT"
+					+ " t.id AS id,"
+					+ " t.team_number AS team_number,"
+					+ " t.kills AS kills,\r\n"
+					+ " IFNULL(SUM(s.amount), 0) AS total_score"
+					+ " FROM teams AS t"
+					+ " LEFT JOIN team_score AS s"
+					+ " ON s.team_id = t.id"
+					+ " GROUP BY t.id";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				TeamData td = new TeamData(rs.getInt("team_number"), rs.getInt("score"), rs.getInt("kills"));
+				TeamData td = new TeamData(rs.getInt("id"), rs.getInt("team_number"), rs.getInt("total_score"), rs.getInt("kills"));
 				teamDataList.add(td);
 			}
 
@@ -135,6 +159,7 @@ public class StatusHandler extends TournamentEndpoint {
 				}
 			}
 
+			p.put("id", pd.getId());
 			p.put("online", online);
 			p.put("server", serverName);
 			p.put("uuid", pd.getUuid());
@@ -153,6 +178,7 @@ public class StatusHandler extends TournamentEndpoint {
 		teamDataList.forEach(td -> {
 			JSONObject team = new JSONObject();
 
+			team.put("id", td.getTeamId());
 			team.put("team_number", td.getTeamNumber());
 			team.put("score", td.getScore());
 			team.put("kills", td.getKills());

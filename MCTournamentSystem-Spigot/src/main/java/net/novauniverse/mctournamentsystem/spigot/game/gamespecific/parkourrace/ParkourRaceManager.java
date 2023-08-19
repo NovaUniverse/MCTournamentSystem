@@ -127,7 +127,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 		}
 		if (LAP_COMPLETED_SCORE > 0) {
 			e.getPlayer().sendMessage(ChatColor.GRAY + "+" + LAP_COMPLETED_SCORE + " points");
-			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), LAP_COMPLETED_SCORE, true);
+			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), LAP_COMPLETED_SCORE, true, "Parkour race lap completion score");
 		}
 	}
 
@@ -140,7 +140,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 		if (e.getPlacement() <= winScore.length) {
 			int score = winScore[e.getPlacement() - 1];
 			e.getPlayer().sendMessage(ChatColor.GRAY + "+" + score + " points");
-			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), score, true);
+			ScoreManager.getInstance().addPlayerScore(e.getPlayer(), score, true, "Parkour race full completion score");
 		}
 	}
 }

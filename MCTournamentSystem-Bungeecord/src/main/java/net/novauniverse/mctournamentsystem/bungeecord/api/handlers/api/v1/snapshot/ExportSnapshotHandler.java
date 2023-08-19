@@ -25,59 +25,62 @@ public class ExportSnapshotHandler extends TournamentEndpoint {
 		JSONArray players = new JSONArray();
 		JSONArray teams = new JSONArray();
 
-		try {
-			String sql = "SELECT * FROM players";
+		{
+			String sql = "SELECT s.server AS server, s.reason AS reason, s.amount AS amount, s.gained_at AS gained_at, p.uuid AS uuid FROM player_score AS s LEFT JOIN players AS p ON p.id = s.player_id";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				String uuid = rs.getString("uuid");
-				int score = rs.getInt("score");
-				int kills = rs.getInt("kills");
+				String server = rs.getString("server");
+				String reason = rs.getString("reason");
+				int amount = rs.getInt("amount");
+				String gainedAt = rs.getString("gained_at");
 
-				JSONObject json = new JSONObject();
-				json.put("uuid", uuid);
-				json.put("score", score);
-				json.put("kills", kills);
+				JSONObject entry = new JSONObject();
 
-				players.put(json);
+				entry.put("uuid", uuid);
+				entry.put("server", server);
+				entry.put("reason", reason);
+				entry.put("amount", amount);
+				entry.put("gained_at", gainedAt);
+
+				players.put(entry);
 			}
 
 			rs.close();
 			ps.close();
-		} catch (Exception e) {
-			throw e;
 		}
 
-		try {
-			String sql = "SELECT * FROM teams";
+		{
+			String sql = "SELECT s.server AS server, s.reason AS reason, s.amount AS amount, s.gained_at AS gained_at, t.team_number AS team_number FROM team_score AS s LEFT JOIN teams AS t ON t.id = s.team_id";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				int teamNumber = rs.getInt("team_number");
-				int score = rs.getInt("score");
+				String server = rs.getString("server");
+				String reason = rs.getString("reason");
+				int amount = rs.getInt("amount");
+				String gainedAt = rs.getString("gained_at");
 
-				JSONObject json = new JSONObject();
-				json.put("team_number", teamNumber);
-				json.put("score", score);
+				JSONObject entry = new JSONObject();
 
-				teams.put(json);
+				entry.put("team_number", teamNumber);
+				entry.put("server", server);
+				entry.put("reason", reason);
+				entry.put("amount", amount);
+				entry.put("gained_at", gainedAt);
+
+				teams.put(entry);
 			}
 
 			rs.close();
 			ps.close();
-		} catch (Exception e) {
-			throw e;
 		}
 
-		JSONObject data = new JSONObject();
-
-		data.put("players", players);
-		data.put("teams", teams);
-
-		result.put("success", true);
-		result.put("data", data);
+		result.put("players", players);
+		result.put("teams", teams);
 
 		return new JSONResponse(result);
 	}

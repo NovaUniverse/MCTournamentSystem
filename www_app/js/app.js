@@ -35,7 +35,7 @@ $(function () {
 				$(".player-avatar").each(function () {
 					let username = $(this).data("username");
 
-					if(username == undefined) {
+					if (username == undefined) {
 						return;
 					}
 
@@ -80,6 +80,8 @@ $(function () {
 	});
 
 	$(".hidden-integration").hide();
+
+	$("#btn_refresh_score_list").on("click", () => updateScoreList());
 
 	$(".meow").on("click", () => {
 		setCatMode(true);
@@ -153,15 +155,11 @@ $(function () {
 	$("#btn_export_snapshot").on("click", function () {
 		toastr.info("Exporting snapshot...");
 		$.getJSON("/api/v1/snapshot/export", function (data) {
-			if (!data.success) {
-				toastr.error("Could not export score snapshot");
-				return;
-			}
 
 			console.log(data);
 			console.log("Data collected. Downloading...");
 
-			let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data.data, null, 4));
+			let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 4));
 			let downloadAnchorNode = document.createElement('a');
 			downloadAnchorNode.setAttribute("href", dataStr);
 			downloadAnchorNode.setAttribute("download", "TournamentScoreSnapshot.json");
@@ -778,12 +776,174 @@ $(function () {
 	$("#btn_clear_next_minigame").on("click", () => TournamentSystem.clearNextMinigame());
 
 	$("#btn_set_next_mingame").on("click", () => TournamentSystem.setNextMinigame($("#next_minigame_value").val()));
+
+	$("#btn_open_add_player_score_model").on("click", () => $("#addPlayerScoreModal").modal("show"));
+
+	$("#btn_open_add_team_score_model").on("click", () => $("#addTeamScoreModal").modal("show"));
+
+	$("#btn_apply_player_score").on("click", () => {
+		const playerId = $("#add_player_score_select_player").val();
+		const data = {
+			reason: $("#add_player_score_reason").val(),
+			amount: $("#add_player_score_value").val()
+		}
+
+		console.log(data);
+
+		$.ajax({
+			type: "PUT",
+			url: "/api/v1/score?type=PLAYER&id=" + playerId,
+			data: JSON.stringify(data),
+			success: function (response) {
+				toastr.success("Score added");
+				$("#addPlayerScoreModal").modal("hide")
+				updateScoreList();
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				console.error(xhr);
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+				toastr.error("Failed to add score to the player");
+			},
+			dataType: "json"
+		});
+	});
+
+	$("#btn_apply_team_score").on("click", () => {
+		const teamId = $("#add_team_score_select_team").val();
+		const data = {
+			reason: $("#add_team_score_reason").val(),
+			amount: $("#add_team_score_value").val()
+		}
+
+		console.log(data);
+
+		$.ajax({
+			type: "PUT",
+			url: "/api/v1/score?type=TEAM&id=" + teamId,
+			data: JSON.stringify(data),
+			success: function (response) {
+				toastr.success("Score added");
+				$("#addTeamScoreModal").modal("hide")
+				updateScoreList();
+			},
+			error: (xhr, ajaxOptions, thrownError) => {
+				console.error(xhr);
+				if (xhr.status == 0 || xhr.status == 503) {
+					toastr.error("Failed to communicate with backend server");
+					return;
+				}
+
+				toastr.error("Failed to add score to the team");
+			},
+			dataType: "json"
+		});
+	});
+
+	updateScoreList();
 });
 
 function hasPermission(permission) {
 	return user_permissions.includes(permission);
 }
 
+
+function updateScoreList() {
+	console.log("Updating score list");
+
+	$.getJSON("/api/v1/system/status", (data) => {
+		$("#add_player_score_select_player").children().remove();
+		$("#add_team_score_select_team").children().remove();
+
+		data.players.forEach(player => {
+			$("#add_player_score_select_player").append(new Option(player.username, player.id));
+		});
+
+		data.teams.forEach(team => {
+			$("#add_team_score_select_team").append(new Option("Team number " + team.team_number, team.id));
+		});
+	});
+
+	$.getJSON("/api/v1/score", (data) => {
+		$("#player_score_list_tbody").children().remove();
+		$("#team_score_list_tbody").children().remove();	
+
+		data.players.forEach((player) => {
+			const newElement = $("<tr></tr>");
+
+			const deleteButton = $("<button></button>");
+
+			deleteButton.text("Remove");
+			deleteButton.addClass("btn");
+			deleteButton.addClass("btn-danger");
+			deleteButton.on("click", () => {
+				$.ajax({
+					url: "/api/v1/score?type=PLAYER&id=" + player.id,
+					type: "DELETE",
+					success: function(data) {
+						toastr.success("Score deleted successfully!");
+						updateScoreList();
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						toastr.error("Failed to delete score");
+					}
+				});
+			});
+
+			newElement.append($("<td></td>").text(player.id).addClass("t-fit"));
+			newElement.append($("<td></td>").text(player.player.username));
+			newElement.append($("<td></td>").text(player.server));
+			newElement.append($("<td></td>").text(player.reason));
+			newElement.append($("<td></td>").text(player.amount));
+			newElement.append($("<td></td>").text(player.gained_at).addClass("t-fit"));
+
+			newElement.append(deleteButton);
+
+			$("#player_score_list_tbody").append(newElement);
+		});
+
+		data.teams.forEach((team) => {
+			const newElement = $("<tr></tr>");
+
+			const deleteButton = $("<button></button>");
+
+			deleteButton.text("Remove");
+			deleteButton.addClass("btn");
+			deleteButton.addClass("btn-danger");
+			deleteButton.on("click", () => {
+				$.ajax({
+					url: "/api/v1/score?type=TEAM&id=" + team.id,
+					type: "DELETE",
+					success: function(data) {
+						toastr.success("Score deleted successfully!");
+						updateScoreList();
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						toastr.error("Failed to delete score");
+					}
+				});
+			});
+
+
+			newElement.append($("<td></td>").text(team.id).addClass("t-fit"));
+			newElement.append($("<td></td>").text(team.team.team_number));
+			newElement.append($("<td></td>").text(team.server));
+			newElement.append($("<td></td>").text(team.reason));
+			newElement.append($("<td></td>").text(team.amount));
+			newElement.append($("<td></td>").text(team.gained_at).addClass("t-fit"));
+
+			newElement.append(deleteButton);
+
+			$("#team_score_list_tbody").append(newElement);
+		});
+
+	}).fail((e) => {
+		toastr.error("Failed to update score list");
+	});
+}
 
 const TournamentSystem = {
 	token: "",
@@ -1072,7 +1232,7 @@ const TournamentSystem = {
 				}
 
 				if (xhr.status == 409) {
-					toastr.error("An online player is needed to be able to send the start packet to the server");
+					toastr.error("The message broker server could not be reached");
 					return;
 				}
 
@@ -1790,7 +1950,6 @@ const TournamentSystem = {
 
 					playerElement.find(".player-send-to").attr("disabled", true);
 				}
-
 			});
 
 			toRemove.forEach((uuid) => {

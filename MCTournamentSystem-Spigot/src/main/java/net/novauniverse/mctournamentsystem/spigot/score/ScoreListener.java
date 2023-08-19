@@ -13,6 +13,7 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.modules.cache.PlayerKillCache;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerWinEvent;
@@ -94,7 +95,7 @@ public class ScoreListener implements Listener {
 						Player player = Bukkit.getServer().getPlayer(uuid);
 						if (player != null) {
 							if (player.isOnline()) {
-								ScoreManager.getInstance().addPlayerScore(player, participationScore, true);
+								ScoreManager.getInstance().addPlayerScore(player, participationScore, true, "Participation score " + player.getName());
 								player.sendMessage(ChatColor.GRAY + "+" + participationScore + " Participation score");
 							}
 						}
@@ -130,7 +131,7 @@ public class ScoreListener implements Listener {
 
 			if (killScoreEnabled) {
 				if (killerPlayer != null) {
-					ScoreManager.getInstance().addPlayerScore(killerPlayer, killScore, true);
+					ScoreManager.getInstance().addPlayerScore(killerPlayer, killScore, true, "Kill score " + killerPlayer.getName() + " eliminated " + e.getPlayer().getName());
 					PlayerKillCache.getInstance().invalidate(killerPlayer);
 				}
 			}
@@ -183,7 +184,7 @@ public class ScoreListener implements Listener {
 			if (placement <= winScore.length) {
 				int score = winScore[placement - 1];
 
-				ScoreManager.getInstance().addPlayerScore(player, score, false);
+				ScoreManager.getInstance().addPlayerScore(player, score, false, "Player placement score");
 				if (player.isOnline()) {
 					((Player) player).sendMessage(ChatColor.GRAY + "+" + score + " score");
 				}
@@ -198,9 +199,9 @@ public class ScoreListener implements Listener {
 
 			double individualScore = Math.ceil(((double) score) / ((double) team.getMembers().size()));
 
-			team.getMembers().forEach(uuid -> ScoreManager.getInstance().addPlayerScore(uuid, (int) individualScore, false));
+			team.getMembers().forEach(uuid -> ScoreManager.getInstance().addPlayerScore(uuid, (int) individualScore, false, "Team placement split to players at " + TextUtils.ordinal(placement) + " place. total: " + score));
 
-			ScoreManager.getInstance().addTeamScore((TournamentSystemTeam) team, score);
+			ScoreManager.getInstance().addTeamScore((TournamentSystemTeam) team, score, "Team placement " + TextUtils.ordinal(placement) + " place. total: " + score);
 
 			team.sendMessage(ChatColor.GRAY + "+" + score + " score (Shared with team members)");
 		}

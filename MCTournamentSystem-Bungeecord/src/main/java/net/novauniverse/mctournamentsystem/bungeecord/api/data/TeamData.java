@@ -1,14 +1,20 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.data;
 
 public class TeamData {
-	private int teamNumber;
-	private int score;
-	private int kills;
+	private final int teamId;
+	private final int teamNumber;
+	private final int score;
+	private final int kills;
 
-	public TeamData(int teamNumber, int score, int kills) {
+	public TeamData(int id, int teamNumber, int score, int kills) {
+		this.teamId = id;
 		this.teamNumber = teamNumber;
 		this.score = score;
 		this.kills = kills;
+	}
+	
+	public int getTeamId() {
+		return teamId;
 	}
 
 	public int getTeamNumber() {

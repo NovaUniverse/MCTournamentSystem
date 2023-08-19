@@ -13,6 +13,8 @@ import net.novauniverse.apilib.http.enums.HTTPResponseCode;
 import net.novauniverse.apilib.http.request.Request;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
+import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.zeeraa.novacore.commons.database.DBConnection;
 
 public abstract class TournamentEndpoint extends HTTPEndpoint {
 	private boolean requireAuthentication;
@@ -38,6 +40,10 @@ public abstract class TournamentEndpoint extends HTTPEndpoint {
 		return null;
 	}
 
+	protected static DBConnection getDBConnection() {
+		return TournamentSystemCommons.getDBConnection();
+	}
+	
 	@Override
 	public final AuthenticationResponse handleAuthentication(Authentication authentication, Request request) {
 		if (requireAuthentication && authentication == null) {

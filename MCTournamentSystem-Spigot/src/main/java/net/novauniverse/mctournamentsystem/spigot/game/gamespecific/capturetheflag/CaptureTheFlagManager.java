@@ -82,7 +82,7 @@ public class CaptureTheFlagManager extends NovaModule implements Listener {
 		Bukkit.getServer().broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "Flag Captured> " + e.getCarrierTeam().getTeam().getTeamColor() + ChatColor.BOLD + e.getCarrier().getName() + ChatColor.GOLD + ChatColor.BOLD + " captured the flag of team " + e.getFlag().getTeam().getTeam().getTeamColor() + ChatColor.BOLD + e.getFlag().getTeam().getTeam().getDisplayName());
 		if (FLAG_CAPTURE_SCORE > 0) {
 			e.getCarrier().sendMessage(ChatColor.GRAY + "Flag captured. +" + FLAG_CAPTURE_SCORE + " points");
-			ScoreManager.getInstance().addPlayerScore(e.getCarrier(), FLAG_CAPTURE_SCORE, true);
+			ScoreManager.getInstance().addPlayerScore(e.getCarrier(), FLAG_CAPTURE_SCORE, true, "Player capture flag of team " + e.getFlag().getTeam().getTeam().getDisplayName());
 		}
 	}
 
@@ -93,7 +93,7 @@ public class CaptureTheFlagManager extends NovaModule implements Listener {
 				if (e.getKiller() instanceof Player) {
 					Player killer = (Player) e.getKiller();
 					killer.sendMessage(ChatColor.GRAY + "Player eliminated. +" + ELIMINATE_PLAYER_SCORE + " points");
-					ScoreManager.getInstance().addPlayerScore(killer, ELIMINATE_PLAYER_SCORE, true);
+					ScoreManager.getInstance().addPlayerScore(killer, ELIMINATE_PLAYER_SCORE, true, "CTF " + e.getKiller().getName() + " eliminated " + e.getPlayer().getName());
 				}
 			}
 		}
