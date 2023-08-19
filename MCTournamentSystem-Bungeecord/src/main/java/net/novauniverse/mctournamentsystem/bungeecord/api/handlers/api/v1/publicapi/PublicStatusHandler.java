@@ -68,7 +68,7 @@ public class PublicStatusHandler extends TournamentEndpoint {
 					+ "	ON ps.player_id = p.id"
 					+ " LEFT JOIN teams AS t"
 					+ "	ON t.team_number = p.team_number"
-					+ "LEFT JOIN team_score AS ts"
+					+ " LEFT JOIN team_score AS ts"
 					+ "	ON ts.team_id = t.id"
 					+ " GROUP BY p.id";
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
