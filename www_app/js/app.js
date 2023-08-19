@@ -843,6 +843,8 @@ $(function () {
 		});
 	});
 
+	$("#nav_btn_score_page").on("click", () => updateScoreList());
+
 	updateScoreList();
 });
 
