@@ -3,7 +3,6 @@ package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.score
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,7 +17,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 public class ScoreHandler extends TournamentEndpoint {
 	public ScoreHandler() {
 		super(true);
-		setAllowedMethods(HTTPMethod.GET, HTTPMethod.DELETE);
+		setAllowedMethods(HTTPMethod.GET, HTTPMethod.DELETE, HTTPMethod.PUT);
 	}
 
 	@Override
@@ -97,7 +96,7 @@ public class ScoreHandler extends TournamentEndpoint {
 
 			json.put("players", players);
 			json.put("teams", teams);
-		} else if (request.getMethod() == HTTPMethod.DELETE) {
+		} else {
 			Map<String, String> parameters = request.getQueryParameters();
 
 			if (!parameters.containsKey("id")) {
@@ -120,24 +119,96 @@ public class ScoreHandler extends TournamentEndpoint {
 
 			TargetType target;
 			try {
-				target = TargetType.valueOf(parameters.get("type"));
+				target = TargetType.valueOf(parameters.get("type").toUpperCase());
 			} catch (IllegalArgumentException argumentException) {
 				json.put("message", "Invalid type value. Valid ones are TEAM and PLAYER");
 				return new JSONResponse(json, HTTPResponseCode.BAD_REQUEST);
 			}
 
-			String sql;
-			if (target == TargetType.PLAYER) {
-				sql = "DELETE FROM player_score WHERE id = ?";
-			} else {
-				sql = "DELETE FROM team_score WHERE id = ?";
-			}
+			if (request.getMethod() == HTTPMethod.DELETE) {
+				String sql;
+				if (target == TargetType.PLAYER) {
+					sql = "DELETE FROM player_score WHERE id = ?";
+				} else {
+					sql = "DELETE FROM team_score WHERE id = ?";
+				}
 
-			PreparedStatement ps = getDBConnection().getConnection().prepareStatement(sql);
-			ps.setInt(1, id);
-			ps.executeUpdate();
-			ps.close();
-			json.put("message", "ok");
+				PreparedStatement ps = getDBConnection().getConnection().prepareStatement(sql);
+				ps.setInt(1, id);
+				ps.executeUpdate();
+				ps.close();
+				json.put("message", "ok");
+			} else if (request.getMethod() == HTTPMethod.PUT) {
+				JSONObject data = null;
+				try {
+					data = new JSONObject(request.getBody());
+				} catch (Exception e) {
+					json.put("error", "Failed to parse body as json");
+					return new JSONResponse(json, HTTPResponseCode.BAD_REQUEST);
+				}
+
+				String reason = "";
+				if (data.has("reason")) {
+					reason = data.getString("reason");
+				}
+
+				if (!data.has("amount")) {
+					json.put("error", "Missing body value: amount");
+					return new JSONResponse(json, HTTPResponseCode.BAD_REQUEST);
+				}
+
+				int amount = data.getInt("amount");
+
+				boolean found = false;
+				if (target == TargetType.PLAYER) {
+					String sql = "SELECT id FROM players WHERE id = ? LIMIT 1";
+					PreparedStatement ps = getDBConnection().getConnection().prepareStatement(sql);
+					ps.setInt(1, id);
+
+					ResultSet rs = ps.executeQuery();
+
+					if (rs.next()) {
+						found = true;
+					}
+
+					rs.close();
+					ps.close();
+				} else {
+					String sql = "SELECT id FROM teams WHERE id = ? LIMIT 1";
+					PreparedStatement ps = getDBConnection().getConnection().prepareStatement(sql);
+					ps.setInt(1, id);
+
+					ResultSet rs = ps.executeQuery();
+
+					if (rs.next()) {
+						found = true;
+					}
+
+					rs.close();
+					ps.close();
+				}
+				
+				if(!found) {
+					json.put("error", "Target not found");
+					return new JSONResponse(json, HTTPResponseCode.NOT_FOUND);
+				}
+
+				String sql;
+				if (target == TargetType.PLAYER) {
+					sql = "INSERT INTO player_score (player_id, reason, amount) VALUES (?, ?, ?)";
+				} else {
+					sql = "INSERT INTO team_score (team_id, reason, amount) VALUES (?, ?, ?)";
+				}
+
+				PreparedStatement ps = getDBConnection().getConnection().prepareStatement(sql);
+				ps.setInt(1, id);
+				ps.setString(2, reason);
+				ps.setInt(3, amount);
+				ps.executeUpdate();
+				ps.close();
+
+				json.put("message", "ok");
+			}
 		}
 
 		return new JSONResponse(json);

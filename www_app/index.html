@@ -158,6 +158,9 @@
 				<a class="nav-link page-link active px-1 py-1" data-page="overview_page" href="#">Overview</a>
 			</li>
 			<li class="nav-item">
+				<a class="nav-link page-link px-1 py-1" data-page="score_page" href="#">Score</a>
+			</li>
+			<li class="nav-item">
 				<a class="nav-link page-link px-1 py-1" data-page="trigger_page" href="#">Game triggers</a>
 			</li>
 			<li class="nav-item" data-hide-if-missing-permission="MANAGE_STAFF">
@@ -196,6 +199,77 @@
 				<div class="ratio ratio-16x9 border border-info border-2">
 					<iframe id="ggrock_integration_iframe" frameborder="1"
 						src="/app/misc/disabled_integration.html"></iframe>
+				</div>
+			</div>
+		</div>
+
+		<div id="score_page" class="nav-page d-none">
+			<div class="container-fluid mt-2">
+				<div class="row">
+					<div class="col">
+						<button class="btn btn-primary" id="btn_refresh_score_list">Refresh</button>
+					</div>
+				</div>
+
+				<div class="row mt-2">
+					<div class="col">
+						<h3>Player score</h3>
+						<table class="table table-striped table-bordered table-hover mt-1">
+							<thead>
+								<tr>
+									<th class="t-fit">ID</th>
+									<th>Username</th>
+									<th>Server</th>
+									<th>Reason</th>
+									<th>Amount</th>
+									<th>Gained At</th>
+									<th class="t-fit"></th>
+								</tr>
+							</thead>
+
+							<tbody id="player_score_list_tbody"></tbody>
+
+							<tbody>
+								<tr>
+									<td colspan="6"></td>
+									<td class="t-fit">
+										<button class="btn btn-success"
+											id="btn_open_add_player_score_model">Add</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="row mt-2">
+					<div class="col">
+						<h3>Team score</h3>
+						<table class="table table-striped table-bordered table-hover mt-1">
+							<thead>
+								<tr>
+									<th class="t-fit">ID</th>
+									<th>Team number</th>
+									<th>Server</th>
+									<th>Reason</th>
+									<th>Amount</th>
+									<th>Gained At</th>
+									<th class="t-fit"></th>
+								</tr>
+							</thead>
+
+							<tbody id="team_score_list_tbody"></tbody>
+
+							<tbody>
+								<tr>
+									<td colspan="6"></td>
+									<td class="t-fit">
+										<button class="btn btn-success" id="btn_open_add_team_score_model">Add</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -352,9 +426,11 @@
 							<li class="list-group-item">Owner: Full permissions</li>
 							<li class="list-group-item">Host: Full permissions</li>
 							<li class="list-group-item">Admin: Full permissions</li>
-							<li class="list-group-item">Moderator: Ban, kick and mute players + Some moderation commands</li>
+							<li class="list-group-item">Moderator: Ban, kick and mute players + Some moderation commands
+							</li>
 							<li class="list-group-item">Helper: Some basic commands to help players on the server</li>
-							<li class="list-group-item">Staff: Indicates that the user is a staff member. Almost no special permissions</li>
+							<li class="list-group-item">Staff: Indicates that the user is a staff member. Almost no
+								special permissions</li>
 						</ul>
 					</div>
 				</div>
@@ -638,7 +714,8 @@
 							</div>
 
 							<div class="form-group mt-2">
-								<input class="form-check-input" type="checkbox" value="" id="cbx_add_whitelist_offlinemode">
+								<input class="form-check-input" type="checkbox" value=""
+									id="cbx_add_whitelist_offlinemode">
 								<label class="form-check-label" for="cbx_add_whitelist_offlinemode">
 									Offline mode user
 								</label>
@@ -966,6 +1043,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="modal fade" id="serverConsoleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 			aria-labelledby="serverConsoleModalTitle" aria-hidden="true">
 			<div class="modal-dialog modal-fullscreen">
@@ -989,9 +1067,97 @@
 								placeholder="Enter command. Press the enter key to run" aria-label="Input command"
 								aria-describedby="console_send_button" id="console_input_field"
 								data-disable-if-missing-permission="REMOTE_EXECUTE_SERVER_COMMAND">
-							<button class="btn btn-decondary btn-outline-secondary close-console-button"
+							<button class="btn btn-secondary btn-outline-secondary close-console-button"
 								data-bs-dismiss="modal" type="button">Close</button>
 						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="addPlayerScoreModal" data-bs-backdrop="static" data-bs-keyboard="false"
+			tabindex="-1" aria-labelledby="addPlayerScoreModalTitle" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<div class="modal-title h5" id="addPlayerScoreModal">Add player score</div>
+						<button type="button" class="btn-close close-console-button" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="container">
+							<div class="row">
+								<div class="col">
+									Player
+									<select class="form-control" id="add_player_score_select_player"></select>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									Amount
+									<input type="number" class="form-control" id="add_player_score_value" value="0"
+										placeholder="Amount">
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									Reason
+									<input type="text" class="form-control" id="add_player_score_reason"
+										placeholder="Reason">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+						<button class="btn btn-primary" id="btn_apply_player_score"
+							type="button">Add</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="addTeamScoreModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+			aria-labelledby="addTeamScoreModalTitle" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<div class="modal-title h5" id="addTeamScoreModalTitle">Add team score</div>
+						<button type="button" class="btn-close close-console-button" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="container">
+							<div class="row">
+								<div class="col">
+									Team
+									<select class="form-control" id="add_team_score_select_team"></select>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									Amount
+									<input type="number" class="form-control" id="add_team_score_value" value="0"
+										placeholder="Amount">
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									Reason
+									<input type="text" class="form-control" id="add_team_score_reason"
+										placeholder="Reason">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+						<button class="btn btn-primary" id="btn_apply_team_score"
+							type="button">Add</button>
 					</div>
 				</div>
 			</div>

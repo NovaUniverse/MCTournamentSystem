@@ -131,7 +131,7 @@ public class ScoreListener implements Listener {
 
 			if (killScoreEnabled) {
 				if (killerPlayer != null) {
-					ScoreManager.getInstance().addPlayerScore(killerPlayer, killScore, true, "Kill score " + killerPlayer + " eliminated " + e.getPlayer().getName());
+					ScoreManager.getInstance().addPlayerScore(killerPlayer, killScore, true, "Kill score " + killerPlayer.getName() + " eliminated " + e.getPlayer().getName());
 					PlayerKillCache.getInstance().invalidate(killerPlayer);
 				}
 			}

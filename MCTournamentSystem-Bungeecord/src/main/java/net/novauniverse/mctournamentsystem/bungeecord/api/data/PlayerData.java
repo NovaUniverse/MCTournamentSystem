@@ -5,16 +5,18 @@ import java.util.UUID;
 import org.json.JSONObject;
 
 public class PlayerData {
-	private UUID uuid;
+	private final int id;
+	private final UUID uuid;
 
-	private int kills;
-	private int score;
-	private int teamScore;
-	private int teamNumber;
-	private String username;
-	private JSONObject metadata;
+	private final int kills;
+	private final int score;
+	private final int teamScore;
+	private final int teamNumber;
+	private final String username;
+	private final JSONObject metadata;
 
-	public PlayerData(UUID uuid, int kills, int score, int teamScore, int teamNumber, String username, JSONObject metadata) {
+	public PlayerData(int id, UUID uuid, int kills, int score, int teamScore, int teamNumber, String username, JSONObject metadata) {
+		this.id = id;
 		this.uuid = uuid;
 		this.kills = kills;
 		this.score = score;
@@ -22,6 +24,10 @@ public class PlayerData {
 		this.teamNumber = teamNumber;
 		this.username = username;
 		this.metadata = metadata;
+	}
+	
+	public int getId() {
+		return id;
 	}
 
 	public UUID getUuid() {
