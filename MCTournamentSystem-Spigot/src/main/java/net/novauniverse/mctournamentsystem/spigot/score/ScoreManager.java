@@ -15,6 +15,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
+import net.zeeraa.novacore.commons.jarresourcereader.JARResourceReader;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.module.NovaModule;
@@ -100,7 +101,7 @@ public class ScoreManager extends NovaModule implements Listener {
 	}
 
 	public void doSynchronousScoreUpdate(UUID uuid) throws SQLException {
-		String sql = "SELECT IFNULL(SUM(amount), 0) as total_score FROM player_score WHERE player_id = (SELECT id FROM players WHERE uuid = ?)";
+		String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/score/get_single_player_score.sql");
 		PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 		ps.setString(1, uuid.toString());
 
@@ -119,7 +120,7 @@ public class ScoreManager extends NovaModule implements Listener {
 			@Override
 			public void run() {
 				try {
-					String sql = "SELECT p.uuid AS uuid, IFNULL(SUM(s.amount), 0) AS score FROM players AS p LEFT JOIN player_score AS s ON s.player_id = p.id GROUP BY p.id";
+					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/score/get_all_player_scores.sql");
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 					ResultSet rs = ps.executeQuery();
@@ -186,7 +187,7 @@ public class ScoreManager extends NovaModule implements Listener {
 			@Override
 			public void run() {
 				try {
-					String sql = "INSERT INTO player_score (player_id, server, reason, amount) SELECT id, ?, ?, ? FROM players WHERE uuid = ?";
+					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/score/add_player_score.sql");
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 					ps.setString(1, TournamentSystem.getInstance().getServerName());
@@ -232,7 +233,7 @@ public class ScoreManager extends NovaModule implements Listener {
 					TournamentSystemTeam team = TournamentSystemTeamManager.getInstance().getTeam(teamId);
 					if(team != null) {
 					}
-					String sql = "INSERT INTO team_score (team_id, server, reason, amount) SELECT id, ?, ?, ? FROM teams WHERE team_number = ?";
+					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/score/add_team_score.sql");
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 					ps.setString(1, TournamentSystem.getInstance().getServerName());
