@@ -101,7 +101,7 @@ public class ScoreManager extends NovaModule implements Listener {
 	}
 
 	public void doSynchronousScoreUpdate(UUID uuid) throws SQLException {
-		String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/score/get_single_player_score.sql");
+		String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/score/get_single_player_score.sql");
 		PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 		ps.setString(1, uuid.toString());
 
@@ -120,7 +120,7 @@ public class ScoreManager extends NovaModule implements Listener {
 			@Override
 			public void run() {
 				try {
-					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/score/get_all_player_scores.sql");
+					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/score/get_all_player_scores.sql");
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 					ResultSet rs = ps.executeQuery();
@@ -187,7 +187,7 @@ public class ScoreManager extends NovaModule implements Listener {
 			@Override
 			public void run() {
 				try {
-					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/score/add_player_score.sql");
+					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/score/add_player_score.sql");
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 					ps.setString(1, TournamentSystem.getInstance().getServerName());
@@ -233,7 +233,7 @@ public class ScoreManager extends NovaModule implements Listener {
 					TournamentSystemTeam team = TournamentSystemTeamManager.getInstance().getTeam(teamId);
 					if(team != null) {
 					}
-					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/score/add_team_score.sql");
+					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/score/add_team_score.sql");
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 					ps.setString(1, TournamentSystem.getInstance().getServerName());

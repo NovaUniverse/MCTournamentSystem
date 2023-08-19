@@ -241,7 +241,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 
 				// Update score and kills
 				try {
-					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/team/fetch_teams.sql");
+					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/team/fetch_teams.sql");
 					;
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
