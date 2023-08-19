@@ -27,6 +27,7 @@ import net.novauniverse.mctournamentsystem.commons.config.InternetCafeOptions;
 import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
 import net.zeeraa.novacore.bungeecord.utils.ChatColorRGBMapper;
+import net.zeeraa.novacore.commons.jarresourcereader.JARResourceReader;
 
 public class StatusHandler extends TournamentEndpoint {
 	public StatusHandler() {
@@ -70,23 +71,7 @@ public class StatusHandler extends TournamentEndpoint {
 		List<PlayerData> playerDataList = new ArrayList<PlayerData>();
 
 		try {
-			String sql = "SELECT"
-					+ " p.id AS id,"
-					+ "	p.metadata AS metadata,"
-					+ "	p.uuid AS uuid,\r\n"
-					+ "	p.username AS username,"
-					+ "	p.kills AS kills,"
-					+ "	t.team_number AS team_number,"
-					+ "	IFNULL(SUM(ps.amount), 0) AS player_score,"
-					+ "	IFNULL(SUM(ts.amount), 0) AS team_score"
-					+ "	FROM players AS p"
-					+ " LEFT JOIN player_score AS ps"
-					+ "	ON ps.player_id = p.id"
-					+ " LEFT JOIN teams AS t"
-					+ "	ON t.team_number = p.team_number"
-					+ " LEFT JOIN team_score AS ts"
-					+ "	ON ts.team_id = t.id"
-					+ " GROUP BY p.id";
+			String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/api/v1/status/get_player_data.sql");
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
@@ -110,15 +95,7 @@ public class StatusHandler extends TournamentEndpoint {
 
 		List<TeamData> teamDataList = new ArrayList<TeamData>();
 		try {
-			String sql = "SELECT"
-					+ " t.id AS id,"
-					+ " t.team_number AS team_number,"
-					+ " t.kills AS kills,\r\n"
-					+ " IFNULL(SUM(s.amount), 0) AS total_score"
-					+ " FROM teams AS t"
-					+ " LEFT JOIN team_score AS s"
-					+ " ON s.team_id = t.id"
-					+ " GROUP BY t.id";
+			String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/api/v1/status/get_team_data.sql");
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
