@@ -30,7 +30,7 @@ public class ScoreHandler extends TournamentEndpoint {
 			JSONArray teams = new JSONArray();
 
 			{
-				String sql = "SELECT s.server AS server, s.reason AS reason, s.gained_at AS gained_at, s.id AS id, s.player_id AS player_id, p.username AS username, p.uuid AS uuid FROM player_score AS s LEFT JOIN players AS p ON p.id = s.player_id";
+				String sql = "SELECT s.amount AS amount, s.server AS server, s.reason AS reason, s.gained_at AS gained_at, s.id AS id, s.player_id AS player_id, p.username AS username, p.uuid AS uuid FROM player_score AS s LEFT JOIN players AS p ON p.id = s.player_id";
 				PreparedStatement ps = getDBConnection().getConnection().prepareStatement(sql);
 				ResultSet rs = ps.executeQuery();
 
@@ -64,7 +64,7 @@ public class ScoreHandler extends TournamentEndpoint {
 			}
 
 			{
-				String sql = "SELECT s.server AS server, s.reason AS reason, s.gained_at AS gained_at, s.id AS id, s.team_id AS team_id, t.team_number AS team_number FROM team_score AS s LEFT JOIN teams AS t ON t.id = s.team_id";
+				String sql = "SELECT s.amount AS amount, s.server AS server, s.reason AS reason, s.gained_at AS gained_at, s.id AS id, s.team_id AS team_id, t.team_number AS team_number FROM team_score AS s LEFT JOIN teams AS t ON t.id = s.team_id";
 				PreparedStatement ps = getDBConnection().getConnection().prepareStatement(sql);
 				ResultSet rs = ps.executeQuery();
 
@@ -91,7 +91,7 @@ public class ScoreHandler extends TournamentEndpoint {
 					owner.put("team_number", teamNumber);
 
 					score.put("team", owner);
-					players.put(score);
+					teams.put(score);
 				}
 			}
 
