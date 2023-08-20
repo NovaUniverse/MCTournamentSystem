@@ -25,6 +25,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
 import net.zeeraa.novacore.bungeecord.utils.ChatColorRGBMapper;
+import net.zeeraa.novacore.commons.jarresourcereader.JARResourceReader;
 
 public class PublicStatusHandler extends TournamentEndpoint {
 	public PublicStatusHandler() {
@@ -55,28 +56,13 @@ public class PublicStatusHandler extends TournamentEndpoint {
 		List<PlayerData> playerDataList = new ArrayList<PlayerData>();
 
 		try {
-			String sql = "SELECT "
-					+ " p.id AS id,"
-					+ "	p.uuid AS uuid,"
-					+ "	p.username AS username,"
-					+ "	p.kills AS kills,"
-					+ "	t.team_number AS team_number,"
-					+ "	IFNULL(SUM(ps.amount), 0) AS total_score,"
-					+ "	IFNULL(SUM(ts.amount), 0) AS team_score"
-					+ " FROM players AS p"
-					+ " LEFT JOIN player_score AS ps"
-					+ "	ON ps.player_id = p.id"
-					+ " LEFT JOIN teams AS t"
-					+ "	ON t.team_number = p.team_number"
-					+ " LEFT JOIN team_score AS ts"
-					+ "	ON ts.team_id = t.id"
-					+ " GROUP BY p.id";
+			String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/api/v1/public/get_player_data.sql");
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				int teamNumber = rs.getInt("team_number");
-				PlayerData playerData = new PlayerData(rs.getInt("id"), UUID.fromString(rs.getString("uuid")), rs.getInt("kills"), rs.getInt("total_score"), rs.getInt("team_score"), (teamNumber == 0 ? -1 : teamNumber), rs.getString("username"), new JSONObject());
+				PlayerData playerData = new PlayerData(rs.getInt("id"), UUID.fromString(rs.getString("uuid")), rs.getInt("kills"), rs.getInt("player_score"), rs.getInt("team_score"), (teamNumber == 0 ? -1 : teamNumber), rs.getString("username"), new JSONObject());
 
 				playerDataList.add(playerData);
 			}
@@ -90,15 +76,7 @@ public class PublicStatusHandler extends TournamentEndpoint {
 
 		List<TeamData> teamDataList = new ArrayList<TeamData>();
 		try {
-			String sql = "SELECT"
-					+ " t.id AS id,"
-					+ "	t.team_number AS team_number,"
-					+ "	t.kills AS kills,"
-					+ "	IFNULL(SUM(s.amount), 0) AS total_score"
-					+ " FROM teams AS t"
-					+ " LEFT JOIN team_score AS s"
-					+ "	ON s.team_id = t.id"
-					+ " GROUP BY t.id";
+			String sql =JARResourceReader.readFileFromJARAsString(getClass(), "/sql/api/v1/public/get_team_data.sql");
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 

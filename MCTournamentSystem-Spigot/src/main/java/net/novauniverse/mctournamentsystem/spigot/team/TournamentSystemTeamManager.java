@@ -20,6 +20,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.modules.playerprefix.PlayerPrefixManager;
+import net.zeeraa.novacore.commons.jarresourcereader.JARResourceReader;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
@@ -240,7 +241,8 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 
 				// Update score and kills
 				try {
-					String sql = "SELECT t.team_number AS team_number, t.kills AS kills, IFNULL(SUM(s.amount), 0) AS total_score FROM teams AS t LEFT JOIN team_score AS s ON s.team_id = t.id  GROUP BY t.id";
+					String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/team/fetch_teams.sql");
+					;
 					PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 					ResultSet rs = ps.executeQuery();

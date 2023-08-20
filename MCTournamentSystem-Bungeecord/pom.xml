@@ -21,6 +21,7 @@
 					<include>plugin.yml</include>
 					<include>config.yml</include>
 					<include>favicon.ico</include>
+					<include>sql/**/*.sql</include>
 				</includes>
 			</resource>
 		</resources>

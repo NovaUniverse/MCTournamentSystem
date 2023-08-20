@@ -23,6 +23,7 @@
 					<include>config.yml</include>
 					<include>GameSpecificScoreSettings.json</include>
 					<include>lang/en-us.json</include>
+					<include>sql/**/*.sql</include>
 				</includes>
 			</resource>
 		</resources>
