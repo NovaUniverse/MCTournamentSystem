@@ -92,6 +92,8 @@ function updateOfflineModePlayerSkinCache(username) {
 					}
 				}
 			}
+		}).fail(function (e) {
+			toastr.error("Failed to fetch skin restorer config")
 		});
 	}
 }
@@ -172,7 +174,9 @@ const update = () => {
 					)
 			);
 		});
-	});
+	}).fail(function (e) {
+		toastr.error("An error occured while fetching live tournament data")
+	});;
 }
 
 const ordinal_suffix_of = (i) => {
