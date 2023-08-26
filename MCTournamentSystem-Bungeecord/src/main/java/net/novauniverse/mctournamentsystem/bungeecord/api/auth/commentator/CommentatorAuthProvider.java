@@ -25,6 +25,14 @@ public class CommentatorAuthProvider implements AuthenticationProvider {
 				}
 			}
 		}
+		
+		if(request.getRequestHeaders().containsKey("x-commentator-auth")) {
+			String authString = request.getFirstResponseHeader("x-commentator-auth");
+			CommentatorAuth result = APIKeyStore.getCommentatorKey(authString);
+			if (result != null) {
+				return result;
+			}
+		}
 
 		if (request.getQueryParameters().containsKey("commentator_key")) {
 			CommentatorAuth result = APIKeyStore.getCommentatorKey(request.getQueryParameters().get("commentator_key"));
