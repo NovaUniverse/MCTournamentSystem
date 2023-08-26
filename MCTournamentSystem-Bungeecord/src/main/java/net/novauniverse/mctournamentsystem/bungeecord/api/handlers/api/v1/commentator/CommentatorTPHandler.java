@@ -60,8 +60,8 @@ public class CommentatorTPHandler extends TournamentEndpoint {
 						ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
 						out.writeUTF("commentator_tp");
-						out.writeUTF(uuid.toString());
-						out.writeUTF(target.toString());
+						out.writeUTF(uuid.toString()); // Player ID
+						out.writeUTF(target.toString()); // Target ID
 
 						player.getServer().getInfo().sendData(TournamentSystemCommons.DATA_CHANNEL, out.toByteArray());
 

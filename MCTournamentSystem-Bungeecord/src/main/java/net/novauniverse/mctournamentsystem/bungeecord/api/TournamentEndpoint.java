@@ -43,9 +43,11 @@ public abstract class TournamentEndpoint extends HTTPEndpoint {
 	protected static DBConnection getDBConnection() {
 		return TournamentSystemCommons.getDBConnection();
 	}
-	
+
 	@Override
 	public final AuthenticationResponse handleAuthentication(Authentication authentication, Request request) {
+		request.setResponseHeader("X-handler", this.getClass().getName());
+
 		if (requireAuthentication && authentication == null) {
 			return AuthenticationResponse.customFailResponse("You need to log in to access this endpoint", HTTPResponseCode.UNAUTHORIZED);
 		}

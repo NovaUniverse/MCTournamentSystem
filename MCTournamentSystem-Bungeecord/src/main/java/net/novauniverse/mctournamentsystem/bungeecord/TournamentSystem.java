@@ -545,7 +545,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		Log.info("Setting up web server");
 
 		JSONObject webUISettings = config.getJSONObject("web_ui");
-		JSONArray commentatorKeys = config.optJSONArray("commentator_keys");
+		JSONArray commentatorKeys = webConfig.optJSONArray("commentator_keys");
 		JSONArray apiKeys = webConfig.optJSONArray("api_keys");
 		JSONArray webUsers = webConfig.getJSONArray("users");
 		JSONArray themes = webConfig.optJSONArray("custom_themes");

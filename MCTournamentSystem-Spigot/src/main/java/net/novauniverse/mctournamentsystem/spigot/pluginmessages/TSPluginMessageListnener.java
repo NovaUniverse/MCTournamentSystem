@@ -48,7 +48,7 @@ public class TSPluginMessageListnener implements PluginMessageListener {
 			ByteArrayDataInput in = ByteStreams.newDataInput(message);
 			String subchannel = in.readUTF();
 
-			// Log.trace("Received message on sub channel ", subchannel);
+			Log.trace("Received message on sub channel " + subchannel);
 
 			switch (subchannel.toLowerCase()) {
 
@@ -79,18 +79,25 @@ public class TSPluginMessageListnener implements PluginMessageListener {
 				break;
 
 			case "commentator_tp":
-				UUID commentatorUuid = UUID.fromString(in.readUTF());
-				UUID commentatorTargetUuid = UUID.fromString(in.readUTF());
+				String id1 = in.readUTF();
+				String id2 = in.readUTF();
+
+				Log.trace("Commentator tp request " + id1 + " => " + id2);
+
+				UUID commentatorUuid = UUID.fromString(id1);
+				UUID commentatorTargetUuid = UUID.fromString(id2);
 
 				Player commentator = Bukkit.getPlayer(commentatorUuid);
 				Player commentatorTarget = Bukkit.getPlayer(commentatorTargetUuid);
 
 				if (commentator != null && commentatorTarget != null) {
-					if (commentator.isOnline() && commentatorTarget.isOnline()) {
-						if (commentator.hasPermission(TournamentPermissions.COMMENTATOR_PERMISSION)) {
-							commentator.teleport(commentatorTarget, TeleportCause.PLUGIN);
-						}
+					if (commentator.hasPermission(TournamentPermissions.COMMENTATOR_PERMISSION)) {
+						commentator.teleport(commentatorTarget, TeleportCause.PLUGIN);
+					} else {
+						Log.trace("Commentator tp failed to to missing permission");
 					}
+				} else {
+					Log.trace("Commentator tp failed due to one of the targets not being available");
 				}
 				break;
 

@@ -14,6 +14,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.Comme
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.internal.InternalAuthProvider;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.GetServiceProvidersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.chat.GetChatLogHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CheckCommentatorAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CommentatorTPHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.GetCommentatorGuestKeyHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.GetTriggersHandler;
@@ -67,9 +68,12 @@ public class TournamentSystemWebAPI {
 		this.server = new HTTPServer(port);
 
 		server.addMiddleware(new CorsAnywhereMiddleware());
+		
+		server.addAuthenticationProvider(new CommentatorAuthProvider());
+		
 		server.addAuthenticationProvider(new InternalAuthProvider());
 		server.addAuthenticationProvider(new APIKeyAuthProvider());
-		server.addAuthenticationProvider(new CommentatorAuthProvider());
+		
 
 		server.setStandardResponseType(StandardResponseType.JSON);
 		server.setExceptionMode(ExceptionMode.MESSAGE);
@@ -128,6 +132,7 @@ public class TournamentSystemWebAPI {
 		// Commentator
 		server.addEndpoint("/api/v1/commentator/tp", new CommentatorTPHandler());
 		server.addEndpoint("/api/v1/commentator/get_guest_key", new GetCommentatorGuestKeyHandler());
+		server.addEndpoint("/api/v1/commentator/check_auth", new CheckCommentatorAuth());
 
 		// Public
 		server.addEndpoint("/api/v1/utils/offline_username_to_uuid", new OfflineUsernameToUUIDHandler());
