@@ -16,8 +16,10 @@ public class Setup {
 		String initialName = System.getProperty("tsInitialName");
 		if (initialName != null) {
 			if (TournamentSystemCommons.getTournamentName() == null) {
-				Log.info("Setup", "Setting name to " + initialName + " specified by the -DtsInitialName parameter");
-				TournamentSystemCommons.setTournamentName(initialName);
+				if (initialName.trim().length() > 0) {
+					Log.info("Setup", "Setting name to " + initialName + " specified by the -DtsInitialName parameter");
+					TournamentSystemCommons.setTournamentName(initialName);
+				}
 			}
 		}
 
@@ -25,8 +27,10 @@ public class Setup {
 			String initialMOTD = System.getProperty("tsInitialMOTD");
 			if (initialMOTD != null) {
 				if (TournamentSystemCommons.getConfigValue("motd") == null) {
-					Log.info("Setup", "Setting MOTD to " + initialMOTD + " specified by the -DtsInitialMOTD parameter");
-					TournamentSystemCommons.setConfigValue("motd", initialMOTD);
+					if (initialMOTD.trim().length() > 0) {
+						Log.info("Setup", "Setting MOTD to " + initialMOTD + " specified by the -DtsInitialMOTD parameter");
+						TournamentSystemCommons.setConfigValue("motd", initialMOTD);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -36,8 +40,10 @@ public class Setup {
 		String initialURL = System.getProperty("tsInitialURL");
 		if (initialURL != null) {
 			if (TournamentSystemCommons.getScoreboardURL() == null) {
-				Log.info("Setup", "Setting scoreboard url to " + initialURL + " specified by the -DtsInitialURL parameter");
-				TournamentSystemCommons.setScoreboardURL(initialURL);
+				if (initialURL.trim().length() > 0) {
+					Log.info("Setup", "Setting scoreboard url to " + initialURL + " specified by the -DtsInitialURL parameter");
+					TournamentSystemCommons.setScoreboardURL(initialURL);
+				}
 			}
 		}
 	}
