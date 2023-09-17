@@ -1,9 +1,15 @@
 package net.novauniverse.mctournamentsystem.spigot.modules.head;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import io.github.bananapuncher714.nbteditor.NBTEditor;
+import net.novauniverse.mctournamentsystem.spigot.modules.cooldown.TickCooldown;
+import net.novauniverse.mctournamentsystem.spigot.textures.Textures;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
+import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
+import net.zeeraa.novacore.spigot.module.NovaModule;
+import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
+import net.zeeraa.novacore.spigot.module.modules.cooldown.CooldownManager;
+import net.zeeraa.novacore.spigot.utils.InventoryUtils;
+import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,18 +26,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import io.github.bananapuncher714.nbteditor.NBTEditor;
-import net.novauniverse.mctournamentsystem.spigot.modules.cooldown.TickCooldown;
-import net.novauniverse.mctournamentsystem.spigot.textures.Textures;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
-import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
-import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
-import net.zeeraa.novacore.spigot.utils.ItemBuilder;
-
 @NovaAutoLoad(shouldEnable = true)
 public class GoldenHead extends NovaModule implements Listener {
-	private Map<UUID, TickCooldown> cooldown = new HashMap<UUID, TickCooldown>();
+
+	private static String GOLDEN_HEAD_COOLDOWN_ID = "golden_head_cooldown";
 
 	public GoldenHead() {
 		super("TournamentSystem.GoldenHead");
@@ -82,47 +80,19 @@ public class GoldenHead extends NovaModule implements Listener {
 
 					Player player = e.getPlayer();
 
-					cooldown.values().removeIf(TickCooldown::isCompleted);
 
-					if (!cooldown.containsKey(player.getUniqueId())) {
-						cooldown.put(player.getUniqueId(), new TickCooldown(100L));
-						if (e.getItem().getAmount() > 1) {
-							e.getItem().setAmount(e.getItem().getAmount() - 1);
-						} else {
-							if (player.getItemInHand().getAmount() == 1) {
-								player.setItemInHand(null);
-							} else {
-								boolean removed = false;
-								for (int i = 0; i < player.getInventory().getSize(); i++) {
-									ItemStack item = player.getInventory().getItem(i);
-									if (item != null) {
-										if (item.getType() != Material.AIR) {
-											if (NBTEditor.contains(item, "tournamentsystem", "goldenhead")) {
-												if (item.getAmount() > 1) {
-													item.setAmount(item.getAmount() - 1);
-													removed = true;
-													break;
-												} else {
-													player.getInventory().setItem(i, null);
-													removed = true;
-													break;
-												}
-											}
-										}
-									}
-								}
-
-								if (!removed) {
-									return;
-								}
-							}
-						}
+					if (!CooldownManager.get().isActive(player.getUniqueId(), GOLDEN_HEAD_COOLDOWN_ID)) {
+						CooldownManager.get().set(player.getUniqueId(), GOLDEN_HEAD_COOLDOWN_ID, 100);
+						InventoryUtils.removeOneFromHand(e.getPlayer());
 						// p.getWorld().playSound(p.getLocation(), Sound.EAT, 1F, 1F);
 						VersionIndependentSound.EAT.play(player);
 
 						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 30 * 20, 1));
 						player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 15 * 20, 1));
 						player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 60 * 20, 1));
+					} else {
+						double seconds = ((double)CooldownManager.get().getTimeLeft(player.getUniqueId(), GOLDEN_HEAD_COOLDOWN_ID) / 20.0);
+						player.sendMessage(ChatColor.RED + "Wait " + seconds + (seconds == 1 ? " second" : "seconds") + " to eat another Golden Head");
 					}
 				}
 			}
