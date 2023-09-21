@@ -72,17 +72,21 @@ public class GoldenHead extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e) {
-		if (VersionIndependentUtils.get().isInteractEventMainHand(e)) {
+		if (VersionIndependentUtils.get().isInteractEventMainHand(e))
 			if (e.getItem() != null) {
 				if (NBTEditor.contains(e.getItem(), "tournamentsystem", "goldenhead")) {
 					if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 						e.setCancelled(true);
-
 						Player player = e.getPlayer();
 
 						if (!CooldownManager.get().isActive(player.getUniqueId(), GOLDEN_HEAD_COOLDOWN_ID)) {
 							CooldownManager.get().set(player.getUniqueId(), GOLDEN_HEAD_COOLDOWN_ID, 100);
-							InventoryUtils.removeOneFromHand(e.getPlayer());
+							if (VersionIndependentUtils.get().isInteractEventMainHand(e)) {
+								InventoryUtils.removeOneFromHand(e.getPlayer());
+							} else {
+								InventoryUtils.removeOneFromOffHand(e.getPlayer());
+							}
+
 							// p.getWorld().playSound(p.getLocation(), Sound.EAT, 1F, 1F);
 							VersionIndependentSound.EAT.play(player);
 
@@ -98,4 +102,3 @@ public class GoldenHead extends NovaModule implements Listener {
 			}
 		}
 	}
-}
