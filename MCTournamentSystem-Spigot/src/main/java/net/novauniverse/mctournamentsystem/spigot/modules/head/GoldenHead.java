@@ -28,7 +28,7 @@ import org.bukkit.potion.PotionEffectType;
 @NovaAutoLoad(shouldEnable = true)
 public class GoldenHead extends NovaModule implements Listener {
 
-	private static String GOLDEN_HEAD_COOLDOWN_ID = "golden_head_cooldown";
+	private static final String GOLDEN_HEAD_COOLDOWN_ID = "golden_head_cooldown";
 
 	public GoldenHead() {
 		super("TournamentSystem.GoldenHead");
@@ -72,7 +72,6 @@ public class GoldenHead extends NovaModule implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e) {
-		if (VersionIndependentUtils.get().isInteractEventMainHand(e))
 			if (e.getItem() != null) {
 				if (NBTEditor.contains(e.getItem(), "tournamentsystem", "goldenhead")) {
 					if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
