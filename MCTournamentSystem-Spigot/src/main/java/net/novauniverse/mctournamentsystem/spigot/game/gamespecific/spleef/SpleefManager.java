@@ -12,7 +12,8 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 
 public class SpleefManager extends NovaModule implements Listener {
 	public SpleefManager() {
@@ -60,10 +61,10 @@ public class SpleefManager extends NovaModule implements Listener {
 											color = ChatColor.GREEN;
 										}
 
-										NetherBoardScoreboard.getInstance().setGlobalLine(SPLEEF_DECAY_LINE, ChatColor.GOLD + "Decay in: " + color + TextUtils.secondsToMinutesSeconds(timeLeft));
+										NovaScoreboardManager.getInstance().setGlobalLine(SPLEEF_DECAY_LINE, new StaticTextLine(ChatColor.GOLD + "Decay in: " + color + TextUtils.secondsToMinutesSeconds(timeLeft)));
 									} else {
 										if (decayLineShown) {
-											NetherBoardScoreboard.getInstance().clearGlobalLine(SPLEEF_DECAY_LINE);
+											NovaScoreboardManager.getInstance().clearGlobalLine(SPLEEF_DECAY_LINE);
 											decayLineShown = false;
 										}
 									}

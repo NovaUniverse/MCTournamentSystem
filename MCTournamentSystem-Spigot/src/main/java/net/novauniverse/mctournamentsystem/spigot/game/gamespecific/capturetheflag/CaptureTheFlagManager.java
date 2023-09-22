@@ -18,7 +18,8 @@ import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class CaptureTheFlagManager extends NovaModule implements Listener {
@@ -56,10 +57,10 @@ public class CaptureTheFlagManager extends NovaModule implements Listener {
 						if (!game.isSuddenDeathActive()) {
 							if (game.getSuddenDeathTask() != null) {
 								int secondsLeft = (int) (game.getSuddenDeathTask().getMSLeft() / 1000);
-								NetherBoardScoreboard.getInstance().setGlobalLine(SUDDEN_DEATH_COUNTDOWN_LINE, ChatColor.GOLD + "Sudden death: " + ChatColor.AQUA + TextUtils.secondsToTime(secondsLeft));
+								NovaScoreboardManager.getInstance().setGlobalLine(SUDDEN_DEATH_COUNTDOWN_LINE, new StaticTextLine(ChatColor.GOLD + "Sudden death: " + ChatColor.AQUA + TextUtils.secondsToTime(secondsLeft)));
 							}
 						} else {
-							NetherBoardScoreboard.getInstance().clearGlobalLine(SUDDEN_DEATH_COUNTDOWN_LINE);
+							NovaScoreboardManager.getInstance().clearGlobalLine(SUDDEN_DEATH_COUNTDOWN_LINE);
 						}
 					}
 				}

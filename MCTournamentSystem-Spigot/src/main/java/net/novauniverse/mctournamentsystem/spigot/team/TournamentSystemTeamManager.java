@@ -23,7 +23,7 @@ import net.novauniverse.mctournamentsystem.spigot.modules.playerprefix.PlayerPre
 import net.zeeraa.novacore.commons.jarresourcereader.JARResourceReader;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 import net.zeeraa.novacore.spigot.utils.NovaItemsAdderUtils;
@@ -159,7 +159,7 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 			if (playerColorCache.containsKey(player.getUniqueId())) {
 				Log.trace("Removing team color for player " + player.getName());
 				playerColorCache.remove(player.getUniqueId());
-				NetherBoardScoreboard.getInstance().resetPlayerNameColor(player);
+				NovaScoreboardManager.getInstance().removePlayerNameColor(player);
 			}
 		} else {
 			ChatColor color = team.getTeamColor();
@@ -172,12 +172,12 @@ public class TournamentSystemTeamManager extends TeamManager implements Listener
 				if (color != playerColorCache.get(player.getUniqueId())) {
 					Log.trace("Changing team color for player " + player.getName());
 					playerColorCache.put(player.getUniqueId(), color);
-					NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, color);
+					NovaScoreboardManager.getInstance().setPlayerNameColor(player, color);
 				}
 			} else {
 				Log.trace("Setting team color for player " + player.getName());
 				playerColorCache.put(player.getUniqueId(), color);
-				NetherBoardScoreboard.getInstance().setPlayerNameColorBungee(player, color);
+				NovaScoreboardManager.getInstance().setPlayerNameColor(player, color);
 			}
 		}
 	}

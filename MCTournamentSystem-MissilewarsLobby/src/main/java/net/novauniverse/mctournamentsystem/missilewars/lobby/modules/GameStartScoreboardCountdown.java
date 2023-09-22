@@ -6,7 +6,8 @@ import net.novauniverse.mctournamentsystem.missilewars.lobby.MissileWarsLobby;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class GameStartScoreboardCountdown extends NovaModule {
@@ -17,7 +18,7 @@ public class GameStartScoreboardCountdown extends NovaModule {
 	public static final int DEFAULT_COUNTDOWN_LINE = 1;
 
 	private int countdownLine;
-
+	
 	public static GameStartScoreboardCountdown getInstance() {
 		return instance;
 	}
@@ -37,14 +38,12 @@ public class GameStartScoreboardCountdown extends NovaModule {
 		task = new SimpleTask(MissileWarsLobby.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				// System.out.println("NovaMain.getInstance().getGameStarter().shouldShowCountdown():
-				// " + NovaMain.getInstance().getGameStarter().shouldShowCountdown());
 				if (MissileWarsLobby.getInstance().getStarter().shouldShowCountdown()) {
 					countdownVisible = true;
-					NetherBoardScoreboard.getInstance().setGlobalLine(countdownLine, ChatColor.GOLD + "Starting in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(MissileWarsLobby.getInstance().getStarter().getTimeLeft()));
+					NovaScoreboardManager.getInstance().setGlobalLine(countdownLine, new StaticTextLine(ChatColor.GOLD + "Starting in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(MissileWarsLobby.getInstance().getStarter().getTimeLeft())));
 				} else {
 					if (countdownVisible) {
-						NetherBoardScoreboard.getInstance().clearGlobalLine(countdownLine);
+						NovaScoreboardManager.getInstance().clearGlobalLine(countdownLine);
 						countdownVisible = false;
 					}
 				}
@@ -58,7 +57,7 @@ public class GameStartScoreboardCountdown extends NovaModule {
 
 	public void setCountdownLine(int countdownLine) {
 		if (countdownVisible) {
-			NetherBoardScoreboard.getInstance().clearGlobalLine(countdownLine);
+			NovaScoreboardManager.getInstance().clearGlobalLine(countdownLine);
 		}
 		this.countdownLine = countdownLine;
 	}

@@ -7,7 +7,9 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.ModifiableTextLine;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class MissilewarsScoreboard extends NovaModule {
@@ -18,7 +20,9 @@ public class MissilewarsScoreboard extends NovaModule {
 	}
 
 	private Task task;
-	
+
+	private ModifiableTextLine tpsLine;
+
 	public MissilewarsScoreboard() {
 		super("TournamentSystem.MissileWars.MissilewarsScoreboard");
 	}
@@ -26,6 +30,7 @@ public class MissilewarsScoreboard extends NovaModule {
 	@Override
 	public void onLoad() {
 		MissilewarsScoreboard.instance = this;
+		tpsLine = new ModifiableTextLine("");
 		task = new SimpleTask(new Runnable() {
 			@Override
 			public void run() {
@@ -38,14 +43,14 @@ public class MissilewarsScoreboard extends NovaModule {
 				}
 
 				if (tps != -1) {
-					NetherBoardScoreboard.getInstance().setGlobalLine(5, ChatColor.GOLD + "TPS: " + TextUtils.formatTps(tps));
+					tpsLine.setText(ChatColor.GOLD + "TPS: " + TextUtils.formatTps(tps));
 				} else {
-					NetherBoardScoreboard.getInstance().setGlobalLine(5, ChatColor.GOLD + "TPS: " + ChatColor.AQUA + "--");
+					tpsLine.setText(ChatColor.GOLD + "TPS: " + ChatColor.AQUA + "--");
 				}
 
 				Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 					int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
-					NetherBoardScoreboard.getInstance().setPlayerLine(6, player, ChatColor.GOLD + "Ping: " + TextUtils.formatPing(ping));
+					NovaScoreboardManager.getInstance().setPlayerLine(player, 6, new StaticTextLine(ChatColor.GOLD + "Ping: " + TextUtils.formatPing(ping)));
 				});
 			}
 		}, 20L);
@@ -53,6 +58,7 @@ public class MissilewarsScoreboard extends NovaModule {
 
 	@Override
 	public void onEnable() throws Exception {
+		NovaScoreboardManager.getInstance().setGlobalLine(5, tpsLine);
 		task.start();
 	}
 

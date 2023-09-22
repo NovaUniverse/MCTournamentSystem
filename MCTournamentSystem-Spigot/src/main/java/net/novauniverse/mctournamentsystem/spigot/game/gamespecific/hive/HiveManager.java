@@ -33,7 +33,8 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEl
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.compass.CompassTracker;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
@@ -89,7 +90,7 @@ public class HiveManager extends NovaModule implements Listener {
 
 					if (!TournamentSystem.getInstance().isDisableScoreboard()) {
 						if (game.hasStarted()) {
-							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(game.getTimeLeft() + 1));
+							NovaScoreboardManager.getInstance().setGlobalLine(TIME_LINE, new StaticTextLine(LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(game.getTimeLeft() + 1)));
 
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 								TournamentSystemTeam team = (TournamentSystemTeam) TeamManager.getTeamManager().getPlayerTeam(player);
@@ -97,7 +98,7 @@ public class HiveManager extends NovaModule implements Listener {
 									HiveData hive = game.getHives().stream().filter(h -> h.getOwner().equals(team)).findFirst().orElse(null);
 									if (hive != null) {
 										boolean filled = hive.getHoney() >= game.getConfig().getHoneyRequiredtoFillJar();
-										NetherBoardScoreboard.getInstance().setPlayerLine(HONEY_LINE, player, LINE_PREFIX + "Honey: " + (filled ? ChatColor.GREEN : ChatColor.WHITE) + hive.getHoney() + " / " + game.getConfig().getHoneyRequiredtoFillJar());
+										NovaScoreboardManager.getInstance().setPlayerLine(player, HONEY_LINE, new StaticTextLine(LINE_PREFIX + "Honey: " + (filled ? ChatColor.GREEN : ChatColor.WHITE) + hive.getHoney() + " / " + game.getConfig().getHoneyRequiredtoFillJar()));
 									}
 								}
 							});

@@ -20,7 +20,8 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
@@ -29,7 +30,7 @@ public class DropperManager extends NovaModule implements Listener {
 	public static final int TIME_LEFT_LINE = 5;
 	public static final int DEATH_COUNT_LINE = 6;
 	public static final int REMAINING_PLAYERS_LINE = 7;
-	
+
 	public static int LEVEL_COMPLETED_SCORE = 0;
 
 	private Task task;
@@ -50,7 +51,7 @@ public class DropperManager extends NovaModule implements Listener {
 				Log.info(getName(), "Setting level complete score to " + LEVEL_COMPLETED_SCORE);
 			}
 		}
-		
+
 		gameManager = GameManager.getInstance();
 		timeLeftLineShown = false;
 
@@ -82,7 +83,7 @@ public class DropperManager extends NovaModule implements Listener {
 
 								String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
-								NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + ChatColor.AQUA + timeString);
+								NovaScoreboardManager.getInstance().setGlobalLine(TIME_LEFT_LINE, new StaticTextLine(ChatColor.GOLD + "Time left: " + ChatColor.AQUA + timeString));
 
 								timeLeftLineShown = true;
 								didShow = true;
@@ -91,7 +92,7 @@ public class DropperManager extends NovaModule implements Listener {
 					}
 
 					if (!didShow && timeLeftLineShown) {
-						NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LEFT_LINE);
+						NovaScoreboardManager.getInstance().clearGlobalLine(TIME_LEFT_LINE);
 						timeLeftLineShown = false;
 					}
 
@@ -99,7 +100,7 @@ public class DropperManager extends NovaModule implements Listener {
 						if (gameManager.getActiveGame().hasStarted()) {
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 								int deaths = ((Dropper) gameManager.getActiveGame()).getDeaths(player.getUniqueId());
-								NetherBoardScoreboard.getInstance().setPlayerLine(DEATH_COUNT_LINE, player, ChatColor.GOLD + "Deaths: " + ChatColor.AQUA + deaths);
+								NovaScoreboardManager.getInstance().setPlayerLine(player, DEATH_COUNT_LINE, new StaticTextLine(ChatColor.GOLD + "Deaths: " + ChatColor.AQUA + deaths));
 							});
 						}
 					}

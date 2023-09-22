@@ -64,7 +64,8 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.event.
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.utils.BungeecordUtils;
 
 public class GameListeners extends NovaModule implements Listener {
@@ -137,7 +138,7 @@ public class GameListeners extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onGameLoaded(GameLoadedEvent e) {
 		if (!TournamentSystem.getInstance().isDisableScoreboard()) {
-			NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + gameManager.getDisplayName());
+			NovaScoreboardManager.getInstance().setGlobalLine(0, new StaticTextLine(ChatColor.YELLOW + "" + ChatColor.BOLD + gameManager.getDisplayName()));
 		}
 		TabListMessage.setServerType(gameManager.getDisplayName());
 

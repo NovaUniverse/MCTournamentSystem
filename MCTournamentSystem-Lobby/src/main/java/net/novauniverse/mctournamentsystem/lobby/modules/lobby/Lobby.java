@@ -58,7 +58,8 @@ import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseWorld;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.WorldUnloadOption;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
@@ -120,7 +121,7 @@ public class Lobby extends NovaModule implements Listener {
 	@Override
 	public void onLoad() {
 		Lobby.instance = this;
-		this.addDependency(NetherBoardScoreboard.class);
+		this.addDependency(NovaScoreboardManager.class);
 		this.addDependency(MultiverseManager.class);
 		this.lobbyLocation = null;
 		this.multiverseWorld = null;
@@ -267,7 +268,7 @@ public class Lobby extends NovaModule implements Listener {
 			Task.tryStartTask(spleefResetTask);
 		}
 
-		NetherBoardScoreboard.getInstance().setGlobalLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + "Lobby");
+		NovaScoreboardManager.getInstance().setGlobalLine(0, new StaticTextLine(ChatColor.YELLOW + "Lobby"));
 
 		lobbyTask = new SimpleTask(TournamentSystemLobby.getInstance(), new Runnable() {
 			@Override

@@ -24,7 +24,8 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 @NovaAutoLoad(shouldEnable = false)
@@ -156,13 +157,13 @@ public class YBorder extends NovaModule implements Listener {
 		Task.tryStopTask(particleTask);
 
 		if (!TournamentSystem.getInstance().isDisableScoreboard()) {
-			NetherBoardScoreboard.getInstance().clearGlobalLine(SCOREBOARD_LINE);
+			NovaScoreboardManager.getInstance().clearGlobalLine(SCOREBOARD_LINE);
 		}
 	}
 
 	private void showLimit() {
 		if (!TournamentSystem.getInstance().isDisableScoreboard()) {
-			NetherBoardScoreboard.getInstance().setGlobalLine(SCOREBOARD_LINE, (color ? ChatColor.RED : ChatColor.YELLOW) + TextUtils.ICON_WARNING + ChatColor.RED + " Height limit Y: " + ChatColor.AQUA + yLimit + " " + (color ? ChatColor.RED : ChatColor.YELLOW) + TextUtils.ICON_WARNING);
+			NovaScoreboardManager.getInstance().setGlobalLine(SCOREBOARD_LINE, new StaticTextLine((color ? ChatColor.RED : ChatColor.YELLOW) + TextUtils.ICON_WARNING + ChatColor.RED + " Height limit Y: " + ChatColor.AQUA + yLimit + " " + (color ? ChatColor.RED : ChatColor.YELLOW) + TextUtils.ICON_WARNING));
 		}
 	}
 
