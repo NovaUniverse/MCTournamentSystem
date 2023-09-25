@@ -11,7 +11,8 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.DelayedGameTrigger;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.RepeatingGameTrigger;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class FinalMissileWarsManager extends NovaModule implements Listener {
@@ -37,9 +38,9 @@ public class FinalMissileWarsManager extends NovaModule implements Listener {
 
 					if (lootTrigger.isRunning()) {
 						lootCountdownShown = true;
-						NetherBoardScoreboard.getInstance().setGlobalLine(LOOT_COUNTDOWN_LINE, ChatColor.GOLD + "New item in: " + ChatColor.AQUA + ((int) Math.ceil((double) lootTrigger.getTicksLeft() / 20D)));
+						NovaScoreboardManager.getInstance().setGlobalLine(LOOT_COUNTDOWN_LINE, new StaticTextLine(ChatColor.GOLD + "New item in: " + ChatColor.AQUA + ((int) Math.ceil((double) lootTrigger.getTicksLeft() / 20D))));
 					} else if (lootCountdownShown) {
-						NetherBoardScoreboard.getInstance().clearGlobalLine(LOOT_COUNTDOWN_LINE);
+						NovaScoreboardManager.getInstance().clearGlobalLine(LOOT_COUNTDOWN_LINE);
 						lootCountdownShown = false;
 					}
 				}
@@ -49,9 +50,9 @@ public class FinalMissileWarsManager extends NovaModule implements Listener {
 
 					if (suddenDeathTrigger.isRunning()) {
 						suddenDeathCountdownShown = true;
-						NetherBoardScoreboard.getInstance().setGlobalLine(SUDDEN_DEATH_COUNTDOWN_LINE, ChatColor.GOLD + "Sudden death: " + ChatColor.AQUA + TextUtils.secondsToTime(((int) (suddenDeathTrigger.getTicksLeft() / 20))));
+						NovaScoreboardManager.getInstance().setGlobalLine(SUDDEN_DEATH_COUNTDOWN_LINE, new StaticTextLine(ChatColor.GOLD + "Sudden death: " + ChatColor.AQUA + TextUtils.secondsToTime(((int) (suddenDeathTrigger.getTicksLeft() / 20)))));
 					} else if (suddenDeathCountdownShown) {
-						NetherBoardScoreboard.getInstance().clearGlobalLine(SUDDEN_DEATH_COUNTDOWN_LINE);
+						NovaScoreboardManager.getInstance().clearGlobalLine(SUDDEN_DEATH_COUNTDOWN_LINE);
 						suddenDeathCountdownShown = false;
 					}
 				}

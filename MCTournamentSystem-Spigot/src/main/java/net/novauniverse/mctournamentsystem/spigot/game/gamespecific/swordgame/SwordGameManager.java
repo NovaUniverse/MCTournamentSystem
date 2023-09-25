@@ -21,7 +21,8 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndE
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.DelayedGameTrigger;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
@@ -63,7 +64,7 @@ public class SwordGameManager extends NovaModule implements Listener {
 						DelayedGameTrigger endTrigger = game.getGameEndTrigger();
 
 						if (endTrigger.isRunning()) {
-							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, ChatColor.GOLD + "Game ends in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(endTrigger.getTicksLeft() / 20));
+							NovaScoreboardManager.getInstance().setGlobalLine(TIME_LINE, new StaticTextLine(ChatColor.GOLD + "Game ends in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(endTrigger.getTicksLeft() / 20)));
 						}
 
 						final List<SwordGameTeamResult> teamScore = getTeamResults();
@@ -82,8 +83,8 @@ public class SwordGameManager extends NovaModule implements Listener {
 								});
 							}
 
-							NetherBoardScoreboard.getInstance().setPlayerLine(TIER_LINE, player, ChatColor.GOLD + "Tier: " + ChatColor.AQUA + tier.get() + " / " + maxTier);
-							NetherBoardScoreboard.getInstance().setPlayerLine(KILL_LINE, player, ChatColor.GOLD + "Sword Game Kills: " + ChatColor.AQUA + kills.get());
+							NovaScoreboardManager.getInstance().setPlayerLine(player, TIER_LINE, new StaticTextLine(ChatColor.GOLD + "Tier: " + ChatColor.AQUA + tier.get() + " / " + maxTier));
+							NovaScoreboardManager.getInstance().setPlayerLine(player, KILL_LINE, new StaticTextLine(ChatColor.GOLD + "Sword Game Kills: " + ChatColor.AQUA + kills.get()));
 						});
 					}
 				}
@@ -116,8 +117,8 @@ public class SwordGameManager extends NovaModule implements Listener {
 	public void onGameEnd(GameEndEvent e) {
 		final List<SwordGameTeamResult> teamScore = getTeamResults();
 		Collections.sort(teamScore, Comparator.comparing(SwordGameTeamResult::getKills).reversed());
-		
-		Bukkit.broadcastMessage(ChatColor.AQUA + ChatColor.BOLD.toString()+ "----- Top teams -----");
+
+		Bukkit.broadcastMessage(ChatColor.AQUA + ChatColor.BOLD.toString() + "----- Top teams -----");
 	}
 
 	public class SwordGameTeamResult {

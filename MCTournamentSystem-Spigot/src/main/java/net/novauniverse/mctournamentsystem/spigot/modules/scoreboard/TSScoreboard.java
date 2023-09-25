@@ -26,7 +26,8 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.Delaye
 import net.zeeraa.novacore.spigot.language.LanguageManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
 
 @NovaAutoLoad(shouldEnable = true)
@@ -168,15 +169,15 @@ public class TSScoreboard extends NovaModule implements Listener {
 							}
 
 							if (PLAYER_SCORE_LINE >= 0) {
-								NetherBoardScoreboard.getInstance().setPlayerLine(PLAYER_SCORE_LINE, player, statsTextProvider.getPlayerScoreLineContent(player, playerScore));
+								NovaScoreboardManager.getInstance().setPlayerLine(player, PLAYER_SCORE_LINE, new StaticTextLine(statsTextProvider.getPlayerScoreLineContent(player, playerScore)));
 							}
 
 							if (PLAYER_KILLS_LINE >= 0) {
-								NetherBoardScoreboard.getInstance().setPlayerLine(PLAYER_KILLS_LINE, player, statsTextProvider.getKillLineContent(player, PlayerKillCache.getInstance().getPlayerKills(player.getUniqueId())));
+								NovaScoreboardManager.getInstance().setPlayerLine(player, PLAYER_KILLS_LINE, new StaticTextLine(statsTextProvider.getKillLineContent(player, PlayerKillCache.getInstance().getPlayerKills(player.getUniqueId()))));
 							}
 
 							if (PLAYER_TEAM_SCORE_LINE >= 0) {
-								NetherBoardScoreboard.getInstance().setPlayerLine(PLAYER_TEAM_SCORE_LINE, player, statsTextProvider.getTeamScoreLineContent(player, team, teamScore));
+								NovaScoreboardManager.getInstance().setPlayerLine(player, PLAYER_TEAM_SCORE_LINE, new StaticTextLine(statsTextProvider.getTeamScoreLineContent(player, team, teamScore)));
 							}
 
 							String teamName = "";
@@ -189,25 +190,25 @@ public class TSScoreboard extends NovaModule implements Listener {
 							}
 
 							if (PLAYER_TEAM_LINE >= 0) {
-								NetherBoardScoreboard.getInstance().setPlayerLine(1, player, teamName);
+								NovaScoreboardManager.getInstance().setPlayerLine(player, 1, new StaticTextLine(teamName));
 							}
 						}
 
 						if (!disablePing) {
 							int ping = NovaCore.getInstance().getVersionIndependentUtils().getPlayerPing(player);
 
-							NetherBoardScoreboard.getInstance().setPlayerLine(PING_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.your_ping") + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : ""));
+							NovaScoreboardManager.getInstance().setPlayerLine(player, PING_LINE, new StaticTextLine(ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.your_ping") + TournamentUtils.formatPing(ping) + "ms " + (ping > 800 ? ChatColor.YELLOW + TextUtils.ICON_WARNING : "")));
 						}
 
 						if (!disableTPS) {
-							NetherBoardScoreboard.getInstance().setPlayerLine(TPS_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : ""));
+							NovaScoreboardManager.getInstance().setPlayerLine(player, TPS_LINE, new StaticTextLine(ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.average_tps") + TournamentUtils.formatTps(tps) + (tps < 18 ? " " + ChatColor.RED + TextUtils.ICON_WARNING : "")));
 						}
 					});
 
 					String nextGame = NextMinigameManager.getInstance().getNextMinigame();
 					if (nextGame == null) {
 						if (nextGameShown) {
-							NetherBoardScoreboard.getInstance().clearGlobalLine(NEXT_GAME_LINE);
+							NovaScoreboardManager.getInstance().clearGlobalLine(NEXT_GAME_LINE);
 							nextGameShown = false;
 						}
 					} else {
@@ -216,7 +217,7 @@ public class TSScoreboard extends NovaModule implements Listener {
 						if (nextGame.length() > 40) {
 							nextGame = nextGame.substring(0, 40);
 						}
-						NetherBoardScoreboard.getInstance().setGlobalLine(NEXT_GAME_LINE, nextGame);
+						NovaScoreboardManager.getInstance().setGlobalLine(NEXT_GAME_LINE, new StaticTextLine(nextGame));
 					}
 
 					if (gameManager != null) {
@@ -235,11 +236,11 @@ public class TSScoreboard extends NovaModule implements Listener {
 														long ticks = trigger.getTicksLeft();
 
 														borderCountdownShown = true;
-														NetherBoardScoreboard.getInstance().setGlobalLine(WORLDBORDER_LINE, WORLDBORDER_LINE_COLOR + "Worldborder: " + ChatColor.WHITE + formatTime(ticks / 20));
+														NovaScoreboardManager.getInstance().setGlobalLine(WORLDBORDER_LINE, new StaticTextLine(WORLDBORDER_LINE_COLOR + "Worldborder: " + ChatColor.WHITE + formatTime(ticks / 20)));
 													} else {
 														if (borderCountdownShown) {
 															borderCountdownShown = false;
-															NetherBoardScoreboard.getInstance().clearGlobalLine(WORLDBORDER_LINE);
+															NovaScoreboardManager.getInstance().clearGlobalLine(WORLDBORDER_LINE);
 														}
 													}
 												}
@@ -254,12 +255,12 @@ public class TSScoreboard extends NovaModule implements Listener {
 							gameCountdownShown = true;
 
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-								NetherBoardScoreboard.getInstance().setPlayerLine(COUNTDOWN_LINE, player, ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.starting_in") + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(GameManager.getInstance().getCountdown().getTimeLeft()));
+								NovaScoreboardManager.getInstance().setPlayerLine(player, COUNTDOWN_LINE, new StaticTextLine(ChatColor.GOLD + LanguageManager.getString(player, "tournamentsystem.scoreboard.starting_in") + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(GameManager.getInstance().getCountdown().getTimeLeft())));
 							});
 						} else {
 							if (gameCountdownShown) {
 								gameCountdownShown = false;
-								Bukkit.getServer().getOnlinePlayers().forEach(player -> NetherBoardScoreboard.getInstance().clearPlayerLine(COUNTDOWN_LINE, player));
+								Bukkit.getServer().getOnlinePlayers().forEach(player -> NovaScoreboardManager.getInstance().clearPlayerLine(player, COUNTDOWN_LINE));
 							}
 						}
 					}

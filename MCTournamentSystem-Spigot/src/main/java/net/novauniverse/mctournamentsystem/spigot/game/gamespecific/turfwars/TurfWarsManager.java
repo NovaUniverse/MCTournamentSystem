@@ -34,7 +34,8 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndE
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.DelayedGameTrigger;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
@@ -140,9 +141,9 @@ public class TurfWarsManager extends NovaModule implements Listener {
 					DelayedGameTrigger buildStartTrigger = game.getBuildTimeStartTrigger();
 
 					if (buildEndTrigger.isRunning()) {
-						NetherBoardScoreboard.getInstance().setGlobalLine(BUILD_TIME_LINE, ChatColor.GOLD + "Build ends in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(buildEndTrigger.getTicksLeft() / 20));
+						NovaScoreboardManager.getInstance().setGlobalLine(BUILD_TIME_LINE, new StaticTextLine(ChatColor.GOLD + "Build ends in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(buildEndTrigger.getTicksLeft() / 20)));
 					} else if (buildStartTrigger.isRunning()) {
-						NetherBoardScoreboard.getInstance().setGlobalLine(BUILD_TIME_LINE, ChatColor.GOLD + "Build starts in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(buildStartTrigger.getTicksLeft() / 20));
+						NovaScoreboardManager.getInstance().setGlobalLine(BUILD_TIME_LINE, new StaticTextLine(ChatColor.GOLD + "Build starts in: " + ChatColor.AQUA + TextUtils.secondsToMinutesSeconds(buildStartTrigger.getTicksLeft() / 20)));
 					}
 					Bukkit.getOnlinePlayers().forEach(player -> {
 						TurfWarsTeamData first = game.getTeam1();
@@ -164,9 +165,9 @@ public class TurfWarsManager extends NovaModule implements Listener {
 						int secondTurf = (game.getTurfSize() / 2) - diff;
 
 						if (game.isPlayerInGame(player)) {
-							NetherBoardScoreboard.getInstance().setPlayerLine(SCORE_LINE, player, ChatColor.GREEN + ChatColor.BOLD.toString() + "(You) " + firstTurf + ChatColor.WHITE + " vs " + ChatColor.RED + ChatColor.BOLD.toString() + secondTurf + " (Enemy)");
+							NovaScoreboardManager.getInstance().setPlayerLine(player, SCORE_LINE, new StaticTextLine(ChatColor.GREEN + ChatColor.BOLD.toString() + "(You) " + firstTurf + ChatColor.WHITE + " vs " + ChatColor.RED + ChatColor.BOLD.toString() + secondTurf + " (Enemy)"));
 						} else {
-							NetherBoardScoreboard.getInstance().setPlayerLine(SCORE_LINE, player, first.getTeamConfig().getChatColor() + ChatColor.BOLD.toString() + "team 1 " + firstTurf + ChatColor.WHITE + " vs " + second.getTeamConfig().getChatColor() + ChatColor.BOLD.toString() + secondTurf + " team 2");
+							NovaScoreboardManager.getInstance().setPlayerLine(player, SCORE_LINE, new StaticTextLine(first.getTeamConfig().getChatColor() + ChatColor.BOLD.toString() + "team 1 " + firstTurf + ChatColor.WHITE + " vs " + second.getTeamConfig().getChatColor() + ChatColor.BOLD.toString() + secondTurf + " team 2"));
 						}
 					});
 				}

@@ -22,7 +22,8 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameEndReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class BingoManager extends NovaModule implements Listener {
@@ -77,7 +78,7 @@ public class BingoManager extends NovaModule implements Listener {
 
 							String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
-							NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + color + timeString);
+							NovaScoreboardManager.getInstance().setGlobalLine(TIME_LEFT_LINE, new StaticTextLine(ChatColor.GOLD + "Time left: " + color + timeString));
 
 							timeLeftLineShown = true;
 							didShow = true;
@@ -85,7 +86,7 @@ public class BingoManager extends NovaModule implements Listener {
 					}
 
 					if (!didShow && timeLeftLineShown) {
-						NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LEFT_LINE);
+						NovaScoreboardManager.getInstance().clearGlobalLine(TIME_LEFT_LINE);
 						timeLeftLineShown = false;
 					}
 				}

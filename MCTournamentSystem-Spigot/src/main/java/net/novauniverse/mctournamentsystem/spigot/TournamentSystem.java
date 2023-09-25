@@ -100,7 +100,9 @@ import net.zeeraa.novacore.spigot.language.LanguageReader;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.modules.customitems.CustomItemManager;
 import net.zeeraa.novacore.spigot.module.modules.multiverse.MultiverseManager;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.title.StaticScoreboardTitle;
 import net.zeeraa.novacore.spigot.permission.PermissionRegistrator;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
@@ -807,7 +809,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		}
 
 		/* ----- Depends ----- */
-		ModuleManager.require(NetherBoardScoreboard.class);
+		ModuleManager.require(NovaScoreboardManager.class);
 		ModuleManager.require(MultiverseManager.class);
 		ModuleManager.require(CustomItemManager.class);
 
@@ -841,7 +843,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		this.cachedTournamentLink = scoreboardUrl;
 		this.cachedTournamentName = tournamentName;
 
-		NetherBoardScoreboard.getInstance().setLineCount(15);
+		NovaScoreboardManager.getInstance().setLineCount(15);
 		updateScoreboard();
 
 		/* ----- Team system ----- */
@@ -1162,8 +1164,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 				tournamentLink = TSItemsAdderUtils.addFontImages(tournamentLink);
 			}
 
-			NetherBoardScoreboard.getInstance().setDefaultTitle(tournamentName);
-			NetherBoardScoreboard.getInstance().setGlobalLine(14, tournamentLink);
+			NovaScoreboardManager.getInstance().setDefaultTitle(new StaticScoreboardTitle(tournamentName));
+			NovaScoreboardManager.getInstance().setGlobalLine(14, new StaticTextLine(tournamentLink));
 		}
 	}
 

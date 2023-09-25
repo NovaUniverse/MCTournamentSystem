@@ -21,7 +21,8 @@ import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class TNTTagManager extends NovaModule implements Listener {
@@ -68,7 +69,7 @@ public class TNTTagManager extends NovaModule implements Listener {
 
 								String timeString = String.format("%02d:%02d", minutes, seconds);
 
-								NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, ChatColor.GOLD + "Time left: " + color + timeString);
+								NovaScoreboardManager.getInstance().setGlobalLine(TIME_LEFT_LINE, new StaticTextLine(ChatColor.GOLD + "Time left: " + color + timeString));
 
 								timeLeftLineShown = true;
 								didShow = true;
@@ -76,14 +77,14 @@ public class TNTTagManager extends NovaModule implements Listener {
 
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
 								if (tntTag.getTaggedPlayers().contains(player.getUniqueId())) {
-									NetherBoardScoreboard.getInstance().setPlayerLine(TAGGED_LINE, player, ChatColor.RED + "Tagged " + TextUtils.ICON_WARNING);
+									NovaScoreboardManager.getInstance().setPlayerLine(player, TAGGED_LINE, new StaticTextLine(ChatColor.RED + "Tagged " + TextUtils.ICON_WARNING));
 								} else {
-									NetherBoardScoreboard.getInstance().clearPlayerLine(TAGGED_LINE, player);
+									NovaScoreboardManager.getInstance().clearPlayerLine(player, TAGGED_LINE);
 								}
 							});
 
 							if (!didShow && timeLeftLineShown) {
-								NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LEFT_LINE);
+								NovaScoreboardManager.getInstance().clearGlobalLine(TIME_LEFT_LINE);
 								timeLeftLineShown = false;
 							}
 						}

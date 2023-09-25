@@ -26,7 +26,9 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameEndReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameEndEvent;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.title.StaticScoreboardTitle;
 import net.zeeraa.novacore.spigot.novaplugin.NovaPlugin;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
@@ -136,11 +138,11 @@ public class MissileWarsLobby extends NovaPlugin implements Listener {
 
 		CommandRegistry.registerCommand(new HubCommand(this));
 
-		requireModule(NetherBoardScoreboard.class);
-		NetherBoardScoreboard.getInstance().setLineCount(7);
-		NetherBoardScoreboard.getInstance().setDefaultTitle(ChatColor.AQUA + "" + ChatColor.BOLD + "MissileWars");
-		NetherBoardScoreboard.getInstance().setGlobalLine(3, ChatColor.GOLD + "Use " + ChatColor.AQUA + "/hub " + ChatColor.GOLD + "to get back");
-		NetherBoardScoreboard.getInstance().setGlobalLine(4, ChatColor.GOLD + "to the tournament");
+		requireModule(NovaScoreboardManager.class);
+		NovaScoreboardManager.getInstance().setLineCount(7);
+		NovaScoreboardManager.getInstance().setDefaultTitle(new StaticScoreboardTitle(ChatColor.AQUA + "" + ChatColor.BOLD + "MissileWars"));
+		NovaScoreboardManager.getInstance().setGlobalLine(3, new StaticTextLine(ChatColor.GOLD + "Use " + ChatColor.AQUA + "/hub " + ChatColor.GOLD + "to get back"));
+		NovaScoreboardManager.getInstance().setGlobalLine(4, new StaticTextLine(ChatColor.GOLD + "to the tournament"));
 
 		ModuleManager.loadModule(this, MissilewarsScoreboard.class, true);
 		ModuleManager.loadModule(this, GameStartScoreboardCountdown.class, true);

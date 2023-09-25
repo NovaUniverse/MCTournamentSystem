@@ -25,7 +25,8 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.PlayerEliminatedEvent;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
@@ -91,9 +92,9 @@ public class ChickenOutManager extends NovaModule implements Listener {
 							}
 
 							if (timeLeftLine == null) {
-								NetherBoardScoreboard.getInstance().clearGlobalLine(TIME_LINE);
+								NovaScoreboardManager.getInstance().clearGlobalLine(TIME_LINE);
 							} else {
-								NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LINE, timeLeftLine);
+								NovaScoreboardManager.getInstance().setGlobalLine(TIME_LINE, new StaticTextLine(timeLeftLine));
 							}
 
 							Bukkit.getServer().getOnlinePlayers().forEach(player -> {
@@ -102,11 +103,11 @@ public class ChickenOutManager extends NovaModule implements Listener {
 									int finalFeathers = game.getFinalScoreForDisplay(player.getUniqueId());
 									String featherCountMessage = LINE_PREFIX + "Feathers: " + ChatColor.AQUA + feathers;
 									String finalFeatherCount = LINE_PREFIX + "Stashed feathers: " + ChatColor.GREEN + finalFeathers;
-									NetherBoardScoreboard.getInstance().setPlayerLine(FEATHER_COUNT_LINE, player, featherCountMessage);
-									NetherBoardScoreboard.getInstance().setPlayerLine(FINAL_FEATHER_COUNT_LINE, player, finalFeatherCount);
+									NovaScoreboardManager.getInstance().setPlayerLine(player, FEATHER_COUNT_LINE, new StaticTextLine(featherCountMessage));
+									NovaScoreboardManager.getInstance().setPlayerLine(player, FINAL_FEATHER_COUNT_LINE, new StaticTextLine(finalFeatherCount));
 								} else {
-									NetherBoardScoreboard.getInstance().clearPlayerLine(FEATHER_COUNT_LINE, player);
-									NetherBoardScoreboard.getInstance().clearPlayerLine(FINAL_FEATHER_COUNT_LINE, player);
+									NovaScoreboardManager.getInstance().clearPlayerLine(player, FEATHER_COUNT_LINE);
+									NovaScoreboardManager.getInstance().clearPlayerLine(player, FINAL_FEATHER_COUNT_LINE);
 								}
 							});
 						}

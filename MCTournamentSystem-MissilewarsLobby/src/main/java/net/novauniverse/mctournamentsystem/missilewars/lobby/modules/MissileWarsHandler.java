@@ -8,7 +8,8 @@ import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.RepeatingGameTrigger;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 import net.zeeraa.novacore.spigot.teams.Team;
 import net.zeeraa.novacore.spigot.teams.TeamManager;
@@ -36,10 +37,10 @@ public class MissileWarsHandler extends NovaModule implements Listener {
 					if (lootTrigger != null) {
 						if (lootTrigger.isRunning()) {
 							lootCountdownShown = true;
-							NetherBoardScoreboard.getInstance().setGlobalLine(LOOT_COUNTDOWN_LINE, ChatColor.GOLD + "New item in: " + ChatColor.AQUA + ((int) (lootTrigger.getTicksLeft() / 20)));
+							NovaScoreboardManager.getInstance().setGlobalLine(LOOT_COUNTDOWN_LINE, new StaticTextLine(ChatColor.GOLD + "New item in: " + ChatColor.AQUA + ((int) (lootTrigger.getTicksLeft() / 20))));
 						} else {
 							if (lootCountdownShown) {
-								NetherBoardScoreboard.getInstance().clearGlobalLine(LOOT_COUNTDOWN_LINE);
+								NovaScoreboardManager.getInstance().clearGlobalLine(LOOT_COUNTDOWN_LINE);
 								lootCountdownShown = false;
 							}
 						}
@@ -50,9 +51,9 @@ public class MissileWarsHandler extends NovaModule implements Listener {
 					Team team = TeamManager.getTeamManager().getPlayerTeam(player);
 
 					if (team == null) {
-						NetherBoardScoreboard.getInstance().setPlayerLine(TEAM_LINE, player, ChatColor.GRAY + "No team");
+						NovaScoreboardManager.getInstance().setPlayerLine(player, TEAM_LINE, new StaticTextLine(ChatColor.GRAY + "No team"));
 					} else {
-						NetherBoardScoreboard.getInstance().setPlayerLine(TEAM_LINE, player, team.getDisplayName() + " team");
+						NovaScoreboardManager.getInstance().setPlayerLine(player, TEAM_LINE, new StaticTextLine(team.getDisplayName() + " team"));
 					}
 				});
 			}

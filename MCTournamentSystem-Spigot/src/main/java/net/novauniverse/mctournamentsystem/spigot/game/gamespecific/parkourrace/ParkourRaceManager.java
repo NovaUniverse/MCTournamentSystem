@@ -22,7 +22,8 @@ import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.events.GameStartEvent;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class ParkourRaceManager extends NovaModule implements Listener {
@@ -83,9 +84,9 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 							if (data != null) {
 								if (!TournamentSystem.getInstance().isDisableScoreboard()) {
 									if (data.isCompleted()) {
-										NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, COMPLETED_PREFIX + "Completed");
+										NovaScoreboardManager.getInstance().setPlayerLine(player, LAP_LINE, new StaticTextLine(COMPLETED_PREFIX + "Completed"));
 									} else {
-										NetherBoardScoreboard.getInstance().setPlayerLine(LAP_LINE, player, LAP_PREFIX + "Lap " + data.getLap());
+										NovaScoreboardManager.getInstance().setPlayerLine(player, LAP_LINE, new StaticTextLine(LAP_PREFIX + "Lap " + data.getLap()));
 									}
 								}
 							}
@@ -97,7 +98,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 	}
 
 	private void updateTimeLeftLine() {
-		NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
+		NovaScoreboardManager.getInstance().setGlobalLine(TIME_LEFT_LINE, new StaticTextLine(LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft())));
 	}
 
 	@Override
@@ -115,7 +116,7 @@ public class ParkourRaceManager extends NovaModule implements Listener {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				NetherBoardScoreboard.getInstance().setGlobalLine(TIME_LEFT_LINE, LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft()));
+				NovaScoreboardManager.getInstance().setGlobalLine(TIME_LEFT_LINE, new StaticTextLine(LINE_PREFIX + "Time left: " + ChatColor.WHITE + TextUtils.secondsToTime(NovaParkourRace.getInstance().getGame().getTimeLeft())));
 			}
 		}.runTaskLater(getPlugin(), 1L);
 	}

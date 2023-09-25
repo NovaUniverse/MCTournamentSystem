@@ -20,7 +20,8 @@ import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.module.NovaModule;
-import net.zeeraa.novacore.spigot.module.modules.scoreboard.NetherBoardScoreboard;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
+import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
 import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 public class BedwarsManager extends NovaModule implements Listener {
@@ -57,13 +58,13 @@ public class BedwarsManager extends NovaModule implements Listener {
 						BedwarsEvent nextEvent = game.getEvents().stream().filter(u -> u.getTimeLeft() > 0).sorted(eventSorter).findFirst().orElse(null);
 
 						if (nextEvent != null) {
-							NetherBoardScoreboard.getInstance().setGlobalLine(BEDWARS_COUNTDOWN_LINE, ChatColor.GOLD + nextEvent.getName() + " in: " + ChatColor.AQUA + TextUtils.secondsToTime(nextEvent.getTimeLeft()));
+							NovaScoreboardManager.getInstance().setGlobalLine(BEDWARS_COUNTDOWN_LINE, new StaticTextLine(ChatColor.GOLD + nextEvent.getName() + " in: " + ChatColor.AQUA + TextUtils.secondsToTime(nextEvent.getTimeLeft())));
 						} else {
-							NetherBoardScoreboard.getInstance().clearGlobalLine(BEDWARS_COUNTDOWN_LINE);
+							NovaScoreboardManager.getInstance().clearGlobalLine(BEDWARS_COUNTDOWN_LINE);
 						}
 
 						Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-							NetherBoardScoreboard.getInstance().setPlayerLine(HAS_BED_LINE, player, ChatColor.GOLD + "Has bed: " + (game.hasBed(player) ? ChatColor.GREEN + "Yes" : ChatColor.RED + "No"));
+							NovaScoreboardManager.getInstance().setPlayerLine(player, HAS_BED_LINE, new StaticTextLine(ChatColor.GOLD + "Has bed: " + (game.hasBed(player) ? ChatColor.GREEN + "Yes" : ChatColor.RED + "No")));
 						});
 					}
 				}
