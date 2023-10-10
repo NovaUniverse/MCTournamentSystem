@@ -34,6 +34,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.playertelementry.
 import net.novauniverse.mctournamentsystem.bungeecord.listener.pluginmessages.TSPluginMessageListener;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.whitelist.WhitelistListener;
+import net.novauniverse.mctournamentsystem.bungeecord.maps.MapScanner;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.CustomTheme;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.SlowPlayerSender;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
@@ -118,6 +119,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private String chatFilterURL;
 
 	private String skinRenderAPIUrl;
+
+	private File mapDataFolder;
 
 	public List<String> getGlobalCustomLaunchFlags() {
 		return globalCustomLaunchFlags;
@@ -278,6 +281,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return logWebServerExceptions;
 	}
 
+	public File getMapDataFolder() {
+		return mapDataFolder;
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable() {
@@ -328,6 +335,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		String configFileOverride = null;
 		String logFolderOverride = null;
 		String webConfigOverride = null;
+
+		mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
 		File overridesFile = new File(globalConfigPath + File.separator + "overrides.json");
 		if (overridesFile.exists()) {
@@ -789,6 +798,9 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		if (makeMeSufferEasteregg) {
 			Log.info(TextUtils.englishToUWU("Hello World"));
 		}
+
+		MapScanner.fixMapUUID();
+		MapScanner.updateMapDatabase();
 	}
 
 	@Override

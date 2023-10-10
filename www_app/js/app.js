@@ -845,13 +845,96 @@ $(function () {
 
 	$("#nav_btn_score_page").on("click", () => updateScoreList());
 
+	$(".btn-reload-maps").on("click", () => updateMapList());
+
 	updateScoreList();
+
+	updateMapList();
 });
 
 function hasPermission(permission) {
 	return user_permissions.includes(permission);
 }
 
+function updateMapList() {
+	console.log("Updating map list");
+
+	$.getJSON("/api/v1/maps", (data) => {
+		$("#maps_tbody").children().remove();
+
+		// Sort first by game then by name
+		data.sort((a, b) => {
+			const gameComparison = a.game.localeCompare(b.game);
+			if (gameComparison === 0) {
+				return a.name.localeCompare(b.name);
+			}
+			return gameComparison;
+		});
+
+		data.forEach(map => {
+			const newElement = $("<tr></tr>");
+
+			newElement.append(
+				$("<td></td>")
+					.text(map.name)
+			);
+
+			newElement.append(
+				$("<td></td>")
+					.text(map.game)
+			);
+
+			newElement.append(
+				$("<td></td>")
+					.text(map.uuid)
+			);
+
+			newElement.append(
+				$("<td></td>")
+					.addClass("t-fit")
+					.append(
+						$("<span></span>")
+							.addClass("badge")
+							.addClass(map.enabled ? "bg-success" : "bg-danger")
+							.text(map.enabled ? "Enabled" : "Disabled")
+					)
+			);
+
+			newElement.append(
+				$("<td></td>")
+					.addClass("t-fit")
+					.append(
+						$("<button></button>")
+							.addClass("btn")
+							.addClass(map.enabled ? "btn-danger" : "btn-success")
+							.text(map.enabled ? "Disable" : "Enable")
+							.on("click", () => {
+								setMapEnabled(map.uuid, !map.enabled);
+							})
+					)
+			)
+
+			$("#maps_tbody").append(newElement);
+		});
+	});
+}
+
+function setMapEnabled(mapId, enabled) {
+	$.ajax({
+		url: "/api/v1/maps?mapId=" + mapId,
+		type: enabled ? "PUT" : "DELETE",
+		contentType: 'application/json',
+		data: {},
+		success: function (response) {
+			toastr.success("Map " + (enabled ? "enabled" : "disabled"));
+			updateMapList();
+		},
+		error: function () {
+			toastr.error("An error occured while " + (enabled ? "enabling" : "disabling") + " map");
+		}
+	});
+
+}
 
 function updateScoreList() {
 	console.log("Updating score list");
@@ -871,7 +954,7 @@ function updateScoreList() {
 
 	$.getJSON("/api/v1/score", (data) => {
 		$("#player_score_list_tbody").children().remove();
-		$("#team_score_list_tbody").children().remove();	
+		$("#team_score_list_tbody").children().remove();
 
 		data.players.forEach((player) => {
 			const newElement = $("<tr></tr>");
@@ -885,11 +968,11 @@ function updateScoreList() {
 				$.ajax({
 					url: "/api/v1/score?type=PLAYER&id=" + player.id,
 					type: "DELETE",
-					success: function(data) {
+					success: function (data) {
 						toastr.success("Score deleted successfully!");
 						updateScoreList();
 					},
-					error: function(jqXHR, textStatus, errorThrown) {
+					error: function (jqXHR, textStatus, errorThrown) {
 						toastr.error("Failed to delete score");
 					}
 				});
@@ -919,11 +1002,11 @@ function updateScoreList() {
 				$.ajax({
 					url: "/api/v1/score?type=TEAM&id=" + team.id,
 					type: "DELETE",
-					success: function(data) {
+					success: function (data) {
 						toastr.success("Score deleted successfully!");
 						updateScoreList();
 					},
-					error: function(jqXHR, textStatus, errorThrown) {
+					error: function (jqXHR, textStatus, errorThrown) {
 						toastr.error("Failed to delete score");
 					}
 				});

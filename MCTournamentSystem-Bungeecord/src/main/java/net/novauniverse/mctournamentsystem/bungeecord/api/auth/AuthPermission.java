@@ -20,6 +20,7 @@ public enum AuthPermission {
 	MANAGE_SETTINGS,
 	SET_NEXT_MINIGAME,
 	CLEAR_DATA,
+	MANAGE_MAPS,
 	SHUTDOWN;
 
 	public static final List<AuthPermission> generatePermissionList(AuthPermission... permissions) {
