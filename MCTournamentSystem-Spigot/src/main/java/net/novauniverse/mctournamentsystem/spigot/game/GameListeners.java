@@ -42,6 +42,7 @@ import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.pr
 import net.novauniverse.mctournamentsystem.spigot.modules.telementry.metadata.providers.tnttag.TNTTagMetadataProvider;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.zeeraa.novacore.commons.log.Log;
+import net.zeeraa.novacore.commons.utils.DelayedRunner;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.abstraction.enums.VersionIndependentSound;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
@@ -177,6 +178,8 @@ public class GameListeners extends NovaModule implements Listener {
 		});
 
 		Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
+
+		DelayedRunner.runDelayed(MapFilter::removeDisabledMapsFromGame, 20L);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

@@ -20,6 +20,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commen
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.GetTriggersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.TriggerHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.maps.MapsHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.nextmingame.NextMinigameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.publicapi.PublicStatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.score.ScoreHandler;
@@ -68,12 +69,11 @@ public class TournamentSystemWebAPI {
 		this.server = new HTTPServer(port);
 
 		server.addMiddleware(new CorsAnywhereMiddleware());
-		
+
 		server.addAuthenticationProvider(new CommentatorAuthProvider());
-		
+
 		server.addAuthenticationProvider(new InternalAuthProvider());
 		server.addAuthenticationProvider(new APIKeyAuthProvider());
-		
 
 		server.setStandardResponseType(StandardResponseType.JSON);
 		server.setExceptionMode(ExceptionMode.MESSAGE);
@@ -117,6 +117,9 @@ public class TournamentSystemWebAPI {
 		server.addEndpoint("/api/v1/game/start_game", new StartGameHandler());
 		server.addEndpoint("/api/v1/game/trigger", new TriggerHandler());
 		server.addEndpoint("/api/v1/game/triggers", new GetTriggersHandler());
+
+		// Maps
+		server.addEndpoint("/api/v1/maps", new MapsHandler());
 
 		// User
 		server.addEndpoint("/api/v1/user/whoami", new WhoAmIHandler());
