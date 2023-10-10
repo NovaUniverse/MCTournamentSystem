@@ -335,6 +335,7 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		String configFileOverride = null;
 		String logFolderOverride = null;
 		String webConfigOverride = null;
+		String mapDataFolderOverride = null;
 
 		mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
@@ -345,9 +346,14 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 				configFileOverride = overrides.optString("config_file");
 				webConfigOverride = overrides.optString("web_config_file");
 				logFolderOverride = overrides.optString("server_log_directory");
+				mapDataFolderOverride = overrides.optString("map_files");
 
 				if (logFolderOverride != null) {
 					serverLogFolder = new File(logFolderOverride);
+				}
+				
+				if(mapDataFolderOverride != null) {
+					mapDataFolder = new File(mapDataFolderOverride);
 				}
 			} catch (Exception e) {
 				Log.error("TournamentSystem", "Failed to read overrides.json. " + e.getClass().getName() + " " + e.getMessage());
