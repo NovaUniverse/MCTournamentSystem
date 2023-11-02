@@ -48,8 +48,13 @@ public class LoginHandler extends TournamentEndpoint {
 					if (user != null) {
 						APIKeyAuth token = APITokenStore.createToken(user);
 
+						JSONObject userData = new JSONObject();
+						userData.put("username", user.getUsername());
+						userData.put("permissions", user.getPermissionsAsJSON());
+						
 						result.put("success", true);
 						result.put("token", token.getKey());
+						result.put("user", userData);
 					} else {
 						result.put("success", false);
 						result.put("error", "login_fail");

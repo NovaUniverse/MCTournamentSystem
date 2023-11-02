@@ -1,7 +1,5 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config;
 
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 import net.novauniverse.apilib.http.auth.Authentication;
@@ -30,7 +28,7 @@ public class MOTDHandler extends TournamentEndpoint {
 			json.put("success", true);
 			json.put("motd", TournamentSystem.getInstance().getMotd());
 		} else {
-			String motd = IOUtils.toString(request.getRequestBody(), StandardCharsets.UTF_8);
+			String motd = request.getBody();
 			Log.info("TournamentSystemAPI", "Setting motd to " + motd);
 			try {
 				TournamentSystem.getInstance().setMotd(motd);

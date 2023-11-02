@@ -1,0 +1,91 @@
+import React, { useEffect, useState } from 'react'
+import { Player } from '../../../scripts/dto/StateDTO'
+import { Badge, Button } from 'react-bootstrap';
+import PlayerHead from '../../PlayerHead';
+import { useTournamentSystemContext } from '../../../context/TournamentSystemContext';
+import axios from 'axios';
+
+interface Props {
+	player: Player;
+}
+
+export default function PlayerListEntry({ player }: Props) {
+	const tournamentSystem = useTournamentSystemContext();
+	const [skinTexture, setSkinTexture] = useState<string | undefined>(undefined);
+	const DEFAULT_TEXTURE = "c06f8906-4c8a-4911-9c29-ea1dbd1aab82";
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			updateSkin();
+		}, 10000);
+
+		updateSkin();
+
+		return () => {
+			clearInterval(interval);
+		}
+	}, []);
+
+	async function updateSkin() {
+		const response = await axios.get(tournamentSystem.apiUrl + "/skinrestorer/get_user_skin?username=" + player.username);
+		if (response.data.has_skin) {
+			const skinData = JSON.parse(atob(response.data.skin_data));
+			if (skinData.textures.SKIN != null) {
+				setSkinTexture(skinData.textures.SKIN.url as string);
+				return;
+			}
+		}
+		setSkinTexture(undefined);
+	}
+
+	function getTeamScore() {
+		const team = tournamentSystem.state.teams.find(t => t.team_number == player.team_number);
+		return team == null ? 0 : team.score;
+	}
+
+	const uuidToShow = tournamentSystem.state.system.offline_mode ? DEFAULT_TEXTURE : player.uuid;
+
+	function sendPlayer() {
+		
+	}
+
+	return (
+		<>
+			<tr key={player.uuid}>
+				<td>
+					<PlayerHead width={32} texture={skinTexture} uuid={skinTexture != null ? undefined : uuidToShow} />
+				</td>
+				<td>
+					{player.uuid}
+				</td>
+				<td>
+					{player.username}
+				</td>
+				<td>
+					{player.score}
+				</td>
+				<td>
+					{player.kills}
+				</td>
+				<td>
+					{player.team_number}
+				</td>
+				<td>
+					{getTeamScore()}
+				</td>
+				<td>
+					{player.online ? <Badge bg='success'>Online</Badge> : <Badge bg='danger'>Offline</Badge>}
+				</td>
+				<td>
+					{player.online ? player.ping : "N/A"}
+				</td>
+				<td>
+					{player.online ? player.server : "N/A"}
+				</td>
+				<td>
+					<Button variant='info' onClick={sendPlayer}>Send to</Button>
+				</td>
+			</tr>
+		</>
+	)
+}

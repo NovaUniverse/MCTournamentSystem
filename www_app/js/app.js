@@ -572,6 +572,7 @@ $(function () {
 			type: "POST",
 			url: "/api/v1/system/settings/tournament_name",
 			data: name,
+			contentType: 'text/plain; charset=utf-8',
 			success: (data) => {
 				$("#set_tournament_name_modal").modal("hide");
 				toastr.info("Tournament name changed to " + name + ". Please restart the server for it to update in game");
@@ -607,7 +608,7 @@ $(function () {
 			type: "POST",
 			url: "/api/v1/system/settings/scoreboard_url",
 			data: url,
-			contentType: 'text/plain',
+			contentType: 'text/plain; charset=utf-8',
 			success: (data) => {
 				$("#set_scoreboard_url_modal").modal("hide");
 				toastr.info("Scoreboard url changed to " + url + ". Please restart the server for it to update in game");
@@ -643,7 +644,7 @@ $(function () {
 			type: "POST",
 			url: "/api/v1/system/settings/motd",
 			data: motd,
-			contentType: 'text/plain',
+			contentType: 'text/plain; charset=utf-8',
 			success: (data) => {
 				$("#set_motd_modal").modal("hide");
 				toastr.info("MOTD Updated");
