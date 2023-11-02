@@ -15,8 +15,12 @@ export default function PHPMyAdminLink({ useNavLink = false }: Props) {
 	}, [])
 
 	async function updateUrl() {
-		const response = await axios.get(tournamentSystem.apiUrl + "/v1/system/web/phpmyadmin_url");
-		setUrl(response.data.url);
+		try {
+			const response = await axios.get(tournamentSystem.apiUrl + "/v1/system/web/phpmyadmin_url");
+			setUrl(response.data.url);
+		} catch (err) {
+			console.error("Failed to fetch phpMyAdmin url");
+		}
 	}
 
 	return (

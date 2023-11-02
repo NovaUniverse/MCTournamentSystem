@@ -3,6 +3,9 @@ import TournamentSystem from "./TournamentSystem";
 import { Events } from "./enum/Events";
 import { Permission } from "./enum/Permission";
 
+/**
+ * This class manages authentication and api tokens
+ */
 export default class AuthManager {
 	private tournamentSystem;
 
@@ -19,6 +22,10 @@ export default class AuthManager {
 		this._permissions = [];
 	}
 
+	/**
+	 * Attempt to load existing token from localStorage
+	 * @returns true if existing login was found
+	 */
 	async loadExistingLogin(): Promise<boolean> {
 		if (window.localStorage.getItem("token")) {
 			this._token = window.localStorage.getItem("token");
@@ -29,6 +36,8 @@ export default class AuthManager {
 				}
 			});
 			if (response.data.logged_in) {
+				this._permissions = response.data.permissions;
+				this._username = response.data.username;
 				this._isLoggedIn = true;
 				this.tournamentSystem.events.emit(Events.LOGIN_STATE_CHANGED);
 				console.log("Existing login found");
@@ -39,6 +48,12 @@ export default class AuthManager {
 		return false;
 	}
 
+	/**
+	 * Tries to log in using the provided credentials
+	 * @param username The username
+	 * @param password The password
+	 * @returns true on success
+	 */
 	async login(username: string, password: string): Promise<boolean> {
 		const data = {
 			username: username,
@@ -67,6 +82,11 @@ export default class AuthManager {
 		return false;
 	}
 
+	/**
+	 * Check if a user has the provided permission
+	 * @param permission The permission value to check
+	 * @returns true if the user has the permission or is admin
+	 */
 	hasPermission(permission: Permission) {
 		if (this.permissions.includes(Permission.ADMIN)) {
 			return true;

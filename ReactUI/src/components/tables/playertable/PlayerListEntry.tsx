@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Player } from '../../../scripts/dto/StateDTO'
-import { Badge, Button } from 'react-bootstrap';
+import { Badge } from 'react-bootstrap';
 import PlayerHead from '../../PlayerHead';
 import { useTournamentSystemContext } from '../../../context/TournamentSystemContext';
 import axios from 'axios';
+import SendPlayerButton from '../../buttons/SendPlayerButton';
 
 interface Props {
 	player: Player;
@@ -11,7 +12,9 @@ interface Props {
 
 export default function PlayerListEntry({ player }: Props) {
 	const tournamentSystem = useTournamentSystemContext();
+
 	const [skinTexture, setSkinTexture] = useState<string | undefined>(undefined);
+
 	const DEFAULT_TEXTURE = "c06f8906-4c8a-4911-9c29-ea1dbd1aab82";
 
 	useEffect(() => {
@@ -27,15 +30,20 @@ export default function PlayerListEntry({ player }: Props) {
 	}, []);
 
 	async function updateSkin() {
-		const response = await axios.get(tournamentSystem.apiUrl + "/skinrestorer/get_user_skin?username=" + player.username);
-		if (response.data.has_skin) {
-			const skinData = JSON.parse(atob(response.data.skin_data));
-			if (skinData.textures.SKIN != null) {
-				setSkinTexture(skinData.textures.SKIN.url as string);
-				return;
+		try {
+			const response = await axios.get(tournamentSystem.apiUrl + "/skinrestorer/get_user_skin?username=" + player.username);
+			if (response.data.has_skin) {
+				const skinData = JSON.parse(atob(response.data.skin_data));
+				if (skinData.textures.SKIN != null) {
+					setSkinTexture(skinData.textures.SKIN.url as string);
+					return;
+				}
 			}
+			setSkinTexture(undefined);
+		} catch (err) {
+			console.error("An error occured while fetching skin data");
+			console.error(err);
 		}
-		setSkinTexture(undefined);
 	}
 
 	function getTeamScore() {
@@ -44,10 +52,6 @@ export default function PlayerListEntry({ player }: Props) {
 	}
 
 	const uuidToShow = tournamentSystem.state.system.offline_mode ? DEFAULT_TEXTURE : player.uuid;
-
-	function sendPlayer() {
-		
-	}
 
 	return (
 		<>
@@ -83,7 +87,7 @@ export default function PlayerListEntry({ player }: Props) {
 					{player.online ? player.server : "N/A"}
 				</td>
 				<td>
-					<Button variant='info' onClick={sendPlayer}>Send to</Button>
+					<SendPlayerButton username={player.username} uuid={player.uuid} />
 				</td>
 			</tr>
 		</>

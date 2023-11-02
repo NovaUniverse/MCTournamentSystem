@@ -6,15 +6,15 @@ export default interface ServerDTO {
     exit_code: number
     jvm_arguments: string
     jar: string
-    last_state_report?: ServerStateReport
+    last_state_report: ServerStateReport
     auto_start: boolean
 }
 
 export interface ServerStateReport {
-    software: ServerSoftware
-    port: number
-    plugins: Plugin[]
-    modules: Module[]
+    software?: ServerSoftware
+    port?: number
+    plugins?: Plugin[]
+    modules?: Module[]
 }
 
 export interface ServerSoftware {

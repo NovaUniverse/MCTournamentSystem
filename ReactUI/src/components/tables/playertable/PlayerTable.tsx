@@ -17,7 +17,7 @@ export default function PlayerTable() {
 					<th>Status</th>
 					<th>Ping</th>
 					<th>Server</th>
-					<th className='t-fit'></th>
+					<th></th>
 				</tr>
 			</thead>
 
