@@ -1,6 +1,7 @@
 import React from 'react'
 import { Container, Nav, NavItem, NavLink, Navbar, NavbarBrand, NavbarCollapse, NavbarToggle } from 'react-bootstrap'
 import PHPMyAdminLink from './items/PHPMyAdminLink'
+import { Link } from 'react-router-dom'
 
 interface Props {
 	loggedIn: boolean
@@ -11,7 +12,7 @@ export default function GlobalNavbar({ loggedIn }: Props) {
 		<>
 			<Navbar expand="lg" bg="dark" data-bs-theme="dark">
 				<Container>
-					<NavbarBrand>TournamentSystem</NavbarBrand>
+					<NavbarBrand as={Link} to='/'>TournamentSystem</NavbarBrand>
 					<NavbarToggle aria-controls="basic-navbar-nav" />
 					<NavbarCollapse id="basic-navbar-nav">
 						<Nav>
@@ -21,6 +22,12 @@ export default function GlobalNavbar({ loggedIn }: Props) {
 							<NavItem>
 								<PHPMyAdminLink useNavLink />
 							</NavItem>
+
+							{loggedIn && <>
+								<NavItem>
+									<NavLink as={Link} to="/editor">Editor</NavLink>
+								</NavItem>
+							</>}
 						</Nav>
 					</NavbarCollapse>
 				</Container>

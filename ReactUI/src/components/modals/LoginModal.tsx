@@ -36,38 +36,51 @@ export default function LoginModal({ visible, showCloseButtons = true, onClose, 
 	}
 
 	return (
-		<Modal show={visible} onHide={onClose}>
-			<ModalHeader closeButton={showCloseButtons}>
-				<ModalTitle>Login</ModalTitle>
-			</ModalHeader>
-
-			<ModalBody>
-				<Container fluid>
+		<>
+			{visible &&
+				<Container className='my-4'>
 					<Row>
 						<Col>
-							<label>Username</label>
-							<FormControl type='text' placeholder='Username' value={username} onChange={handleUsernameChange} />
-						</Col>
-					</Row>
+							<div
+								className="modal show"
+								style={{ display: 'block', position: 'initial' }}
+							>
+								<ModalHeader closeButton={showCloseButtons}>
+									<ModalTitle>Login</ModalTitle>
+								</ModalHeader>
 
-					<Row>
-						<Col>
-							<label>Password</label>
-							<FormControl type="password" placeholder='Password' value={password} onChange={handlePasswordChange} />
+								<ModalBody>
+									<Container fluid>
+										<Row>
+											<Col>
+												<label>Username</label>
+												<FormControl type='text' placeholder='Username' value={username} onChange={handleUsernameChange} />
+											</Col>
+										</Row>
+
+										<Row>
+											<Col>
+												<label>Password</label>
+												<FormControl type="password" placeholder='Password' value={password} onChange={handlePasswordChange} />
+											</Col>
+										</Row>
+									</Container>
+								</ModalBody>
+								<ModalFooter>
+									{showCloseButtons &&
+										<Button variant="secondary" onClick={onClose}>
+											Cancel
+										</Button>
+									}
+									<Button variant="success" onClick={handleLogin}>
+										Login
+									</Button>
+								</ModalFooter>
+							</div>
 						</Col>
 					</Row>
 				</Container>
-			</ModalBody>
-			<ModalFooter>
-				{showCloseButtons &&
-					<Button variant="secondary" onClick={onClose}>
-						Cancel
-					</Button>
-				}
-				<Button variant="success" onClick={handleLogin}>
-					Login
-				</Button>
-			</ModalFooter>
-		</Modal>
+			}
+		</>
 	)
 }

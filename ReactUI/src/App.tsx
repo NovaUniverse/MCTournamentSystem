@@ -57,6 +57,10 @@ export default function App() {
                             <Routes>
                                 <Route path="/" element={<Overview />} />
                                 <Route path="/servers" element={<Servers />} />
+
+                                <Route path="*" element={<>
+                                    <h2>Page not found</h2>
+                                </>} />
                             </Routes>
                         </>
                         :
