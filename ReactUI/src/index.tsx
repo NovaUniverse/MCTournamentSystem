@@ -9,6 +9,7 @@ import { TournamentSystemContext } from './context/TournamentSystemContext'
 import TournamentSystem from './scripts/TournamentSystem'
 
 const root = document.getElementById('root')
+
 const tournamentSystem = new TournamentSystem();
 
 import 'bootstrap/dist/css/bootstrap.min.css';

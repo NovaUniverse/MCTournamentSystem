@@ -8,6 +8,7 @@ import LoginModal from './components/modals/LoginModal';
 import GlobalNavbar from './components/navbar/GlobalNavbar';
 import Servers from './pages/Servers';
 import { Alert, Button } from 'react-bootstrap';
+import PageSelection from './components/nav/PageSelection';
 
 export default function App() {
     const tournamentSystem = useTournamentSystemContext();
@@ -52,6 +53,7 @@ export default function App() {
                     <GlobalNavbar loggedIn={loggedIn} />
                     {loggedIn ?
                         <>
+                            <PageSelection />
                             <Routes>
                                 <Route path="/" element={<Overview />} />
                                 <Route path="/servers" element={<Servers />} />
@@ -67,7 +69,7 @@ export default function App() {
                 <>
                     <div className='mx-2 my-2'>
                         <Alert variant='danger '>TournamentSystemUI has crashed: {criticalError}</Alert>
-                        <Button onClick={() => {window.location.reload()}}>Reload</Button>
+                        <Button onClick={() => { window.location.reload() }}>Reload</Button>
                     </div>
 
                 </>
