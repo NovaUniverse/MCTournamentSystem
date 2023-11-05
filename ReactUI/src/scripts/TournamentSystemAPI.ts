@@ -8,6 +8,30 @@ export default class TournamentSystemAPI {
 		this.tournamentSystem = tournamentSystem;
 	}
 
+	async broadcastMessage(text: string) {
+		const url = "/v1/system/broadcast";
+		const result = await this.authenticatedRequest(RequestType.POST, url, text);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: {}
+			}
+		}
+		return this.defaultResponses(result);
+	}
+
+	async setNextMinigame(text: string) {
+		const url = "/v1/next_minigame";
+		const result = await this.authenticatedRequest(RequestType.POST, url, text);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: {}
+			}
+		}
+		return this.defaultResponses(result);
+	}
+
 	async sendPlayerToServer(player: string, server: string): Promise<GenericRequestResponse> {
 		const url = "/v1/send/send_player?server=" + encodeURIComponent(server) + "&player=" + encodeURIComponent(player);
 		const result = await this.authenticatedRequest(RequestType.POST, url);
@@ -253,7 +277,7 @@ export default class TournamentSystemAPI {
 				throw new Error("Invalid request type");
 			}
 		} catch (err: any) {
-			if(err.code == "ERR_NETWORK") {
+			if (err.code == "ERR_NETWORK") {
 				return {
 					status: err.request.status,
 					response: {}

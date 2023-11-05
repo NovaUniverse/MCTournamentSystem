@@ -8,6 +8,7 @@ export interface StateDTO {
     whitelist: WhitelistEntry[]
     user: User
     online_players: OnlinePlayer[]
+    next_minigame?: string;
 }
 
 export interface WhitelistEntry {

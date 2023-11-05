@@ -5,28 +5,39 @@ import SendAllButton from '../components/buttons/SendAllButton'
 import StartGameButton from '../components/buttons/StartGameButton'
 import ExportSummaryButton from '../components/buttons/ExportSummaryButton'
 import SystemStats from '../components/SystemStats'
+import BroadcastMessageButton from '../components/buttons/BroadcastMessageButton'
+import ClickableNextMinigameText from '../components/text/ClickableNextMinigameText'
 
 export default function Overview() {
 	return (
 		<Container fluid>
-			<Row>
+			<Row className='mt-2'>
+				<Col>
+					<h4>
+						<ClickableNextMinigameText />
+					</h4>
+				</Col>
+			</Row>
+
+			<Row className='mt-2'>
 				<Col>
 					<PlayerTable />
 				</Col>
 			</Row>
 
-			<Row>
+			<Row className='mt-2'>
 				<Col>
+					<BroadcastMessageButton className='me-2 mt-2' />
 					<SendAllButton className='me-2 mt-2' />
 					<StartGameButton className='me-2 mt-2' />
 					<ExportSummaryButton className='me-2 mt-2' />
 				</Col>
 			</Row>
 
-			<Row>
+			<Row className='mt-2'>
 				<Col md={6} sm={12} xs={12}>
 					<h5>System stats</h5>
-					<SystemStats/>
+					<SystemStats />
 				</Col>
 			</Row>
 		</Container>

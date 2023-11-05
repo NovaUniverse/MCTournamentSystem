@@ -31,7 +31,7 @@ export default function SystemStats() {
 
 		return String(total / count);
 	}
-	
+
 	return (
 		<p>
 			<span>Player count: {state.online_players.length}</span><br />
