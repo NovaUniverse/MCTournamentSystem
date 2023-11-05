@@ -42,7 +42,9 @@ export interface System {
     offline_mode: boolean
     free_memory: number
     scoreboard_url: string
-    os_name: string
+    os_name: string;
+    linux_distro?: string;
+    dynamic_config_url?: string;
 }
 
 export interface Team {
