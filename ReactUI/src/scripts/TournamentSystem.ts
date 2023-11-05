@@ -1,9 +1,9 @@
 import axios from "axios";
 import AuthManager from "./AuthManager";
-import { StateDTO, createEmptyState } from "./dto/StateDTO";
+import StateDTO, { createEmptyState } from "./dto/StateDTO";
 import { Events } from "./enum/Events";
 import EventEmitter from "./utils/EventEmitter";
-import { ServiceProvidersDTO } from "./dto/ServiceProvidersDTO";
+import ServiceProvidersDTO from "./dto/ServiceProvidersDTO";
 import TournamentSystemAPI from "./TournamentSystemAPI";
 import ServerDTO from "./dto/ServerDTO";
 

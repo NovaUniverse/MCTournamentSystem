@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Button, Col, Container, FormSelect, Modal, ModalBody, ModalFooter, ModalHeader, ModalTitle, Row } from 'react-bootstrap';
 import toast from 'react-hot-toast';
-import { Server, StateDTO } from '../../scripts/dto/StateDTO';
+import StateDTO, { Server } from '../../scripts/dto/StateDTO';
 import { useTournamentSystemContext } from '../../context/TournamentSystemContext';
 import { Events } from '../../scripts/enum/Events';
 

@@ -1,3 +1,6 @@
+/**
+ * Data transfer object for managed servers
+ */
 export default interface ServerDTO {
     is_running: boolean
     last_exception: string

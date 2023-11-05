@@ -1,11 +1,38 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, AxiosResponseHeaders, RawAxiosResponseHeaders } from "axios";
 import TournamentSystem from "./TournamentSystem";
+import { ScoreEntryType } from "./enum/ScoreEntryType";
 
 export default class TournamentSystemAPI {
 	private tournamentSystem;
 
 	constructor(tournamentSystem: TournamentSystem) {
 		this.tournamentSystem = tournamentSystem;
+	}
+
+	async deleteScoreEntry(type: ScoreEntryType, id: number): Promise<GenericRequestResponse> {
+		const url = "/v1/score?type=" + type + "&id=" + id;
+		const result = await this.authenticatedRequest(RequestType.DELETE, url);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async getScore(): Promise<GenericRequestResponse> {
+		const url = "/v1/score";
+		const result = await this.authenticatedRequest(RequestType.GET, url);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+
+		return this.defaultResponses(result);
 	}
 
 	async broadcastMessage(text: string) {
@@ -271,6 +298,8 @@ export default class TournamentSystemAPI {
 		try {
 			if (type == RequestType.GET) {
 				response = await axios.get(endpoint, config);
+			} else if (type == RequestType.DELETE) {
+				response = await axios.delete(endpoint, config);
 			} else if (type == RequestType.POST) {
 				response = await axios.post(endpoint, data, config);
 			} else {
@@ -309,5 +338,6 @@ interface WebRequestResponse {
 
 enum RequestType {
 	GET,
-	POST
+	POST,
+	DELETE
 }

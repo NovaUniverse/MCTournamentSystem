@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useTournamentSystemContext } from '../context/TournamentSystemContext';
-import { StateDTO } from '../scripts/dto/StateDTO';
+import StateDTO from '../scripts/dto/StateDTO';
 import { Events } from '../scripts/enum/Events';
 
 export default function SystemStats() {

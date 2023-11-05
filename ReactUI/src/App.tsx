@@ -9,6 +9,7 @@ import GlobalNavbar from './components/navbar/GlobalNavbar';
 import Servers from './pages/Servers';
 import { Alert, Button } from 'react-bootstrap';
 import PageSelection from './components/nav/PageSelection';
+import Score from './pages/Score';
 
 export default function App() {
     const tournamentSystem = useTournamentSystemContext();
@@ -57,6 +58,7 @@ export default function App() {
                             <Routes>
                                 <Route path="/" element={<Overview />} />
                                 <Route path="/servers" element={<Servers />} />
+                                <Route path="/score" element={<Score />} />
 
                                 <Route path="*" element={<>
                                     <h2>Page not found</h2>

@@ -1,4 +1,7 @@
-export interface StateDTO {
+/**
+ * Data transfer object for state
+ */
+export default interface StateDTO {
     internet_cafe_settings: InternetCafeSettings
     servers: Server[]
     system: System

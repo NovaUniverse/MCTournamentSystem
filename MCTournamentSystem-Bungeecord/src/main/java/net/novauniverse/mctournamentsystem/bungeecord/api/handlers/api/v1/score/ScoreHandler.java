@@ -13,11 +13,15 @@ import net.novauniverse.apilib.http.request.Request;
 import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
 import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 
 public class ScoreHandler extends TournamentEndpoint {
 	public ScoreHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.GET, HTTPMethod.DELETE, HTTPMethod.PUT);
+
+		setMethodBasedPermission(HTTPMethod.DELETE, AuthPermission.ALTER_SCORE);
+		setMethodBasedPermission(HTTPMethod.PUT, AuthPermission.ALTER_SCORE);
 	}
 
 	@Override
@@ -187,8 +191,8 @@ public class ScoreHandler extends TournamentEndpoint {
 					rs.close();
 					ps.close();
 				}
-				
-				if(!found) {
+
+				if (!found) {
 					json.put("error", "Target not found");
 					return new JSONResponse(json, HTTPResponseCode.NOT_FOUND);
 				}
