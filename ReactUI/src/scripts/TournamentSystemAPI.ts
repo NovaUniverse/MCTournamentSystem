@@ -9,8 +9,45 @@ export default class TournamentSystemAPI {
 		this.tournamentSystem = tournamentSystem;
 	}
 
-	async deleteScoreEntry(type: ScoreEntryType, id: number): Promise<GenericRequestResponse> {
-		const url = "/v1/score?type=" + type + "&id=" + id;
+	async addScore(type: ScoreEntryType, targetId: number, reason: string, amount: number) {
+		const url = "/v1/score?type=" + type + "&id=" + targetId;
+
+		const body: any = {
+			reason: reason,
+			amount: amount
+		}
+
+		const result = await this.authenticatedRequest(RequestType.PUT, url, body);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		} else if (result.status == 404) {
+			return {
+				success: false,
+				message: "That " + String(type).toLowerCase() + " could not be found"
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async clearScore(): Promise<GenericRequestResponse> {
+		const url = "/v1/score?all";
+		const result = await this.authenticatedRequest(RequestType.DELETE, url);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async deleteScoreEntry(type: ScoreEntryType, entryId: number): Promise<GenericRequestResponse> {
+		const url = "/v1/score?type=" + type + "&id=" + entryId;
 		const result = await this.authenticatedRequest(RequestType.DELETE, url);
 		if (result.status == 200) {
 			return {
@@ -140,6 +177,16 @@ export default class TournamentSystemAPI {
 			return {
 				success: false,
 				message: "Failed to kill server. " + result.response.message
+			}
+		} else if (result.status == 400) {
+			return {
+				success: false,
+				message: "Bad request, there might be somethiing wrong with the code interacting with the api. Server message: " + result.response.message
+			}
+		} else if (result.status == 404) {
+			return {
+				success: false,
+				message: "404 Not found, the frontend version might be outdated. Server message: " + result.response.message
 			}
 		}
 
@@ -302,6 +349,8 @@ export default class TournamentSystemAPI {
 				response = await axios.delete(endpoint, config);
 			} else if (type == RequestType.POST) {
 				response = await axios.post(endpoint, data, config);
+			} else if (type == RequestType.PUT) {
+				response = await axios.put(endpoint, data, config);
 			} else {
 				throw new Error("Invalid request type");
 			}
@@ -339,5 +388,6 @@ interface WebRequestResponse {
 enum RequestType {
 	GET,
 	POST,
-	DELETE
+	DELETE,
+	PUT,
 }
