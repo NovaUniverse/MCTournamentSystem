@@ -1,12 +1,22 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, AxiosResponseHeaders, RawAxiosResponseHeaders } from "axios";
 import TournamentSystem from "./TournamentSystem";
 import { ScoreEntryType } from "./enum/ScoreEntryType";
+import OfflineUserIdDTO from "./dto/OfflineUserIdDTO";
 
 export default class TournamentSystemAPI {
 	private tournamentSystem;
 
 	constructor(tournamentSystem: TournamentSystem) {
 		this.tournamentSystem = tournamentSystem;
+	}
+
+	async usernameToOfflineUserUUID(username: string): Promise<OfflineUserIdDTO> {
+		const url = "/v1/utils/offline_username_to_uuid?username=" + username;
+		const result = await this.authenticatedRequest(RequestType.GET, url);
+		if (result.status == 200) {
+			return result.response as OfflineUserIdDTO;
+		}
+		throw new Error("Server communication failure");
 	}
 
 	async addScore(type: ScoreEntryType, targetId: number, reason: string, amount: number) {
