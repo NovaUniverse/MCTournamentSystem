@@ -4,8 +4,9 @@ import StateDTO, { createEmptyState } from "./dto/StateDTO";
 import { Events } from "./enum/Events";
 import EventEmitter from "./utils/EventEmitter";
 import ServiceProvidersDTO from "./dto/ServiceProvidersDTO";
-import TournamentSystemAPI from "./TournamentSystemAPI";
+import TournamentSystemAPI from "./api/TournamentSystemAPI";
 import ServerDTO from "./dto/ServerDTO";
+import MojangAPI from "./api/MojangAPI";
 
 /**
  * Main class for the amin ui
@@ -18,6 +19,7 @@ export default class TournamentSystem {
 	private _servers: ServerDTO[];
 	private _serviceProviders: ServiceProvidersDTO;
 	private _api: TournamentSystemAPI;
+	private _mojangApi: MojangAPI;
 	private _criticalError: string | null;
 	private _mainInterval: NodeJS.Timeout | null;
 	private _initialStateFetched: boolean;
@@ -33,6 +35,9 @@ export default class TournamentSystem {
 		this._criticalError = null;
 		this._mainInterval = null;
 		this._initialStateFetched = false;
+
+		// Use default until service providers are loaded
+		this._mojangApi = new MojangAPI("https://mojangapi.novauniverse.net/");
 
 		this.events.on(Events.FORCE_STATE_UPDATE, () => {
 			this.updateState();
@@ -58,6 +63,13 @@ export default class TournamentSystem {
 	private async init() {
 		const serviceProviderResponse = await axios.get(this._apiUrl + "/v1/service_providers");
 		this._serviceProviders = serviceProviderResponse.data as ServiceProvidersDTO;
+
+		if (this.serviceProviders.mojang_api_proxy != null) {
+			console.log("Using mojang api proxy provider: " + this.serviceProviders.mojang_api_proxy);
+			this._mojangApi = new MojangAPI(this.serviceProviders.mojang_api_proxy);
+		} else {
+			console.warn("No mojang api proxy provider configured. Consider setting up your own to not run into rate limits https://github.com/NovaUniverse/MojangAPIProxy");
+		}
 
 		await this._authManager.loadExistingLogin();
 
@@ -167,6 +179,10 @@ export default class TournamentSystem {
 
 	get api() {
 		return this._api;
+	}
+
+	get mojangApi() {
+		return this._mojangApi;
 	}
 
 	get criticalError() {

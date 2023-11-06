@@ -1,13 +1,57 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, AxiosResponseHeaders, RawAxiosResponseHeaders } from "axios";
-import TournamentSystem from "./TournamentSystem";
-import { ScoreEntryType } from "./enum/ScoreEntryType";
-import OfflineUserIdDTO from "./dto/OfflineUserIdDTO";
+import TournamentSystem from "../TournamentSystem";
+import { ScoreEntryType } from "../enum/ScoreEntryType";
+import OfflineUserIdDTO from "../dto/OfflineUserIdDTO";
 
 export default class TournamentSystemAPI {
 	private tournamentSystem;
 
 	constructor(tournamentSystem: TournamentSystem) {
 		this.tournamentSystem = tournamentSystem;
+	}
+
+	async addWhitelistUser(uuid: string, username: string, offline: boolean): Promise<GenericRequestResponse> {
+		const url = "/v1/whitelist/users?uuid=" + uuid + "&username=" + username + "&offline_mode=" + String(offline);
+		const result = await this.authenticatedRequest(RequestType.PUT, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		}
+		throw new Error("Server communication failure");
+	}
+
+	async removeWhitelistUser(uuid: string): Promise<GenericRequestResponse> {
+		const url = "/v1/whitelist/users?uuid=" + uuid;
+		const result = await this.authenticatedRequest(RequestType.DELETE, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		}
+		throw new Error("Server communication failure");
+	}
+
+	async getWhitelist(): Promise<GenericRequestResponse> {
+		const url = "/v1/whitelist/users";
+		const result = await this.authenticatedRequest(RequestType.GET, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		}
+		throw new Error("Server communication failure");
+	}
+
+	async clearWhitelist(): Promise<GenericRequestResponse> {
+		const url = "/v1/whitelist/clear";
+		const result = await this.authenticatedRequest(RequestType.POST, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		}
+		throw new Error("Server communication failure");
 	}
 
 	async usernameToOfflineUserUUID(username: string): Promise<OfflineUserIdDTO> {
@@ -19,7 +63,7 @@ export default class TournamentSystemAPI {
 		throw new Error("Server communication failure");
 	}
 
-	async addScore(type: ScoreEntryType, targetId: number, reason: string, amount: number) {
+	async addScore(type: ScoreEntryType, targetId: number, reason: string, amount: number): Promise<GenericRequestResponse> {
 		const url = "/v1/score?type=" + type + "&id=" + targetId;
 
 		const body: any = {

@@ -7,19 +7,12 @@ import WhitelistTableEntry from './WhitelistTableEntry';
 
 interface Props {
 	entries: WhitelistEntry[];
+	onAddButtonClicked: () => void;
+	onClearButtonClicked: () => void;
 }
 
-export default function WhitelistTable({ entries }: Props) {
+export default function WhitelistTable({ entries, onAddButtonClicked, onClearButtonClicked }: Props) {
 	const tournamentSystem = useTournamentSystemContext();
-
-
-	function showAddUserModal() {
-
-	}
-
-	function showClearModal() {
-
-	}
 
 	return (
 		<Table bordered striped hover>
@@ -40,10 +33,10 @@ export default function WhitelistTable({ entries }: Props) {
 			<tbody>
 				<tr>
 					<td colSpan={4}>
-						<Button variant="danger" disabled={!tournamentSystem.authManager.hasPermission(Permission.MANAGE_WHITELIST)} onClick={showClearModal}>Clear</Button>
+						<Button variant="danger" disabled={!tournamentSystem.authManager.hasPermission(Permission.MANAGE_WHITELIST)} onClick={onClearButtonClicked}>Clear</Button>
 					</td>
 					<td>
-						<Button variant="success" disabled={!tournamentSystem.authManager.hasPermission(Permission.MANAGE_WHITELIST)} onClick={showAddUserModal}>Add</Button>
+						<Button variant="success" disabled={!tournamentSystem.authManager.hasPermission(Permission.MANAGE_WHITELIST)} onClick={() => { onAddButtonClicked() }}>Add</Button>
 					</td>
 				</tr>
 			</tbody>

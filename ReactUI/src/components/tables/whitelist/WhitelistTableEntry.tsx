@@ -5,6 +5,7 @@ import { useTournamentSystemContext } from '../../../context/TournamentSystemCon
 import { Permission } from '../../../scripts/enum/Permission';
 import PlayerHead from '../../PlayerHead';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 interface Props {
 	entry: WhitelistEntry;
@@ -49,7 +50,13 @@ export default function WhitelistTableEntry({ entry }: Props) {
 	const uuidToShow = tournamentSystem.state.system.offline_mode ? DEFAULT_TEXTURE : entry.uuid;
 
 	async function remove() {
-
+		const req = await tournamentSystem.api.removeWhitelistUser(entry.uuid);
+		if (req.success) {
+			toast.success(entry.username + " was removed from the whitelist");
+			await tournamentSystem.updateState();
+		} else {
+			toast.error("Failed to remove user from whitelist. " + req.message);
+		}
 	}
 
 
