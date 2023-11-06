@@ -11,6 +11,7 @@ import { Alert, Button } from 'react-bootstrap';
 import Score from './pages/Score';
 import AuthenticatedZone from './components/AuthenticatedZone';
 import Whitelist from './pages/Whitelist';
+import LiveStats from './pages/LiveStats';
 
 export default function App() {
     const tournamentSystem = useTournamentSystemContext();
@@ -41,11 +42,16 @@ export default function App() {
 
                     <>
                         <Routes>
+                            {/* Authenticated zones */}
                             <Route path="/" element={<AuthenticatedZone><Overview /></AuthenticatedZone>} />
                             <Route path="/servers" element={<AuthenticatedZone><Servers /></AuthenticatedZone>} />
                             <Route path="/score" element={<AuthenticatedZone><Score /></AuthenticatedZone>} />
                             <Route path="/whitelist" element={<AuthenticatedZone><Whitelist /></AuthenticatedZone>} />
 
+                            {/* Unauthenticated zones */}
+                            <Route path="/live_stats" element={<LiveStats />} />
+
+                            {/* Misc */}
                             <Route path="*" element={<>
                                 <h2>Page not found</h2>
                             </>} />
