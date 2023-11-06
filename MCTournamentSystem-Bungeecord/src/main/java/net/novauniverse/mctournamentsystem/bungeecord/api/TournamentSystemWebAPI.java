@@ -8,7 +8,6 @@ import net.novauniverse.apilib.http.HTTPServer;
 import net.novauniverse.apilib.http.enums.ExceptionMode;
 import net.novauniverse.apilib.http.enums.StandardResponseType;
 import net.novauniverse.apilib.http.middleware.middlewares.CorsAnywhereMiddleware;
-import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuthProvider;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuthProvider;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.internal.InternalAuthProvider;
@@ -56,9 +55,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.W
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.util.OfflineUsernameToUUIDHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ClearWhitelistHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ManageWhitelistUserHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.FileNotFoundHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.internal.ManagedServerStateReportingEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.react.ReactUIHandler;
 
 public class TournamentSystemWebAPI {
 	private int port;
@@ -79,8 +77,8 @@ public class TournamentSystemWebAPI {
 		server.setExceptionMode(ExceptionMode.MESSAGE);
 
 		// Redirect and favicon
-		server.getHttpServer().createContext("/", new FileNotFoundHandler(appRoot));
-		server.getHttpServer().createContext("/favicon.ico", new FaviconHandler(TournamentSystem.getInstance().getDataFolder().getPath()));
+		//server.getHttpServer().createContext("/", new FileNotFoundHandler(appRoot));
+		//server.getHttpServer().createContext("/favicon.ico", new FaviconHandler(TournamentSystem.getInstance().getDataFolder().getPath()));
 
 		// Service providers
 		server.addEndpoint("/api/v1/service_providers", new GetServiceProvidersHandler());
@@ -171,8 +169,8 @@ public class TournamentSystemWebAPI {
 		server.getHttpServer().createContext("/api/internal/server/state_reporting", new ManagedServerStateReportingEndpoint());
 
 		// Static files
-		server.addStaticFileHandler("/app/", appRoot, "index.html");
-
+		// server.addStaticFileHandler("/app/", appRoot, "index.html");
+		server.getHttpServer().createContext("/", new ReactUIHandler("/", appRoot.getAbsolutePath()));
 	}
 
 	public int getPort() {
