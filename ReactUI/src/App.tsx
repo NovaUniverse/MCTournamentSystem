@@ -8,8 +8,9 @@ import LoginModal from './components/modals/LoginModal';
 import GlobalNavbar from './components/navbar/GlobalNavbar';
 import Servers from './pages/Servers';
 import { Alert, Button } from 'react-bootstrap';
-import PageSelection from './components/nav/PageSelection';
 import Score from './pages/Score';
+import AuthenticatedZone from './components/AuthenticatedZone';
+import Whitelist from './pages/Whitelist';
 
 export default function App() {
     const tournamentSystem = useTournamentSystemContext();
@@ -32,44 +33,24 @@ export default function App() {
         };
     }, []);
 
-    async function login(username: string, password: string) {
-        try {
-            const success = await tournamentSystem.authManager.login(username, password);
-            if (success) {
-                toast.success("Logged in");
-            } else {
-                toast.error("Invalid username or password");
-            }
-        } catch (err) {
-            console.error("Failed to log in");
-            console.error(err);
-            toast.error("An error occured while logging in");
-        }
-    }
-
     return (
         <>
             {criticalError == null ?
                 <>
                     <GlobalNavbar loggedIn={loggedIn} />
-                    {loggedIn ?
-                        <>
-                            <PageSelection />
-                            <Routes>
-                                <Route path="/" element={<Overview />} />
-                                <Route path="/servers" element={<Servers />} />
-                                <Route path="/score" element={<Score />} />
 
-                                <Route path="*" element={<>
-                                    <h2>Page not found</h2>
-                                </>} />
-                            </Routes>
-                        </>
-                        :
-                        <>
-                            <LoginModal onSubmit={login} visible showCloseButtons={false} />
-                        </>
-                    }
+                    <>
+                        <Routes>
+                            <Route path="/" element={<AuthenticatedZone><Overview /></AuthenticatedZone>} />
+                            <Route path="/servers" element={<AuthenticatedZone><Servers /></AuthenticatedZone>} />
+                            <Route path="/score" element={<AuthenticatedZone><Score /></AuthenticatedZone>} />
+                            <Route path="/whitelist" element={<AuthenticatedZone><Whitelist /></AuthenticatedZone>} />
+
+                            <Route path="*" element={<>
+                                <h2>Page not found</h2>
+                            </>} />
+                        </Routes>
+                    </>
                 </>
                 :
                 <>
@@ -77,12 +58,10 @@ export default function App() {
                         <Alert variant='danger '>TournamentSystemUI has crashed: {criticalError}</Alert>
                         <Button onClick={() => { window.location.reload() }}>Reload</Button>
                     </div>
-
                 </>
             }
 
             <Toaster />
         </>
-
     )
 }

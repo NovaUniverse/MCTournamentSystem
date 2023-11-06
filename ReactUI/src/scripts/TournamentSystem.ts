@@ -34,6 +34,9 @@ export default class TournamentSystem {
 		this._mainInterval = null;
 		this._initialStateFetched = false;
 
+		this.events.on(Events.FORCE_STATE_UPDATE, () => {
+			this.updateState();
+		});
 
 		this.events.on(Events.LOGIN_STATE_CHANGED, () => {
 			this.updateState();

@@ -8,6 +8,7 @@ export default function PageSelection() {
 			<PageNavLink url="/" text="Overview" />
 			<PageNavLink url="/score" text="Score" />
 			<PageNavLink url="/servers" text="Servers" />
+			<PageNavLink url="/whitelist" text="Whitelist" />
 		</Nav>
 	)
 }

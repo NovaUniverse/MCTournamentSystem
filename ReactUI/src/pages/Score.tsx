@@ -8,6 +8,7 @@ import { Events } from '../scripts/enum/Events';
 import { Permission } from '../scripts/enum/Permission';
 import ConfirmModal from '../components/modals/ConfirmModal';
 import toast from 'react-hot-toast';
+import PageSelection from '../components/nav/PageSelection';
 
 export default function Score() {
 	const tournamentSystem = useTournamentSystemContext();
@@ -56,6 +57,8 @@ export default function Score() {
 
 	return (
 		<>
+			<PageSelection />
+			
 			<Container fluid>
 				<Row>
 					<Col>
