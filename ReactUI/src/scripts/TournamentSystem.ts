@@ -7,6 +7,8 @@ import ServiceProvidersDTO from "./dto/ServiceProvidersDTO";
 import TournamentSystemAPI from "./api/TournamentSystemAPI";
 import ServerDTO from "./dto/ServerDTO";
 import MojangAPI from "./api/MojangAPI";
+import toast from "react-hot-toast";
+import { Theme, getThemeFix } from "./enum/Theme";
 
 /**
  * Main class for the amin ui
@@ -23,6 +25,7 @@ export default class TournamentSystem {
 	private _criticalError: string | null;
 	private _mainInterval: NodeJS.Timeout | null;
 	private _initialStateFetched: boolean;
+	private _activeTheme: Theme;
 
 	constructor() {
 		this._apiUrl = process.env.REACT_APP_API_URL as string;
@@ -35,6 +38,7 @@ export default class TournamentSystem {
 		this._criticalError = null;
 		this._mainInterval = null;
 		this._initialStateFetched = false;
+		this._activeTheme = Theme.QUARTZ;
 
 		// Use default until service providers are loaded
 		this._mojangApi = new MojangAPI("https://mojangapi.novauniverse.net/");
@@ -48,6 +52,16 @@ export default class TournamentSystem {
 			this.updateServers();
 		});
 
+		if (localStorage.getItem("ts_theme") != null) {
+			const theme = localStorage.getItem("ts_theme") as Theme;
+			if (Object.values(Theme).includes(theme)) {
+				this.setTheme(theme, false);
+			} else {
+				console.warn("Could not find theme " + theme);
+				setTimeout(() => { toast.error("Could not find theme " + theme) }, 1000); // Delay to allow toast library to load
+			}
+		}
+
 		this.init().then(() => {
 			console.log("Init complete");
 		}).catch((error) => {
@@ -55,6 +69,23 @@ export default class TournamentSystem {
 			console.error(error);
 			this.bigTimeFuckyWucky("An error occured during init");
 		});
+	}
+
+	setTheme(theme: Theme, persistent: boolean = true) {
+		if (persistent) {
+			localStorage.setItem("ts_theme", theme);
+		}
+		const event = new CustomEvent("ts_SetTheme", {
+			bubbles: false,
+			cancelable: true,
+			detail: {
+				theme: String(theme),
+				fix: getThemeFix(theme)
+			}
+		});
+		window.dispatchEvent(event);
+		this._activeTheme = theme;
+		this.events.emit(Events.THEME_CHANGED, theme);
 	}
 
 	/**
@@ -151,6 +182,10 @@ export default class TournamentSystem {
 	 */
 	isInCrashState() {
 		return this._criticalError != null;
+	}
+
+	get activeTheme() {
+		return this._activeTheme;
 	}
 
 	get apiUrl() {

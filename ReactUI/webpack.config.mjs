@@ -13,9 +13,22 @@ export const entry = './src/index.tsx'
 
 export const module = {
     rules: [
-        { test: /\.(t|j)sx?$/, exclude: /(node_modules|bower_components)/, use: { loader: 'babel-loader', options: { presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'] } } },
-        { test: /\.(sa|sc|c)ss$/, use: ['style-loader', 'css-loader', 'sass-loader'] },
-        { test: /\.(png|jpe?g|gif)$/i, use: [{ loader: 'file-loader' }] },
+        {
+            test: /\.(t|j)sx?$/,
+            exclude: /(node_modules|bower_components)/,
+            use: {
+                loader: 'babel-loader',
+                options: { presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'] }
+            }
+        },
+        {
+            test: /\.(sa|sc|c)ss$/,
+            use: ['style-loader', 'css-loader', 'sass-loader']
+        },
+        {
+            test: /\.(png|jpe?g|gif)$/i,
+            use: [{ loader: 'file-loader' }]
+        },
     ],
 }
 
@@ -51,10 +64,7 @@ export const plugins = [
     }),
     new WebpackShellPluginNext({
         onBeforeBuild: {
-            scripts: [
-                'rm -rf dist',
-                'clear',
-            ],
+            scripts: [],
             blocking: true,
             parallel: false,
         },

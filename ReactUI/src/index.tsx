@@ -12,8 +12,6 @@ const root = document.getElementById('root')
 
 const tournamentSystem = new TournamentSystem();
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 if (root) {
     ReactDOM
         .createRoot(root)
