@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
-import { Button, Col, Container, FormControl, Modal, ModalBody, ModalFooter, ModalHeader, ModalTitle, Row } from 'react-bootstrap';
+import { Button, Col, Container, FormControl, ModalBody, ModalFooter, ModalHeader, ModalTitle, Row } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 
 interface Props {
@@ -35,6 +35,12 @@ export default function LoginModal({ visible, showCloseButtons = true, onClose, 
 		onSubmit(username, password);
 	}
 
+	function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+		if (e.key === 'Enter') {
+			handleLogin();
+		}
+	}
+
 	return (
 		<>
 			{visible &&
@@ -45,37 +51,41 @@ export default function LoginModal({ visible, showCloseButtons = true, onClose, 
 								className="modal show"
 								style={{ display: 'block', position: 'initial' }}
 							>
-								<ModalHeader closeButton={showCloseButtons}>
-									<ModalTitle>Login</ModalTitle>
-								</ModalHeader>
+								<div className='modal-dialog modal-lg'>
+									<div className='modal-content'>
+										<ModalHeader closeButton={showCloseButtons}>
+											<ModalTitle>Login</ModalTitle>
+										</ModalHeader>
 
-								<ModalBody>
-									<Container fluid>
-										<Row>
-											<Col>
-												<label>Username</label>
-												<FormControl type='text' placeholder='Username' value={username} onChange={handleUsernameChange} />
-											</Col>
-										</Row>
+										<ModalBody>
+											<Container fluid>
+												<Row>
+													<Col>
+														<label>Username</label>
+														<FormControl type='text' placeholder='Username' value={username} onKeyDown={handleKeyDown} onChange={handleUsernameChange} />
+													</Col>
+												</Row>
 
-										<Row>
-											<Col>
-												<label>Password</label>
-												<FormControl type="password" placeholder='Password' value={password} onChange={handlePasswordChange} />
-											</Col>
-										</Row>
-									</Container>
-								</ModalBody>
-								<ModalFooter>
-									{showCloseButtons &&
-										<Button variant="secondary" onClick={onClose}>
-											Cancel
-										</Button>
-									}
-									<Button variant="success" onClick={handleLogin}>
-										Login
-									</Button>
-								</ModalFooter>
+												<Row>
+													<Col>
+														<label>Password</label>
+														<FormControl type="password" placeholder='Password' value={password} onKeyDown={handleKeyDown} onChange={handlePasswordChange} />
+													</Col>
+												</Row>
+											</Container>
+										</ModalBody>
+										<ModalFooter>
+											{showCloseButtons &&
+												<Button variant="secondary" onClick={onClose}>
+													Cancel
+												</Button>
+											}
+											<Button variant="success" onClick={handleLogin}>
+												Login
+											</Button>
+										</ModalFooter>
+									</div>
+								</div>
 							</div>
 						</Col>
 					</Row>
