@@ -11,6 +11,8 @@ import Score from './pages/Score';
 import AuthenticatedZone from './components/AuthenticatedZone';
 import Whitelist from './pages/Whitelist';
 import LiveStats from './pages/LiveStats';
+import NotFound from './pages/NotFound';
+import Triggers from './pages/Triggers';
 
 export default function App() {
 	const tournamentSystem = useTournamentSystemContext();
@@ -46,14 +48,13 @@ export default function App() {
 							<Route path="/servers" element={<AuthenticatedZone><Servers /></AuthenticatedZone>} />
 							<Route path="/score" element={<AuthenticatedZone><Score /></AuthenticatedZone>} />
 							<Route path="/whitelist" element={<AuthenticatedZone><Whitelist /></AuthenticatedZone>} />
+							<Route path="/triggers" element={<AuthenticatedZone><Triggers /></AuthenticatedZone>} />
 
 							{/* Unauthenticated zones */}
 							<Route path="/live_stats" element={<LiveStats />} />
 
 							{/* Misc */}
-							<Route path="*" element={<>
-								<h2>Page not found</h2>
-							</>} />
+							<Route path="*" element={<NotFound />} />
 						</Routes>
 					</>
 				</>

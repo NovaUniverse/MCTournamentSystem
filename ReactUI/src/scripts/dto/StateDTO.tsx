@@ -71,13 +71,29 @@ export interface PlayerServerData {
     server: string
     max_health: number
     in_game: boolean
-    metadata: any
+    metadata: ServerMetadata
     closest_enemy_distance: number
     health: number
     uuid: string
     gamemode: string
     food: number
     username: string
+}
+
+export interface ServerMetadata {
+    triggers?: Trigger[]
+}
+
+export interface Trigger {
+    running: boolean
+    server: string
+    ticks_left?: number
+    trigger_count: number
+    name: string
+    flags: string[]
+    session_id: string
+    description: string
+    type: string
 }
 
 export interface Player {

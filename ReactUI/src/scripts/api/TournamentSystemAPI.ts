@@ -10,6 +10,22 @@ export default class TournamentSystemAPI {
 		this.tournamentSystem = tournamentSystem;
 	}
 
+	async activateTrigger(triggerName: string, sessionId: string): Promise<GenericRequestResponse> {
+		const url = "/v1/game/trigger?triggerId=" + triggerName + "&sessionId=" + sessionId;
+		const result = await this.authenticatedRequest(RequestType.POST, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		} else if (result.status == 409) {
+			return {
+				success: false,
+				message: "No online players found for plugin channel communication"
+			}
+		}
+		throw new Error("Server communication failure");
+	}
+
 	async addWhitelistUser(uuid: string, username: string, offline: boolean): Promise<GenericRequestResponse> {
 		const url = "/v1/whitelist/users?uuid=" + uuid + "&username=" + username + "&offline_mode=" + String(offline);
 		const result = await this.authenticatedRequest(RequestType.PUT, url);

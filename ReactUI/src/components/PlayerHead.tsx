@@ -8,7 +8,7 @@ interface Props {
 	height?: number;
 }
 
-export default function PlayerHead({ uuid, texture, width, height}: Props) {
+export default function PlayerHead({ uuid, texture, width, height }: Props) {
 	const tournamentSystem = useTournamentSystemContext();
 
 	if (uuid != null) {
@@ -22,7 +22,7 @@ export default function PlayerHead({ uuid, texture, width, height}: Props) {
 					tournamentSystem.serviceProviders.skin_render_api == null ?
 						<>PlayerHead: Error: No skin render service provider</>
 						:
-						<img width={width} height={height} src={tournamentSystem.serviceProviders.skin_render_api + "/from_image/face/skin.png?resolution=256&url=" + texture}></img>
+						<img width={width} height={height} src={tournamentSystem.serviceProviders.skin_render_api + "/from_image/face/skin.png?url=" + texture}></img>
 				}
 			</>
 		)

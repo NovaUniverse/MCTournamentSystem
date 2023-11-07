@@ -37,24 +37,23 @@ export default function ServerCard({ className, server }: Props) {
 							<Badge bg='danger'>Offline</Badge>
 						}
 					</CardText>
-
-					<CardFooter>
-						{server.is_running ?
-							<>
-								<KillServerButton server={server} className='me-2 mt-2' />
-								<StopServerButton server={server} className='me-2 mt-2' />
-							</>
-							:
-							<>
-								<StartServerButton server={server} className='me-2 mt-2' />
-							</>
-						}
-						<ShowLogsButton className='me-2 mt-2' server={server} />
-						<Button className='me-2 mt-2' variant='secondary' onClick={() => { setServerInfoModalVisible(true) }}>Info</Button>
-
-						<Button className='me-2 mt-2' variant='info' onClick={() => { setServerConsoleModalVisible(true) }}>Console</Button>
-					</CardFooter>
 				</CardBody>
+				<CardFooter>
+					{server.is_running ?
+						<>
+							<KillServerButton server={server} className='me-2 mt-2' />
+							<StopServerButton server={server} className='me-2 mt-2' />
+						</>
+						:
+						<>
+							<StartServerButton server={server} className='me-2 mt-2' />
+						</>
+					}
+					<ShowLogsButton className='me-2 mt-2' server={server} />
+					<Button className='me-2 mt-2' variant='secondary' onClick={() => { setServerInfoModalVisible(true) }}>Info</Button>
+
+					<Button className='me-2 mt-2' variant='info' onClick={() => { setServerConsoleModalVisible(true) }}>Console</Button>
+				</CardFooter>
 			</Card>
 			<ServerInfoModal server={server} visible={serverInfoModalVisible} onClose={() => { setServerInfoModalVisible(false) }} />
 			<ServerConsoleModal server={server} visible={serverConsoleModalVisible} onClose={() => { setServerConsoleModalVisible(false) }} />
