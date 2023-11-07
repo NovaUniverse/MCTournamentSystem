@@ -13,6 +13,11 @@ import Whitelist from './pages/Whitelist';
 import LiveStats from './pages/LiveStats';
 import NotFound from './pages/NotFound';
 import Triggers from './pages/Triggers';
+import Staff from './pages/Staff';
+
+/// @ts-ignore
+import catCry from "./assets/img/cat_cry.png";
+import DisconnectHandler from './components/DisconnectHandler';
 
 export default function App() {
 	const tournamentSystem = useTournamentSystemContext();
@@ -37,11 +42,11 @@ export default function App() {
 
 	return (
 		<>
+			<GlobalNavbar loggedIn={loggedIn} />
+
 			{criticalError == null ?
 				<>
-					<GlobalNavbar loggedIn={loggedIn} />
-
-					<>
+					<DisconnectHandler>
 						<Routes>
 							{/* Authenticated zones */}
 							<Route path="/" element={<AuthenticatedZone><Overview /></AuthenticatedZone>} />
@@ -49,6 +54,7 @@ export default function App() {
 							<Route path="/score" element={<AuthenticatedZone><Score /></AuthenticatedZone>} />
 							<Route path="/whitelist" element={<AuthenticatedZone><Whitelist /></AuthenticatedZone>} />
 							<Route path="/triggers" element={<AuthenticatedZone><Triggers /></AuthenticatedZone>} />
+							<Route path="/staff" element={<AuthenticatedZone><Staff /></AuthenticatedZone>} />
 
 							{/* Unauthenticated zones */}
 							<Route path="/live_stats" element={<LiveStats />} />
@@ -56,12 +62,19 @@ export default function App() {
 							{/* Misc */}
 							<Route path="*" element={<NotFound />} />
 						</Routes>
-					</>
+					</DisconnectHandler>
 				</>
 				:
 				<>
 					<div className='mx-2 my-2'>
-						<Alert variant='danger '>TournamentSystemUI has crashed: {criticalError}</Alert>
+						<Alert variant='danger '>
+							<div className='d-flex'>
+								<div className='w-100'>
+									TournamentSystemUI has crashed: <span>{criticalError}</span>
+								</div>
+								<img className='align-self-end' src={catCry} width={32} height={32} />
+							</div>
+						</Alert>
 						<Button onClick={() => { window.location.reload() }}>Reload</Button>
 					</div>
 				</>

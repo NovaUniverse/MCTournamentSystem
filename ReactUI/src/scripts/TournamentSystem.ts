@@ -26,6 +26,8 @@ export default class TournamentSystem {
 	private _mainInterval: NodeJS.Timeout | null;
 	private _initialStateFetched: boolean;
 	private _activeTheme: Theme;
+	private _errorCount: number;
+	private _connectionLost: boolean;
 
 	constructor() {
 		this._apiUrl = process.env.REACT_APP_API_URL as string;
@@ -39,6 +41,8 @@ export default class TournamentSystem {
 		this._mainInterval = null;
 		this._initialStateFetched = false;
 		this._activeTheme = Theme.QUARTZ;
+		this._errorCount = 0;
+		this._connectionLost = false;
 
 		// Use default until service providers are loaded
 		this._mojangApi = new MojangAPI("https://mojangapi.novauniverse.net/");
@@ -69,6 +73,51 @@ export default class TournamentSystem {
 			console.error(error);
 			this.bigTimeFuckyWucky("An error occured during init");
 		});
+	}
+
+	private killMainLoop() {
+		if (this._mainInterval != null) {
+			clearInterval(this._mainInterval);
+		}
+	}
+
+	private async addAPIErrorCount() {
+		if (this._connectionLost) {
+			// At this point we are dead so no need to worry about the small problems in life
+			return;
+		}
+
+		this._errorCount++;
+
+		if (window.location.pathname.endsWith("/editor")) {
+			// It would not be nice to remove all the users progress if the server disconnects in the editor so lets wait instead
+			return;
+		}
+
+		if (this._errorCount > 10) {
+			this._errorCount = 0;
+
+			// Check what the error is
+			try {
+				const response = await axios.get(this.apiUrl + "/v1/user/whoami", {
+					headers: {
+						Authorization: `Bearer ${this._authManager.token}`,
+					}
+				});
+				if (!response.data.logged_in) {
+					// Token invalid or expired. Reload to allow the user to log in again
+					window.location.reload();
+				} else {
+					// Well everything seems alright so lets continue as normal
+				}
+			} catch (err) {
+				// This is bad
+				toast.error("Seems like we lost connection to the server");
+				this.killMainLoop();
+				this._connectionLost = true;
+				this.events.emit(Events.DISCONNECTED);
+			}
+		}
 	}
 
 	setTheme(theme: Theme, persistent: boolean = true) {
@@ -132,6 +181,8 @@ export default class TournamentSystem {
 		} catch (err) {
 			if (!this._initialStateFetched) {
 				this.bigTimeFuckyWucky("Failed to fetch initial state");
+			} else {
+				this.addAPIErrorCount();
 			}
 			console.error("Failed to update state");
 			console.error(err);
@@ -161,6 +212,7 @@ export default class TournamentSystem {
 		} catch (err) {
 			console.error("Failed to update servers");
 			console.error(err);
+			this.addAPIErrorCount();
 		}
 	}
 
@@ -171,9 +223,7 @@ export default class TournamentSystem {
 	bigTimeFuckyWucky(errorMessage: string) {
 		this._criticalError = errorMessage;
 		this.events.emit(Events.CRASH, this.criticalError);
-		if (this._mainInterval != null) {
-			clearInterval(this._mainInterval);
-		}
+		this.killMainLoop();
 	}
 
 	/**
@@ -182,6 +232,10 @@ export default class TournamentSystem {
 	 */
 	isInCrashState() {
 		return this._criticalError != null;
+	}
+
+	get connectionLost() {
+		return this._connectionLost;
 	}
 
 	get activeTheme() {

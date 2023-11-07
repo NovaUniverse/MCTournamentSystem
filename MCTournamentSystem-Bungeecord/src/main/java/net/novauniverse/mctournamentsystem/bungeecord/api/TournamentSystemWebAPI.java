@@ -11,6 +11,7 @@ import net.novauniverse.apilib.http.middleware.middlewares.CorsAnywhereMiddlewar
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuthProvider;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuthProvider;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.internal.InternalAuthProvider;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.ConnectionCheckHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.GetServiceProvidersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.chat.GetChatLogHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CheckCommentatorAuth;
@@ -77,8 +78,12 @@ public class TournamentSystemWebAPI {
 		server.setExceptionMode(ExceptionMode.MESSAGE);
 
 		// Redirect and favicon
-		//server.getHttpServer().createContext("/", new FileNotFoundHandler(appRoot));
-		//server.getHttpServer().createContext("/favicon.ico", new FaviconHandler(TournamentSystem.getInstance().getDataFolder().getPath()));
+		// server.getHttpServer().createContext("/", new FileNotFoundHandler(appRoot));
+		// server.getHttpServer().createContext("/favicon.ico", new
+		// FaviconHandler(TournamentSystem.getInstance().getDataFolder().getPath()));
+
+		// Connectivity check
+		server.addEndpoint("/api/v1/connectivity_check", new ConnectionCheckHandler());
 
 		// Service providers
 		server.addEndpoint("/api/v1/service_providers", new GetServiceProvidersHandler());

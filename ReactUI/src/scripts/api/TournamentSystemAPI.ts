@@ -2,12 +2,55 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, AxiosResponseHead
 import TournamentSystem from "../TournamentSystem";
 import { ScoreEntryType } from "../enum/ScoreEntryType";
 import OfflineUserIdDTO from "../dto/OfflineUserIdDTO";
+import StaffDTO from "../dto/StaffDTO";
 
 export default class TournamentSystemAPI {
 	private tournamentSystem;
 
 	constructor(tournamentSystem: TournamentSystem) {
 		this.tournamentSystem = tournamentSystem;
+	}
+
+	async setUserStaffRole(uuid: string, username: string, role: string, offlineMode: boolean) {
+		const url = "/v1/staff";
+		const data: any = {
+			uuid: uuid,
+			role: role,
+			username: username,
+			offline_mode: offlineMode
+		}
+
+		const result = await this.authenticatedRequest(RequestType.PUT, url, data);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async removeStaffUser(uuid: string) {
+		const url = "/v1/staff?uuid=" + uuid;
+		const result = await this.authenticatedRequest(RequestType.DELETE, url);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async getStaffList(): Promise<StaffDTO> {
+		const url = "/v1/staff";
+		const result = await this.authenticatedRequest(RequestType.GET, url);
+		if (result.status == 200) {
+			return result.response as StaffDTO;
+		}
+		throw new Error("Failed to fetch staff list. Server responded with code " + result.status);
 	}
 
 	async activateTrigger(triggerName: string, sessionId: string): Promise<GenericRequestResponse> {
