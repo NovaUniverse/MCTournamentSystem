@@ -3,6 +3,7 @@ import TournamentSystem from "../TournamentSystem";
 import { ScoreEntryType } from "../enum/ScoreEntryType";
 import OfflineUserIdDTO from "../dto/OfflineUserIdDTO";
 import StaffDTO from "../dto/StaffDTO";
+import MapDataDTO from "../dto/MapDataDTO";
 
 export default class TournamentSystemAPI {
 	private tournamentSystem;
@@ -11,7 +12,34 @@ export default class TournamentSystemAPI {
 		this.tournamentSystem = tournamentSystem;
 	}
 
-	async setUserStaffRole(uuid: string, username: string, role: string, offlineMode: boolean) {
+	async setMapEnabled(mapId: string, enabled: boolean): Promise<GenericRequestResponse> {
+		const url = "/v1/maps?mapId=" + mapId;
+		const result = await this.authenticatedRequest(enabled ? RequestType.PUT : RequestType.DELETE, url);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		} else if (result.status == 404) {
+			return {
+				success: false,
+				message: "Could not find map with id " + mapId
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async getMaps() {
+		const url = "/v1/maps";
+		const result = await this.authenticatedRequest(RequestType.GET, url);
+		if (result.status == 200) {
+			return result.response as MapDataDTO[];
+		}
+		throw new Error("Failed to fetch map list. Server responded with code " + result.status);
+	}
+
+	async setUserStaffRole(uuid: string, username: string, role: string, offlineMode: boolean): Promise<GenericRequestResponse> {
 		const url = "/v1/staff";
 		const data: any = {
 			uuid: uuid,
@@ -31,7 +59,7 @@ export default class TournamentSystemAPI {
 		return this.defaultResponses(result);
 	}
 
-	async removeStaffUser(uuid: string) {
+	async removeStaffUser(uuid: string): Promise<GenericRequestResponse> {
 		const url = "/v1/staff?uuid=" + uuid;
 		const result = await this.authenticatedRequest(RequestType.DELETE, url);
 		if (result.status == 200) {

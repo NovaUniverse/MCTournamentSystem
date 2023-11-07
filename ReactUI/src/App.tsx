@@ -14,10 +14,11 @@ import LiveStats from './pages/LiveStats';
 import NotFound from './pages/NotFound';
 import Triggers from './pages/Triggers';
 import Staff from './pages/Staff';
+import DisconnectHandler from './components/DisconnectHandler';
+import Maps from './pages/Maps';
 
 /// @ts-ignore
 import catCry from "./assets/img/cat_cry.png";
-import DisconnectHandler from './components/DisconnectHandler';
 
 export default function App() {
 	const tournamentSystem = useTournamentSystemContext();
@@ -55,6 +56,7 @@ export default function App() {
 							<Route path="/whitelist" element={<AuthenticatedZone><Whitelist /></AuthenticatedZone>} />
 							<Route path="/triggers" element={<AuthenticatedZone><Triggers /></AuthenticatedZone>} />
 							<Route path="/staff" element={<AuthenticatedZone><Staff /></AuthenticatedZone>} />
+							<Route path="/maps" element={<AuthenticatedZone><Maps /></AuthenticatedZone>} />
 
 							{/* Unauthenticated zones */}
 							<Route path="/live_stats" element={<LiveStats />} />
