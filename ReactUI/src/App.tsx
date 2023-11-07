@@ -16,6 +16,7 @@ import Triggers from './pages/Triggers';
 import Staff from './pages/Staff';
 import DisconnectHandler from './components/DisconnectHandler';
 import Maps from './pages/Maps';
+import ChatLog from './pages/ChatLog';
 
 /// @ts-ignore
 import catCry from "./assets/img/cat_cry.png";
@@ -57,6 +58,7 @@ export default function App() {
 							<Route path="/triggers" element={<AuthenticatedZone><Triggers /></AuthenticatedZone>} />
 							<Route path="/staff" element={<AuthenticatedZone><Staff /></AuthenticatedZone>} />
 							<Route path="/maps" element={<AuthenticatedZone><Maps /></AuthenticatedZone>} />
+							<Route path="/chat" element={<AuthenticatedZone><ChatLog /></AuthenticatedZone>} />
 
 							{/* Unauthenticated zones */}
 							<Route path="/live_stats" element={<LiveStats />} />
