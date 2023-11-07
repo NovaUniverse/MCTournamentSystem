@@ -136,7 +136,7 @@ export default function Staff() {
 	}
 
 	function handleOfflineChange(e: ChangeEvent<any>) {
-		setOffline(e.target.value == "on");
+		setOffline(e.target.checked);
 	}
 
 	return (

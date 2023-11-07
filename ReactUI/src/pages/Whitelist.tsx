@@ -60,7 +60,7 @@ export default function Whitelist() {
 	}
 
 	function handleOfflineChange(e: ChangeEvent<any>) {
-		setOffline(e.target.value == "on");
+		setOffline(e.target.checked);
 	}
 
 	function closeAddModal() {
