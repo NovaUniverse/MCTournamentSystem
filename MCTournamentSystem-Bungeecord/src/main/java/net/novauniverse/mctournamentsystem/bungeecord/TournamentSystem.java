@@ -1,15 +1,18 @@
 package net.novauniverse.mctournamentsystem.bungeecord;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.KeyPair;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,12 +21,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentSystemWebAPI;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth.Type;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyStore;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuth;
+import net.novauniverse.mctournamentsystem.bungeecord.authdb.AuthDB;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere.SendHereCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.timeout.TimeoutCommand;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.JoinEvents;
@@ -37,6 +35,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.whitelist.Whiteli
 import net.novauniverse.mctournamentsystem.bungeecord.maps.MapScanner;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.CustomTheme;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.SlowPlayerSender;
+import net.novauniverse.mctournamentsystem.bungeecord.security.RSAGen;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ServerAutoRegisterData;
 import net.novauniverse.mctournamentsystem.bungeecord.setup.Setup;
@@ -63,14 +62,11 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private static TournamentSystem instance;
 
 	private TournamentSystemWebAPI webServer;
-	private boolean webserverDevelopmentMode;
 	private List<String> staffRoles;
 	private List<String> quickMessages;
 	private int teamSize;
 
 	private ChatListener chatListener;
-
-	private CommentatorAuth commentatorGuestKey;
 
 	private String phpmyadminURL;
 
@@ -89,8 +85,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private String dynamicConfigURL;
 
 	private InternetCafeOptions internetCafeOptions;
-
-	private List<APIUser> apiUsers;
 
 	private List<ManagedServer> managedServers;
 
@@ -121,6 +115,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private String skinRenderAPIUrl;
 
 	private File mapDataFolder;
+
+	private KeyPair tokenKeyPair;
+
+	private AuthDB authDB;
 
 	public List<String> getGlobalCustomLaunchFlags() {
 		return globalCustomLaunchFlags;
@@ -158,16 +156,16 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return managedServers;
 	}
 
-	public List<APIUser> getApiUsers() {
-		return apiUsers;
-	}
-
 	public String getDynamicConfigUrl() {
 		return dynamicConfigURL;
 	}
 
 	public String getMojangAPIProxyURL() {
 		return mojangAPIProxyURL;
+	}
+
+	public AuthDB getAuthDB() {
+		return authDB;
 	}
 
 	public void reloadDynamicConfig() throws Exception {
@@ -203,10 +201,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return instance;
 	}
 
-	public boolean isWebserverDevelopmentMode() {
-		return webserverDevelopmentMode;
-	}
-
 	public List<String> getStaffRoles() {
 		return staffRoles;
 	}
@@ -229,10 +223,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	public boolean isOpenMode() {
 		return openMode;
-	}
-
-	public CommentatorAuth getCommentatorGuestKey() {
-		return commentatorGuestKey;
 	}
 
 	public String getDistroName() {
@@ -285,6 +275,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return mapDataFolder;
 	}
 
+	public KeyPair getTokenKeyPair() {
+		return tokenKeyPair;
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable() {
@@ -292,7 +286,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		staffRoles = new ArrayList<>();
 		openMode = false;
 		distroName = null;
-		apiUsers = new ArrayList<>();
 		managedServers = new ArrayList<>();
 		globalCustomLaunchFlags = new ArrayList<>();
 		makeMeSufferEasteregg = false;
@@ -321,8 +314,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 		chatListener = new ChatListener();
 
-		commentatorGuestKey = new CommentatorAuth(UUID.randomUUID().toString(), "guest", null);
-
 		quickMessages = new ArrayList<>();
 
 		String globalConfigPath = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
@@ -336,6 +327,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		String logFolderOverride = null;
 		String webConfigOverride = null;
 		String mapDataFolderOverride = null;
+		String authDBOverride = null;
+		String certOverride = null;
 
 		mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
@@ -347,18 +340,68 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 				webConfigOverride = overrides.optString("web_config_file");
 				logFolderOverride = overrides.optString("server_log_directory");
 				mapDataFolderOverride = overrides.optString("map_files");
+				authDBOverride = overrides.optString("authdb_file");
+				certOverride = overrides.optString("cert_file");
 
 				if (logFolderOverride != null) {
 					serverLogFolder = new File(logFolderOverride);
 				}
-				
-				if(mapDataFolderOverride != null) {
+
+				if (mapDataFolderOverride != null) {
 					mapDataFolder = new File(mapDataFolderOverride);
 				}
 			} catch (Exception e) {
 				Log.error("TournamentSystem", "Failed to read overrides.json. " + e.getClass().getName() + " " + e.getMessage());
 				e.printStackTrace();
 				ProxyServer.getInstance().stop("Failed to enable tournament system: Failed to read overrides.json");
+				return;
+			}
+		}
+
+		File authDBFile = new File(authDBOverride == null ? globalConfigFolder.getAbsolutePath() + File.separator + "auth_db.json" : authDBOverride);
+		try {
+			this.authDB = new AuthDB(authDBFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.fatal("TournamentSystem", "Failed to set up AuthDB. " + e.getClass().getName() + " " + e.getMessage());
+			ProxyServer.getInstance().stop("Failed to setup AuthDB");
+			return;
+		}
+
+		File keyFile = new File(certOverride == null ? globalConfigFolder.getAbsolutePath() + File.separator + "keypair.ser" : certOverride);
+		if (!keyFile.exists()) {
+			Log.info("TournamentSystem", "Key pair not found at " + keyFile.getAbsolutePath() + ". Generating a new one...");
+			try {
+				KeyPair pair = RSAGen.generateRSAKeyPair();
+
+				FileOutputStream fileOut = new FileOutputStream(keyFile.getAbsolutePath());
+				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+				objectOut.writeObject(pair);
+				objectOut.close();
+				fileOut.close();
+
+				this.tokenKeyPair = pair;
+
+				Log.info("TournamentSystem", "New key pair generated");
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.fatal("TournamentSystem", "Failed to save new key pair. " + e.getClass().getName() + " " + e.getMessage());
+				ProxyServer.getInstance().stop("Failed to setup token key pair");
+				return;
+			}
+		} else {
+			try {
+				Log.info("TournamentSystem", "Loading key pair from " + keyFile.getAbsolutePath());
+				FileInputStream fileIn = new FileInputStream(keyFile.getAbsolutePath());
+				ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+				KeyPair loadedKeyPair = (KeyPair) objectIn.readObject();
+				objectIn.close();
+				fileIn.close();
+				this.tokenKeyPair = loadedKeyPair;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.fatal("TournamentSystem", "Failed to read key pair. " + e.getClass().getName() + " " + e.getMessage());
+				ProxyServer.getInstance().stop("Failed to setup token key pair");
 				return;
 			}
 		}
@@ -560,15 +603,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		Log.info("Setting up web server");
 
 		JSONObject webUISettings = config.getJSONObject("web_ui");
-		JSONArray commentatorKeys = webConfig.optJSONArray("commentator_keys");
-		JSONArray apiKeys = webConfig.optJSONArray("api_keys");
-		JSONArray webUsers = webConfig.getJSONArray("users");
 		JSONArray themes = webConfig.optJSONArray("custom_themes");
 		JSONArray managedServersJSON = config.optJSONArray("servers");
-
-		if (webUsers.length() == 0) {
-			Log.warn("TournamentSystem", "No users defined for web server in " + configFile.getAbsolutePath() + ". The web ui wont be accessible unless you are in dev mode (and thats not a good idea for prod env)");
-		}
 
 		if (themes != null) {
 			for (int i = 0; i < themes.length(); i++) {
@@ -581,67 +617,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 				customAdminUIThemes.put(name, new CustomTheme(name, url, baseTheme, serverConsoleTheme));
 			}
-		}
-
-		if (commentatorKeys != null) {
-			for (int i = 0; i < commentatorKeys.length(); i++) {
-				JSONObject commentatorKey = commentatorKeys.getJSONObject(i);
-
-				String key = commentatorKey.getString("key");
-				String uuidString = commentatorKey.getString("uuid");
-				String identifier = commentatorKey.getString("identifier");
-				UUID uuid = null;
-
-				try {
-					uuid = UUID.fromString(uuidString);
-				} catch (IllegalArgumentException e) {
-					Log.error("TournamentSystem", "Invalid UUID " + uuidString + " for commentator key with identifier " + identifier);
-					continue;
-				}
-
-				APIKeyStore.addCommentatorKey(new CommentatorAuth(identifier, key, uuid));
-			}
-		}
-		for (int i = 0; i < webUsers.length(); i++) {
-			JSONObject user = webUsers.getJSONObject(i);
-
-			boolean hidePlayerIPs = user.optBoolean("hide_player_ips", false);
-
-			String username = user.getString("username");
-			String password = user.getString("password");
-			List<AuthPermission> permissions = new ArrayList<AuthPermission>();
-
-			JSONArray permissionStrings = user.getJSONArray("permissions");
-			for (int j = 0; j < permissionStrings.length(); j++) {
-				String permissionName = permissionStrings.getString(j);
-				try {
-					permissions.add(AuthPermission.valueOf(permissionName));
-				} catch (Exception e) {
-					Log.error("TournamentSystem", "Invalid permission " + permissionName + " for user " + username);
-				}
-			}
-
-			apiUsers.add(new APIUser(username, password, permissions, hidePlayerIPs));
-
-			Log.info("TournamentSystem", "Added user " + username + " to the web ui users. (hide ip: " + hidePlayerIPs + ")");
-		}
-
-		Log.info("TournamentSystem", apiUsers.size() + " user" + (apiUsers.size() == 1 ? "" : "s") + " configured for web ui");
-
-		if (apiKeys != null) {
-			for (int i = 0; i < apiKeys.length(); i++) {
-				JSONObject apiKey = apiKeys.getJSONObject(i);
-				String key = apiKey.getString("key");
-				String userName = apiKey.getString("user");
-
-				APIUser user = apiUsers.stream().filter(u -> u.getUsername().equals(userName)).findFirst().orElse(null);
-				if (user == null) {
-					Log.error("TournamentSystem", "Invalid user " + userName + " configured for api key");
-				} else {
-					APIKeyStore.addApiKey(new APIKeyAuth(key, user, Type.API_KEY));
-				}
-			}
-			Log.info("TournamentSystem", APIKeyStore.getApiKeys().size() + " api keys loaded");
 		}
 
 		if (managedServersJSON != null) {
@@ -703,14 +678,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 			Log.info("TournamentSystem", managedServers.size() + " servers configured to auto start");
 		}
 
-		webserverDevelopmentMode = webUISettings.optBoolean("development_mode", false);
-
 		try {
 			int port = webUISettings.getInt("port");
-
-			if (webserverDevelopmentMode) {
-				Log.warn("TournamentSystem", "Development mode enabled for web server. No autentication will be required to access the web ui and api");
-			}
 
 			Log.info("Starting web server on port " + port);
 			webServer = new TournamentSystemWebAPI(port, wwwAppFile);

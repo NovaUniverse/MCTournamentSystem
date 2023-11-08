@@ -16,12 +16,10 @@ if (root) {
     ReactDOM
         .createRoot(root)
         .render(
-            <React.StrictMode>
-                <TournamentSystemContext.Provider value={tournamentSystem}>
-                    <BrowserRouter>
-                        <App />
-                    </BrowserRouter>
-                </TournamentSystemContext.Provider>
-            </React.StrictMode>
+            <TournamentSystemContext.Provider value={tournamentSystem}>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </TournamentSystemContext.Provider>
         )
 }

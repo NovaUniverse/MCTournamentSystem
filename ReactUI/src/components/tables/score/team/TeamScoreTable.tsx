@@ -8,6 +8,7 @@ import StateDTO from '../../../../scripts/dto/StateDTO';
 import { Events } from '../../../../scripts/enum/Events';
 import toast from 'react-hot-toast';
 import { ScoreEntryType } from '../../../../scripts/enum/ScoreEntryType';
+import ScrollOnXOverflow from '../../../ScrollOnXOverflow';
 
 interface Props {
 	score: ScoreDTO;
@@ -78,32 +79,34 @@ export default function TeamScoreTable({ score }: Props) {
 
 	return (
 		<>
-			<Table striped bordered hover>
-				<thead>
-					<tr>
-						<th className='t-fit'>ID</th>
-						<th>Team number</th>
-						<th>Server</th>
-						<th>Reason</th>
-						<th>Amount</th>
-						<th>Gained at</th>
-						<th className='t-fit'></th>
-					</tr>
-				</thead>
+			<ScrollOnXOverflow>
+				<Table striped bordered hover>
+					<thead>
+						<tr>
+							<th className='t-fit'>ID</th>
+							<th>Team number</th>
+							<th>Server</th>
+							<th>Reason</th>
+							<th>Amount</th>
+							<th>Gained at</th>
+							<th className='t-fit'></th>
+						</tr>
+					</thead>
 
-				<tbody>
-					{score.teams.map(s => <TeamScoreTableEntry score={s} key={String(s.id)} />)}
-				</tbody>
+					<tbody>
+						{score.teams.map(s => <TeamScoreTableEntry score={s} key={String(s.id)} />)}
+					</tbody>
 
-				<tbody>
-					<tr>
-						<td colSpan={6}></td>
-						<td>
-							<Button variant='success' disabled={!tournamentSystem.authManager.hasPermission(Permission.ALTER_SCORE)} onClick={() => { setModalVisible(true) }}>Add</Button>
-						</td>
-					</tr>
-				</tbody>
-			</Table>
+					<tbody>
+						<tr>
+							<td colSpan={6}></td>
+							<td>
+								<Button variant='success' disabled={!tournamentSystem.authManager.hasPermission(Permission.ALTER_SCORE)} onClick={() => { setModalVisible(true) }}>Add</Button>
+							</td>
+						</tr>
+					</tbody>
+				</Table>
+			</ScrollOnXOverflow>
 
 			<Modal show={modalVisible} onHide={onClose}>
 				<ModalHeader closeButton>

@@ -19,7 +19,7 @@ import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
 import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.PlayerData;
 import net.novauniverse.mctournamentsystem.bungeecord.api.data.TeamData;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
@@ -44,11 +44,13 @@ public class StatusHandler extends TournamentEndpoint {
 	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
 		JSONObject json = new JSONObject();
 
-		if (authentication instanceof APIKeyAuth) {
+		if (authentication instanceof UserAuth) {
 			JSONObject loggedInUser = new JSONObject();
-			APIKeyAuth auth = (APIKeyAuth) authentication;
+			UserAuth auth = (UserAuth) authentication;
 			loggedInUser.put("username", auth.getUser().getUsername());
 			loggedInUser.put("permissions", auth.getUser().getPermissionsAsJSON());
+			loggedInUser.put("type", auth.getType().name());
+			loggedInUser.put("can_manage_accounts", auth.getUser().isAllowManagingAccounts());
 			json.put("user", loggedInUser);
 		}
 

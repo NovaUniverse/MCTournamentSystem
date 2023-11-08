@@ -86,8 +86,8 @@ export default function PlayerListEntry({ player }: Props) {
 				<td>
 					{player.online ? player.server : "N/A"}
 				</td>
-				<td>
-					<SendPlayerButton username={player.username} uuid={player.uuid} />
+				<td className='t-fit'>
+					<SendPlayerButton className='text-nowrap' username={player.username} uuid={player.uuid} />
 				</td>
 			</tr>
 		</>

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosHeaders, AxiosRequestConfig } from "axios";
 import TournamentSystem from "./TournamentSystem";
 import { Events } from "./enum/Events";
 import { Permission } from "./enum/Permission";
@@ -13,12 +13,14 @@ export default class AuthManager {
 	private _token: string | null;
 	private _username: string | null;
 	private _permissions: Permission[];
+	private _hasEditUserPermission: boolean;
 
 	constructor(tournamentSystem: TournamentSystem) {
 		this.tournamentSystem = tournamentSystem;
 		this._isLoggedIn = false;
 		this._username = null;
 		this._token = null;
+		this._hasEditUserPermission = false;
 		this._permissions = [];
 	}
 
@@ -38,6 +40,7 @@ export default class AuthManager {
 			if (response.data.logged_in) {
 				this._permissions = response.data.permissions;
 				this._username = response.data.username;
+				this._hasEditUserPermission = response.data.can_manage_accounts;
 				this._isLoggedIn = true;
 				this.tournamentSystem.events.emit(Events.LOGIN_STATE_CHANGED);
 				console.log("Existing login found");
@@ -71,6 +74,7 @@ export default class AuthManager {
 			this._token = token;
 			this._username = response.data.user.username;
 			this._permissions = response.data.user.permissions;
+			this._hasEditUserPermission = response.data.user.can_manage_accounts;
 			this._isLoggedIn = true;
 
 			console.log("Logged in as " + username);
@@ -108,5 +112,15 @@ export default class AuthManager {
 
 	get token() {
 		return this._token;
+	}
+
+	get authHeaders(): any {
+		return {
+			Authorization: `Bearer ${this._token}`,
+		}
+	}
+
+	get hasEditUserPermission() {
+		return this._hasEditUserPermission;
 	}
 }

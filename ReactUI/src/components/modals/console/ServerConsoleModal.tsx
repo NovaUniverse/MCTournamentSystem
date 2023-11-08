@@ -12,6 +12,7 @@ import "xterm/css/xterm.css";
 import "./ServerConsoleModal.scss";
 import StartServerButton from '../../buttons/server/StartServerButton';
 import KillServerButton from '../../buttons/server/KillServerButton';
+import toast from 'react-hot-toast';
 
 interface Props {
 	visible: boolean;
@@ -176,8 +177,24 @@ export default function ServerConsoleModal({ server, visible, onClose }: Props) 
 		setCommand(e.target.value);
 	}
 
-	function executeCommand() {
+	async function executeCommand() {
+		if(command.trim().length == 0) {
+			return;
+		}
 
+		const req = await tournamentSystem.api.execServerCommand(server.name, command);
+		if (req.success) {
+			toast.success("Command executed");
+			setCommand("");
+		} else {
+			toast.error(String(req.message));
+		}
+	}
+
+	function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+		if (e.key === 'Enter') {
+			executeCommand();
+		}
 	}
 
 	return (
@@ -199,7 +216,7 @@ export default function ServerConsoleModal({ server, visible, onClose }: Props) 
 			</ModalBody>
 			<ModalFooter>
 				<InputGroup>
-					<FormControl type='text' value={command} onChange={handleCommandChange} placeholder='Enter command. Press enter key to run' />
+					<FormControl type='text' value={command} onChange={handleCommandChange} onKeyDown={handleKeyDown} placeholder='Enter command. Press enter key to run' />
 					<Button variant="primary" onClick={executeCommand}>Send</Button>
 					{server.is_running ?
 						<KillServerButton server={server} />

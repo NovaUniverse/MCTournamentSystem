@@ -3,6 +3,7 @@ export enum Events {
 	SERVER_UPDATE = "sys:server_update",
 	STAFF_CHANGED = "sys:staff_changed",
 	MAPS_CHANGED = "sys:maps_changed",
+	ACCOUNTS_CHANGED = "sys:accounts_changed",
 	CRASH = "sys:crash",
 	DISCONNECTED = "sys:disconnected",
 	THEME_CHANGED = "ui:theme_change",

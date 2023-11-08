@@ -28,6 +28,7 @@ export default class TournamentSystem {
 	private _activeTheme: Theme;
 	private _errorCount: number;
 	private _connectionLost: boolean;
+	private _validPermissions: string[];
 
 	constructor() {
 		this._apiUrl = process.env.REACT_APP_API_URL as string;
@@ -43,6 +44,7 @@ export default class TournamentSystem {
 		this._activeTheme = Theme.QUARTZ;
 		this._errorCount = 0;
 		this._connectionLost = false;
+		this._validPermissions = [];
 
 		// Use default until service providers are loaded
 		this._mojangApi = new MojangAPI("https://mojangapi.novauniverse.net/");
@@ -68,6 +70,7 @@ export default class TournamentSystem {
 
 		this.init().then(() => {
 			console.log("Init complete");
+			console.log("Has account edit permission: " + this.authManager.hasEditUserPermission);
 		}).catch((error) => {
 			console.error("Error occured during init");
 			console.error(error);
@@ -150,6 +153,10 @@ export default class TournamentSystem {
 		} else {
 			console.warn("No mojang api proxy provider configured. Consider setting up your own to not run into rate limits https://github.com/NovaUniverse/MojangAPIProxy");
 		}
+
+		const permissions = await axios.get(this._apiUrl + "/v1/permissions");
+		this._validPermissions = permissions.data as string[];
+		console.log("Valid permissions: " + JSON.stringify(this._validPermissions));
 
 		await this._authManager.loadExistingLogin();
 
@@ -276,5 +283,9 @@ export default class TournamentSystem {
 
 	get criticalError() {
 		return this._criticalError;
+	}
+
+	get validPermissions() {
+		return this._validPermissions;
 	}
 }

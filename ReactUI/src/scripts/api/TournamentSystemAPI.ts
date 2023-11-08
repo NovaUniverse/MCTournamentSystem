@@ -4,12 +4,134 @@ import { ScoreEntryType } from "../enum/ScoreEntryType";
 import OfflineUserIdDTO from "../dto/OfflineUserIdDTO";
 import StaffDTO from "../dto/StaffDTO";
 import MapDataDTO from "../dto/MapDataDTO";
+import AccountDTO from "../dto/AccountDTO";
 
 export default class TournamentSystemAPI {
 	private tournamentSystem;
 
 	constructor(tournamentSystem: TournamentSystem) {
 		this.tournamentSystem = tournamentSystem;
+	}
+
+	async shutdown(): Promise<GenericRequestResponse> {
+		const url = "/v1/system/shutdown";
+		const result = await this.authenticatedRequest(RequestType.POST, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		}
+		throw new Error("Server communication failure");
+	}
+
+	async reset(): Promise<GenericRequestResponse> {
+		const url = "/v1/system/reset";
+		const result = await this.authenticatedRequest(RequestType.DELETE, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		}
+		throw new Error("Server communication failure");
+	}
+
+	async createUser(username: string, password: string, hideIPs: boolean, allowManageUsers: boolean, permissions: string[]): Promise<GenericRequestResponse> {
+		const data: any = {
+			username: username,
+			password: password,
+			hide_ips: hideIPs,
+			allow_manage_users: allowManageUsers,
+			permissions: permissions
+		}
+
+		const url = "/v1/user_management/users/create";
+
+		const result = await this.authenticatedRequest(RequestType.PUT, url, data);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		} else if (result.status == 409) {
+			return {
+				success: false,
+				message: "A user with that name already exists"
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async changePassword(username: string, password: string): Promise<GenericRequestResponse> {
+		const url = "/v1/user_management/users/change_password?username=" + username;
+		const result = await this.authenticatedRequest(RequestType.POST, url, password, {
+			headers: {
+				'Content-Type': 'text/plain'
+			}
+		});
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		} else if (result.status == 404) {
+			return {
+				success: false,
+				message: "That user could not be found"
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async editAccounts(username: string, permission: string[], hideIPs: boolean): Promise<GenericRequestResponse> {
+		const data: any = {
+			hide_ips: hideIPs,
+			permissions: permission
+		}
+
+		const url = "/v1/user_management/users/edit?username=" + username;
+		const result = await this.authenticatedRequest(RequestType.POST, url, data);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		} else if (result.status == 404) {
+			return {
+				success: false,
+				message: "That user could not be found"
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async deleteAccount(username: string): Promise<GenericRequestResponse> {
+		const url = "/v1/user_management/users/delete?username=" + username;
+		const result = await this.authenticatedRequest(RequestType.DELETE, url);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		} else if (result.status == 404) {
+			return {
+				success: false,
+				message: "That user could not be found"
+			}
+		}
+
+		return this.defaultResponses(result);
+	}
+
+	async getAccounts(): Promise<AccountDTO[]> {
+		const url = "/v1/user_management/users/get";
+		const result = await this.authenticatedRequest(RequestType.GET, url);
+		if (result.status == 200) {
+			return result.response as AccountDTO[];
+		}
+		throw new Error("Failed to fetch user list. Server responded with code " + result.status);
 	}
 
 	async setMapEnabled(mapId: string, enabled: boolean): Promise<GenericRequestResponse> {
@@ -30,7 +152,7 @@ export default class TournamentSystemAPI {
 		return this.defaultResponses(result);
 	}
 
-	async getMaps() {
+	async getMaps(): Promise<MapDataDTO[]> {
 		const url = "/v1/maps";
 		const result = await this.authenticatedRequest(RequestType.GET, url);
 		if (result.status == 200) {
@@ -213,7 +335,7 @@ export default class TournamentSystemAPI {
 		return this.defaultResponses(result);
 	}
 
-	async broadcastMessage(text: string) {
+	async broadcastMessage(text: string): Promise<GenericRequestResponse> {
 		const url = "/v1/system/broadcast";
 		const result = await this.authenticatedRequest(RequestType.POST, url, text);
 		if (result.status == 200) {
@@ -225,7 +347,7 @@ export default class TournamentSystemAPI {
 		return this.defaultResponses(result);
 	}
 
-	async setNextMinigame(text: string) {
+	async setNextMinigame(text: string): Promise<GenericRequestResponse> {
 		const url = "/v1/next_minigame";
 		const result = await this.authenticatedRequest(RequestType.POST, url, text);
 		if (result.status == 200) {

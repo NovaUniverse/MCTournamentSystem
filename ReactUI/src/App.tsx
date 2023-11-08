@@ -20,6 +20,7 @@ import ChatLog from './pages/ChatLog';
 
 /// @ts-ignore
 import catCry from "./assets/img/cat_cry.png";
+import Accounts from './pages/Accounts';
 
 export default function App() {
 	const tournamentSystem = useTournamentSystemContext();
@@ -59,6 +60,7 @@ export default function App() {
 							<Route path="/staff" element={<AuthenticatedZone><Staff /></AuthenticatedZone>} />
 							<Route path="/maps" element={<AuthenticatedZone><Maps /></AuthenticatedZone>} />
 							<Route path="/chat" element={<AuthenticatedZone><ChatLog /></AuthenticatedZone>} />
+							<Route path="/accounts" element={<AuthenticatedZone><Accounts /></AuthenticatedZone>} />
 
 							{/* Unauthenticated zones */}
 							<Route path="/live_stats" element={<LiveStats />} />

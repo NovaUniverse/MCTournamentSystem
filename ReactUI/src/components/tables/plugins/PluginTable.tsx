@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ServerDTO, { Plugin } from '../../../scripts/dto/ServerDTO'
 import { Table } from 'react-bootstrap';
 import PluginTableEntry from './PluginTableEntry';
+import ScrollOnXOverflow from '../../ScrollOnXOverflow';
 
 interface Props {
 	server: ServerDTO;
@@ -15,16 +16,18 @@ export default function PluginTable({ server }: Props) {
 	}, [server]);
 
 	return (
-		<Table bordered striped hover>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Version</th>
-				</tr>
-			</thead>
-			<tbody>
-				{plugins.map((plugin) => <PluginTableEntry key={plugin.name} plugin={plugin} />)}
-			</tbody>
-		</Table>
+		<ScrollOnXOverflow>
+			<Table bordered striped hover>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Version</th>
+					</tr>
+				</thead>
+				<tbody>
+					{plugins.map((plugin) => <PluginTableEntry key={plugin.name} plugin={plugin} />)}
+				</tbody>
+			</Table>
+		</ScrollOnXOverflow>
 	)
 }

@@ -1,5 +1,6 @@
-package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system;
+package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.usermanagements.user;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import net.novauniverse.apilib.http.auth.Authentication;
@@ -10,24 +11,27 @@ import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 
-public class SecurityCheckHandler extends TournamentEndpoint {
-	public SecurityCheckHandler() {
+public class GetUsersHandler extends TournamentEndpoint {
+	public GetUsersHandler() {
 		super(true);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override
-	public boolean allowCommentatorAccess() {
-		return false;
-	}
-
-	@Override
 	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
-		JSONObject json = new JSONObject();
+		JSONArray result = new JSONArray();
 
-		json.put("default_login_warning", TournamentSystem.getInstance().getApiUsers().stream().filter(u -> u.getUsername().equalsIgnoreCase("admin") && u.getPassword().equalsIgnoreCase("admin")).findFirst().isPresent());
-		json.put("dev_mode", TournamentSystem.getInstance().isWebserverDevelopmentMode());
+		TournamentSystem.getInstance().getAuthDB().getUsers().forEach(u -> {
+			JSONObject userData = new JSONObject();
 
-		return new JSONResponse(json);
+			userData.put("username", u.getUsername());
+			userData.put("hide_ips", u.isHideIps());
+			userData.put("allow_manage_users", u.isAllowManagingAccounts());
+			userData.put("permissions", u.getPermissionsAsJSON());
+
+			result.put(userData);
+		});
+
+		return new JSONResponse(result);
 	}
 }

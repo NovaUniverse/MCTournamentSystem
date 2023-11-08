@@ -14,12 +14,13 @@ interface Props {
 	extraButtonVisible?: boolean;
 	extraButtonText?: string;
 	extraButtonType?: string;
+	allowEnterToSubmit?: boolean;
 	onExtraButtonClick?: () => void;
 	onClose: () => void;
 	onSubmit: (text: string) => void;
 }
 
-export default function TextPromptModal({ maxLength, placeholder, children, visible, title, onClose, onSubmit, cancelText = "Cancel", confirmText = "Confirm", extraButtonVisible = false, extraButtonText = "Extra button", extraButtonType = "secondary", onExtraButtonClick = () => { }, cancelType = "secondary", confirmType = "primary" }: Props) {
+export default function TextPromptModal({ maxLength, placeholder, children, visible, title, onClose, onSubmit, allowEnterToSubmit = true, cancelText = "Cancel", confirmText = "Confirm", extraButtonVisible = false, extraButtonText = "Extra button", extraButtonType = "secondary", onExtraButtonClick = () => { }, cancelType = "secondary", confirmType = "primary" }: Props) {
 	const [text, setText] = useState<string>("");
 
 	useEffect(() => {
@@ -42,6 +43,14 @@ export default function TextPromptModal({ maxLength, placeholder, children, visi
 		}
 	}
 
+	function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+		if (e.key === 'Enter') {
+			if (allowEnterToSubmit) {
+				handleSubmit();
+			}
+		}
+	}
+
 	return (
 		<Modal show={visible} onHide={onClose}>
 			<ModalHeader closeButton>
@@ -59,7 +68,7 @@ export default function TextPromptModal({ maxLength, placeholder, children, visi
 					}
 					<Row>
 						<Col>
-							<FormControl type="text" onChange={handleTextChange} value={text} maxLength={maxLength} placeholder={placeholder} />
+							<FormControl type="text" onChange={handleTextChange} value={text} maxLength={maxLength} placeholder={placeholder} onKeyDown={handleKeyDown} />
 						</Col>
 					</Row>
 				</Container>
