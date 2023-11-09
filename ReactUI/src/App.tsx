@@ -17,10 +17,11 @@ import Staff from './pages/Staff';
 import DisconnectHandler from './components/DisconnectHandler';
 import Maps from './pages/Maps';
 import ChatLog from './pages/ChatLog';
+import Accounts from './pages/Accounts';
+import EditorProvider from './components/EditorProvider';
 
 /// @ts-ignore
 import catCry from "./assets/img/cat_cry.png";
-import Accounts from './pages/Accounts';
 
 export default function App() {
 	const tournamentSystem = useTournamentSystemContext();
@@ -61,6 +62,7 @@ export default function App() {
 							<Route path="/maps" element={<AuthenticatedZone><Maps /></AuthenticatedZone>} />
 							<Route path="/chat" element={<AuthenticatedZone><ChatLog /></AuthenticatedZone>} />
 							<Route path="/accounts" element={<AuthenticatedZone><Accounts /></AuthenticatedZone>} />
+							<Route path="/editor" element={<AuthenticatedZone><EditorProvider /></AuthenticatedZone>} />
 
 							{/* Unauthenticated zones */}
 							<Route path="/live_stats" element={<LiveStats />} />
@@ -85,6 +87,8 @@ export default function App() {
 					</div>
 				</>
 			}
+
+
 
 			<Toaster />
 		</>

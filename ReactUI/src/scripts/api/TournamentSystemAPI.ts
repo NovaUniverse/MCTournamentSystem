@@ -5,12 +5,25 @@ import OfflineUserIdDTO from "../dto/OfflineUserIdDTO";
 import StaffDTO from "../dto/StaffDTO";
 import MapDataDTO from "../dto/MapDataDTO";
 import AccountDTO from "../dto/AccountDTO";
+import TeamEditorEntry from "../TeamEditorEntry";
 
 export default class TournamentSystemAPI {
 	private tournamentSystem;
 
 	constructor(tournamentSystem: TournamentSystem) {
 		this.tournamentSystem = tournamentSystem;
+	}
+
+	async upploadTeam(teamData: TeamEditorEntry[]): Promise<GenericRequestResponse> {
+		const url = "/v1/team/upload_team";
+		const result = await this.authenticatedRequest(RequestType.POST, url, teamData);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+		return this.defaultResponses(result);
 	}
 
 	async shutdown(): Promise<GenericRequestResponse> {

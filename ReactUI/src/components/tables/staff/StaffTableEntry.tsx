@@ -6,6 +6,7 @@ import { useTournamentSystemContext } from '../../../context/TournamentSystemCon
 import { Permission } from '../../../scripts/enum/Permission';
 import toast from 'react-hot-toast';
 import { Events } from '../../../scripts/enum/Events';
+import { Skins } from '../../../scripts/enum/Skins';
 
 interface Props {
 	staff: StaffDTO;
@@ -23,7 +24,7 @@ export default function StaffTableEntry({ staff, staffMember }: Props) {
 		}
 	}, [staffMember]);
 
-	const skinUUID = staffMember.offline_mode ? "c06f8906-4c8a-4911-9c29-ea1dbd1aab82" : staffMember.uuid;
+	const skinUUID = staffMember.offline_mode ? Skins.MHF_Steve : staffMember.uuid;
 
 	function handleRoleChange(e: ChangeEvent<any>) {
 		const newRole = e.target.value;

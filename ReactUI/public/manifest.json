@@ -1,0 +1,16 @@
+{
+	"name": "NovaUniverse tournament system",
+	"short_name": "TournamentSystem",
+	"description": "An app to controll the NovaUniverse Tournament system for minecraft",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#3D0000",
+	"icons": [
+		{
+			"src": "/icon.png",
+			"sizes": "256x256",
+			"type": "image/png"
+		}
+	]
+}

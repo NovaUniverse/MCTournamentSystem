@@ -78,7 +78,7 @@ export default function ChatLog() {
 		}, 500);
 
 		setTimeout(() => {
-			if(closed) {
+			if (closed) {
 				return;
 			}
 			console.log("Delayed resize");
@@ -115,6 +115,11 @@ export default function ChatLog() {
 
 			<Container fluid>
 				<Row>
+					<Col>
+						<h2>Live chat</h2>
+					</Col>
+				</Row>
+				<Row className='mt-1'>
 					<Col>
 						<div ref={terminalRef} className='chat_xterm_container' />
 					</Col>

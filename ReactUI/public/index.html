@@ -9,26 +9,15 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+	<link rel="manifest" href="/manifest.json">
+
 	<link rel="stylesheet" href="/css/theme/bootstrap.darkly.min.css" id="main_css_theme">
 
 	<!-- Some themes requires extra css to patch some small bugs -->
 	<link rel="stylesheet" href="/css/fix/darkly.css" id="main_css_fix">
 
-	<script>
-		window.addEventListener('ts_SetTheme', function (event) {
-			const data = event.detail;
-			const theme = String(data.theme).toLowerCase();
-			const fix = data.fix == null ? "null" : data.fix;
-
-			console.log("Changing theme to " + theme);
-
-			const cssLink = document.getElementById("main_css_theme");
-			cssLink.href = "/css/theme/bootstrap." + theme + ".min.css";
-
-			const fixLink = document.getElementById("main_css_fix");
-			fixLink.href = "/css/fix/" + fix + ".css";
-		});
-	</script>
+	<script src="/js/ThemeManager.js"></script>
+	<script src="/js/CSSModManager.js"></script>
 </head>
 
 <body>

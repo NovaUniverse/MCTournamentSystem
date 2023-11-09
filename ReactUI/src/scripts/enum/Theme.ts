@@ -1,5 +1,8 @@
 export enum Theme {
 	BOOTSTRAP = "Bootstrap",
+	CERULEAN="Cerulean",
+	COSMO="Cosmo",
+	CYBORG="Cyborg",
 	DARKLY = "Darkly",
 	FLATLY = "Flatly",
 	JOURNAL = "Journal",

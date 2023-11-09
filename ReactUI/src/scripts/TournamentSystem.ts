@@ -9,6 +9,8 @@ import ServerDTO from "./dto/ServerDTO";
 import MojangAPI from "./api/MojangAPI";
 import toast from "react-hot-toast";
 import { Theme, getThemeFix } from "./enum/Theme";
+import { LocalStorageKeys } from "./enum/LocalStorageKeys";
+import CSSMod from "./CSSMod";
 
 /**
  * Main class for the amin ui
@@ -29,6 +31,9 @@ export default class TournamentSystem {
 	private _errorCount: number;
 	private _connectionLost: boolean;
 	private _validPermissions: string[];
+	private _cssMods: CSSMod[];
+	private _activeCSSMods: string[];
+	private _backgroundTasksPaused: boolean;
 
 	constructor() {
 		this._apiUrl = process.env.REACT_APP_API_URL as string;
@@ -45,6 +50,9 @@ export default class TournamentSystem {
 		this._errorCount = 0;
 		this._connectionLost = false;
 		this._validPermissions = [];
+		this._cssMods = [];
+		this._activeCSSMods = [];
+		this._backgroundTasksPaused = false;
 
 		// Use default until service providers are loaded
 		this._mojangApi = new MojangAPI("https://mojangapi.novauniverse.net/");
@@ -58,8 +66,8 @@ export default class TournamentSystem {
 			this.updateServers();
 		});
 
-		if (localStorage.getItem("ts_theme") != null) {
-			const theme = localStorage.getItem("ts_theme") as Theme;
+		if (localStorage.getItem(LocalStorageKeys.THEME) != null) {
+			const theme = localStorage.getItem(LocalStorageKeys.THEME) as Theme;
 			if (Object.values(Theme).includes(theme)) {
 				this.setTheme(theme, false);
 			} else {
@@ -76,6 +84,14 @@ export default class TournamentSystem {
 			console.error(error);
 			this.bigTimeFuckyWucky("An error occured during init");
 		});
+	}
+
+	public pauseBackgroundTasks() {
+		this._backgroundTasksPaused = true;
+	}
+
+	public rerumeBackgroundTasks() {
+		this._backgroundTasksPaused = false;
 	}
 
 	private killMainLoop() {
@@ -125,7 +141,7 @@ export default class TournamentSystem {
 
 	setTheme(theme: Theme, persistent: boolean = true) {
 		if (persistent) {
-			localStorage.setItem("ts_theme", theme);
+			localStorage.setItem(LocalStorageKeys.THEME, theme);
 		}
 		const event = new CustomEvent("ts_SetTheme", {
 			bubbles: false,
@@ -154,6 +170,17 @@ export default class TournamentSystem {
 			console.warn("No mojang api proxy provider configured. Consider setting up your own to not run into rate limits https://github.com/NovaUniverse/MojangAPIProxy");
 		}
 
+		try {
+			const mods = await axios.get(this._apiUrl + "/v1/system/web/css_mods");
+			this._cssMods = mods.data as CSSMod[];
+			console.debug("Available CSS mods:");
+			console.debug(this.cssMods);
+			this.events.emit(Events.CSS_MODS_CHANGED, this._activeCSSMods);
+		} catch (err) {
+			console.error("Failed to fetch CSS mods");
+			console.error(err);
+		}
+
 		const permissions = await axios.get(this._apiUrl + "/v1/permissions");
 		this._validPermissions = permissions.data as string[];
 		console.log("Valid permissions: " + JSON.stringify(this._validPermissions));
@@ -162,7 +189,21 @@ export default class TournamentSystem {
 
 		console.log("Using API url: " + this._apiUrl);
 
+		if (localStorage.getItem(LocalStorageKeys.CSS_MODS)) {
+			try {
+				let mods: string[] = JSON.parse(localStorage.getItem(LocalStorageKeys.CSS_MODS) as string);
+				mods.forEach(m => this.setCSSModActive(m, true));
+			} catch (err) {
+				console.error("Failed to parse active css mods");
+				console.error(err);
+			}
+		}
+
 		this._mainInterval = setInterval(() => {
+			if (this._backgroundTasksPaused) {
+				return;
+			}
+
 			this.updateState();
 			this.updateServers();
 		}, 1000);
@@ -194,6 +235,47 @@ export default class TournamentSystem {
 			console.error("Failed to update state");
 			console.error(err);
 		}
+	}
+
+	public setCSSModActive(name: string, active: boolean): boolean {
+		const mod = this.cssMods.find(m => m.name == name);
+		if (mod == null) {
+			return false;
+		}
+
+		if (active) {
+			const event = new CustomEvent("ts_EnableCSSMod", {
+				bubbles: false,
+				cancelable: true,
+				detail: {
+					name: mod.name,
+					url: mod.url
+				}
+			});
+			window.dispatchEvent(event);
+			if (!this._activeCSSMods.includes(name)) {
+				this._activeCSSMods.push(name);
+				this._activeCSSMods = this._activeCSSMods.map(m => m);
+				localStorage.setItem(LocalStorageKeys.CSS_MODS, JSON.stringify(this.activeCSSMods));
+				this.events.emit(Events.CSS_MODS_CHANGED, this._activeCSSMods);
+			}
+		} else {
+			const event = new CustomEvent("ts_DisableCSSMod", {
+				bubbles: false,
+				cancelable: true,
+				detail: {
+					name: mod.name
+				}
+			});
+			window.dispatchEvent(event);
+			if (this._activeCSSMods.includes(name)) {
+				this._activeCSSMods = this._activeCSSMods.filter(n => n != name);
+				localStorage.setItem(LocalStorageKeys.CSS_MODS, JSON.stringify(this.activeCSSMods));
+				this.events.emit(Events.CSS_MODS_CHANGED, this._activeCSSMods);
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -239,6 +321,14 @@ export default class TournamentSystem {
 	 */
 	isInCrashState() {
 		return this._criticalError != null;
+	}
+
+	get cssMods() {
+		return this._cssMods;
+	}
+
+	get activeCSSMods() {
+		return this._activeCSSMods;
 	}
 
 	get connectionLost() {

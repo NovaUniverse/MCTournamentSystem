@@ -6,6 +6,7 @@ import { Permission } from '../../../scripts/enum/Permission';
 import PlayerHead from '../../PlayerHead';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { Skins } from '../../../scripts/enum/Skins';
 
 interface Props {
 	entry: WhitelistEntry;
@@ -15,8 +16,6 @@ export default function WhitelistTableEntry({ entry }: Props) {
 	const tournamentSystem = useTournamentSystemContext();
 
 	const [skinTexture, setSkinTexture] = useState<string | undefined>(undefined);
-
-	const DEFAULT_TEXTURE = "c06f8906-4c8a-4911-9c29-ea1dbd1aab82";
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -47,7 +46,7 @@ export default function WhitelistTableEntry({ entry }: Props) {
 		}
 	}
 
-	const uuidToShow = tournamentSystem.state.system.offline_mode ? DEFAULT_TEXTURE : entry.uuid;
+	const uuidToShow = tournamentSystem.state.system.offline_mode ? Skins.MHF_Steve : entry.uuid;
 
 	async function remove() {
 		const req = await tournamentSystem.api.removeWhitelistUser(entry.uuid);

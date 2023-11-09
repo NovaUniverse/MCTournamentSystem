@@ -7,6 +7,7 @@ import { useTournamentSystemContext } from '../../context/TournamentSystemContex
 import { Permission } from '../../scripts/enum/Permission'
 import toast from 'react-hot-toast'
 import ConfirmModal from '../modals/ConfirmModal'
+import { LocalStorageKeys } from '../../scripts/enum/LocalStorageKeys'
 
 interface Props {
 	loggedIn: boolean
@@ -26,7 +27,7 @@ export default function GlobalNavbar({ loggedIn }: Props) {
 	}
 
 	function logout() {
-		window.localStorage.removeItem("token");
+		window.localStorage.removeItem(LocalStorageKeys.TOKEN);
 		window.location.reload();
 	}
 
@@ -72,12 +73,12 @@ export default function GlobalNavbar({ loggedIn }: Props) {
 		<>
 			<Navbar expand="lg" bg="dark" data-bs-theme="dark">
 				<Container>
-					<NavbarBrand as={Link} to='/'>TournamentSystem</NavbarBrand>
+					<NavbarBrand as={Link} to='/' className='main-navbar-brand'>TournamentSystem</NavbarBrand>
 					<NavbarToggle aria-controls="basic-navbar-nav" />
 					<NavbarCollapse id="basic-navbar-nav">
 						<Nav>
 							<NavItem>
-								<NavLink onClick={openThemeSelector}>Theme</NavLink>
+								<NavLink onClick={openThemeSelector} className='main-navbar-set-theme'>Theme</NavLink>
 							</NavItem>
 							<NavItem>
 								<NavLink href="/plan">Analytics</NavLink>

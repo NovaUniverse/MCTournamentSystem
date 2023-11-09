@@ -9,9 +9,7 @@ import java.io.ObjectOutputStream;
 import java.security.KeyPair;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -33,8 +31,8 @@ import net.novauniverse.mctournamentsystem.bungeecord.listener.pluginmessages.TS
 import net.novauniverse.mctournamentsystem.bungeecord.listener.security.Log4JRCEFix;
 import net.novauniverse.mctournamentsystem.bungeecord.listener.whitelist.WhitelistListener;
 import net.novauniverse.mctournamentsystem.bungeecord.maps.MapScanner;
-import net.novauniverse.mctournamentsystem.bungeecord.misc.CustomTheme;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.SlowPlayerSender;
+import net.novauniverse.mctournamentsystem.bungeecord.misc.WebStyleMod;
 import net.novauniverse.mctournamentsystem.bungeecord.security.RSAGen;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ManagedServer;
 import net.novauniverse.mctournamentsystem.bungeecord.servers.ServerAutoRegisterData;
@@ -92,8 +90,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	private boolean disableParentPidMonitoring;
 
-	private Map<String, CustomTheme> customAdminUIThemes;
-
 	private PingListeners pingListeners;
 
 	private String mojangAPIProxyURL;
@@ -120,6 +116,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	private AuthDB authDB;
 
+	private List<WebStyleMod> cssMods;
+
 	public List<String> getGlobalCustomLaunchFlags() {
 		return globalCustomLaunchFlags;
 	}
@@ -144,10 +142,6 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		return webServer;
 	}
 
-	public Map<String, CustomTheme> getCustomAdminUIThemes() {
-		return customAdminUIThemes;
-	}
-
 	public File getServerLogFolder() {
 		return serverLogFolder;
 	}
@@ -166,6 +160,10 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 
 	public AuthDB getAuthDB() {
 		return authDB;
+	}
+
+	public List<WebStyleMod> getCssMods() {
+		return cssMods;
 	}
 
 	public void reloadDynamicConfig() throws Exception {
@@ -292,13 +290,12 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		logWebServerExceptions = false;
 		chatFilterURL = null;
 		skinRenderAPIUrl = "https://skinrender.novauniverse.net";
+		cssMods = new ArrayList<>();
 
 		publicIp = "Unknown";
 		motd = "Tournament System";
 
 		offlineMode = !ProxyServer.getInstance().getConfig().isOnlineMode();
-
-		customAdminUIThemes = new HashMap<>();
 
 		try {
 			int pid = ProcessUtils.getOwnPID();
@@ -603,19 +600,17 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		Log.info("Setting up web server");
 
 		JSONObject webUISettings = config.getJSONObject("web_ui");
-		JSONArray themes = webConfig.optJSONArray("custom_themes");
 		JSONArray managedServersJSON = config.optJSONArray("servers");
+		JSONArray cssMods = webConfig.optJSONArray("css_mods");
 
-		if (themes != null) {
-			for (int i = 0; i < themes.length(); i++) {
-				JSONObject theme = themes.getJSONObject(i);
-				String name = theme.getString("name");
-				String url = theme.getString("url");
-				String baseTheme = theme.optString("base_theme");
+		if (cssMods != null) {
+			for (int i = 0; i < cssMods.length(); i++) {
+				JSONObject cssMod = cssMods.getJSONObject(i);
 
-				JSONObject serverConsoleTheme = theme.optJSONObject("server_console_theme");
+				String name = cssMod.getString("name");
+				String css = cssMod.getString("css");
 
-				customAdminUIThemes.put(name, new CustomTheme(name, url, baseTheme, serverConsoleTheme));
+				this.cssMods.add(new WebStyleMod(name, css));
 			}
 		}
 

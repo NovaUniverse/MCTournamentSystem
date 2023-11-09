@@ -46,7 +46,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.TournamentNameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.dynamicconfig.ReloadDynamicConfig;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.reset.ResetHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web.GetCustomThemesHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web.GetCSSModsHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web.PHPMyAdminUrlHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.ExportTeamDataHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.UploadTeamHandler;
@@ -104,7 +104,7 @@ public class TournamentSystemWebAPI {
 		server.addEndpoint("/api/v1/system/settings/motd", new MOTDHandler());
 
 		server.addEndpoint("/api/v1/system/web/phpmyadmin_url", new PHPMyAdminUrlHandler());
-		server.addEndpoint("/api/v1/system/web/custom_themes", new GetCustomThemesHandler());
+		server.addEndpoint("/api/v1/system/web/css_mods", new GetCSSModsHandler());
 
 		// Dynamic config
 		server.addEndpoint("/api/v1/system/dynamicconfig/reload", new ReloadDynamicConfig());

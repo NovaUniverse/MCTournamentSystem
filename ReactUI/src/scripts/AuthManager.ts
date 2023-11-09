@@ -2,6 +2,7 @@ import axios, { AxiosHeaders, AxiosRequestConfig } from "axios";
 import TournamentSystem from "./TournamentSystem";
 import { Events } from "./enum/Events";
 import { Permission } from "./enum/Permission";
+import { LocalStorageKeys } from "./enum/LocalStorageKeys";
 
 /**
  * This class manages authentication and api tokens
@@ -29,8 +30,8 @@ export default class AuthManager {
 	 * @returns true if existing login was found
 	 */
 	async loadExistingLogin(): Promise<boolean> {
-		if (window.localStorage.getItem("token")) {
-			this._token = window.localStorage.getItem("token");
+		if (window.localStorage.getItem(LocalStorageKeys.TOKEN)) {
+			this._token = window.localStorage.getItem(LocalStorageKeys.TOKEN);
 			console.log("Validating token");
 			const response = await axios.get(this.tournamentSystem.apiUrl + "/v1/user/whoami", {
 				headers: {
@@ -70,7 +71,7 @@ export default class AuthManager {
 		});
 		if (response.data.success) {
 			const token = response.data.token;
-			window.localStorage.setItem("token", token);
+			window.localStorage.setItem(LocalStorageKeys.TOKEN, token);
 			this._token = token;
 			this._username = response.data.user.username;
 			this._permissions = response.data.user.permissions;

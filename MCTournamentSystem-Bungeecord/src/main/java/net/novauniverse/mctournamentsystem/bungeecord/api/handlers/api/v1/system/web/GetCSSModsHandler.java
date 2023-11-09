@@ -11,28 +11,23 @@ import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 
-public class GetCustomThemesHandler extends TournamentEndpoint {
-	public GetCustomThemesHandler() {
+public class GetCSSModsHandler extends TournamentEndpoint {
+	public GetCSSModsHandler() {
 		super(false);
 		setAllowedMethods(HTTPMethod.GET);
 	}
 
 	@Override
 	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
-		JSONObject json = new JSONObject();
-		JSONArray themes = new JSONArray();
+		JSONArray mods = new JSONArray();
 
-		TournamentSystem.getInstance().getCustomAdminUIThemes().values().forEach(data -> {
-			JSONObject theme = new JSONObject();
-			theme.put("name", data.getName());
-			theme.put("url", data.getUrl());
-			theme.put("base_theme", data.getBaseTheme());
-			theme.put("server_console_theme", data.getServerConsoleTheme());
-			themes.put(theme);
+		TournamentSystem.getInstance().getCssMods().forEach(m -> {
+			JSONObject mod = new JSONObject();
+			mod.put("name", m.getName());
+			mod.put("url", m.getCssUrl());
+			mods.put(mod);
 		});
 
-		json.put("themes", themes);
-
-		return new JSONResponse(json);
+		return new JSONResponse(mods);
 	}
 }

@@ -5,6 +5,7 @@ import PlayerHead from '../../PlayerHead';
 import { useTournamentSystemContext } from '../../../context/TournamentSystemContext';
 import axios from 'axios';
 import SendPlayerButton from '../../buttons/SendPlayerButton';
+import { Skins } from '../../../scripts/enum/Skins';
 
 interface Props {
 	player: Player;
@@ -14,8 +15,6 @@ export default function PlayerListEntry({ player }: Props) {
 	const tournamentSystem = useTournamentSystemContext();
 
 	const [skinTexture, setSkinTexture] = useState<string | undefined>(undefined);
-
-	const DEFAULT_TEXTURE = "c06f8906-4c8a-4911-9c29-ea1dbd1aab82";
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -51,7 +50,7 @@ export default function PlayerListEntry({ player }: Props) {
 		return team == null ? 0 : team.score;
 	}
 
-	const uuidToShow = tournamentSystem.state.system.offline_mode ? DEFAULT_TEXTURE : player.uuid;
+	const uuidToShow = tournamentSystem.state.system.offline_mode ? Skins.MHF_Steve : player.uuid;
 
 	return (
 		<>
