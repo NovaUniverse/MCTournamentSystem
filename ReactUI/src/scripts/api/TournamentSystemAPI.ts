@@ -14,6 +14,78 @@ export default class TournamentSystemAPI {
 		this.tournamentSystem = tournamentSystem;
 	}
 
+	async setTournamentName(name: string) {
+		const url = "/v1/system/settings/tournament_name";
+		const result = await this.authenticatedRequest(RequestType.POST, url, name);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+		return this.defaultResponses(result);
+	}
+
+	async setScoreboardURL(url: string) {
+		const apiUrl = "/v1/system/settings/scoreboard_url";
+		const result = await this.authenticatedRequest(RequestType.POST, apiUrl, url);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+		return this.defaultResponses(result);
+	}
+
+	async setMOTD(motd: string) {
+		const url = "/v1/system/settings/motd";
+		const result = await this.authenticatedRequest(RequestType.POST, url, motd);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+		return this.defaultResponses(result);
+	}
+
+	async reloadDynamicConfig(): Promise<GenericRequestResponse> {
+		const url = "/v1/system/dynamicconfig/reload"
+		const result = await this.authenticatedRequest(RequestType.POST, url);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+		return this.defaultResponses(result);
+	}
+
+	async importScoreSnapshot(snapshot: any): Promise<GenericRequestResponse> {
+		const url = "/v1/snapshot/import"
+		const result = await this.authenticatedRequest(RequestType.POST, url, snapshot);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+		return this.defaultResponses(result);
+	}
+
+	async exportScoreSnapshot(): Promise<GenericRequestResponse> {
+		const url = "/v1/snapshot/export"
+		const result = await this.authenticatedRequest(RequestType.GET, url);
+		if (result.status == 200) {
+			return {
+				success: true,
+				data: result.response
+			}
+		}
+		return this.defaultResponses(result);
+	}
+
 	async upploadTeam(teamData: TeamEditorEntry[]): Promise<GenericRequestResponse> {
 		const url = "/v1/team/upload_team";
 		const result = await this.authenticatedRequest(RequestType.POST, url, teamData);

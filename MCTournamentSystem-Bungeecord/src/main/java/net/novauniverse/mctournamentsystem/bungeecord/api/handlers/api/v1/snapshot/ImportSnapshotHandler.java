@@ -106,7 +106,7 @@ public class ImportSnapshotHandler extends TournamentEndpoint {
 
 				playerIds.stream().filter(p -> p.getUuid().toString().equalsIgnoreCase(uuidString)).findFirst().ifPresent(pid -> {
 					try {
-						String server = player.getString("server");
+						String server = player.optString("server", "");
 						String reason = player.getString("reason");
 						int amount = player.getInt("amount");
 						String gainedAt = player.getString("gained_at");
@@ -136,7 +136,7 @@ public class ImportSnapshotHandler extends TournamentEndpoint {
 
 				teamIds.stream().filter(t -> t.getTeamNumber() == teamNumber).findFirst().ifPresent(tid -> {
 					try {
-						String server = team.getString("server");
+						String server = team.optString("server", "");
 						String reason = team.getString("reason");
 						int amount = team.getInt("amount");
 						String gainedAt = team.getString("gained_at");

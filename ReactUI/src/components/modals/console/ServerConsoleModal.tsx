@@ -13,6 +13,7 @@ import "./ServerConsoleModal.scss";
 import StartServerButton from '../../buttons/server/StartServerButton';
 import KillServerButton from '../../buttons/server/KillServerButton';
 import toast from 'react-hot-toast';
+import { Permission } from '../../../scripts/enum/Permission';
 
 interface Props {
 	visible: boolean;
@@ -178,7 +179,7 @@ export default function ServerConsoleModal({ server, visible, onClose }: Props) 
 	}
 
 	async function executeCommand() {
-		if(command.trim().length == 0) {
+		if (command.trim().length == 0) {
 			return;
 		}
 
@@ -216,8 +217,8 @@ export default function ServerConsoleModal({ server, visible, onClose }: Props) 
 			</ModalBody>
 			<ModalFooter>
 				<InputGroup>
-					<FormControl type='text' value={command} onChange={handleCommandChange} onKeyDown={handleKeyDown} placeholder='Enter command. Press enter key to run' />
-					<Button variant="primary" onClick={executeCommand}>Send</Button>
+					<FormControl type='text' value={command} onChange={handleCommandChange} onKeyDown={handleKeyDown} placeholder='Enter command. Press enter key to run' disabled={!tournamentSystem.authManager.hasPermission(Permission.REMOTE_EXECUTE_SERVER_COMMAND)} />
+					<Button variant="primary" onClick={executeCommand} disabled={!tournamentSystem.authManager.hasPermission(Permission.REMOTE_EXECUTE_SERVER_COMMAND)}>Send</Button>
 					{server.is_running ?
 						<KillServerButton server={server} />
 						:

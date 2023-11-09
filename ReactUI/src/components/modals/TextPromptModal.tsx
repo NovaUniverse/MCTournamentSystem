@@ -15,17 +15,18 @@ interface Props {
 	extraButtonText?: string;
 	extraButtonType?: string;
 	allowEnterToSubmit?: boolean;
+	initialValue?: string;
 	onExtraButtonClick?: () => void;
 	onClose: () => void;
 	onSubmit: (text: string) => void;
 }
 
-export default function TextPromptModal({ maxLength, placeholder, children, visible, title, onClose, onSubmit, allowEnterToSubmit = true, cancelText = "Cancel", confirmText = "Confirm", extraButtonVisible = false, extraButtonText = "Extra button", extraButtonType = "secondary", onExtraButtonClick = () => { }, cancelType = "secondary", confirmType = "primary" }: Props) {
+export default function TextPromptModal({ initialValue = "", maxLength, placeholder, children, visible, title, onClose, onSubmit, allowEnterToSubmit = true, cancelText = "Cancel", confirmText = "Confirm", extraButtonVisible = false, extraButtonText = "Extra button", extraButtonType = "secondary", onExtraButtonClick = () => { }, cancelType = "secondary", confirmType = "primary" }: Props) {
 	const [text, setText] = useState<string>("");
 
 	useEffect(() => {
-		console.debug("Resetting text prompt modal");
-		setText("");
+		//console.debug("Resetting text prompt modal");
+		setText(initialValue);
 	}, [visible]);
 
 

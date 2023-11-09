@@ -22,6 +22,7 @@ import EditorProvider from './components/EditorProvider';
 
 /// @ts-ignore
 import catCry from "./assets/img/cat_cry.png";
+import ScoreSnapshot from './pages/ScoreSnapshot';
 
 export default function App() {
 	const tournamentSystem = useTournamentSystemContext();
@@ -63,6 +64,7 @@ export default function App() {
 							<Route path="/chat" element={<AuthenticatedZone><ChatLog /></AuthenticatedZone>} />
 							<Route path="/accounts" element={<AuthenticatedZone><Accounts /></AuthenticatedZone>} />
 							<Route path="/editor" element={<AuthenticatedZone><EditorProvider /></AuthenticatedZone>} />
+							<Route path="/score_snapshot" element={<AuthenticatedZone><ScoreSnapshot /></AuthenticatedZone>} />
 
 							{/* Unauthenticated zones */}
 							<Route path="/live_stats" element={<LiveStats />} />

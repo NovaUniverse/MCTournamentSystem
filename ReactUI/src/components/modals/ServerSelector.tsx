@@ -32,7 +32,7 @@ export default function ServerSelector({ visible, text, title = "Select server",
 	}, []);
 
 	useEffect(() => {
-		console.debug("Resetting server picker modal");
+		//console.debug("Resetting server picker modal");
 		if (servers.length > 0) {
 			setServer(servers[0].name);
 		}
