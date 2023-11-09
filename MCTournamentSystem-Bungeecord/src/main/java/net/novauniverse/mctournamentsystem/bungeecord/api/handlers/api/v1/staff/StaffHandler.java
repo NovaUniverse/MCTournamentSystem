@@ -21,17 +21,18 @@ public class StaffHandler extends TournamentEndpoint {
 	public StaffHandler() {
 		super(true);
 
-		setAllowedMethods(HTTPMethod.GET, HTTPMethod.PUT);
+		setAllowedMethods(HTTPMethod.GET, HTTPMethod.PUT, HTTPMethod.DELETE);
 
 		setMethodBasedPermission(HTTPMethod.PUT, AuthPermission.MANAGE_STAFF);
+		setMethodBasedPermission(HTTPMethod.DELETE, AuthPermission.MANAGE_STAFF);
 	}
 
 	@Override
 	public AbstractHTTPResponse handleRequest(Request request, Authentication authentication) throws Exception {
+		JSONObject result = new JSONObject();
 		if (request.getMethod() == HTTPMethod.GET) {
-			JSONObject result = new JSONObject();
 			JSONArray staffRoles = new JSONArray();
-			JSONObject staff = new JSONObject();
+			JSONArray staff = new JSONArray();
 
 			for (String name : TournamentSystem.getInstance().getStaffRoles()) {
 				staffRoles.put(name);
@@ -55,7 +56,7 @@ public class StaffHandler extends TournamentEndpoint {
 					data.put("username", username);
 					data.put("offline_mode", offlineMode);
 
-					staff.put(uuid, data);
+					staff.put(data);
 				}
 
 				rs.close();
@@ -69,11 +70,8 @@ public class StaffHandler extends TournamentEndpoint {
 			result.put("staff_roles", staffRoles);
 
 			return new JSONResponse(result);
-		} else {
-			JSONObject result = new JSONObject();
+		} else if (request.getMethod() == HTTPMethod.PUT) {
 			JSONObject staffData = null;
-
-			boolean failed = false;
 
 			try {
 				staffData = new JSONObject(request.getBody());
@@ -86,32 +84,40 @@ public class StaffHandler extends TournamentEndpoint {
 				return new JSONResponse(result, HTTPResponseCode.BAD_REQUEST);
 			}
 
-			if (!failed) {
-				String sql;
-				PreparedStatement ps;
-
-				sql = "TRUNCATE staff";
-				ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
-				ps.executeUpdate();
-				ps.close();
-
-				sql = "INSERT INTO staff (uuid, role, username, offline_mode) VALUES (?, ?, ?, ?)";
-
-				for (String key : staffData.keySet()) {
-					JSONObject data = staffData.getJSONObject(key);
-					ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
-					ps.setString(1, data.getString("uuid"));
-					ps.setString(2, data.getString("role"));
-					ps.setString(3, data.optString("username", null));
-					ps.setBoolean(4, data.optBoolean("offline_mode", false));
-					ps.executeUpdate();
-					ps.close();
-				}
+			if (!(staffData.has("uuid") && staffData.has("role") && staffData.has("username") && staffData.has("offline_mode"))) {
+				result.put("success", false);
+				result.put("error", "bad_request");
+				result.put("message", "Post body is missing some parameters");
+				result.put("http_response_code", 400);
+				return new JSONResponse(result, HTTPResponseCode.BAD_REQUEST);
 			}
 
+			String sql = "REPLACE INTO staff (id, uuid, role, username, offline_mode) VALUES(null, ?, ?, ?, ?)";
+			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+			ps.setString(1, staffData.getString("uuid"));
+			ps.setString(2, staffData.getString("role"));
+			ps.setString(3, staffData.getString("username"));
+			ps.setBoolean(4, staffData.getBoolean("offline_mode"));
+			ps.executeUpdate();
+			ps.close();
 			result.put("success", true);
+		} else if (request.getMethod() == HTTPMethod.DELETE) {
+			if (!request.getQueryParameters().containsKey("uuid")) {
+				result.put("success", false);
+				result.put("error", "bad_request");
+				result.put("message", "Missing uuid");
+				result.put("http_response_code", 400);
+				return new JSONResponse(result, HTTPResponseCode.BAD_REQUEST);
+			}
 
-			return new JSONResponse(result);
+			String sql = "DELETE FROM staff WHERE uuid = ?";
+			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
+			ps.setString(1, request.getQueryParameters().get("uuid"));
+			ps.executeUpdate();
+			ps.close();
+			result.put("success", true);
 		}
+
+		return new JSONResponse(result);
 	}
 }

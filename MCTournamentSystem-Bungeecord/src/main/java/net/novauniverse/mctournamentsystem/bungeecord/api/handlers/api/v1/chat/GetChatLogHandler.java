@@ -24,10 +24,20 @@ public class GetChatLogHandler extends TournamentEndpoint {
 		JSONObject result = new JSONObject();
 		JSONArray messages = new JSONArray();
 
-		String sql = "SELECT id, uuid, username, content, sent_at FROM chat_log WHERE session_id = ?";
+		int after = -1;
+
+		if (request.getQueryParameters().containsKey("after")) {
+			try {
+				after = Integer.parseInt(request.getQueryParameters().get("after"));
+			} catch (Exception e) {
+			}
+		}
+
+		String sql = "SELECT id, uuid, username, content, sent_at FROM chat_log WHERE session_id = ? AND id > ? ORDER BY id";
 		PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
 		ps.setString(1, TournamentSystemCommons.getSessionId().toString());
+		ps.setInt(2, after);
 
 		ResultSet rs = ps.executeQuery();
 

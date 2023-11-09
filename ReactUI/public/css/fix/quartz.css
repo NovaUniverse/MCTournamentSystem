@@ -1,0 +1,8 @@
+:root {
+	--bs-emphasis-color: #FFFFFF !important;
+	--bs-table-color-state: #FFFFFF !important;
+}
+
+.table {
+	--bs-table-bg: rgba(0, 0, 0, 0) !important
+}

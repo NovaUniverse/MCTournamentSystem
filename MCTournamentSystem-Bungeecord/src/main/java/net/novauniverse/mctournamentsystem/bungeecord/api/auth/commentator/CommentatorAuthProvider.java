@@ -1,43 +1,45 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
 import net.novauniverse.apilib.http.auth.Authentication;
 import net.novauniverse.apilib.http.auth.AuthenticationProvider;
 import net.novauniverse.apilib.http.request.Request;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyStore;
+import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.JWTAuthProvider;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.JWTTokenType;
 
-public class CommentatorAuthProvider implements AuthenticationProvider {
+public class CommentatorAuthProvider extends JWTAuthProvider implements AuthenticationProvider {
+	public CommentatorAuthProvider() {
+		super();
+	}
+
 	@Override
 	public Authentication authenticate(Request request) {
 		String auth = request.getFirstRequestHeader("authorization");
 		if (auth != null) {
 			if (auth.length() > 0) {
 				String[] authParts = auth.split(" ");
-				String thePartWeCareAbout = authParts[authParts.length - 1];
+				String token = authParts[authParts.length - 1];
 
-				CommentatorAuth result = APIKeyStore.getCommentatorKey(thePartWeCareAbout);
-				if (result != null) {
-					return result;
+				try {
+					DecodedJWT jwt = jwtVerifier.verify(token);
+					String type = jwt.getClaim("type").asString();
+
+					if (type.equalsIgnoreCase(JWTTokenType.COMMENTATOR.name())) {
+						String username = jwt.getClaim("username").asString();
+
+						CommentatorUser user = TournamentSystem.getInstance().getAuthDB().getCommentators().stream().filter(c -> c.getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
+						if (user != null) {
+							String pci = jwt.getClaim("pwid").asString();
+							if (user.getPasswordChangeId().toString().equalsIgnoreCase(pci)) {
+								return new CommentatorAuth(user);
+							}
+						}
+					}
+				} catch (JWTVerificationException e) {
 				}
-
-				result = APIKeyStore.getCommentatorKey(thePartWeCareAbout);
-				if (result != null) {
-					return result;
-				}
-			}
-		}
-
-		if (request.getRequestHeaders().containsKey("X-commentator-auth")) {
-			String authString = request.getFirstRequestHeader("X-commentator-auth");
-			CommentatorAuth result = APIKeyStore.getCommentatorKey(authString);
-			if (result != null) {
-				return result;
-			}
-		}
-
-		if (request.getQueryParameters().containsKey("commentator_key")) {
-			CommentatorAuth result = APIKeyStore.getCommentatorKey(request.getQueryParameters().get("commentator_key"));
-			if (result != null) {
-				return result;
 			}
 		}
 		return null;

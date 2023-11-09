@@ -1,9 +1,14 @@
-# NodeJS stuff
-node_modules
-npm-debug.log
+# WebSocketAPI
+/WebSocketAPI/node_modules
+/WebSocketAPI/npm-debug.log
 /WebSocketAPI/data
 /WebSocketAPI/dist
-yarn.lock
+/WebSocketAPI/yarn.lock
+
+# WebUI
+/ReactUI/node_modules
+/ReactUI/npm-debug.log
+/ReactUI/dist
 
 # Compiled class file
 *.class

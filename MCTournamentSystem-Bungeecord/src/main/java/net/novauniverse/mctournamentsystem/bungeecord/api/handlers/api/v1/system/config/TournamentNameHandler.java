@@ -1,7 +1,5 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config;
 
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 import net.novauniverse.apilib.http.auth.Authentication;
@@ -30,7 +28,7 @@ public class TournamentNameHandler extends TournamentEndpoint {
 			json.put("success", true);
 			json.put("tournament_name", TournamentSystemCommons.getTournamentName());
 		} else {
-			String name = IOUtils.toString(request.getRequestBody(), StandardCharsets.UTF_8);
+			String name = request.getBody();
 			Log.info("TournamentSystemAPI", "Reanaming tournament to " + name);
 			try {
 				TournamentSystemCommons.setTournamentName(name);

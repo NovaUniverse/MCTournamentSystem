@@ -1,7 +1,5 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config;
 
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 import net.novauniverse.apilib.http.enums.HTTPMethod;
@@ -29,7 +27,7 @@ public class ScoreboardURLHandler extends TournamentEndpoint {
 			json.put("success", true);
 			json.put("scoreboard_url", TournamentSystemCommons.getScoreboardURL());
 		} else {
-			String url = IOUtils.toString(request.getRequestBody(), StandardCharsets.UTF_8);
+			String url = request.getBody();
 			Log.info("TournamentSystemAPI", "Setting scoreboard url to " + url);
 			try {
 				TournamentSystemCommons.setScoreboardURL(url);

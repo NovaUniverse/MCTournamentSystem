@@ -1,7 +1,16 @@
 package net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user;
 
+import java.security.KeyPair;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONObject;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 
 import net.novauniverse.apilib.http.auth.Authentication;
 import net.novauniverse.apilib.http.enums.HTTPMethod;
@@ -10,9 +19,10 @@ import net.novauniverse.apilib.http.response.AbstractHTTPResponse;
 import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
 import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuth;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APITokenStore;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.APIUser;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.JWTTokenType;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.User;
+import net.novauniverse.mctournamentsystem.bungeecord.security.JWTProperties;
+import net.novauniverse.mctournamentsystem.bungeecord.security.PasswordHashing;
 
 public class LoginHandler extends TournamentEndpoint {
 	public LoginHandler() {
@@ -43,13 +53,39 @@ public class LoginHandler extends TournamentEndpoint {
 					String username = loginBody.getString("username");
 					String password = loginBody.getString("password");
 
-					APIUser user = TournamentSystem.getInstance().getApiUsers().stream().filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password)).findFirst().orElse(null);
+					User user = TournamentSystem.getInstance().getAuthDB().getUsers().stream().filter(u -> u.getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
 
 					if (user != null) {
-						APIKeyAuth token = APITokenStore.createToken(user);
+						if (PasswordHashing.verifyPassword(password, user.getPasswordHash())) {
+							try {
+								KeyPair pair = TournamentSystem.getInstance().getTokenKeyPair();
+								Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) pair.getPublic(), (RSAPrivateKey) pair.getPrivate());
+								JWTCreator.Builder builder = JWT.create();
+								builder.withIssuer(JWTProperties.ISSUER);
+								builder.withClaim("type", JWTTokenType.USER.name());
+								builder.withClaim("pwid", user.getPasswordChangeId().toString());
+								builder.withClaim("username", user.getUsername());
+								String token = builder.sign(algorithm);
 
-						result.put("success", true);
-						result.put("token", token.getKey());
+								JSONObject userData = new JSONObject();
+								userData.put("username", user.getUsername());
+								userData.put("permissions", user.getPermissionsAsJSON());
+								userData.put("can_manage_accounts", user.isAllowManagingAccounts());
+
+								result.put("success", true);
+								result.put("token", token);
+								result.put("user", userData);
+							} catch (JWTCreationException e) {
+								e.printStackTrace();
+								throw new RuntimeException("An error occured while signing token");
+							}
+						} else {
+							result.put("success", false);
+							result.put("error", "login_fail");
+							result.put("message", "Invalid username or password");
+							result.put("http_response_code", 401);
+							code = 401;
+						}
 					} else {
 						result.put("success", false);
 						result.put("error", "login_fail");

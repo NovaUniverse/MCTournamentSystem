@@ -45,7 +45,7 @@ public class CommentatorTPHandler extends TournamentEndpoint {
 			}
 
 			if (target != null) {
-				if (auth.getMinecraftUuid() == null) {
+				if (auth.getUser().getMinecraftUuid() == null) {
 					json.put("success", false);
 					json.put("error", "unauthorized");
 					json.put("message", "Guest commentators cant use the tp function. Please ask the staff if you want a full access commentator key");
@@ -53,7 +53,7 @@ public class CommentatorTPHandler extends TournamentEndpoint {
 					code = 401;
 				} else {
 
-					UUID uuid = auth.getMinecraftUuid();
+					UUID uuid = auth.getUser().getMinecraftUuid();
 
 					ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
 					if (player != null) {

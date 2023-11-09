@@ -8,20 +8,20 @@ import net.novauniverse.apilib.http.HTTPServer;
 import net.novauniverse.apilib.http.enums.ExceptionMode;
 import net.novauniverse.apilib.http.enums.StandardResponseType;
 import net.novauniverse.apilib.http.middleware.middlewares.CorsAnywhereMiddleware;
-import net.novauniverse.mctournamentsystem.bungeecord.TournamentSystem;
-import net.novauniverse.mctournamentsystem.bungeecord.api.auth.apikey.APIKeyAuthProvider;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.commentator.CommentatorAuthProvider;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.internal.InternalAuthProvider;
+import net.novauniverse.mctournamentsystem.bungeecord.api.auth.user.UserAuthProvider;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.ConnectionCheckHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.GetServiceProvidersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.chat.GetChatLogHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CheckCommentatorAuth;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.CommentatorTPHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.commentator.GetCommentatorGuestKeyHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.GetTriggersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.StartGameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.game.TriggerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.maps.MapsHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.nextmingame.NextMinigameHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.permissions.PermissionsHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.publicapi.PublicStatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.score.ScoreHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.send.SendPlayerHandler;
@@ -39,7 +39,6 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.staff.
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.BroadcastHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ModeHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.QuickMessageHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.SecurityCheckHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.ShutdownHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.StatusHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.MOTDHandler;
@@ -47,18 +46,22 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.config.TournamentNameHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.dynamicconfig.ReloadDynamicConfig;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.reset.ResetHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web.GetCustomThemesHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web.GetCSSModsHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.system.web.PHPMyAdminUrlHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.ExportTeamDataHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.team.UploadTeamHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.LoginHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.user.WhoAmIHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.usermanagements.user.ChangePasswordHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.usermanagements.user.CreateUserHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.usermanagements.user.DeleteUserHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.usermanagements.user.EditUserHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.usermanagements.user.GetUsersHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.util.OfflineUsernameToUUIDHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ClearWhitelistHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ManageWhitelistUserHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.files.FaviconHandler;
-import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.redirect.FileNotFoundHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.internal.ManagedServerStateReportingEndpoint;
+import net.novauniverse.mctournamentsystem.bungeecord.react.ReactUIHandler;
 
 public class TournamentSystemWebAPI {
 	private int port;
@@ -70,17 +73,19 @@ public class TournamentSystemWebAPI {
 
 		server.addMiddleware(new CorsAnywhereMiddleware());
 
-		server.addAuthenticationProvider(new CommentatorAuthProvider());
-
 		server.addAuthenticationProvider(new InternalAuthProvider());
-		server.addAuthenticationProvider(new APIKeyAuthProvider());
+
+		server.addAuthenticationProvider(new CommentatorAuthProvider());
+		server.addAuthenticationProvider(new UserAuthProvider());
 
 		server.setStandardResponseType(StandardResponseType.JSON);
 		server.setExceptionMode(ExceptionMode.MESSAGE);
 
-		// Redirect and favicon
-		server.getHttpServer().createContext("/", new FileNotFoundHandler(appRoot));
-		server.getHttpServer().createContext("/favicon.ico", new FaviconHandler(TournamentSystem.getInstance().getDataFolder().getPath()));
+		// Connectivity check
+		server.addEndpoint("/api/v1/connectivity_check", new ConnectionCheckHandler());
+
+		// Permissions
+		server.addEndpoint("/api/v1/permissions", new PermissionsHandler());
 
 		// Service providers
 		server.addEndpoint("/api/v1/service_providers", new GetServiceProvidersHandler());
@@ -90,7 +95,6 @@ public class TournamentSystemWebAPI {
 		server.addEndpoint("/api/v1/system/broadcast", new BroadcastHandler());
 		server.addEndpoint("/api/v1/system/quick_message", new QuickMessageHandler());
 		server.addEndpoint("/api/v1/system/shutdown", new ShutdownHandler());
-		server.addEndpoint("/api/v1/system/security_check", new SecurityCheckHandler());
 		server.addEndpoint("/api/v1/system/mode", new ModeHandler());
 
 		server.addEndpoint("/api/v1/system/reset", new ResetHandler());
@@ -100,7 +104,7 @@ public class TournamentSystemWebAPI {
 		server.addEndpoint("/api/v1/system/settings/motd", new MOTDHandler());
 
 		server.addEndpoint("/api/v1/system/web/phpmyadmin_url", new PHPMyAdminUrlHandler());
-		server.addEndpoint("/api/v1/system/web/custom_themes", new GetCustomThemesHandler());
+		server.addEndpoint("/api/v1/system/web/css_mods", new GetCSSModsHandler());
 
 		// Dynamic config
 		server.addEndpoint("/api/v1/system/dynamicconfig/reload", new ReloadDynamicConfig());
@@ -125,6 +129,13 @@ public class TournamentSystemWebAPI {
 		server.addEndpoint("/api/v1/user/whoami", new WhoAmIHandler());
 		server.addEndpoint("/api/v1/user/login", new LoginHandler());
 
+		// User management
+		server.addEndpoint("/api/v1/user_management/users/get", new GetUsersHandler());
+		server.addEndpoint("/api/v1/user_management/users/create", new CreateUserHandler());
+		server.addEndpoint("/api/v1/user_management/users/delete", new DeleteUserHandler());
+		server.addEndpoint("/api/v1/user_management/users/edit", new EditUserHandler());
+		server.addEndpoint("/api/v1/user_management/users/change_password", new ChangePasswordHandler());
+
 		// Staff
 		server.addEndpoint("/api/v1/staff", new StaffHandler());
 
@@ -134,7 +145,6 @@ public class TournamentSystemWebAPI {
 
 		// Commentator
 		server.addEndpoint("/api/v1/commentator/tp", new CommentatorTPHandler());
-		server.addEndpoint("/api/v1/commentator/get_guest_key", new GetCommentatorGuestKeyHandler());
 		server.addEndpoint("/api/v1/commentator/check_auth", new CheckCommentatorAuth());
 
 		// Public
@@ -164,15 +174,14 @@ public class TournamentSystemWebAPI {
 		// Score
 		server.addEndpoint("/api/v1/score", new ScoreHandler());
 
-		// Skinrestorer
+		// Skin restorer
 		server.addEndpoint("/api/skinrestorer/get_user_skin", new GetSkinrestorerSkinHandler());
 
 		// Internal
 		server.getHttpServer().createContext("/api/internal/server/state_reporting", new ManagedServerStateReportingEndpoint());
 
-		// Static files
-		server.addStaticFileHandler("/app/", appRoot, "index.html");
-
+		// React UI
+		server.getHttpServer().createContext("/", new ReactUIHandler("/", appRoot.getAbsolutePath()));
 	}
 
 	public int getPort() {
