@@ -1,0 +1,16 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "Welcome to the novauniverse tournament system repo. A developer will take a look at your issue as soon as possible"
+        pr-message: "Thanks you for helping to contribute to our tourmanents. Make sure to check out our discord server https://discord.com/invite/4gZSVJ7"
