@@ -16,7 +16,7 @@ jobs:
           version: 8
       - name: Install dependencies
         working-directory: ./ReactUI
-        run: pnpm install --dev
+        run: pnpm install
       - name: Build
         working-directory: ./ReactUI
         run: pnpm run build
