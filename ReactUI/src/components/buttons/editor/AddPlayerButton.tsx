@@ -132,13 +132,14 @@ export default function AddPlayerButton({ className, disabled = false }: Props) 
 			return;
 		}
 
-		teamEditor.players.push({
+		const newPlayers = players;
+		newPlayers.push({
 			team_number: parseInt(selectedTeam),
 			username: player!.username,
 			uuid: player!.uuid,
 			metadata: {}
 		});
-		teamEditor.sendTeamChange();
+		teamEditor.players = newPlayers.map((x) => x);
 		toast.success(player!.username + " added to team " + selectedTeam);
 		setModalVisible(false);
 	}
