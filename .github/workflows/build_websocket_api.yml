@@ -23,6 +23,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        working-directory: ./WebSocketAPI
     - name: Install typescript
       working-directory: ./WebSocketAPI
       run: npm install --global typescript
