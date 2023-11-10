@@ -17,9 +17,9 @@ export default function TeamEditorTable({ showMetadata, disableInputs }: Props) 
 
 	useEffect(() => {
 		const handleChange = (data: TeamEditorEntry[]) => {
-			console.log("Change event");
-			console.log(data);
-			setPlayers(data);
+			//console.log("Change event");
+			//console.log(data);
+			setPlayers(data.map(p => p));
 		}
 
 		teamEditor.tournamentSystem.events.on(Events.TEAM_EDITOR_UPDATE, handleChange);
