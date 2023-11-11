@@ -55,10 +55,10 @@ export default function Editor() {
 	async function apply() {
 		const req = await teamEditor.tournamentSystem.api.upploadTeam(teamEditor.players);
 		if (req.success) {
-			toast.success("Team upploaded");
+			toast.success("Team uploaded");
 			setExportModalVisible(false);
 		} else {
-			toast.error("Failed to uppload team. " + req.message);
+			toast.error("Failed to upload team. " + req.message);
 		}
 	}
 
