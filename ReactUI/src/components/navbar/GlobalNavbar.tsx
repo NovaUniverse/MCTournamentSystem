@@ -38,7 +38,7 @@ export default function GlobalNavbar({ loggedIn }: Props) {
 			toast.error("You dont have permission to do that");
 			return;
 		}
-		setResetPromptVisible(true);
+		setShutdownPromptVisible(true);
 	}
 
 	async function shutdown() {
