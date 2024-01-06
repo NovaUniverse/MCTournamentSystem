@@ -56,6 +56,8 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 	private LocationData lobbyLocation;
 	private boolean preventDamageMobs;
 
+	private boolean useActionBar;
+	
 	private List<WrappedAdvancedGUI> guis;
 
 	public LocationData getLobbyLocationData() {
@@ -77,6 +79,10 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 	public World getLobbyWorld() {
 		return Lobby.getInstance().getWorld();
 	}
+	
+	public boolean isUseActionBar() {
+		return useActionBar;
+	}
 
 	@Override
 	public void onEnable() {
@@ -86,6 +92,8 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 
 		guis = new ArrayList<>();
 
+		useActionBar = getConfig().getBoolean("use_actionbar");
+		
 		ModuleManager.scanForModules(this, "net.novauniverse.mctournamentsystem.lobby.modules");
 
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
@@ -131,6 +139,18 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 					Log.info(getName(), "Setting up KOTL hologram at " + location.toString());
 					Lobby.getInstance().setupKOTLHologram(location, lines);
 				}
+			}
+		}
+
+		if (config.has("winner_showcase")) {
+			JSONObject winnerShowcase = config.getJSONObject("winner_showcase");
+			if (winnerShowcase.has("holograms")) {
+				JSONArray holograms = winnerShowcase.getJSONArray("holograms");
+				for (int i = 0; i < holograms.length(); i++) {
+					XYZLocation xyz = XYZLocation.fromJSON(holograms.getJSONObject(i));
+					Lobby.getInstance().addWinnerHologram(xyz);
+				}
+
 			}
 		}
 

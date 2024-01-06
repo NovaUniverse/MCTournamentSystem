@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,15 +35,20 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.utils.WrappedString;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.kotl.score.KingOfTheLadderScore;
 import net.novauniverse.mctournamentsystem.lobby.modules.lobby.kotl.score.KingOfTheLadderScoreComparator;
 import net.novauniverse.mctournamentsystem.lobby.versionspecific.Pre_1_13_Utils;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.modules.winnermanagement.WinnerChangeEvent;
 import net.novauniverse.mctournamentsystem.spigot.score.ScoreManager;
+import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
+import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
@@ -110,6 +114,10 @@ public class Lobby extends NovaModule implements Listener {
 	private boolean pvpBypassEnabled;
 	private boolean mapProtectionBypassEnabled;
 
+	private List<Hologram> winnerHolograms;
+	private String displayedWinnerString;
+	private Task winnerActionbarTask;
+
 	public static Lobby getInstance() {
 		return instance;
 	}
@@ -146,6 +154,19 @@ public class Lobby extends NovaModule implements Listener {
 
 		this.pvpBypassEnabled = false;
 		this.mapProtectionBypassEnabled = false;
+
+		this.winnerHolograms = new ArrayList<>();
+		this.displayedWinnerString = null;
+
+		this.winnerActionbarTask = new SimpleTask(() -> {
+			if (displayedWinnerString != null) {
+				if (TournamentSystemLobby.getInstance().isUseActionBar()) {
+					Bukkit.getServer().getOnlinePlayers().forEach(p -> {
+						VersionIndependentUtils.getInstance().sendActionBarMessage(p, displayedWinnerString);
+					});
+				}
+			}
+		}, 10L);
 	}
 
 	@Override
@@ -158,6 +179,8 @@ public class Lobby extends NovaModule implements Listener {
 		multiverseWorld.getWorld().setWeatherDuration(0);
 
 		multiverseWorld.setLockWeather(true);
+
+		Task.tryStartTask(winnerActionbarTask);
 
 		this.spleefTask = new SimpleTask(getPlugin(), new Runnable() {
 			@Override
@@ -332,6 +355,8 @@ public class Lobby extends NovaModule implements Listener {
 
 		Task.tryStopTask(spleefTask);
 		Task.tryStopTask(spleefResetTask);
+
+		Task.tryStopTask(winnerActionbarTask);
 
 		MultiverseManager.getInstance().unload(multiverseWorld);
 		multiverseWorld = null;
@@ -586,7 +611,44 @@ public class Lobby extends NovaModule implements Listener {
 		}
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onWinnerChange(WinnerChangeEvent e) {
+		Log.info("Lobby", "Updating winner holograms");
+		if (e.getNewValue() == -1) {
+			displayedWinnerString = null;
+			winnerHolograms.forEach(h -> h.getVisibilityManager().setVisibleByDefault(false));
+		} else {
+			WrappedString teamName = new WrappedString("null");
+			WrappedString members = new WrappedString("null");
+
+			TournamentSystemTeam team = TournamentSystemTeamManager.getInstance().getTeam(e.getNewValue());
+
+			if (team != null) {
+				ChatColor color = team.getTeamColor();
+				teamName.set(color + ChatColor.BOLD.toString() + team.getDisplayName());
+				members.set(color + ChatColor.BOLD.toString() + team.getMemberString());
+			}
+
+			final String winnerString = ChatColor.GOLD + ChatColor.BOLD.toString() + "Winner: " + teamName.get();
+
+			displayedWinnerString = winnerString;
+
+			winnerHolograms.forEach(h -> {
+				h.clearLines();
+				h.appendTextLine(winnerString);
+				h.appendTextLine(members.get());
+				h.getVisibilityManager().setVisibleByDefault(true);
+			});
+		}
+	}
+
 	public void clearKOTLScore() {
 		kotlScore.clear();
+	}
+
+	public void addWinnerHologram(XYZLocation location) {
+		Hologram hologram = HologramsAPI.createHologram(getPlugin(), location.toBukkitLocation(getWorld()));
+		hologram.getVisibilityManager().setVisibleByDefault(false);
+		winnerHolograms.add(hologram);
 	}
 }

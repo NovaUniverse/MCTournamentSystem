@@ -17,7 +17,7 @@ public class LockedWinnerManagement {
 	}
 
 	public static void unlockWinner() throws SQLException {
-		unlockWinner(true);
+		unlockWinner(false);
 	}
 	
 	public static void unlockWinner(boolean noRabbitMessage) throws SQLException {
@@ -34,7 +34,7 @@ public class LockedWinnerManagement {
 				int result = Integer.parseInt(data);
 				return result;
 			} catch (NumberFormatException e) {
-				unlockWinner();
+				unlockWinner(true);
 			}
 		}
 		return -1;
@@ -44,7 +44,7 @@ public class LockedWinnerManagement {
 		if (TournamentSystemCommons.hasRabbitMQManager()) {
 			TournamentRabbitMQManager manager = TournamentSystemCommons.getRabbitMQManager();
 			if (manager.isConnected()) {
-				manager.sendMessage(RabbitMQStrings.LOCKED_TEAM_CHANGED, new JSONObject());
+				manager.sendMessage(RabbitMQStrings.LOCKED_WINNER_CHANGED, new JSONObject());
 				
 			}
 		}
