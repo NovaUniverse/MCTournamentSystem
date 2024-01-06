@@ -34,6 +34,7 @@ export default class TournamentSystem {
 	private _cssMods: CSSMod[];
 	private _activeCSSMods: string[];
 	private _backgroundTasksPaused: boolean;
+	private _errorMessage: string;
 
 	constructor() {
 		this._apiUrl = process.env.REACT_APP_API_URL as string;
@@ -53,6 +54,7 @@ export default class TournamentSystem {
 		this._cssMods = [];
 		this._activeCSSMods = [];
 		this._backgroundTasksPaused = false;
+		this._errorMessage = "";
 
 		// Use default until service providers are loaded
 		this._mojangApi = new MojangAPI("https://mojangapi.novauniverse.net/");
@@ -82,8 +84,17 @@ export default class TournamentSystem {
 		}).catch((error) => {
 			console.error("Error occured during init");
 			console.error(error);
+			this._errorMessage = error.message + " " + error.stack;
 			this.bigTimeFuckyWucky("An error occured during init");
 		});
+	}
+
+	get errorMessage() {
+		return this._errorMessage;
+	}
+
+	set errorMessage(message: string) {
+		this._errorMessage = message;
 	}
 
 	public pauseBackgroundTasks() {
@@ -132,6 +143,7 @@ export default class TournamentSystem {
 			} catch (err) {
 				// This is bad
 				toast.error("Seems like we lost connection to the server");
+				this.errorMessage = "Connection lost";
 				this.killMainLoop();
 				this._connectionLost = true;
 				this.events.emit(Events.DISCONNECTED);
@@ -226,8 +238,9 @@ export default class TournamentSystem {
 			this._initialStateFetched = true;
 			this._state = response.data as StateDTO;
 			this.events.emit(Events.STATE_UPDATE, this.state);
-		} catch (err) {
+		} catch (err: any) {
 			if (!this._initialStateFetched) {
+				this._errorMessage = err.message + " " + err.stack;
 				this.bigTimeFuckyWucky("Failed to fetch initial state");
 			} else {
 				this.addAPIErrorCount();

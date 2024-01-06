@@ -71,6 +71,7 @@ public class LockedWinnerHandler extends TournamentEndpoint {
 				try {
 					int teamNumber = Integer.parseInt(request.getQueryParameters().get("team"));
 					LockedWinnerManagement.lockWinner(teamNumber);
+					return new JSONResponse();
 				} catch (NumberFormatException e) {
 					return new JSONResponse(new JSONObjectBuilder().put("message", "Bad request: team has to be a number").build(), HTTPResponseCode.BAD_REQUEST);
 				}

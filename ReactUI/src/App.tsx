@@ -91,6 +91,10 @@ export default function App() {
 								<img className='align-self-end' src={catCry} width={32} height={32} />
 							</div>
 						</Alert>
+
+						<p className='mt-4'>
+							{tournamentSystem.errorMessage}
+						</p>
 						<Button onClick={() => { window.location.reload() }}>Reload</Button>
 					</div>
 				</>

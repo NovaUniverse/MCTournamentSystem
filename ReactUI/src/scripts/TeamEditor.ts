@@ -29,9 +29,10 @@ export default class TeamEditor {
 			const state = response.data as StateDTO;
 			this._teamSize = state.system.team_size;
 			this.tournamentSystem.events.emit(Events.TEAM_EDITOR_TEAM_SIZE_CHANGED);
-		} catch (err) {
+		} catch (err: any) {
 			console.error("Failed to fetch state");
 			console.error(err);
+			this.tournamentSystem.errorMessage = err.message + " " + err.stack;
 			this.tournamentSystem.bigTimeFuckyWucky("Team editor failed to load initial team size");
 			return;
 		}
@@ -39,9 +40,10 @@ export default class TeamEditor {
 		try {
 			this.loadExistingTeam();
 			console.log("Loaded " + this.players.length + " entries");
-		} catch (err) {
+		} catch (err: any) {
 			console.error("Failed to fetch team list");
 			console.error(err);
+			this.tournamentSystem.errorMessage = err.message + " " + err.stack;
 			this.tournamentSystem.bigTimeFuckyWucky("Team editor failed to load team list");
 			return;
 		}
