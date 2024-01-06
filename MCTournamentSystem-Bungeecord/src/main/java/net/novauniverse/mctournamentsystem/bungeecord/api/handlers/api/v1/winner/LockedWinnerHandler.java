@@ -27,7 +27,7 @@ public class LockedWinnerHandler extends TournamentEndpoint {
 	public LockedWinnerHandler() {
 		super(false);
 
-		setAllowedMethods(HTTPMethod.GET, HTTPMethod.DELETE, HTTPMethod.POST);
+		setAllowedMethods(HTTPMethod.GET, HTTPMethod.DELETE, HTTPMethod.PUT);
 
 		setMethodBasedPermission(HTTPMethod.PUT, AuthPermission.LOCK_WINNER);
 		setMethodBasedPermission(HTTPMethod.DELETE, AuthPermission.LOCK_WINNER);
@@ -81,5 +81,4 @@ public class LockedWinnerHandler extends TournamentEndpoint {
 
 		return new TextResponse("Bruh", HTTPResponseCode.NOT_IMPLEMENTED);
 	}
-
 }

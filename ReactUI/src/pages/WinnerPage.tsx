@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import PageSelection from '../components/nav/PageSelection'
-import { Button, Col, Container, Row } from 'react-bootstrap'
+import { Button, Col, Container, FormSelect, Modal, ModalBody, ModalFooter, ModalHeader, ModalTitle, Row } from 'react-bootstrap'
 import { useTournamentSystemContext } from '../context/TournamentSystemContext'
 import StateDTO from '../scripts/dto/StateDTO';
 import { Events } from '../scripts/enum/Events';
@@ -24,19 +24,32 @@ export default function WinnerPage() {
 		}
 	}, []);
 
+	const [selectedTeam, setSelectedTeam] = useState<number>(state.teams.length > 0 ? state.teams[0].team_number : -1);
+
 	const [autoLockModalVisible, setAutoLockModalVisible] = useState<boolean>(false);
 	const [clearModalVisible, setClearModalVisible] = useState<boolean>(false);
+	const [selectWinnerModalVisible, setSelectWinnerModalVisible] = useState<boolean>(false);
 
 	async function selectWinner() {
-
+		setAutoLockModalVisible(false);
+		try {
+			await tournamentSystem.api.setLockedWinner(selectedTeam);
+			await tournamentSystem.updateState();
+			setSelectWinnerModalVisible(false);
+			toast.success("Winner locked as team " + selectedTeam);
+		} catch (err) {
+			console.error("Failed to lock winner winner");
+			console.error(err);
+			toast.error("An error occured while locking winner team");
+		}
 	}
 
 	async function confirmAutoLock() {
-		setAutoLockModalVisible(false);
 		try {
 			await tournamentSystem.api.autoLockWinner();
 			await tournamentSystem.updateState();
-			setClearModalVisible(false);
+			setAutoLockModalVisible(false);
+			toast.success("Winner locked");
 		} catch (err) {
 			console.error("Failed to auto lock winner");
 			console.error(err);
@@ -49,11 +62,16 @@ export default function WinnerPage() {
 			await tournamentSystem.api.clearLockedWinner();
 			await tournamentSystem.updateState();
 			setClearModalVisible(false);
+			toast.success("Winner cleared");
 		} catch (err) {
 			console.error("Failed to clear winner");
 			console.error(err);
 			toast.error("An error occured while clearing locked winner");
 		}
+	}
+
+	function handleTeamChange(e: ChangeEvent<any>) {
+		setSelectedTeam(e.target.value);
 	}
 
 	return (
@@ -69,8 +87,8 @@ export default function WinnerPage() {
 
 				<Row>
 					<Col>
-						<Button variant='primary' className='me-2' onClick={selectWinner} disabled={!tournamentSystem.authManager.hasPermission(Permission.LOCK_WINNER)}>Select winner</Button>
-						<Button variant='primary' className='me-2' onClick={() => { setAutoLockModalVisible(true) }} disabled={!tournamentSystem.authManager.hasPermission(Permission.LOCK_WINNER)}>Lock winner (Score based)</Button>
+						<Button variant='primary' className='me-2' onClick={() => { setSelectWinnerModalVisible(true) }} disabled={!tournamentSystem.authManager.hasPermission(Permission.LOCK_WINNER)}>Select winner</Button>
+						<Button variant='primary' className='me-2' onClick={() => { setAutoLockModalVisible(true) }} disabled={!tournamentSystem.authManager.hasPermission(Permission.LOCK_WINNER)}>Auto select winner</Button>
 						<Button variant='danger' className='me-2' onClick={() => { setClearModalVisible(true) }} disabled={!tournamentSystem.authManager.hasPermission(Permission.LOCK_WINNER) || state.locked_winner == -1}>Clear winner</Button>
 					</Col>
 				</Row>
@@ -83,6 +101,36 @@ export default function WinnerPage() {
 					Please confirm that you want to clear the current winner
 				</ConfirmModal>
 			</Container>
+
+			<Modal show={selectWinnerModalVisible} onHide={() => { setSelectWinnerModalVisible(false) }}>
+				<ModalHeader closeButton>
+					<ModalTitle>Select winner</ModalTitle>
+				</ModalHeader>
+
+				<ModalBody>
+					<Container fluid>
+						<Row>
+							<Col>
+								<p>
+									Select team to mark as winner
+								</p>
+							</Col>
+						</Row>
+
+						<Row>
+							<Col>
+								<FormSelect value={selectedTeam} onChange={handleTeamChange}>
+									{state.teams.map(t => <option key={t.id} value={t.team_number}>{t.display_name}</option>)}
+								</FormSelect>
+							</Col>
+						</Row>
+					</Container>
+				</ModalBody>
+				<ModalFooter>
+					<Button variant="danger" onClick={() => { setSelectWinnerModalVisible(false) }}>Cancel</Button>
+					<Button variant="success" onClick={selectWinner}>Select</Button>
+				</ModalFooter>
+			</Modal>
 		</>
 	)
 }
