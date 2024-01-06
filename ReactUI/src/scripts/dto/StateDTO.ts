@@ -12,6 +12,7 @@ export default interface StateDTO {
     user: User
     online_players: OnlinePlayer[]
     next_minigame?: string;
+    locked_winner: number;
 }
 
 export interface WhitelistEntry {
@@ -152,6 +153,7 @@ export function createEmptyState(): StateDTO {
             permissions: [],
             username: ""
         },
-        whitelist: []
+        whitelist: [],
+        locked_winner: -1
     }
 }

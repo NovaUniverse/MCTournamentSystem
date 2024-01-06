@@ -60,6 +60,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.userma
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.util.OfflineUsernameToUUIDHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ClearWhitelistHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.whitelist.ManageWhitelistUserHandler;
+import net.novauniverse.mctournamentsystem.bungeecord.api.handlers.api.v1.winner.LockedWinnerHandler;
 import net.novauniverse.mctournamentsystem.bungeecord.api.internal.ManagedServerStateReportingEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.react.ReactUIHandler;
 
@@ -162,6 +163,9 @@ public class TournamentSystemWebAPI {
 
 		// Next minigame
 		server.addEndpoint("/api/v1/next_minigame", new NextMinigameHandler());
+
+		// Winner
+		server.addEndpoint("/api/v1/locked_winner", new LockedWinnerHandler());
 
 		// Servers
 		server.addEndpoint("/api/v1/servers/get_servers", new GetServersHandler());

@@ -6,6 +6,7 @@ export default function PageSelection() {
 	return (
 		<Nav className='my-1 mx-2' variant='tabs'>
 			<PageNavLink url="/" text="Overview" />
+			<PageNavLink url="/winner" text="Winner" />
 			<PageNavLink url="/score" text="Score" />
 			<PageNavLink url="/score_snapshot" text="Score Snapshot" />
 			<PageNavLink url="/triggers" text="Triggers" />

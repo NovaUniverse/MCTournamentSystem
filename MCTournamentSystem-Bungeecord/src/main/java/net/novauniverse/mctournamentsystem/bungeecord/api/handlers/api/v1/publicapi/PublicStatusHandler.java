@@ -24,6 +24,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.data.TeamData;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
+import net.novauniverse.mctournamentsystem.commons.winner.LockedWinnerManagement;
 import net.zeeraa.novacore.bungeecord.utils.ChatColorRGBMapper;
 import net.zeeraa.novacore.commons.jarresourcereader.JARResourceReader;
 
@@ -76,7 +77,7 @@ public class PublicStatusHandler extends TournamentEndpoint {
 
 		List<TeamData> teamDataList = new ArrayList<TeamData>();
 		try {
-			String sql =JARResourceReader.readFileFromJARAsString(getClass(), "/sql/api/v1/public/get_team_data.sql");
+			String sql = JARResourceReader.readFileFromJARAsString(getClass(), "/sql/api/v1/public/get_team_data.sql");
 			PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 
@@ -148,6 +149,9 @@ public class PublicStatusHandler extends TournamentEndpoint {
 		json.put("players", players);
 		json.put("teams", teams);
 
+		/* ===== Locked winner ===== */;
+		int lockedWinnerTeamNumber = LockedWinnerManagement.getLockedWinner();
+
 		/* ===== Online players ===== */
 		JSONArray onlinePlayers = new JSONArray();
 
@@ -173,6 +177,7 @@ public class PublicStatusHandler extends TournamentEndpoint {
 		json.put("active_server", TournamentSystemCommons.getActiveServer());
 		json.put("next_minigame", TournamentSystemCommons.getNextMinigame());
 		json.put("dynamic_config_url", TournamentSystem.getInstance().getDynamicConfigUrl());
+		json.put("locked_winner", lockedWinnerTeamNumber);
 
 		return new JSONResponse(json);
 	}

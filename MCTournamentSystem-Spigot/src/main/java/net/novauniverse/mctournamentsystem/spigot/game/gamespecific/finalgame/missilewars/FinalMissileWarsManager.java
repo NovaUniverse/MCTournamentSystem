@@ -5,11 +5,13 @@ import org.bukkit.event.Listener;
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.games.finalgame.missilewars.NovaFinalMissileWars;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
+import net.novauniverse.mctournamentsystem.spigot.game.GameListeners;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.TextUtils;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.DelayedGameTrigger;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.triggers.RepeatingGameTrigger;
+import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.NovaScoreboardManager;
 import net.zeeraa.novacore.spigot.module.modules.scoreboard.text.StaticTextLine;
@@ -62,6 +64,7 @@ public class FinalMissileWarsManager extends NovaModule implements Listener {
 
 	@Override
 	public void onEnable() throws Exception {
+		ModuleManager.getModule(GameListeners.class).setDisableBuiltInTeamWinMessage(true);
 		Task.tryStartTask(task);
 	}
 

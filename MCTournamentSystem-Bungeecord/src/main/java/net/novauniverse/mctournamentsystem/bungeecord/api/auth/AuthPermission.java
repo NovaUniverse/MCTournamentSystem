@@ -22,6 +22,7 @@ public enum AuthPermission {
 	CLEAR_DATA,
 	MANAGE_MAPS,
 	ALTER_SCORE,
+	LOCK_WINNER,
 	SHUTDOWN;
 
 	public static final List<AuthPermission> generatePermissionList(AuthPermission... permissions) {

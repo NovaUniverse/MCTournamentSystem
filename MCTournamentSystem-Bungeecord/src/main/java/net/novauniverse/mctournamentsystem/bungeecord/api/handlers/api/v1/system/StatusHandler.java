@@ -26,6 +26,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.config.InternetCafeOptions;
 import net.novauniverse.mctournamentsystem.commons.team.TeamColorProvider;
 import net.novauniverse.mctournamentsystem.commons.team.TeamNameProvider;
+import net.novauniverse.mctournamentsystem.commons.winner.LockedWinnerManagement;
 import net.zeeraa.novacore.bungeecord.utils.ChatColorRGBMapper;
 import net.zeeraa.novacore.commons.jarresourcereader.JARResourceReader;
 
@@ -215,6 +216,10 @@ public class StatusHandler extends TournamentEndpoint {
 		}
 
 		json.put("whitelist", whitelist);
+		
+		
+		/* ===== Locked winner ===== */;
+		int lockedWinnerTeamNumber = LockedWinnerManagement.getLockedWinner();
 
 		/* ===== Internet cafe settings ===== */
 		InternetCafeOptions internetCafeOptions = TournamentSystem.getInstance().getInternetCafeOptions();
@@ -258,6 +263,8 @@ public class StatusHandler extends TournamentEndpoint {
 
 		json.put("active_server", TournamentSystemCommons.getActiveServer());
 		json.put("next_minigame", TournamentSystemCommons.getNextMinigame());
+		
+		json.put("locked_winner", lockedWinnerTeamNumber);
 
 		return new JSONResponse(json);
 	}

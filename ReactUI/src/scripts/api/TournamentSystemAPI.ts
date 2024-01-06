@@ -120,6 +120,39 @@ export default class TournamentSystemAPI {
 		throw new Error("Server communication failure");
 	}
 
+	async clearLockedWinner(): Promise<GenericRequestResponse> {
+		const url = "/v1/locked_winner";
+		const result = await this.authenticatedRequest(RequestType.DELETE, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		}
+		throw new Error("Server communication failure");
+	}
+
+	async setLockedWinner(winnerTeamNumber: number): Promise<GenericRequestResponse> {
+		const url = "/v1/locked_winner?team=" + winnerTeamNumber;
+		const result = await this.authenticatedRequest(RequestType.PUT, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		}
+		throw new Error("Server communication failure");
+	}
+
+	async autoLockWinner(): Promise<GenericRequestResponse> {
+		const url = "/v1/locked_winner?auto=true";
+		const result = await this.authenticatedRequest(RequestType.PUT, url);
+		if (result.status == 200) {
+			return {
+				success: true
+			}
+		}
+		throw new Error("Server communication failure");
+	}
+
 	async createUser(username: string, password: string, hideIPs: boolean, allowManageUsers: boolean, permissions: string[]): Promise<GenericRequestResponse> {
 		const data: any = {
 			username: username,

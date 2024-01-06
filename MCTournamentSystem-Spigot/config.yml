@@ -45,3 +45,9 @@ enable_edible_heads: true
 # -=-=-=  ItemsAdder Settings  =-=-=-
 # ===================================
 enable_items_adder: false
+
+# ===================================
+# -=-=-=  Final game settings  =-=-=-
+# ===================================
+# If true locked winner will be set on win
+is_final_game: false

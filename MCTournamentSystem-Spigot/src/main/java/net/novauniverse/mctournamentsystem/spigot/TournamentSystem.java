@@ -39,6 +39,7 @@ import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.api.TournamentSystemAPI;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfig;
 import net.novauniverse.mctournamentsystem.commons.dynamicconfig.DynamicConfigManager;
+import net.novauniverse.mctournamentsystem.commons.rabbitmq.RabbitMQStrings;
 import net.novauniverse.mctournamentsystem.commons.team.TeamOverrides;
 import net.novauniverse.mctournamentsystem.commons.utils.ResourceUtils;
 import net.novauniverse.mctournamentsystem.commons.utils.TSFileUtils;
@@ -197,6 +198,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 	private TournamentSystemAPI api;
 
 	private List<String> configuredManagedServers;
+
+	private boolean isFinalGame;
 
 	public static TournamentSystem getInstance() {
 		return instance;
@@ -468,6 +471,10 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		return iaNoTeamIcon;
 	}
 
+	public boolean isFinalGame() {
+		return isFinalGame;
+	}
+
 	@Override
 	public void onEnable() {
 		// Init session id
@@ -534,6 +541,8 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		/* ----- Setup files ----- */
 		saveDefaultConfig();
+
+		this.isFinalGame = getConfig().getBoolean("is_final_game");
 
 		globalDataDirectory = TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(TSFileUtils.getParentSafe(this.getDataFolder())))).getAbsolutePath();
 
@@ -1012,6 +1021,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			public void run() {
 				Bukkit.getServer().getWorlds().forEach(world -> world.setAutoSave(false));
 				reportServerStateAsync();
+				Log.debug("TournamentSystem", "Is final game: " + isFinalGame);
 			}
 		}.runTaskLater(this, 1L);
 
@@ -1052,14 +1062,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		if (TournamentSystemCommons.hasRabbitMQManager()) {
 			Log.info("TournamentSystem", "Registering RabbitMQ listeners");
-			TournamentSystemCommons.getRabbitMQManager().addMessageReceiver("start_game", (data) -> {
+			TournamentSystemCommons.getRabbitMQManager().addMessageReceiver(RabbitMQStrings.START_GAME, (data) -> {
 				if (NovaCore.isNovaGameEngineEnabled()) {
 					if (GameManager.getInstance().isEnabled()) {
 						if (GameManager.getInstance().hasGame()) {
 							if (!GameManager.getInstance().getCountdown().hasCountdownStarted() && !GameManager.getInstance().getCountdown().hasCountdownFinished()) {
-								Log.info("TSPluginMessageListnener", "Starting countdown");
+								Log.info("RabbitMQ", "Starting game countdown");
 								GameManager.getInstance().getCountdown().startCountdown();
-								Log.info("TSPluginMessageListnener", "Setting reconnect server");
+								Log.info("RabbitMQ", "Setting reconnect server");
 								TournamentSystemCommons.setActiveServer(TournamentSystem.getInstance().getServerName());
 							}
 						}

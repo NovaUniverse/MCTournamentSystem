@@ -10,6 +10,7 @@ import net.novauniverse.apilib.http.response.JSONResponse;
 import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.rabbitmq.RabbitMQStrings;
 import net.novauniverse.mctournamentsystem.commons.rabbitmq.TournamentRabbitMQManager;
 
 public class StartGameHandler extends TournamentEndpoint {
@@ -31,7 +32,7 @@ public class StartGameHandler extends TournamentEndpoint {
 		if (TournamentSystemCommons.hasRabbitMQManager()) {
 			TournamentRabbitMQManager manager = TournamentSystemCommons.getRabbitMQManager();
 			if (manager.isConnected()) {
-				if (manager.sendMessage("start_game", TournamentRabbitMQManager.empty())) {
+				if (manager.sendMessage(RabbitMQStrings.START_GAME, TournamentRabbitMQManager.empty())) {
 					json.put("success", true);
 				} else {
 					json.put("success", false);

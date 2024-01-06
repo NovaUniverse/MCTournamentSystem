@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import net.md_5.bungee.api.ChatColor;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
 import net.novauniverse.mctournamentsystem.commons.socketapi.SocketAPI;
+import net.novauniverse.mctournamentsystem.commons.winner.LockedWinnerManagement;
 import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.bedwars.BedwarsManager;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.behindyourtail.BehindYourTailManager;
@@ -79,10 +80,13 @@ public class GameListeners extends NovaModule implements Listener {
 
 	private GameManager gameManager;
 
+	private boolean disableBuiltInTeamWinMessage;
+
 	public static GameListeners getInstance() {
 		return instance;
 	}
 
+	/* Game specific */
 	static {
 		// Original MCF / MCClassics games
 		GAME_SPECIFIC_MODULES.put("survivalgames", SurvivalGamesManager.class);
@@ -105,6 +109,7 @@ public class GameListeners extends NovaModule implements Listener {
 		GAME_SPECIFIC_MODULES.put("missilewars_finalgame", FinalMissileWarsManager.class);
 	}
 
+	/* Telementry */
 	static {
 		// TNT tag state
 		TELEMENTRY_METADATA_PROVIDERS.add(new GameSpecificTelementryModule("tnttag", TNTTagMetadataProvider.class));
@@ -125,9 +130,18 @@ public class GameListeners extends NovaModule implements Listener {
 	public void onLoad() {
 		GameListeners.instance = this;
 		disableAudoShutdown = false;
+		disableBuiltInTeamWinMessage = false;
 		gameManager = GameManager.getInstance();
 	}
 
+	public boolean isDisableBuiltInTeamWinMessage() {
+		return disableBuiltInTeamWinMessage;
+	}
+	
+	public void setDisableBuiltInTeamWinMessage(boolean disableBuiltInTeamWinMessage) {
+		this.disableBuiltInTeamWinMessage = disableBuiltInTeamWinMessage;
+	}
+	
 	public boolean isDisableAudoShutdown() {
 		return disableAudoShutdown;
 	}
@@ -258,8 +272,10 @@ public class GameListeners extends NovaModule implements Listener {
 		e.getTeam().getMembers().forEach(uuid -> {
 			Player player = Bukkit.getServer().getPlayer(uuid);
 			if (player != null) {
-				VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + "Winner", ChatColor.GREEN + "Your team won", 10, 40, 10);
-				// player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1F, 2F);
+				if (!disableBuiltInTeamWinMessage) {
+					VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN + "Winner", ChatColor.GREEN + "Your team won", 10, 40, 10);
+				}
+				
 				VersionIndependentSound.ORB_PICKUP.play(player, 1F, 2F);
 
 				if (SocketAPI.isAvailable()) {
@@ -279,6 +295,16 @@ public class GameListeners extends NovaModule implements Listener {
 				}
 			}
 		});
+
+		if (TournamentSystem.getInstance().isFinalGame()) {
+			int number = ((TournamentSystemTeam) e.getTeam()).getTeamNumber();
+			try {
+				Log.info("GameListeners", "Locking winner as team " + number);
+				LockedWinnerManagement.lockWinner(number);
+			} catch (Exception ex) {
+				Log.error("GameListeners", "Failed to set locked winner team to " + number + ". " + e.getClass().getName() + " " + ex.getMessage());
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

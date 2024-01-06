@@ -23,6 +23,8 @@ import EditorProvider from './components/EditorProvider';
 /// @ts-ignore
 import catCry from "./assets/img/cat_cry.png";
 import ScoreSnapshot from './pages/ScoreSnapshot';
+import WinnerPage from './pages/WinnerPage';
+import LocationRedirect from './components/LocationRedirect';
 
 export default function App() {
 	const tournamentSystem = useTournamentSystemContext();
@@ -65,9 +67,13 @@ export default function App() {
 							<Route path="/accounts" element={<AuthenticatedZone><Accounts /></AuthenticatedZone>} />
 							<Route path="/editor" element={<AuthenticatedZone><EditorProvider /></AuthenticatedZone>} />
 							<Route path="/score_snapshot" element={<AuthenticatedZone><ScoreSnapshot /></AuthenticatedZone>} />
+							<Route path="/winner" element={<AuthenticatedZone><WinnerPage /></AuthenticatedZone>} />
 
 							{/* Unauthenticated zones */}
 							<Route path="/live_stats" element={<LiveStats />} />
+
+							{/* Legacy redirect */}
+							<Route path="/app" element={<LocationRedirect target='/' />} />
 
 							{/* Misc */}
 							<Route path="*" element={<NotFound />} />

@@ -12,6 +12,7 @@ import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentEndpoint;
 import net.novauniverse.mctournamentsystem.bungeecord.api.auth.AuthPermission;
 import net.novauniverse.mctournamentsystem.bungeecord.misc.MissingTeamFixer;
 import net.novauniverse.mctournamentsystem.commons.TournamentSystemCommons;
+import net.novauniverse.mctournamentsystem.commons.winner.LockedWinnerManagement;
 
 public class ResetHandler extends TournamentEndpoint {
 	public ResetHandler() {
@@ -62,6 +63,13 @@ public class ResetHandler extends TournamentEndpoint {
 		}
 
 		MissingTeamFixer.fixTeams();
+
+		try {
+			LockedWinnerManagement.unlockWinner();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 
 		json.put("success", true);
 		return new JSONResponse(json);

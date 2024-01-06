@@ -3,6 +3,7 @@ package net.novauniverse.mctournamentsystem.commons;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.UUID;
 
 import org.json.JSONObject;
@@ -237,7 +238,11 @@ public class TournamentSystemCommons {
 
 		PreparedStatement ps = TournamentSystemCommons.getDBConnection().getConnection().prepareStatement(sql);
 
-		ps.setString(1, value);
+		if (value == null) {
+			ps.setNull(1, Types.VARCHAR);
+		} else {
+			ps.setString(1, value);
+		}
 		ps.setString(2, key);
 
 		ps.executeUpdate();
