@@ -118,6 +118,8 @@ public class Lobby extends NovaModule implements Listener {
 	private String displayedWinnerString;
 	private Task winnerActionbarTask;
 
+	private List<Material> blockedInteractions;
+
 	public static Lobby getInstance() {
 		return instance;
 	}
@@ -157,6 +159,8 @@ public class Lobby extends NovaModule implements Listener {
 
 		this.winnerHolograms = new ArrayList<>();
 		this.displayedWinnerString = null;
+
+		this.blockedInteractions = new ArrayList<Material>();
 
 		this.winnerActionbarTask = new SimpleTask(() -> {
 			if (displayedWinnerString != null) {
@@ -360,6 +364,10 @@ public class Lobby extends NovaModule implements Listener {
 
 		MultiverseManager.getInstance().unload(multiverseWorld);
 		multiverseWorld = null;
+	}
+
+	public List<Material> getBlockedInteractions() {
+		return blockedInteractions;
 	}
 
 	public boolean isPvpBypassEnabled() {
@@ -582,6 +590,14 @@ public class Lobby extends NovaModule implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			if (e.getPlayer().getGameMode() != GameMode.CREATIVE) {
+				if (e.getClickedBlock() != null) {
+					if (blockedInteractions.contains(e.getClickedBlock().getType())) {
+						e.setCancelled(true);
+					}
+				}
+			}
+
 			// if (e.getClickedBlock().getType() == Material.SIGN_POST ||
 			// e.getClickedBlock().getType() == Material.WALL_SIGN) {
 			if (VersionIndependentUtils.get().isSign(e.getClickedBlock())) {

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -151,6 +152,18 @@ public class TournamentSystemLobby extends JavaPlugin implements Listener {
 					Lobby.getInstance().addWinnerHologram(xyz);
 				}
 
+			}
+		}
+		
+		if (config.has("blocked_interactions")) {
+			JSONArray blockedInteractions = config.getJSONArray("blocked_interactions");
+			for(int i = 0; i < blockedInteractions.length(); i++) {
+				String materialName = blockedInteractions.getString(i);
+				try {
+					Lobby.getInstance().getBlockedInteractions().add(Material.valueOf(materialName));
+				} catch(Exception e) {
+					Log.error("Lobby", "Invalid material from blocked_interactions: " + materialName);
+				}
 			}
 		}
 
