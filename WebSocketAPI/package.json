@@ -11,7 +11,7 @@
   "author": "Zeeraa,NovaUniverse",
   "license": "ISC",
   "dependencies": {
-    "@types/amqplib": "^0.10.1",
+    "@types/amqplib": "^0.10.5",
     "@types/express": "^4.17.17",
     "@types/node": "^18.14.0",
     "@types/socket.io": "^3.0.2",
