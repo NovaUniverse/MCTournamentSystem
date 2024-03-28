@@ -10,6 +10,7 @@ import java.security.KeyPair;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -17,7 +18,11 @@ import org.json.JSONObject;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 import net.novauniverse.mctournamentsystem.bungeecord.api.TournamentSystemWebAPI;
 import net.novauniverse.mctournamentsystem.bungeecord.authdb.AuthDB;
 import net.novauniverse.mctournamentsystem.bungeecord.commands.sendhere.SendHereCommand;
@@ -63,60 +68,34 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 	private List<String> staffRoles;
 	private List<String> quickMessages;
 	private int teamSize;
-
 	private ChatListener chatListener;
-
 	private String phpmyadminURL;
-
 	private String distroName;
-
 	private boolean openMode;
-
 	private File globalConfigFolder;
-
 	private PlayerTelementryManager playerTelementryManager;
-
 	private SlowPlayerSender slowPlayerSender;
-
 	private String publicIp;
-
 	private String dynamicConfigURL;
-
 	private InternetCafeOptions internetCafeOptions;
-
 	private List<ManagedServer> managedServers;
-
 	private File serverLogFolder;
-
 	private boolean disableParentPidMonitoring;
-
 	private PingListeners pingListeners;
-
 	private String mojangAPIProxyURL;
-
 	private boolean makeMeSufferEasteregg;
-
 	private String motd;
-
 	private boolean autoAppendAikarFlags;
-
 	private List<String> globalCustomLaunchFlags;
-
 	private boolean offlineMode;
-
 	private boolean logWebServerExceptions;
-
 	private String chatFilterURL;
-
 	private String skinRenderAPIUrl;
-
 	private File mapDataFolder;
-
 	private KeyPair tokenKeyPair;
-
 	private AuthDB authDB;
-
 	private List<WebStyleMod> cssMods;
+	private boolean showDeveloperCredits;
 
 	public List<String> getGlobalCustomLaunchFlags() {
 		return globalCustomLaunchFlags;
@@ -326,6 +305,8 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		String mapDataFolderOverride = null;
 		String authDBOverride = null;
 		String certOverride = null;
+
+		showDeveloperCredits = new File(getDataFolder() + File.separator + "show_credits").exists();
 
 		mapDataFolder = new File(globalConfigPath + File.separator + "map_data");
 
@@ -796,5 +777,19 @@ public class TournamentSystem extends NovaPlugin implements Listener {
 		this.getProxy().unregisterChannel(TournamentSystemCommons.PLAYER_TELEMENTRY_CHANNEL);
 
 		ProxyServer.getInstance().getScheduler().cancel(this);
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPostLogin(PostLoginEvent e) {
+		if (showDeveloperCredits) {
+			ProxyServer.getInstance().getScheduler().schedule(TournamentSystem.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					TextComponent disclaimerText = new TextComponent("Tournament system developed by NovaUniverse. Check out our discord server at https://novauniverse.net");
+					disclaimerText.setColor(ChatColor.GREEN);
+					e.getPlayer().sendMessage(disclaimerText);
+				}
+			}, 500, TimeUnit.MILLISECONDS);
+		}
 	}
 }
