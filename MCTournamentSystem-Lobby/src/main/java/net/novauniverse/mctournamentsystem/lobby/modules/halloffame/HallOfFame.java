@@ -9,9 +9,8 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-
+import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.SpawnReason;
@@ -23,6 +22,7 @@ import net.zeeraa.novacore.commons.api.novauniverse.callback.IAsyncProfileCallba
 import net.zeeraa.novacore.commons.api.novauniverse.data.MojangPlayerProfile;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
+import net.zeeraa.novacore.commons.utils.ListUtils;
 import net.zeeraa.novacore.spigot.module.ModuleManager;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
@@ -123,7 +123,7 @@ public class HallOfFame extends NovaModule {
 			this.config.getNpcs().clear();
 		}
 	}
-	
+
 	public void updateUsernames() {
 		toUpdate.clear();
 		cachedResults.forEach(tournamentResult -> {
@@ -138,7 +138,7 @@ public class HallOfFame extends NovaModule {
 		this.initialized = true;
 		this.debug = config.isDebug();
 
-		nameHologram = HologramsAPI.createHologram(getPlugin(), config.getNameHologramLocation().toBukkitLocation(Lobby.getInstance().getWorld()));
+		nameHologram = DHAPI.createHologram(UUID.randomUUID().toString(), config.getNameHologramLocation().toBukkitLocation(Lobby.getInstance().getWorld()), false);
 
 		updateData();
 
@@ -161,8 +161,8 @@ public class HallOfFame extends NovaModule {
 				Log.debug("HallOfFame", "NPC count: " + config.getNpcs().size());
 				Log.debug("HallOfFame", "Player count: " + top.getPlayers().size());
 			}
-			nameHologram.clearLines();
-			nameHologram.appendTextLine(ChatColor.GREEN + tournamentResult.getDisplayName());
+
+			DHAPI.setHologramLines(nameHologram, ListUtils.createList(ChatColor.GREEN + tournamentResult.getDisplayName()));
 
 			for (int i = 0; i < config.getNpcs().size(); i++) {
 				HallOfFameNPC npc = config.getNpcs().get(i);

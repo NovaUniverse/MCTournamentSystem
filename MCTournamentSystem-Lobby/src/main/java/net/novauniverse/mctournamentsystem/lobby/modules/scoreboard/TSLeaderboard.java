@@ -1,16 +1,16 @@
 package net.novauniverse.mctournamentsystem.lobby.modules.scoreboard;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 
+import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
 import net.novauniverse.mctournamentsystem.lobby.TournamentSystemLobby;
-import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.novauniverse.mctournamentsystem.spigot.score.PlayerScoreData;
 import net.novauniverse.mctournamentsystem.spigot.score.TeamScoreData;
 import net.novauniverse.mctournamentsystem.spigot.score.TopScore;
@@ -69,61 +69,47 @@ public class TSLeaderboard extends NovaModule {
 		}
 
 		if (teamHologram != null) {
-			teamHologram.clearLines();
 			teamHologram.delete();
 		}
 
 		if (playerHologram != null) {
-			playerHologram.clearLines();
 			playerHologram.delete();
 		}
 	}
 
 	public void update() {
 		if (playerHologram != null) {
-			int lineIndex = 0;
-
-			if (playerHologram.size() <= lineIndex) {
-				playerHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top player scores");
-			}
-
+			List<String> content = new ArrayList<String>();
+			
+			content.add(ChatColor.GREEN + "" + ChatColor.BOLD + "Top player scores");
+			
 			List<PlayerScoreData> scores = TopScore.getPlayerTopScore(lines);
 
+			int lineIndex = 0;
 			for (PlayerScoreData scoreData : scores) {
 				lineIndex++;
-
-				if (playerHologram.size() <= lineIndex) {
-					playerHologram.appendTextLine("-----------");
-				}
-				((TextLine) playerHologram.getLine(lineIndex)).setText(ChatColor.YELLOW + "" + lineIndex + ChatColor.GOLD + " : " + scoreData.toString());
+				content.add(ChatColor.YELLOW + "" + lineIndex + ChatColor.GOLD + " : " + scoreData.toString());
 			}
 
-			while (playerHologram.size() > lineIndex + 1) {
-				playerHologram.removeLine(playerHologram.size() - 1);
-			}
+			DHAPI.setHologramLines(playerHologram, content);
 		}
+		
 		if (TeamManager.hasTeamManager()) {
 			if (teamHologram != null) {
+				List<String> content = new ArrayList<String>();
+				
+				content.add(ChatColor.GREEN + "" + ChatColor.BOLD + "Top team scores");
+				
 				int lineIndex = 0;
-
-				if (teamHologram.size() <= lineIndex) {
-					teamHologram.appendTextLine(ChatColor.GREEN + "" + ChatColor.BOLD + "Top team scores");
-				}
 
 				List<TeamScoreData> scores = TopScore.getTeamTopScore(lines);
 
 				for (TeamScoreData scoreData : scores) {
 					lineIndex++;
-
-					if (teamHologram.size() <= lineIndex) {
-						teamHologram.appendTextLine("-----------");
-					}
-					((TextLine) teamHologram.getLine(lineIndex)).setText(ChatColor.YELLOW + "" + lineIndex + ChatColor.GOLD + " : " + scoreData.toString());
+					content.add(ChatColor.YELLOW + "" + lineIndex + ChatColor.GOLD + " : " + scoreData.toString());
 				}
 
-				while (teamHologram.size() > lineIndex + 1) {
-					teamHologram.removeLine(teamHologram.size() - 1);
-				}
+				DHAPI.setHologramLines(teamHologram, content);
 			}
 		}
 	}
@@ -133,7 +119,7 @@ public class TSLeaderboard extends NovaModule {
 			teamHologram.delete();
 		}
 
-		teamHologram = HologramsAPI.createHologram(TournamentSystem.getInstance(), location);
+		teamHologram = DHAPI.createHologram(UUID.randomUUID().toString(), location, false); // HologramsAPI.createHologram(TournamentSystem.getInstance(), location);
 	}
 
 	public void setPlayerHologramLocation(Location location) {
@@ -141,7 +127,7 @@ public class TSLeaderboard extends NovaModule {
 			playerHologram.delete();
 		}
 
-		playerHologram = HologramsAPI.createHologram(TournamentSystem.getInstance(), location);
+		playerHologram = DHAPI.createHologram(UUID.randomUUID().toString(), location, false); // HologramsAPI.createHologram(TournamentSystem.getInstance(), location);
 	}
 
 	public int getLines() {
