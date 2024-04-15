@@ -39,6 +39,10 @@ export default function ExportSummaryButton({ className }: Props) {
 			dataExport["teams"] = tournamentSystem.state.teams;
 			dataExport["players"] = players;
 
+			if(tournamentSystem.state.locked_winner > 0) {
+				dataExport["locked_winner"] = tournamentSystem.state.locked_winner;
+			}
+
 			console.log("Data collected. Downloading...");
 			console.log(dataExport);
 
