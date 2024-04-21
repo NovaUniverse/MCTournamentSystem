@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -52,6 +53,7 @@ import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeam;
 import net.novauniverse.mctournamentsystem.spigot.team.TournamentSystemTeamManager;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.commons.tasks.Task;
+import net.zeeraa.novacore.commons.utils.DelayedRunner;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
@@ -352,6 +354,10 @@ public class Lobby extends NovaModule implements Listener {
 
 		multiverseWorld.getWorld().setGameRuleValue("announceAdvancements", "false");
 		// CommandRegistry.registerCommand(new ReconnectCommand());
+
+		DelayedRunner.runDelayed(() -> {
+			getWorld().setDifficulty(Difficulty.PEACEFUL);
+		}, 20L);
 	}
 
 	@Override
