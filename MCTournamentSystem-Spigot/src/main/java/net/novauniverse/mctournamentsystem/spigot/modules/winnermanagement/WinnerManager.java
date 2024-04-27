@@ -13,8 +13,8 @@ import net.zeeraa.novacore.spigot.tasks.SimpleTask;
 
 @NovaAutoLoad(shouldEnable = true)
 public class WinnerManager extends NovaModule {
-	public int winner;
-	public Task task;
+	private int winner;
+	private Task task;
 
 	public WinnerManager() {
 		super("TournamentSystem.WinnerManager");
