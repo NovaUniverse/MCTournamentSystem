@@ -89,6 +89,14 @@ export default class TournamentSystem {
 		});
 	}
 
+	public hideNavbar() {
+		this.events.emit(Events.HIDE_NAVBAR);
+	}
+
+	public showNavbar() {
+		this.events.emit(Events.SHOW_NAVBAR);
+	}
+
 	get errorMessage() {
 		return this._errorMessage;
 	}

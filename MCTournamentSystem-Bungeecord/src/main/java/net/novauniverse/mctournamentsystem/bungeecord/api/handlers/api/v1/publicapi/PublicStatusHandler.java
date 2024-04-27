@@ -178,6 +178,7 @@ public class PublicStatusHandler extends TournamentEndpoint {
 		json.put("next_minigame", TournamentSystemCommons.getNextMinigame());
 		json.put("dynamic_config_url", TournamentSystem.getInstance().getDynamicConfigUrl());
 		json.put("locked_winner", lockedWinnerTeamNumber);
+		json.put("tournament_name", TournamentSystemCommons.getTournamentName());
 
 		return new JSONResponse(json);
 	}

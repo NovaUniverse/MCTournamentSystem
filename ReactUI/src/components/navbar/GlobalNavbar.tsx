@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, DropdownDivider, DropdownItem, DropdownItemText, Nav, NavDropdown, NavItem, NavLink, Navbar, NavbarBrand, NavbarCollapse, NavbarToggle } from 'react-bootstrap'
 import PHPMyAdminLink from './items/PHPMyAdminLink'
 import { Link } from 'react-router-dom'
@@ -12,6 +12,7 @@ import TextPromptModal from '../modals/TextPromptModal'
 
 /// @ts-ignore
 import novaLogo256 from "../../assets/img/nova_logo_256.png";
+import { Events } from '../../scripts/enum/Events'
 
 interface Props {
 	loggedIn: boolean
@@ -21,6 +22,7 @@ export default function GlobalNavbar({ loggedIn }: Props) {
 	const tournamentSystem = useTournamentSystemContext();
 
 	const [themeSelectorVisible, setThemeSelectorVisible] = useState<boolean>(false);
+	const [navbarVisible, setNavbarVisible] = useState<boolean>(true);
 
 	function openThemeSelector() {
 		setThemeSelectorVisible(true);
@@ -34,6 +36,24 @@ export default function GlobalNavbar({ loggedIn }: Props) {
 		window.localStorage.removeItem(LocalStorageKeys.TOKEN);
 		window.location.reload();
 	}
+
+	useEffect(() => {
+		const show = () => {
+			setNavbarVisible(true);
+		}
+
+		const hide = () => {
+			setNavbarVisible(false);
+		}
+
+		tournamentSystem.events.on(Events.SHOW_NAVBAR, show);
+		tournamentSystem.events.on(Events.HIDE_NAVBAR, hide);
+
+		return () => {
+			tournamentSystem.events.off(Events.SHOW_NAVBAR, show);
+			tournamentSystem.events.off(Events.HIDE_NAVBAR, hide);
+		}
+	}, []);
 
 	const [shutdownPromptVisible, setShutdownPromptVisible] = useState<boolean>(false);
 	function openShutdownPropmpt() {
@@ -152,88 +172,92 @@ export default function GlobalNavbar({ loggedIn }: Props) {
 
 	return (
 		<>
-			<Navbar expand="lg" bg="dark" data-bs-theme="dark">
-				<Container>
-					<NavbarBrand as={Link} to='/' className='main-navbar-brand'>
-						<img src={novaLogo256} width="36" height="36" className="d-inline-block align-top me-1" />
-						TournamentSystem
-					</NavbarBrand>
-					<NavbarToggle aria-controls="basic-navbar-nav" />
-					<NavbarCollapse id="basic-navbar-nav">
-						<Nav>
-							<NavItem>
-								<NavLink onClick={openThemeSelector} className='main-navbar-set-theme'>Theme</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink href="/plan">Analytics</NavLink>
-							</NavItem>
-							<NavItem>
-								<PHPMyAdminLink useNavLink />
-							</NavItem>
+			{navbarVisible &&
+				<>
+					<Navbar expand="lg" bg="dark" data-bs-theme="dark">
+						<Container>
+							<NavbarBrand as={Link} to='/' className='main-navbar-brand'>
+								<img src={novaLogo256} width="36" height="36" className="d-inline-block align-top me-1" />
+								TournamentSystem
+							</NavbarBrand>
+							<NavbarToggle aria-controls="basic-navbar-nav" />
+							<NavbarCollapse id="basic-navbar-nav">
+								<Nav>
+									<NavItem>
+										<NavLink onClick={openThemeSelector} className='main-navbar-set-theme'>Theme</NavLink>
+									</NavItem>
+									<NavItem>
+										<NavLink href="/plan">Analytics</NavLink>
+									</NavItem>
+									<NavItem>
+										<PHPMyAdminLink useNavLink />
+									</NavItem>
 
-							{loggedIn && <>
-								<NavItem>
-									<NavLink as={Link} to="/editor">Editor</NavLink>
-								</NavItem>
-								<NavDropdown title="System" id="basic-nav-dropdown">
-									<DropdownItemText>Settings</DropdownItemText>
-									<DropdownItem onClick={openSetTournamentName}>Set tournament name</DropdownItem>
-									<DropdownItem onClick={openSetMOTD}>Set MOTD</DropdownItem>
-									<DropdownItem onClick={openSetScoreboardURL}>Set scoreboard url</DropdownItem>
-									<DropdownDivider />
-									<DropdownItemText>Account management</DropdownItemText>
-									<DropdownItem as={Link} to="/accounts">Manage accounts</DropdownItem>
-									<DropdownDivider />
-									<DropdownItemText>Management</DropdownItemText>
-									<DropdownItem onClick={reloadDynamicConfig}>Reload dynamic config</DropdownItem>
-									<DropdownItem onClick={openResetPropmpt} className='text-danger'>Reset</DropdownItem>
-									<DropdownItem onClick={openShutdownPropmpt} className='text-danger'>Shutdown</DropdownItem>
-								</NavDropdown>
+									{loggedIn && <>
+										<NavItem>
+											<NavLink as={Link} to="/editor">Editor</NavLink>
+										</NavItem>
+										<NavDropdown title="System" id="basic-nav-dropdown">
+											<DropdownItemText>Settings</DropdownItemText>
+											<DropdownItem onClick={openSetTournamentName}>Set tournament name</DropdownItem>
+											<DropdownItem onClick={openSetMOTD}>Set MOTD</DropdownItem>
+											<DropdownItem onClick={openSetScoreboardURL}>Set scoreboard url</DropdownItem>
+											<DropdownDivider />
+											<DropdownItemText>Account management</DropdownItemText>
+											<DropdownItem as={Link} to="/accounts">Manage accounts</DropdownItem>
+											<DropdownDivider />
+											<DropdownItemText>Management</DropdownItemText>
+											<DropdownItem onClick={reloadDynamicConfig}>Reload dynamic config</DropdownItem>
+											<DropdownItem onClick={openResetPropmpt} className='text-danger'>Reset</DropdownItem>
+											<DropdownItem onClick={openShutdownPropmpt} className='text-danger'>Shutdown</DropdownItem>
+										</NavDropdown>
 
-								<NavDropdown title="Account" id="basic-nav-dropdown">
-									<DropdownItemText>
-										Logged in as: <span className='text-info'>{tournamentSystem.authManager.username}</span>
-									</DropdownItemText>
-									<DropdownDivider />
-									<DropdownItem onClick={logout} className='text-danger'>Logout</DropdownItem>
-								</NavDropdown>
-							</>}
-						</Nav>
-					</NavbarCollapse>
-				</Container>
-			</Navbar>
+										<NavDropdown title="Account" id="basic-nav-dropdown">
+											<DropdownItemText>
+												Logged in as: <span className='text-info'>{tournamentSystem.authManager.username}</span>
+											</DropdownItemText>
+											<DropdownDivider />
+											<DropdownItem onClick={logout} className='text-danger'>Logout</DropdownItem>
+										</NavDropdown>
+									</>}
+								</Nav>
+							</NavbarCollapse>
+						</Container>
+					</Navbar>
 
-			<ConfirmModal onCancel={() => { setShutdownPromptVisible(false) }} onConfirm={shutdown} title='Confirm shutdown' visible={shutdownPromptVisible} cancelButtonVariant='secondary' confirmButtonVariant='danger' cancelText='Cancel' confirmText='Shutdown'>
-				<p>
-					Please confirm that you want to shutdown the tournament system
-				</p>
-			</ConfirmModal>
+					<ConfirmModal onCancel={() => { setShutdownPromptVisible(false) }} onConfirm={shutdown} title='Confirm shutdown' visible={shutdownPromptVisible} cancelButtonVariant='secondary' confirmButtonVariant='danger' cancelText='Cancel' confirmText='Shutdown'>
+						<p>
+							Please confirm that you want to shutdown the tournament system
+						</p>
+					</ConfirmModal>
 
-			<ConfirmModal onCancel={() => { setResetPromptVisible(false) }} onConfirm={reset} title='Confirm reset' visible={shutdownResetVisible} cancelButtonVariant='secondary' confirmButtonVariant='danger' cancelText='Cancel' confirmText='Reset'>
-				<p>
-					Please confirm that you want to reset all player data
-				</p>
-			</ConfirmModal>
+					<ConfirmModal onCancel={() => { setResetPromptVisible(false) }} onConfirm={reset} title='Confirm reset' visible={shutdownResetVisible} cancelButtonVariant='secondary' confirmButtonVariant='danger' cancelText='Cancel' confirmText='Reset'>
+						<p>
+							Please confirm that you want to reset all player data
+						</p>
+					</ConfirmModal>
 
-			<TextPromptModal onClose={() => { setNameModalOpen(false) }} initialValue={tournamentSystem.state.system.tournament_name} onSubmit={onSetName} title='Set tournament name' visible={nameModalOpen} cancelText='Cancel' cancelType='secondary' confirmType='primary' confirmText='Set name' placeholder='Tournament name'>
-				<p>
-					Enter the new tournament name
-				</p>
-			</TextPromptModal>
+					<TextPromptModal onClose={() => { setNameModalOpen(false) }} initialValue={tournamentSystem.state.system.tournament_name} onSubmit={onSetName} title='Set tournament name' visible={nameModalOpen} cancelText='Cancel' cancelType='secondary' confirmType='primary' confirmText='Set name' placeholder='Tournament name'>
+						<p>
+							Enter the new tournament name
+						</p>
+					</TextPromptModal>
 
-			<TextPromptModal onClose={() => { setMOTDModalOpen(false) }} initialValue={tournamentSystem.state.system.motd} onSubmit={onSetMOTD} title='Set MOTD' visible={motdModalOpen} cancelText='Cancel' cancelType='secondary' confirmType='primary' confirmText='Set MOTD' placeholder='MOTD'>
-				<p>
-					Enter the new MOTD
-				</p>
-			</TextPromptModal>
+					<TextPromptModal onClose={() => { setMOTDModalOpen(false) }} initialValue={tournamentSystem.state.system.motd} onSubmit={onSetMOTD} title='Set MOTD' visible={motdModalOpen} cancelText='Cancel' cancelType='secondary' confirmType='primary' confirmText='Set MOTD' placeholder='MOTD'>
+						<p>
+							Enter the new MOTD
+						</p>
+					</TextPromptModal>
 
-			<TextPromptModal onClose={() => { setUrlModalOpen(false) }} initialValue={tournamentSystem.state.system.scoreboard_url} onSubmit={onSetUrl} title='Set scoreboard url' visible={urlModalOpen} cancelText='Cancel' cancelType='secondary' confirmType='primary' confirmText='Set URL' placeholder='Scoreboard URL'>
-				<p>
-					Enter the new scoreboard url
-				</p>
-			</TextPromptModal>
+					<TextPromptModal onClose={() => { setUrlModalOpen(false) }} initialValue={tournamentSystem.state.system.scoreboard_url} onSubmit={onSetUrl} title='Set scoreboard url' visible={urlModalOpen} cancelText='Cancel' cancelType='secondary' confirmType='primary' confirmText='Set URL' placeholder='Scoreboard URL'>
+						<p>
+							Enter the new scoreboard url
+						</p>
+					</TextPromptModal>
 
-			<ThemeSelector onClose={closeThemeSelector} visible={themeSelectorVisible} />
+					<ThemeSelector onClose={closeThemeSelector} visible={themeSelectorVisible} />
+				</>
+			}
 		</>
 	)
 }

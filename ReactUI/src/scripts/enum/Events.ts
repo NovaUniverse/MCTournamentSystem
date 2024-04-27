@@ -14,4 +14,6 @@ export enum Events {
 	TEAM_EDITOR_READY = "editor:ready",
 	TEAM_EDITOR_TEAM_SIZE_CHANGED = "editor:team_size_change",
 	CSS_MODS_CHANGED = "sys:css_mods_changed",
+	HIDE_NAVBAR = "ui:hidenavbar",
+	SHOW_NAVBAR = "ui:shownavbar"
 }
