@@ -19,12 +19,12 @@ import Maps from './pages/Maps';
 import ChatLog from './pages/ChatLog';
 import Accounts from './pages/Accounts';
 import EditorProvider from './components/EditorProvider';
-
-/// @ts-ignore
-import catCry from "./assets/img/cat_cry.png";
 import ScoreSnapshot from './pages/ScoreSnapshot';
 import WinnerPage from './pages/WinnerPage';
 import LocationRedirect from './components/LocationRedirect';
+
+/// @ts-ignore
+import catCry from "./assets/img/cat_cry.png";
 
 export default function App() {
 	const tournamentSystem = useTournamentSystemContext();

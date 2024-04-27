@@ -10,6 +10,9 @@ import ConfirmModal from '../modals/ConfirmModal'
 import { LocalStorageKeys } from '../../scripts/enum/LocalStorageKeys'
 import TextPromptModal from '../modals/TextPromptModal'
 
+/// @ts-ignore
+import novaLogo256 from "../../assets/img/nova_logo_256.png";
+
 interface Props {
 	loggedIn: boolean
 }
@@ -151,7 +154,10 @@ export default function GlobalNavbar({ loggedIn }: Props) {
 		<>
 			<Navbar expand="lg" bg="dark" data-bs-theme="dark">
 				<Container>
-					<NavbarBrand as={Link} to='/' className='main-navbar-brand'>TournamentSystem</NavbarBrand>
+					<NavbarBrand as={Link} to='/' className='main-navbar-brand'>
+						<img src={novaLogo256} width="36" height="36" className="d-inline-block align-top me-1" />
+						TournamentSystem
+					</NavbarBrand>
 					<NavbarToggle aria-controls="basic-navbar-nav" />
 					<NavbarCollapse id="basic-navbar-nav">
 						<Nav>

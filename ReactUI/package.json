@@ -7,7 +7,7 @@
     "main": "index.js",
     "scripts": {
         "build": "cross-env NODE_ENV=production webpack --config webpack.config.mjs --mode production",
-        "start": "cross-env NODE_ENV=development webpack serve --config webpack.config.mjs --mode development --no-cache --port 3005",
+        "start": "cross-env NODE_ENV=development webpack serve --config webpack.config.mjs --mode development --no-cache --port 4200",
         "update": "npm install && npm update",
         "pupdate": "pnpm install && pnpm update"
     },
