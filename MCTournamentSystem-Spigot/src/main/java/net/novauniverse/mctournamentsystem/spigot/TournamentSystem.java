@@ -50,6 +50,7 @@ import net.novauniverse.mctournamentsystem.spigot.command.commentator.csp.CSPCom
 import net.novauniverse.mctournamentsystem.spigot.command.commentator.ctp.CTPCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.copylocation.CopyLocationCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.database.DatabaseCommand;
+import net.novauniverse.mctournamentsystem.spigot.command.enablefinalgame.EnableFinalGameCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.fly.FlyCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.halt.HaltCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.killstatusreporting.KillStatusReportingCommand;
@@ -908,6 +909,7 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		CommandRegistry.registerCommand(new ReloadDynamicConfigCommand());
 		CommandRegistry.registerCommand(new KillStatusReportingCommand());
 		CommandRegistry.registerCommand(new ManagedServerCommand());
+		CommandRegistry.registerCommand(new EnableFinalGameCommand());
 
 		if (config.has("socials")) {
 			JSONObject socials = config.getJSONObject("socials");
