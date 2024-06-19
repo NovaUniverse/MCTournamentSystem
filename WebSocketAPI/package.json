@@ -19,7 +19,7 @@
     "console-stamp": "^3.1.2",
     "express": "^4.19.2",
     "nodemon": "^2.0.20",
-    "socket.io": "^4.7.5",
+    "socket.io": "^4.7.0",
     "uuidv4": "^6.2.13"
   }
 }
