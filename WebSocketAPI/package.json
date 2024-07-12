@@ -15,7 +15,7 @@
     "@types/express": "^4.17.21",
     "@types/node": "^18.19.37",
     "@types/socket.io": "^3.0.2",
-    "amqplib": "^0.10.3",
+    "amqplib": "^0.10.4",
     "console-stamp": "^3.1.2",
     "express": "^4.19.2",
     "nodemon": "^2.0.20",
