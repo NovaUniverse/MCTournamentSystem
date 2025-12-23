@@ -63,7 +63,6 @@ import net.novauniverse.mctournamentsystem.spigot.command.socials.implementation
 import net.novauniverse.mctournamentsystem.spigot.command.socials.implementation.PatreonCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.socials.implementation.YoutubeCommand;
 import net.novauniverse.mctournamentsystem.spigot.command.yborder.YBorderCommand;
-import net.novauniverse.mctournamentsystem.spigot.cosmetics.CosmeticsIntegrations;
 import net.novauniverse.mctournamentsystem.spigot.debug.DebugCommands;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.ITournamentSystemPlayerEliminationMessageProvider;
 import net.novauniverse.mctournamentsystem.spigot.eliminationmessage.TournamentSystemDefaultPlayerEliminationMessage;
@@ -71,7 +70,6 @@ import net.novauniverse.mctournamentsystem.spigot.game.GameSetup;
 import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.misc.GameEndSoundtrackManager;
 import net.novauniverse.mctournamentsystem.spigot.game.util.DefaultPlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
-import net.novauniverse.mctournamentsystem.spigot.labymod.LabyModIntegration;
 import net.novauniverse.mctournamentsystem.spigot.misc.CustomItemTest;
 import net.novauniverse.mctournamentsystem.spigot.modules.chatfilter.ChatFilter;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
@@ -1030,29 +1028,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 
 		Task.tryStartTask(timerSeconds);
 		Task.tryStartTask(statusReportingTask);
-
-		if (Bukkit.getServer().getPluginManager().getPlugin("LabyApi") != null) {
-			ModuleManager.loadModule(this, LabyModIntegration.class, true);
-		}
-
-		try {
-			if (Bukkit.getServer().getPluginManager().getPlugin("CosmeticSystem") != null) {
-				if (config.optBoolean("disable_cosmetic_system", false) || ("" + System.getenv("DISABLE_COSMETIC_SYSTEM")).equalsIgnoreCase("true")) {
-					Log.info("TournamentSystem", "Disabling cosmetic system since disable_cosmetic_system is set to true or the env variable ");
-					Bukkit.getServer().getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("CosmeticSystem"));
-				} else {
-					if (Bukkit.getServer().getPluginManager().getPlugin("CosmeticSystem").isEnabled()) {
-						Log.info("TournamentSystem", "Enabling cosmetic system integration");
-						ModuleManager.loadModule(this, CosmeticsIntegrations.class, true);
-					} else {
-						Log.info("TournamentSystem", "Skip enabling cosmetic system integration since the plugin is not enabled");
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.error("TournamentSystem", "An error occured when trying to set up costmetic system support");
-		}
 
 		if (dynamicConfigURL != null) {
 			Log.info("TournamentSystem", "Trying to read dynamic config...");
