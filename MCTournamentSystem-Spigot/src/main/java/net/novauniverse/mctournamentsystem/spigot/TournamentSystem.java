@@ -1063,14 +1063,6 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 		} else {
 			Log.warn("TournamentSystem", "RabbitMQ not available");
 		}
-
-		if (NovaCore.getInstance().getNovaCoreGameVersion().isBefore(NovaCoreGameVersion.V_1_20_R1)) {
-			try {
-				ModuleManager.enable(AutoRespawnModule.class);
-			} catch (Exception e) {
-				Log.error("TournamentSystem", "Failed to enable auto respawn module");
-			}
-		}
 	}
 
 	public void killStatusReporting() {
