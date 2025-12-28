@@ -18,7 +18,7 @@ import net.novauniverse.mctournamentsystem.spigot.TournamentSystem;
 import net.zeeraa.novacore.spigot.module.NovaModule;
 import net.zeeraa.novacore.spigot.module.annotations.NovaAutoLoad;
 
-@NovaAutoLoad(shouldEnable = true)
+@NovaAutoLoad(shouldEnable = false)
 public class AutoRespawnModule extends NovaModule implements Listener {
 	private Map<UUID, Location> respawnLocation;
 

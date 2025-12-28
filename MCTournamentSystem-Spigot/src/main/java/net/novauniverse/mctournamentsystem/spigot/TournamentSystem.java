@@ -71,6 +71,7 @@ import net.novauniverse.mctournamentsystem.spigot.game.gamespecific.misc.GameEnd
 import net.novauniverse.mctournamentsystem.spigot.game.util.DefaultPlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.game.util.PlayerEliminatedTitleProvider;
 import net.novauniverse.mctournamentsystem.spigot.misc.CustomItemTest;
+import net.novauniverse.mctournamentsystem.spigot.modules.autorespawn.AutoRespawnModule;
 import net.novauniverse.mctournamentsystem.spigot.modules.chatfilter.ChatFilter;
 import net.novauniverse.mctournamentsystem.spigot.modules.ezreplacer.EZReplacer;
 import net.novauniverse.mctournamentsystem.spigot.modules.head.EdibleHeads;
@@ -94,6 +95,7 @@ import net.zeeraa.novacore.commons.platform.OSPlatformUtils;
 import net.zeeraa.novacore.commons.tasks.Task;
 import net.zeeraa.novacore.commons.utils.JSONFileUtils;
 import net.zeeraa.novacore.spigot.NovaCore;
+import net.zeeraa.novacore.spigot.abstraction.enums.NovaCoreGameVersion;
 import net.zeeraa.novacore.spigot.command.CommandRegistry;
 import net.zeeraa.novacore.spigot.gameengine.NovaCoreGameEngine;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameManager;
@@ -1060,6 +1062,14 @@ public class TournamentSystem extends JavaPlugin implements Listener {
 			});
 		} else {
 			Log.warn("TournamentSystem", "RabbitMQ not available");
+		}
+
+		if (NovaCore.getInstance().getNovaCoreGameVersion().isBefore(NovaCoreGameVersion.V_1_20_R1)) {
+			try {
+				ModuleManager.enable(AutoRespawnModule.class);
+			} catch (Exception e) {
+				Log.error("TournamentSystem", "Failed to enable auto respawn module");
+			}
 		}
 	}
 
